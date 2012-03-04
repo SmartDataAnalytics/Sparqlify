@@ -1,0 +1,16 @@
+
+- [Rewrite] Combining Distinct + Order By does not yield correct ordering.
+   The reason is that in the SQL the Order By becomes a sub-query of the query doing the distinct.
+   Distinct does not preserve the order.
+   
+- [Config] Prefixes and strings are not correctly found out to be equal:
+  Given Prefix ns:<http://ex.org/> and the var-defs
+      ?x = spy:uri(ns:foo)
+      ?y = spy:uri(http://ex.org/foo)
+  the system will not realize that the vars can be joined.
+
+
+- In the 'with' part: The same variable definition may appear multiple times, in which case previous one are overwritten
+  Throw an exception if that happens.
+   system.addView(RdfView.create("{ ?v3s geo:religion ?v3r. } with ?v3s = beef:uri(concat('http://entitiy/', ?id)) ; ?v3s = beef:uri(concat('http://rel/', ?rname)); select id, rname from religions"));
+

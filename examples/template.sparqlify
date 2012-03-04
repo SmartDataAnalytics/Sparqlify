@@ -1,0 +1,62 @@
+/**
+ * 
+ *
+ *
+ */
+
+
+Prefix spy:<http://aksw.org/sparqlify/>
+Prefix ogc:<http://www.opengis.net/rdf#>
+
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+Prefix p:<http://example.org>
+
+Create View Template dataset As
+	Construct {
+        ?d    a             p:Dataset ;
+              p:location    ?l ;
+              p:tripleCount	?c .
+	}
+	With 
+		?d = spy:uri(?dataset)
+		?l = spy:uri(?location)
+		?c = spy:typedLiteral(?count, xsd:int)
+	;
+
+Create View Template evaluation As
+	Construct {
+		?s a p:EvaluationResult .
+
+		?s rdfs:comment ?c .
+		
+		?s p:startedAt ?time .
+
+		?s p:dataset ?d .
+		?s p:refset ?r .
+
+		?s p:overlapSize ?os .
+		
+		
+		?s p:precision ?p .
+		?s p:recall ?r .
+		
+		?s p:duration ?duration .
+		 
+	}
+	With
+		?s = spy:uri(?evalUri)
+		?d = spy:uri(?datasetUri)
+		?r = spy:uri(?refsetUri)
+		
+		?c = spy:plainLiteral(?comment)
+		?time = spy:typedLiteral(?dateTime, xsd:dateTime)
+		
+		?os = spy:typedLiteral(?overlapSize, xsd:int)
+		?p = spy:typedLiteral(?precision, xsd:double)
+		?r = spy:typedLiteral(?recall, xsd:double)
+	;
+	

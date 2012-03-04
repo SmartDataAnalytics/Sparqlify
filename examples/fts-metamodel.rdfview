@@ -1,0 +1,74 @@
+/**
+ *
+ */
+
+Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/>
+Prefix ogc:<http://www.opengis.net/rdf#>
+Prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+Prefix meta:<http://fintrans.publicdata.eu/ec/ontology/>
+
+
+Create Construct View prefLabel As
+	[[ Construct { ?s rdfs:prefLabel ?o . } { ?s rdfs:label ?o . } ]];
+
+Create Construct View type As
+	[[ Construct { ?s a rdf:SR1 . } { ?s <http://climb.dataincubator.org/vocabs/climb/threeStarRating> ?o . Filter(?o = "1") . } ]];
+
+Create Construct View type As
+	[[ Construct { ?s a rdf:SR2 . } { ?s <http://climb.dataincubator.org/vocabs/climb/threeStarRating> ?o . Filter(?o = "2") . } ]];
+
+Create Construct View type As
+	[[ Construct { ?s a rdf:SR3 . } { ?s <http://climb.dataincubator.org/vocabs/climb/threeStarRating> ?o . Filter(?o = "3") . } ]];
+
+
+
+/** Everything commented out below **/
+
+/*
+Create Construct View test As [[
+	Construct {
+		?s ?p ?o .
+	}
+	{
+		?s ?p ?o .
+	}
+]]
+*/
+
+
+/*
+Create Construct View my_view As [[
+	Construct {
+		?s a ft:Facet .
+		?s ft:geoRelated ?l .
+	}
+	{
+		?s ft:beneficiary ?b .
+		?b ft:city ?c .
+		?c rdfs:label ?l .
+	}
+]]
+*/
+
+/*
+Create Construct View my_view As [[
+	Construct {
+		?s ft:geoRelated ?l .
+		?l geo:lat ?x .
+		?l geo:long ?y .
+	}
+	{
+		?s ft:beneficiary ?b .
+		?b ft:city ?c .
+		?c owl:sameAs ?l .
+		?l geo:lat ?x .
+		?l geo:long ?y .
+	}
+]]
+*/

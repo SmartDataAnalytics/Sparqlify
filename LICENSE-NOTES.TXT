@@ -1,0 +1,18 @@
+This implementation contains modifications of the following external source code:
+
+A class for serializing RDF in the Talis JSON format
+	com.talis.rdfwriters.json.JSONJenaWriter
+	Apache 2 license (http://www.apache.org/licenses/LICENSE-2.0)
+	
+
+Adaptions of the AntLR 3 SPARQL Grammar and Tree Grammar from the sparkle-g Team
+	src/main/antlr3/org/aksw/sparqlify/config/lang/SparqlifyConfig.g
+	src/main/antlr3/org/aksw/sparqlify/config/lang/SparqlifyConfigTree.g
+	Apache 2 license (http://www.apache.org/licenses/LICENSE-2.0)
+
+Adoption of some Jena classes
+	various files
+	Apache 2 license (http://www.apache.org/licenses/LICENSE-2.0)
+	
+	
+

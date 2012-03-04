@@ -1,0 +1,356 @@
+/**
+ * Sparqlify configuration file for LinkedGeoData
+ *
+ * NeoGeo flavor
+ *
+ */
+
+
+// Prefixes (these will also be used in the query responses)
+Prefix spy:<http://aksw.org/sparqlify/>
+Prefix ogc:<http://www.opengis.net/rdf#>
+
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+
+Prefix lgdn:<http://linkedgeodata.org/resource/node/>
+Prefix lgdo:<http://linkedgeodata.org/ontology/>
+
+Prefix geo:<http://www.georss.org/georss/>
+
+Prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+Prefix gv:<http://geovocab.org/geometry#>
+
+
+Create View classes_k As
+    Construct {
+        ?s a owl:Class .
+    }
+    With
+        ?s = spy:uri(?object)
+    Constrain
+        ?s prefix "http://linkedgeodata.org/ontology/"
+    From
+        [[SELECT object FROM lgd_map_resource_k WHERE property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type']];
+       
+Create View classes_kv As
+    Construct {
+        ?s a owl:Class .
+    }
+    With
+        ?s = spy:uri(?object)
+    Constrain
+        ?s prefix "http://linkedgeodata.org/ontology/"
+    From
+        [[SELECT object FROM lgd_map_resource_kv WHERE property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type']];
+
+
+
+// Resource labels
+Create View view_resource_labels As
+	Construct {
+		?s rdfs:label ?o .
+	}
+	With
+		?s = spy:uri(?resource)
+		?o = spy:plainLiteral(?label, ?language)
+	Constrain
+		?s prefix "http://linkedgeodata.org/ontology/"
+	From
+		lgd_resource_label;
+
+
+// Node geometries
+Create View view_nodes As
+	Construct {
+		?s geo:geometry ?o .
+		?s gv:geometry ?g .
+		?g a wgs:Point .
+		?g wgs:long ?xx .
+		?g wgs:lat ?yy .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?id))
+		?g = spy:uri(concat('http://linkedgeodata.org/geometry/node/_', ?id))
+		?o = spy:plainLiteral(?geom)
+		?xx = spy:typedLiteral(?x, xsd:double)
+		?yy = spy:typedLiteral(?y, xsd:double)
+	From
+		[[select id, geom, ST_X(geom::geometry) x, ST_Y(geom::geometry) y from nodes]];
+
+
+
+
+
+Create View node_tags_languages As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id)) 
+		?p = spy:uri(?property)
+		?o = spy:plainLiteral(?v, ?language)
+	Constrain
+		?p prefix "http://www.w3.org/"
+	From
+		lgd_node_tags_text;
+
+
+
+
+
+Create View node_tags_resource_kv As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id)) 
+		?p = spy:uri(?property)
+		?o = spy:uri(?object)
+	Constrain
+		?p regex "(^http://linkedgeodata.org/ontology/.*)|(^http://www.w3.org/.*)"	
+		?o regex "(^http://linkedgeodata.org/ontology/.*)"	
+	From
+		lgd_node_tags_resource_kv;
+
+
+Create View node_tags_generic As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id)) 
+		?p = spy:uri(?property)
+		?o = spy:uri(?object)
+	Constrain
+		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"
+		?o prefix "http://linkedgeodata.org/ontology/"
+	From
+		lgd_node_tags_resource_k;
+
+
+
+Create View view_node_tags_int As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = spy:typedLiteral(?v, 'http://www.w3.org/2001/XMLSchema#int')
+	From
+		lgd_node_tags_int;
+
+// Typed Literals - These are tags that match the pattern (*, *)
+Create View view_node_tags_boolean As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = spy:typedLiteral(?v, <http://www.w3.org/2001/XMLSchema#boolean>)
+	From
+		lgd_node_tags_boolean;
+
+
+Create View view_node_tags_float As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = spy:typedLiteral(?v, 'http://www.w3.org/2001/XMLSchema#float')
+	From
+		lgd_node_tags_float;
+
+
+Create View lgd_node_tags_string As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = spy:plainLiteral(?v)
+	From
+		lgd_node_tags_string;
+
+
+
+
+
+
+
+Create View view_lgd_relation_specific_resources As
+	Construct {
+//		?s a lgdo:Relation .
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/relation/_', ?relation_id)) 
+		?p = spy:uri(?property)
+		?o = spy:uri(?object)
+	Constrain
+		?p regex "(^http://linkedgeodata.org/ontology/.*)|(^http://www.w3.org/.*)"	
+		?o regex "(^http://linkedgeodata.org/ontology/.*)"	
+	From
+		lgd_relation_resource_kv;
+
+
+Create View relation_members_nodes As
+	Construct {
+		?s lgdo:hasMember ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/relation/_', ?relation_id)) 
+		?o = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?member_id))
+	From
+		[[SELECT relation_id, member_id FROM relation_members WHERE member_type = 'N']];
+
+
+ 
+Create View view_way_to_nodes As
+	Construct {
+		?w lgdo:hasNodeSeq ?ns .
+		?w lgdo:hasNodeList ?nl .
+	}
+	With
+		?w = spy:uri(concat('http://linkedgeodata.org/resource/way/', ?id))
+		?ns = spy:uri(concat('http://linkedgeodata.org/resource/waynode-seq/_', ?id))  
+		?nl = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?id, '/', 0))  
+	From
+		ways;
+
+
+Create View view_way_nodes_seq As
+	Construct {
+		?wn ?p ?n .
+
+		?n a rdf:List .
+		?n rdf:first ?y .
+		?n rdf:rest ?z .
+	}
+	With
+		?wn = spy:uri(concat('http://linkedgeodata.org/resource/waynode-seq/_', ?way_id))
+		?p  = spy:uri(concat('http://www.w3.org/1999/02/22-rdf-syntax-ns#_', ?sequence_id))
+		?n = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?way_id, '/', ?sequence_id))
+
+		?y = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?z = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?way_id, '/', ?next_sequence_id))		
+	From
+		[[SELECT way_id, sequence_id, node_id, sequence_id + 1 AS next_sequence_id FROM (SELECT * FROM way_nodes a WHERE sequence_id NOT IN (SELECT MAX(sequence_id) FROM way_nodes b WHERE a.way_id = b.way_id GROUP BY way_id)) x]]
+		//[[SELECT way_id, sequence_id, node_id, sequence_id + 1 AS next_sequence_id FROM way_nodes]];
+
+
+
+
+Create View view_way_nodes_list_nil As
+	Construct {
+		?wn ?p ?n .
+
+		?n a rdf:List .
+		?n rdf:first ?y .
+		?n rdf:rest rdf:nil .
+	}
+	With
+		?wn = spy:uri(concat('http://linkedgeodata.org/resource/waynode-seq/_', ?way_id))
+		?p  = spy:uri(concat('http://www.w3.org/1999/02/22-rdf-syntax-ns#_', ?sequence_id))
+		?n = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?way_id, '/', ?sequence_id))
+
+		?y = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+	From
+		[[SELECT way_id, sequence_id, node_id FROM (SELECT * FROM way_nodes a WHERE sequence_id IN (SELECT MAX(sequence_id) FROM way_nodes b WHERE a.way_id = b.way_id GROUP BY way_id)) x]]
+
+
+
+
+/*
+Create View view_way_nodes_list_nil As
+	Construct {
+		?x a rdf:List .
+		?x rdf:first ?y .
+		?x rdf:rest rdf:nil .
+	}
+	With
+		?x = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?way_id, ?first_sequence_id))
+		?y = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?first_node_id))
+	From
+		[[SELECT * FROM lgd_way_nodes WHERE rest_sequence_id IS NULL]];
+
+
+Create View view_way_to_nodes As
+	Construct {
+		?w lgdo:hasNodes ?wn .
+	}
+	With 
+		?w = spy:uri(concat('http://linkedgeodata.org/resource/way/', ?way_id))
+		?wn = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?way_id, '0'))  
+	From
+		way_nodes;
+
+
+*/
+
+
+/*
+
+// Classes and object properties (generic)
+Create View view_prefixed_properties As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(?property)
+		?o = spy:uri(?object)
+	From
+		node_generic_resources;
+
+
+
+
+// Object Properties with prefix
+// The prefix datatype causes troubles
+Create View view_prefixed_properties As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(?property)
+		?o = spy:uri(concat(?object_prefix, ?v))
+	From
+		lgd_node_tags_prefix;
+
+*/
+
+
+		
+/**
+ * Copyright (C) 2009-2011, LinkedGeoData team at the MOLE research
+ * group at AKSW / University of Leipzig
+ *
+ * This file is part of LinkedGeoData.
+ *
+ * LinkedGeoData is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * LinkedGeoData is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+

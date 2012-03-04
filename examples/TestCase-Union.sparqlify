@@ -1,0 +1,55 @@
+/**
+ * Sparqlify configuration file for LinkedGeoData
+ */
+
+
+// Prefixes (these will also be used in the query resonses)
+Prefix spy:<http://aksw.org/sparqlify/>
+Prefix ogc:<http://www.opengis.net/rdf#>
+
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+
+Prefix lgdn:<http://linkedgeodata.org/resource/node/>
+Prefix lgdo:<http://linkedgeodata.org/ontology/>
+
+Prefix geo:<http://www.georss.org/georss/>
+
+Create View test_1 As
+    Construct {
+    	geo:a geo:b geo:c .
+    };
+
+
+Create View test_2 As
+    Construct {
+    	geo:d geo:e geo:f .
+    };
+
+/*
+Create View classes_k As
+    Construct {
+        ?s a owl:Class .
+    }
+    With
+        ?s = spy:uri(?object)
+    Constrain
+        ?s regex "^http://linkedgeodata.org/ontology/.*"
+    From
+        [[SELECT object FROM lgd_map_resource_k WHERE property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type']];
+
+
+Create View classes_kv As
+    Construct {
+        ?s a owl:Class .
+    }
+    With
+        ?s = spy:uri(?object)
+    Constrain
+        ?s regex "^http://linkedgeodata.org/ontology/.*"
+    From
+        [[SELECT object FROM lgd_map_resource_kv WHERE property = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type']];
+*/

@@ -1,0 +1,7 @@
+Create Template As
+	Construct {
+	}
+	With
+		?value = ?value
+		?o = concat(observation, 
+	

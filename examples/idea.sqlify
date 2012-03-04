@@ -1,0 +1,12 @@
+
+CREATE VIEW myTable(name text, age INTEGER, address text) As
+    Select ?name, ?age, ?address
+    {
+        ?p a ex:Person .
+        ?p ex:age ?age .
+        ?p ex:address ?address
+    }
+    
+
+Join(myTable a, myTable b, a=b)
+    

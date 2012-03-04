@@ -1,0 +1,66 @@
+Prefix spy:<http://aksw.org/sparqlify/>
+Prefix ogc:<http://www.opengis.net/rdf#>
+
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+
+Prefix lgdn:<http://linkedgeodata.org/resource/node/>
+Prefix lgdo:<http://linkedgeodata.org/ontology/>
+
+Prefix geo:<http://www.georss.org/georss/>
+
+Prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+Prefix gv:<http://geovocab.org/geometry#>
+
+Prefix virtrdf:<http://www.openlinksw.com/schemas/virtrdf#>
+
+
+Create View view_way_nodes_list_nil As
+	Construct {
+		?wn ?p ?n .
+
+		?n a rdf:List .
+//		?n rdf:first ?y .
+//		?n rdf:rest rdf:nil .
+	}
+	With
+		?wn = spy:uri(concat('http://linkedgeodata.org/resource/waynode-seq/_', ?way_id))
+		?p  = spy:uri(concat('http://www.w3.org/1999/02/22-rdf-syntax-ns#_', ?sequence_id))
+		?n = spy:uri(concat('http://linkedgeodata.org/resource/waynode/_', ?way_id, '/', ?sequence_id))
+
+		?y = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+	From
+		[[SELECT way_id, sequence_id, node_id FROM (SELECT * FROM way_nodes a WHERE sequence_id IN (SELECT MAX(sequence_id) FROM way_nodes b WHERE a.way_id = b.way_id GROUP BY way_id)) x]]
+
+
+
+/*
+// Typed Literals - These are tags that match the pattern (*, *)
+Create View view_node_tags_boolean As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = spy:typedLiteral(?v, xsd:boolean)
+	From
+		lgd_node_tags_boolean;
+
+
+Create View view_node_tags_float As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = spy:uri(concat('http://linkedgeodata.org/resource/node/_', ?node_id))
+		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = spy:typedLiteral(?v, xsd:float)
+	From
+		lgd_node_tags_float;
+		
+*/

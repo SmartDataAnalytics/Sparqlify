@@ -1,0 +1,16 @@
+
+
+Create View test_sp As
+	Construct {
+		?x ?y ?z .
+	}
+	With
+		?x = spy:uri(?a)
+		?y = spy:uri(?b)
+		?z = spy:uri(?c)
+	Constrain
+		?x regex "http://.*"
+		?z regex "mailto://.*"
+	From
+		test_abc;
+
