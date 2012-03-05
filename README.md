@@ -33,6 +33,7 @@ Options are:
 
 ### Example
 The following command will start the Sparqlify HTTP server on the default port.
+
     java -cp target/sparqlify-0.0.1-SNAPSHOT-jar-with-dependencies.jar RunEndpoint -h localhost -u postgres -p secret -d mydb -c mydb-mappings.sparqlify -n 1000 -t 30
 
 Agents can now access the SPARQL endpoint at `http://localhost:9999/sparql`
@@ -42,7 +43,7 @@ Agents can now access the SPARQL endpoint at `http://localhost:9999/sparql`
 For the time being, please use e.g. [SNORQL](https://github.com/kurtjx/SNORQL) as a web frontend:
 
 * Download Snorql
-* Copy the `snorql` folder into your web servers directory (e.g. `/var/www/snorql`)
+* Copy the `snorql` folder into your web server's hosting directory (e.g. `/var/www/snorql`)
 * Edit the file `snorql.js`, and set the `this._endpoint` accordingly
   * e.g. `this._endpoint = "http://localhost:9999/sparql";`
 
