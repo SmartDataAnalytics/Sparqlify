@@ -46,7 +46,7 @@ For the time being, please use e.g. [SNORQL](https://github.com/kurtjx/SNORQL) a
 * Copy the `snorql` folder into your web server's hosting directory (e.g. `/var/www/sparqlify/snorql`)
   * Under Ubuntu you can install the Apache webserver using `sudo apt-get install apache2`, for other systems please consult the internet.
 * Edit the file `snorql.js`, and set the `this._endpoint` accordingly
-  * e.g. `this._endpoint = "http://localhost:9999/sparql";`
+  * e.g. `this._endpoint = "http://localhost:7531/sparql";`
 
 ## Demo
 
