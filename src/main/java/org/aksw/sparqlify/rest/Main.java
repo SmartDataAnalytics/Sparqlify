@@ -83,11 +83,11 @@ public class Main {
 
 		
 		// Parsing of command line args
-		String portStr = commandLine.getOptionValue("P", "7000");
-		String backLogStr = commandLine.getOptionValue("B", "100");
-		String contextStr = commandLine.getOptionValue("C", "/sparqlify");
+		String portStr = commandLine.getOptionValue("P", "7531");
+		//String backLogStr = commandLine.getOptionValue("B", "100");
+		//String contextStr = commandLine.getOptionValue("C", "/sparqlify");
 		int port = Integer.parseInt(portStr);
-		int backLog = Integer.parseInt(backLogStr);
+		//int backLog = Integer.parseInt(backLogStr);
 
 		String hostName = commandLine.getOptionValue("h", "localhost");
 		String dbName = commandLine.getOptionValue("d", "");
@@ -198,7 +198,7 @@ public class Main {
 		sh.setInitParameter("com.sun.jersey.config.property.packages",
 				"org.aksw.sparqlify.rest");
 
-		Server server = new Server(9999);
+		Server server = new Server(port);
 		Context context = new Context(server, "/", Context.SESSIONS);
 		context.addServlet(sh, "/*");
 		

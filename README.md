@@ -19,7 +19,7 @@ Options are:
 
 * Server Configuration
   * -c   Sparqlify mapping definition file
-  * -P   Server port [default: 9999]
+  * -P   Server port [default: 7531]
 
 * Database Settings
   * -h   Hostname of the database (e.g. localhost or localhost:5432)
@@ -36,16 +36,34 @@ The following command will start the Sparqlify HTTP server on the default port.
 
     java -cp target/sparqlify-0.0.1-SNAPSHOT-jar-with-dependencies.jar RunEndpoint -h localhost -u postgres -p secret -d mydb -c mydb-mappings.sparqlify -n 1000 -t 30
 
-Agents can now access the SPARQL endpoint at `http://localhost:9999/sparql`
+Agents can now access the SPARQL endpoint at `http://localhost:7531/sparql`
 
 ### Web Frontend
 **TODO** This endpoint currently does NOT provide an HTML interface out of the box.
 For the time being, please use e.g. [SNORQL](https://github.com/kurtjx/SNORQL) as a web frontend:
 
 * Download Snorql
-* Copy the `snorql` folder into your web server's hosting directory (e.g. `/var/www/snorql`)
+* Copy the `snorql` folder into your web server's hosting directory (e.g. `/var/www/sparqlify/snorql`)
+  * Under Ubuntu you can install the Apache webserver using `sudo apt-get install apache2`, for other systems please consult the internet.
 * Edit the file `snorql.js`, and set the `this._endpoint` accordingly
   * e.g. `this._endpoint = "http://localhost:9999/sparql";`
+
+## Demo
+
+Currently there is no publicly available online demo yet.
+However, an example LinkedGeoData/OpenStreetMap SQL dump is located in this repository under `data`. 
+You can load it into a PostgreSQL database using the following procedure:
+
+    bzip2 -d lgd_sparqlify_rc1.sql.bz2
+    createdb lgd_test
+    psql -d lgd_test -f lgd_sparqlify_rc1.sql
+
+
+Then run Sparqlify using
+
+    java -cp target/sparqlify-0.0.1-SNAPSHOT-jar-with-dependencies.jar RunEndpoint -h localhost -u postgres -p secret -d lgd_test -n 1000 -t 30 -c mappings/LinkedGeoData-Triplify-IndividualViews.sparqlify
+
+If you have configured SNORQL, you should be able to visit the web front end with your browser (e.g. `http://localhost/sparqlify/snorql`).
 
 ## Mapping Syntax:
 A Sparqlify mapping configuration is a set of CREATE VIEW statements, somewhat similar to the CREATE VIEW statement from SQL.
@@ -112,9 +130,10 @@ The available abbreviations and the relation to rdfTerm are shown below:
 
 ### Constrain
 If a column of a table already contains URIs, then Sparqlify cannot know what kind of URIs they are.
+In order to avoid unnecessary SQL-joins (and reduce the query-rewriting time), prefix constraints can be stated.
 
-
-Find further examples in the folder `examples`.
+### Further examples
+Find further examples in the folder `mappings`.
 
 **TODO** Detailed Documentation of the Sparqlify Mapping Language
 
@@ -128,6 +147,7 @@ The following improvements are planned (currently in no particular order):
 * Support for generic Aggregate functions
 * Configurable rewrites of SPARQL->SQL predicates (so make every SQL predicate available on the Sparql level)
 * Support for other relational database systems besides PostgreSQL.
+* Redesign the constraints clause to support arbitrary constraint expressions; For instance ?s prefix "http://..." actually means startsWith(str(?s), 'http://...').
 
 ## Not planned yet
 * SPARQL 1.1 Property Paths (This would require an extra layer of query planning within Sparqlify, as the Property Path operators do not directly map to relational operators)

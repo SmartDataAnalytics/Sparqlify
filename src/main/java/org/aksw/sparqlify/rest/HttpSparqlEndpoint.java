@@ -13,6 +13,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.commons.util.strings.StringUtils;
 
 import com.hp.hpl.jena.sparql.engine.http.HttpParams;
 
@@ -49,7 +50,16 @@ public class HttpSparqlEndpoint {
 	{
 		return ProcessQuery.processQuery(queryString, format, getSparqler());
 	}
-	
+
+	/*
+	@GET
+	public String executeQueryXml()
+			throws Exception {
+		String example = "<?xml version='1.0' encoding='ISO-8859-1'?><xml>Select * { ?s ?p ?o } Limit 10</xml>";
+		return "No query specified. Example: ?query=" + StringUtils.urlEncode(example);
+	}
+	*/
+
 	@GET
 	public StreamingOutput executeQueryXml(@QueryParam("query") String queryString)
 			throws Exception {
