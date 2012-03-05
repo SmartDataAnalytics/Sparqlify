@@ -3,7 +3,7 @@
 ## Introduction
 
 This is an experimental RDB-RDF mapper, which is being developed for the [LinkedGeoData](http://linkedgeodata.org) project.
-Sparqlify supports a subset of the SPARQL 1.0 query language. A detailed description of the features is pending.
+Sparqlify supports a subset of the SPARQL 1.0 query language plus sub queries. A detailed description of the features is pending.
 Currently only PostgreSQL is supported. We will investigate which other relational database systems can be reasonably supported.
 Sparqlify rewrites a given SPARQL query into a single SQL query, thereby giving full control to the query planner of the underlying DB.
 
@@ -33,15 +33,16 @@ Options are:
 
 ### Example
 The following command will start the Sparqlify HTTP server on the default port.
-`java -cp target/sparqlify-0.0.1-SNAPSHOT-jar-with-dependencies.jar RunEndpoint -h localhost -u postgres -p secret -d mydb -c mydb-mappings.sparqlify -n 1000 -t 30`
+    java -cp target/sparqlify-0.0.1-SNAPSHOT-jar-with-dependencies.jar RunEndpoint -h localhost -u postgres -p secret -d mydb -c mydb-mappings.sparqlify -n 1000 -t 30
 
-Agents can now access the SPARQL endpoint at http://localhost:9999/sparql
+Agents can now access the SPARQL endpoint at `http://localhost:9999/sparql`
 
 ### Web Frontend
 **TODO** This endpoint currently does NOT provide an HTML interface out of the box.
 For the time being, please use e.g. [SNORQL](https://github.com/kurtjx/SNORQL) as a web frontend:
 
 * Download Snorql
+* Copy the `snorql` folder into your web servers directory (e.g. `/var/www/snorql`)
 * Edit the file `snorql.js`, and set the `this._endpoint` accordingly
   * e.g. `this._endpoint = "http://localhost:9999/sparql";`
 
@@ -76,10 +77,59 @@ A Sparqlify view definition consists of four clauses:
 * *Constrain* : A set of constraints which the Sparqlify optimizer should take into account.
 * *From*: The table-name from which to generate the RDF. Use double brackets if you want to specify SQL-queries (e.g. `[[SELECT id, work_page FROM mytable]]`)
 
+### Construct
+The construct clause is similar to that of a Sparql-Construct query.
+
+### With
+This clause contains a set of variable bindings that express the "glue" between the RDF and the RDB worlds.
+A variable binding takes the form `?sparql_var = term-contructor(sqlExpr1, ..., sqlExprN)`.
+
+Currently, the term constructor names are located in the `http://aksw.org/sparqlify/` namespace, and are called *blankNode*, *uri*, *plainLiteral*, *typedLiteral* and *rdfTerm*.
+The term constructor rdfTerm is a generalization of the former ones, and has the signature:
+
+    rdfTerm(termType, value, datatype, languageTag).
+
+The available abbreviations and the relation to rdfTerm are shown below:
+
+* blankNode(x) -> rdfTerm(0, x, '', '')
+* uri(x) -> rdfTerm(1, x, '', '')
+* plainLiteral(x) -> rdfTerm(2, x, '', '')
+* plainLiteral(x, l) -> rdfTerm(2, x, '', l)
+* typedLiteral(x, d) -> rdfTerm(3, x, d, '')
+
+#### Examples
+    Prefix spy:<http://aksw.org/sparqlify/>
+    Prefix lgd:<http://linkedgeodata.org/triplify/>
+    Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+
+    ...
+    ?a = spy:uri(concat('http://linkedgeodata.org/triplify/node', ?node_id)
+    ?b = spy:uri(concat(lgd:node, ?node_id)) // same as above
+    ?c = spy:plainLiteral(?v, ?lang)
+    ?d = spy:typedLiteral(?age, xsd:int)
+
+
+### Constrain
+If a column of a table already contains URIs, then Sparqlify cannot know what kind of URIs they are.
+
+
 Find further examples in the folder `examples`.
 
 **TODO** Detailed Documentation of the Sparqlify Mapping Language
 
+## Roadmap
+The following improvements are planned (currently in no particular order):
+
+* Get rid of the Sparqlify-namespace, and make the term-constructors first class entities.
+* Support of the GRAPH keyword in the construct clause of the view definitions.
+* Optimizations of LEFT-JOINS (Optional-Clauses)
+* Support for the `COUNT` keyword
+* Support for generic Aggregate functions
+* Configurable rewrites of SPARQL->SQL predicates (so make every SQL predicate available on the Sparql level)
+* Support for other relational database systems besides PostgreSQL.
+
+## Not planned yet
+* SPARQL 1.1 Property Paths (This would require an extra layer of query planning within Sparqlify, as the Property Path operators do not directly map to relational operators)
 
 ## Relation to R2RML
 [R2RML](http://www.w3.org/2001/sw/rdb2rdf/r2rml/) is the upcoming standard language for expressing RDB-RDF mappings. A thorough analysis of the relations between R2RML and Sparqlify-ML mapping languages and their expressivity is pending.
