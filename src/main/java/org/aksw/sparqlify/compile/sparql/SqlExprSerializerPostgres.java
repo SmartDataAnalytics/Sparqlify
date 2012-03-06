@@ -329,8 +329,11 @@ abstract class SqlExprSerializerDefault
 	
 	public String _serialize(S_Intersects expr)
 	{
-		return "(" + serialize(expr.getLeft()) + " && " + serialize(expr.getRight()) + ")";
-		//return "ST_Intersects(" + serialize(expr.getLeft()) + ", " + serialize(expr.getRight()) + ")"; 
+		// Did I have some argument against ST_Intersects???
+		//return "(" + serialize(expr.getLeft()) + " && " + serialize(expr.getRight()) + ")";
+		
+		
+		return "ST_Intersects(" + serialize(expr.getLeft()) + ", " + serialize(expr.getRight()) + ")"; 
 	}
 	
 	

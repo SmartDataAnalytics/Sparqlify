@@ -51,12 +51,12 @@ For the time being, please use e.g. [SNORQL](https://github.com/kurtjx/SNORQL) a
 ## Demo
 
 Currently there is no publicly available online demo yet.
-However, an example LinkedGeoData/OpenStreetMap SQL dump is located in this repository under `data`. 
-You can load it into a PostgreSQL database using the following procedure:
+However, an example LinkedGeoData/OpenStreetMap SQL dump is located [here](http://test.linkedgeodata.org/downloads/sql-dumps/lgd_sparqlify_rc1_a.sql.bz2).
+Download the file and load it into a PostgreSQL database using the following procedure:
 
-    bzip2 -d lgd_sparqlify_rc1.sql.bz2
+    bzip2 -d lgd_sparqlify_rc1_a.sql.bz2
     createdb lgd_test
-    psql -d lgd_test -f lgd_sparqlify_rc1.sql
+    psql -d lgd_test -f lgd_sparqlify_rc1_a.sql
 
 
 Then run Sparqlify using
