@@ -19,6 +19,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystem;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GeographyFromText;
@@ -33,6 +34,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Regex;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Substract;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
@@ -40,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sdb.core.sqlnode.SqlSelectBlock;
+import com.hp.hpl.jena.sparql.expr.E_Add;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
@@ -56,6 +59,7 @@ import com.hp.hpl.jena.sparql.expr.E_NotEquals;
 import com.hp.hpl.jena.sparql.expr.E_Regex;
 import com.hp.hpl.jena.sparql.expr.E_Str;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
+import com.hp.hpl.jena.sparql.expr.E_Subtract;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
@@ -310,7 +314,14 @@ class SqlPusher
 	public static SqlExpr push(E_LangMatches expr, SqlExprList args) {
 		return S_Equal.create(args.get(0), args.get(1), datatypeSystem);
 	}
-	
+
+	public static SqlExpr push(E_Add expr, SqlExprList args) {
+		return S_Add.create(args.get(0), args.get(1), datatypeSystem);
+	}
+
+	public static SqlExpr push(E_Subtract expr, SqlExprList args) {
+		return S_Substract.create(args.get(0), args.get(1), datatypeSystem);
+	}
 
 	public static SqlExpr push(E_LogicalAnd expr, SqlExprList args) {
 		return new S_LogicalAnd(args.get(0), args.get(1));

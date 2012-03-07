@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1519,6 +1520,20 @@ public class SqlNodeBinding {
 			return new SqlExprList(SqlExprValue.FALSE);
 		}
 
+		
+		// Remove all 'true' from the result
+		// In Postgres 9.1, a "WHERE TRUE" in a union prevents the union to become an append-relation
+		// As a result, in LinkedGeoData "Select { ?s dc:modified ?o . } Order By ?s" won't work (efficiently)
+		// FIXME Although it makes sense to already get rid of unnecessary exprs here,
+		// it might be good to have a full SQL-level optimization at some later stage
+		Iterator<SqlExpr> it = result.iterator();
+		while(it.hasNext()) {
+			SqlExpr item = it.next();
+			if(item.equals(SqlExprValue.TRUE)) {
+				it.remove();
+			}
+		}
+		
 		
 		return result;
 	}

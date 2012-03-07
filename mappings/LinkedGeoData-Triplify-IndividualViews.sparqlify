@@ -324,7 +324,7 @@ Create View lgd_ways_linestrings As
 		?w = spy:uri(concat(lgd-geom:way, ?id))
 		?g = spy:typedLiteral(?linestring, ogc:WKTLiteral)
 	From
-		[[SELECT id, linestring FROM ways a WHERE NOT EXISTS (SELECT way_id FROM simple_polys b WHERE b.way_id = a.id)]];
+		[[SELECT id, linestring FROM ways a WHERE a.id NOT IN (SELECT way_id FROM simple_polys)]];
     
 
 Create View ways_polygons As

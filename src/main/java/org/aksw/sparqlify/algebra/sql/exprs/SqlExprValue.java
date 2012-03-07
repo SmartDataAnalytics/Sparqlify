@@ -7,6 +7,12 @@ import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatypeEvaluator;
 public class SqlExprValue
 	extends SqlExpr0
 {
+	enum SpecialTypes {
+		TYPE_ERROR
+	}
+	
+
+	//public static final SqlExprValue TYPE_ERROR = new SqlExprValue(SpecialTypes.TYPE_ERROR);
 	public static final SqlExprValue FALSE = new SqlExprValue(false);
 	public static final SqlExprValue TRUE = new SqlExprValue(true);
 

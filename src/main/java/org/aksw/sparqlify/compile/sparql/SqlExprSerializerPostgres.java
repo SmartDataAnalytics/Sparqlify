@@ -9,6 +9,7 @@ import java.util.Map;
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
@@ -369,6 +370,9 @@ abstract class SqlExprSerializerDefault
 		return "(NOT " + serialize(expr.getExpr()) + ")";
 	}
 
+	public String _serialize(S_Arithmetic expr) {
+		return "(" + serialize(expr.getLeft()) + " " + expr.getSymbol() + " " + serialize(expr.getRight()) + ")";
+	}
 	
 	public String _serialize(S_IsNotNull expr) {
 		String arg = serialize(expr.getExpr());

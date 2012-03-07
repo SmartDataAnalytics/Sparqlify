@@ -27,6 +27,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sparql.DnfUtils;
 
@@ -38,6 +40,7 @@ import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
 import com.hp.hpl.jena.sparql.expr.E_LessThan;
 import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
+import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.E_NotEquals;
 import com.hp.hpl.jena.sparql.expr.E_Regex;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
@@ -153,7 +156,9 @@ class InverseFunctionManagerImpl
  */
 @Deprecated
 public class SqlExprOptimizer {
-
+	public static Logger logger = LoggerFactory.getLogger(SqlExprOptimizer.class);
+	
+	
 	public static Map<Class, Class> functionToInverse;
 	
 	private static DatatypeSystem datatypeSystem = new DatatypeSystemDefault();
@@ -232,6 +237,23 @@ public class SqlExprOptimizer {
 	}
 
 	
+	public static Expr optimize(E_LogicalAnd expr) {
+		Expr a = optimizeMM(expr.getArg1());
+		Expr b = optimizeMM(expr.getArg1());
+		
+		logger.debug("TODO Handle type error correctly");
+		if(a.equals(NodeValue.FALSE) || b.equals(NodeValue.FALSE)) {
+			return NodeValue.FALSE;
+		}
+		if(a.equals(NodeValue.TRUE) && b.equals(NodeValue.TRUE)) {
+			return NodeValue.TRUE;
+		} else {
+			return new E_LogicalAnd(a, b);
+		}
+		
+		
+	}
+	
 	/*
 	class Factory2Ctor<T>
 		implements IFactory2<T>
@@ -273,10 +295,16 @@ public class SqlExprOptimizer {
 	
 	
 	/**
+	 * 
+	 * 
+	 * 
+	 * FIXME The following expression is crap. I must have written it before I was clear about type errors...
 	 * a.type < b.type ||
 	 * a.type = b.type && a.obj < b.obj ||
 	 * a.type = b.type && a.type = 2 && a.obj = b.obj && a.lang < b.lang ||
 	 * a.type = b.type && a.type = 3 && a.obj = b.obj && a.datatype < b.datatype ||
+	 *
+	 *
 	 *
 	 * @param a
 	 * @param b
@@ -284,11 +312,18 @@ public class SqlExprOptimizer {
 	 * @return
 	 */
 	public static Expr optimizeCompare(Expr ea, Expr eb, Factory2<Expr> factory) {
-		E_RdfTerm a = SqlPrePusher.asRdfTerm(ea);
-		E_RdfTerm b = SqlPrePusher.asRdfTerm(eb);
+		
+		Expr oa = optimizeMM(ea);
+		Expr ob = optimizeMM(eb);
+		
+		
+		E_RdfTerm a = SqlPrePusher.asRdfTerm(oa);
+		E_RdfTerm b = SqlPrePusher.asRdfTerm(ob);
 		
 		if(a == null || b == null) {
-			throw new RuntimeException("Arguments are no ExprRdfTerms");
+			//throw new RuntimeException("Arguments are no ExprRdfTerms");
+			logger.warn("Arguments are no ExprRdfTerms");
+			return factory.create(oa, ob);
 		}
 		
 		NodeValue zero = NodeValue.makeInteger(0);
