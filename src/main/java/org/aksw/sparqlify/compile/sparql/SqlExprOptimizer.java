@@ -237,6 +237,7 @@ public class SqlExprOptimizer {
 	}
 
 	
+	/*
 	public static Expr optimize(E_LogicalAnd expr) {
 		Expr a = optimizeMM(expr.getArg1());
 		Expr b = optimizeMM(expr.getArg1());
@@ -252,7 +253,7 @@ public class SqlExprOptimizer {
 		}
 		
 		
-	}
+	}*/
 	
 	/*
 	class Factory2Ctor<T>
