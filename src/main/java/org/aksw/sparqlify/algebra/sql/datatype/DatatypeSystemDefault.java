@@ -235,6 +235,10 @@ public class DatatypeSystemDefault
 		// Create a copy of the defaults
 		for(SqlDatatype item : DatatypeSystemDefault.getDefaultDatatypes()) {
 			nameToDatatype.put(item.getName(), item);
+			
+			if(item.getXsd() != null) {
+				nameToDatatype.put(item.getXsd().getURI(), item);
+			}
 		}
 		
 		for(Entry<SqlDatatype, SqlDatatype> entry : childToParent.entries()) {

@@ -26,10 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.hp.hpl.jena.sparql.expr.E_Concat;
 import com.hp.hpl.jena.sparql.expr.E_Function;
+import com.hp.hpl.jena.sparql.expr.E_StrDatatype;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 interface IFactoryN<T>
 {
@@ -218,6 +222,14 @@ public class FunctionExpander {
 					public Expr create(ExprList args) {
 						return new E_GeographyFromText(args.get(0));
 					}});
+		
+
+		map.put("http://www.w3.org/2001/XMLSchema#double",
+				new IFactoryN<Expr>() {
+					@Override
+						public Expr create(ExprList args) {
+							return new E_StrDatatype(args.get(0), NodeValue.makeNode(XSD.xdouble.asNode()));
+						}});
 		
 		DatatypeSystem datatypeSystem = new DatatypeSystemDefault();
 		

@@ -17,8 +17,13 @@ import org.apache.log4j.PropertyConfigurator;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import com.clarkparsia.owlapiv3.XSD;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.sparql.algebra.Algebra;
+import com.hp.hpl.jena.sparql.algebra.AlgebraQuad;
+import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -41,6 +46,17 @@ public class DemoLinkedGeoData {
 	public static void main(String[] args) throws Exception {
 		PropertyConfigurator.configure("log4j.properties");
 
+		
+		
+		if(true) {
+			String str = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> Select * {?s ?p ?o . } Order By xsd:double(str(?o))";
+			Query q = QueryFactory.create(str);
+			Op op = Algebra.compile(q);
+			Algebra.toQuadForm(op);
+			System.out.println(op);
+
+			return;
+		}
 
 		Connection conn = getConnection();
 		RdfViewSystemOld system = configureSystem(conn);

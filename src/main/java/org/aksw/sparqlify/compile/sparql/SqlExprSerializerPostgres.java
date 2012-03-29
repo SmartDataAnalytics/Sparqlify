@@ -10,6 +10,7 @@ import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Arithmetic;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
@@ -267,6 +268,16 @@ abstract class SqlExprSerializerDefault
 		return result;
 	}
 
+	public String _serialize(S_Cast expr) {		
+		
+		String tmp = serialize(expr.getExpr());
+		Factory1<String> caster = datatypeSerializer.asString(expr.getDatatype());
+
+		String result = caster.create(tmp);
+		
+		return result;
+	}
+	
 	public String _serialize(S_Function expr) {
 		List<String> args = serializeArgs(expr.getArgs());
 		

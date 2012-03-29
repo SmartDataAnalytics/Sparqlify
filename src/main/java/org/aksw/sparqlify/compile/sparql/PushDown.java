@@ -20,6 +20,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystem;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Add;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GeographyFromText;
@@ -59,6 +60,7 @@ import com.hp.hpl.jena.sparql.expr.E_NotEquals;
 import com.hp.hpl.jena.sparql.expr.E_Regex;
 import com.hp.hpl.jena.sparql.expr.E_Str;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
+import com.hp.hpl.jena.sparql.expr.E_StrDatatype;
 import com.hp.hpl.jena.sparql.expr.E_Subtract;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
@@ -366,6 +368,14 @@ class SqlPusher
 
 	public static SqlExpr push(E_GeomFromText expr, SqlExprList args) {
 		return new S_GeometryFromText(args.get(0));
+	}
+
+	public static SqlExpr push(E_StrDatatype expr, SqlExprList args) {
+		if(!(args.get(1) instanceof SqlExprValue)) {
+			throw new RuntimeException("Only constants supported for casts");
+		}
+		
+		return S_Cast.create(args.get(0), ((SqlExprValue)args.get(1)).getObject().toString(), datatypeSystem);
 	}
 
 	

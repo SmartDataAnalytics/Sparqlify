@@ -81,6 +81,21 @@ public class SqlSelectBlockCollector {
 	
 	public static SqlSelectBlock makeSelect(SqlAlias node) {
 		
+		if(true) {
+			SqlSelectBlock result = _makeSelect(node.getSubNode());
+			//result.setAliasName(node.getAliasName());
+			
+			SqlSelectBlock wrap = new SqlSelectBlock(node.getAliasName(), result);
+			copyProjection(wrap, result);
+			
+			return wrap;
+
+			/*
+			copyProjection(result, node);
+			result.setAliasName(node.getAliasName());
+			return result;
+			*/
+		}
 		//throw new RuntimeException("Should not come here");
 		
 
