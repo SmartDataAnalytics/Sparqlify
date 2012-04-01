@@ -68,15 +68,17 @@ Create View view_product As
     product
 
 
+
+
 Create View view_producttypeproduct As
   Construct {
     ?product a ?productType .
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
-    ?productType = spy:uri(concat(bsbm-inst:ProductType, ?productType))
+    ?product     = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
+    ?productType = spy:uri(concat(bsbm-inst:ProductType, ?producttype))
   From 
-    [[SELECT a.nr, a.producer, b."productType" FROM product a JOIN producttypeproduct b ON (b.product = a.nr)]]
+    [[SELECT a.nr, a.producer, b."producttype" FROM product a JOIN producttypeproduct b ON (b.product = a.nr)]]
 
 
 Create View view_productfeatureproduct As
@@ -85,9 +87,9 @@ Create View view_productfeatureproduct As
   }
   With
     ?product = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
-    ?feature = spy:uri(concat(bsbm-inst:ProductFeature, ?productFeature))
+    ?feature = spy:uri(concat(bsbm-inst:ProductFeature, ?productfeature))
   From
-    [[SELECT a.nr, a.producer, b."productFeature" FROM product a JOIN productfeatureproduct b ON (b.product = a.nr)]]
+    [[SELECT a.nr, a.producer, b."productfeature" FROM product a JOIN productfeatureproduct b ON (b.product = a.nr)]]
 
 
 Create View view_producttype As
