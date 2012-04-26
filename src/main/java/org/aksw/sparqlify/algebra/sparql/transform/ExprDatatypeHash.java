@@ -6,10 +6,12 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode;
 
 /**
  * Compute a hash for an expression based on their structure and
@@ -28,6 +30,11 @@ public class ExprDatatypeHash {
 
 	
 	public static int hash(Expr expr, Map<String, SqlDatatype> columnToDatatype) {
+		if(expr == null) {
+			// Return something for null-exprs
+			return 7531902;			
+		}
+		
 		return (Integer)MultiMethod.invokeStatic(ExprDatatypeHash.class, "_hash", expr, columnToDatatype);
 	}
 	
@@ -60,7 +67,14 @@ public class ExprDatatypeHash {
 		} else if(expr.isIRI()) {
 			// TODO: This hash approach sucks piles
 			return 75319;
-		} else {
+		} /* else if(expr instanceof NodeValueNode) {
+			NodeValueNode e = (NodeValueNode)expr;
+			if(e.getNode().equals(Node.NULL)) {
+				return 864213;
+			}
+			throw new RuntimeException("Not implemented");
+		} */
+		else {
 			throw new RuntimeException("Not implemented");
 		}
 	}

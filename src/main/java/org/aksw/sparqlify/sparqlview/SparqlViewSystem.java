@@ -20,7 +20,6 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
-import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
 import org.aksw.sparqlify.database.Clause;
@@ -37,6 +36,7 @@ import org.aksw.sparqlify.database.Table;
 import org.aksw.sparqlify.database.TableBuilder;
 import org.aksw.sparqlify.database.TreeIndex;
 import org.aksw.sparqlify.database.VariableConstraint;
+import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.restriction.Type;
@@ -327,7 +327,7 @@ public class SparqlViewSystem
 				
 				Expr arg = termCtor.getArg(1);
 				if(arg.isConstant()) {
-					Object o = PushDown.getValue(arg.getConstant());
+					Object o = NodeValueUtils.getValue(arg.getConstant());
 					
 					Number number = (Number)o;
 					switch(number.intValue()) {
@@ -580,7 +580,7 @@ public class SparqlViewSystem
 			return null;
 		}
 		
-		Object value = PushDown.getValue(b.getConstant());
+		Object value = NodeValueUtils.getValue(b.getConstant());
 		
 		
 		return new VariableConstraint(a.getVarName(), new IsPrefixOfConstraint(value.toString()));		

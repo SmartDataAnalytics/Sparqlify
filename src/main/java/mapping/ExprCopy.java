@@ -73,6 +73,12 @@ public class ExprCopy {
 	{
 		return (Expr)MultiMethod.invoke(this, "_copy", proto, args);
 	}
+
+	public Expr copy(Expr proto, List<Expr> args)
+	{
+		return (Expr)MultiMethod.invoke(this, "_copy", proto, new ExprList(args));
+	}
+
 	
 	public Expr copy(Expr expr) {
 		return copy(expr, ExprArgs.getArgs(expr));

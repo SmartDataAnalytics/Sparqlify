@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import mapping.ExprCommonFactor;
+import mapping.ExprCopy;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
@@ -47,6 +48,7 @@ import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.compile.sparql.SqlAlgebraToString;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
+import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
@@ -71,6 +73,7 @@ import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 class ArgExpr {
@@ -1935,6 +1938,8 @@ public class SqlNodeBinding {
 	 * what we can factor out.
 	 * 
 	 * 
+	 * 
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -1945,6 +1950,7 @@ public class SqlNodeBinding {
 		// result node will be created
 		Multimap<Var, TermDef> commons = HashMultimap.create();
 		
+		// For each union member, prepare a datastructe for its new projection
 		List<Multimap<Var, TermDef>> projections = new ArrayList<Multimap<Var, TermDef>>();
 		for (int i = 0; i < sqlNodes.size(); ++i) {
 			Multimap<Var, TermDef> tmp = HashMultimap.create();
@@ -1963,6 +1969,13 @@ public class SqlNodeBinding {
 		}
 
 		
+		// TODO
+		// If a variable maps to a constant, than the mapping does not apply to any union member
+		// that does not define the constant.
+		// This means we have to introduce a column for discrimination, which contains NULL for
+		// all union members where to constaint is not applicable
+ 
+		
 		Generator aliasGen = Gensym.create("c");
 		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
 
@@ -1975,6 +1988,8 @@ public class SqlNodeBinding {
 			Var var = entry.getKey();
 			
 			
+			// TODO Just clustering by hash may result in clashes!!!
+			// For each hash we have to keep a list an explicitly compare for structural equivalence
 			Multimap<Integer, ArgExpr> cluster = HashMultimap.create();
 
 			//IBiSetMultimap<Integer, Integer> exprToOrigin = new BiHashMultimap<Integer, Integer>();
@@ -2136,6 +2151,51 @@ public class SqlNodeBinding {
 		// Now we can start with the actual work				
 		Multimap<Var, Integer> varToSqlNode = HashMultimap.create();
 
+		Generator aliasGen = Gensym.create("c");
+
+		// Push constants into columns
+		for (int i = 0; i < sqlNodes.size(); ++i) {
+			SqlNode sqlNode = sqlNodes.get(i);
+			Set<Var> vars = new HashSet<Var>(sqlNode.getSparqlVarsMentioned()); // FIXME possible redundant hashset
+			for (Var var : vars) {
+				
+				
+				List<TermDef> termDefs = new ArrayList<TermDef>(sqlNode.getSparqlVarToExprs().get(var)); 
+				
+				for(TermDef termDef : termDefs) {
+					Expr expr = termDef.getExpr();
+					
+					
+					if(termDef.getExpr().isConstant()) {
+						sqlNode.getSparqlVarToExprs().remove(var, termDef);
+						
+						NodeValue nv = ExprUtils.eval(expr);
+						Object o = NodeValueUtils.getValue(nv);
+						
+						SqlExprValue sv = new SqlExprValue(o);
+						
+						String columnAlias = aliasGen.next();
+						
+						// FIXME Assumes a type constructor here - which it should alway be
+						List<Expr> newArgs = new ArrayList<Expr>(expr.getFunction().getArgs());
+						newArgs.set(1, new ExprVar(columnAlias));
+						
+						Expr newExpr = ExprCopy.getInstance().copy(expr, newArgs);
+						
+						TermDef newTermDef = new TermDef(newExpr);
+						sqlNode.getSparqlVarToExprs().put(var, newTermDef);
+						sqlNode.getAliasToColumn().put(columnAlias, sv);
+						
+						sqlNode.getSparqlVarToExprs().put(var, newTermDef);
+					}
+
+				}
+				
+				
+			}
+		}
+
+		
 		// Map each variable to the set of corresponding nodes
 		for (int i = 0; i < sqlNodes.size(); ++i) {
 			SqlNode sqlNode = sqlNodes.get(i);
@@ -2143,14 +2203,82 @@ public class SqlNodeBinding {
 				varToSqlNode.put((Var)var, i);
 			}
 		}
+		
+
+		// TODO Delete the commented out code below if the pushing into columns works 
+		// A set of variables that have bindings to constants
+		//Set<Var> varConstant = new HashSet<Var>();
+		/*
+		Map<Var, TermDef> varToConstant = new HashMap<Var, TermDef>();
+		for(Entry<Var, Collection<Integer>> entry : varToSqlNode.asMap().entrySet()) {
+			Var var = entry.getKey();
+						
+			for (int index : entry.getValue()) {
+				SqlNode sqlNode = sqlNodes.get(index);
+				
+				sqlNode.
+				Collection<TermDef> exprsForVar = sqlNode.getSparqlVarToExprs().get(var);
+				
+
+				for(TermDef def : exprsForVar) {
+					if(def.getExpr().isConstant()) {
+						//varConstant.add(var);
+						varToConstant.put(var, def);
+					}			
+				}
+			}
+		}*/
 
 		
-		Generator aliasGen = Gensym.create("c");
+		// For each var that maps to a constant, add a NULL mapping for
+		// every union member which does not define the variable as a contstant
+		/*
+		for(Entry<Var, TermDef> entry : varToConstant.entrySet()) {
+			Var var = entry.getKey();
+			TermDef baseTermDef = entry.getValue();
+			
+			for (int i = 0; i < sqlNodes.size(); ++i) {
+				SqlNode sqlNode = sqlNodes.get(i);
+				
+				Multimap<Var, TermDef> varDefs = sqlNode.getSparqlVarToExprs();
+				
+				boolean hasConstant = false;
+				for(TermDef termDef : varDefs.get(var)) {
+					if(termDef.getExpr().isConstant()) {
+						hasConstant = true;
+						continue;
+					}
+				}
+				
+				if(!hasConstant) {
+					ExprList exprs = new ExprList();
+					List<Expr> args = baseTermDef.getExpr().getFunction().getArgs();
+					//System.out.println("Args: " + args.size());
+					for(int j = 0; j < args.size(); ++j) {
+						Expr expr = j == 1 ? NodeValue.makeString(""): args.get(j);
+						
+						exprs.add(expr);
+					}
+					
+					Expr newExpr = ExprCopy.getInstance().copy(baseTermDef.getExpr(), exprs); 
+					
+					varToSqlNode.put((Var)var, i);
+					varDefs.put(var, new TermDef(newExpr));
+				}				
+			}
+		}
+		*/
+
+
+		
+		
 		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
 
 		
 		Map<String, SqlDatatype> allColumnsToDatatype = new HashMap<String, SqlDatatype>();
 		
+
+
 		
 		// For each variable, cluster the corresponding expressions
 		for(Entry<Var, Collection<Integer>> entry : varToSqlNode.asMap().entrySet()) {
@@ -2167,6 +2295,10 @@ public class SqlNodeBinding {
 				SqlNode sqlNode = sqlNodes.get(index);
 
 				Collection<TermDef> exprsForVar = sqlNode.getSparqlVarToExprs().get(var);
+				
+				
+				
+				
 				
 				for(TermDef def : exprsForVar) {
 					restrictionsForVar.addAlternatives(def.getRestrictions());
@@ -2200,7 +2332,15 @@ public class SqlNodeBinding {
 					
 					++i;
 				}
-				
+
+				/*
+				if(exprs.size() == 1) {
+					Expr expr = exprs.get(0);
+					if(expr.isConstant()) {
+						System.out.println("constant expr: " + expr);
+					}
+				}
+				*/
 
 				// Now we can finally factor the cluster
 				List<Map<Var, Expr>> partialProjections = new ArrayList<Map<Var, Expr>>();

@@ -21,13 +21,13 @@ import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
-import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewConjunction;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.RdfViewSystem;
 import org.aksw.sparqlify.core.ReplaceConstants;
+import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.restriction.Type;
@@ -302,7 +302,7 @@ public class RdfViewSystem2
 				
 				Expr arg = termCtor.getArg(1);
 				if(arg.isConstant()) {
-					Object o = PushDown.getValue(arg.getConstant());
+					Object o = NodeValueUtils.getValue(arg.getConstant());
 					
 					Number number = (Number)o;
 					switch(number.intValue()) {
@@ -551,7 +551,7 @@ public class RdfViewSystem2
 			return null;
 		}
 		
-		Object value = PushDown.getValue(b.getConstant());
+		Object value = NodeValueUtils.getValue(b.getConstant());
 		
 		
 		return new VariableConstraint(a.getVarName(), new IsPrefixOfConstraint(value.toString()));		

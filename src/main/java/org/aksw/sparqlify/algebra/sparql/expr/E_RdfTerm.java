@@ -63,6 +63,19 @@ public class E_RdfTerm
 		return super.getArgs().get(3);
 	}
 
+    @Override
+    public boolean isConstant() 
+    {
+    	for(Expr expr : super.getArgs()) {
+    		if(!expr.isConstant()) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+
+	
 	@Override
 	protected NodeValue eval(List<NodeValue> args) {
 		return RdfTerm.eval(args.get(0), args.get(1), args.get(2), args.get(3));
