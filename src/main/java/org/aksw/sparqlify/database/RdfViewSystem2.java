@@ -26,6 +26,7 @@ import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewConjunction;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.RdfViewSystem;
+import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ReplaceConstants;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
@@ -938,6 +939,12 @@ public class RdfViewSystem2
 				}*/
 				
 				RdfViewConjunction viewConjunction = new RdfViewConjunction(nextInstances.asList(), subRestrictions);
+
+				// remove self joins
+				RdfViewSystemOld.merge(viewConjunction);
+
+				
+				
 				result.add(viewConjunction);
 				// We have reached the end!
 				// Yield another view conjunction

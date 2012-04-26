@@ -579,9 +579,13 @@ public class RdfViewSystemOld
 		mergedBinding = mergedBinding.copySubstitute(mergeMap);
 		
 		result.getBinding().addAll(mergedBinding);
-		
+
+		System.out.println("------------------------------------------------------");
+		System.out.println("a: " + a.getBinding());
+		System.out.println("b: " + b.getBinding());
+
 		System.out.println("MERGE RESULT: " + result.getBinding());
-		System.out.println("MERGE RESULT: " + result.getQueryQuads());
+		//System.out.println("MERGE RESULT: " + result.getQueryQuads());
 		
 		return result;
 				
@@ -700,6 +704,7 @@ public class RdfViewSystemOld
 				
 				RdfViewInstance view = merge(a, b);
 				if(view != null) { // FIXME Assumes that b is always merged into a (maybe in the future it may change)
+					a = view;
 					conjunction.getViewBindings().set(i, view);
 					conjunction.getViewBindings().remove(j);
 					--j;
@@ -712,6 +717,7 @@ public class RdfViewSystemOld
 		}
 		
 		// Recompute the two way binding
+		/*
 		logger.debug("Pre Merge: " + conjunction.getCompleteBinding());
 
 		
@@ -721,7 +727,7 @@ public class RdfViewSystemOld
 		}
 
 		logger.debug("Post Merge: " + conjunction.getCompleteBinding());
-		
+		*/
 		/*
 		for(ViewInstance view : conjunction.getViewBindings()) {
 
