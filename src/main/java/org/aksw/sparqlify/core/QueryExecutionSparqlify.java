@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -277,8 +278,14 @@ class QueryExecutionSelect
 			return createEmptyResultSet();
 		}
 
-		System.out.println("Final sparql var mapping:");
-		write(System.out, sqlNode.getSparqlVarToExprs());
+		if(logger.isInfoEnabled()) {
+			logger.info("Final sparql var mapping:");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream ps = new PrintStream(baos);
+			write(ps, sqlNode.getSparqlVarToExprs());
+			
+			logger.debug(baos.toString());
+		}
 
 		
 		if(sqlNode instanceof SqlNodeEmpty) {
@@ -288,7 +295,7 @@ class QueryExecutionSelect
 		
 		SqlGenerator sqlGenerator = new SqlGenerator();
 		String sqlQuery = sqlGenerator.generateMM(sqlNode);
-		System.out.println(sqlQuery);
+		logger.info(sqlQuery);
 
 		boolean enableCostChecking = false;
 		
@@ -302,7 +309,7 @@ class QueryExecutionSelect
 			//return null;
 		}
 
-		System.out.println("Query cost ok (" + cost + ")");
+		logger.debug("Query cost ok (" + cost + ")");
 		} else {
 			logger.info("Cost estimates disabled.");
 		}

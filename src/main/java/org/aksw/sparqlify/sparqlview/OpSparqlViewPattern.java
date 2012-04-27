@@ -121,7 +121,7 @@ public class OpSparqlViewPattern
 				b = OpExtend.extend(b, veList);
 			}
 			
-			System.out.println(renamed);
+			//System.out.println(renamed);
 			
 			if(a == null) {
 				a = b;

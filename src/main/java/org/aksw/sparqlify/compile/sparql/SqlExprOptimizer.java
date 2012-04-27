@@ -752,9 +752,11 @@ public class SqlExprOptimizer {
 				for(int i = 0; i < c.getKey().size(); ++i) {
 					Expr ea = c.getKey().get(i);
 					
+					/*
 					if(i >= c.getValue().size()) {
 						System.out.println("OOpps");
 					}
+					*/
 					
 					Expr eb = c.getValue().get(i);
 					

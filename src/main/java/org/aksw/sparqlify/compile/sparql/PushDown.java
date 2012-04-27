@@ -566,9 +566,11 @@ public class PushDown {
 	 */
 	public static Expr pushDown(ExprFunction expr) {
 	
+		/*
 		if(expr instanceof E_Str) {
 			System.out.println("DEBUG");
 		}
+		*/
 		
 		ExprList args = pushDownArgs(expr.getArgs());
 		//SqlExprList sqlArgs = extractSqlExprs(args);

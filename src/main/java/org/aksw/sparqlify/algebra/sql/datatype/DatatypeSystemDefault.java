@@ -300,7 +300,7 @@ public class DatatypeSystemDefault
 		DatatypeSystem system = new DatatypeSystemDefault();
 		
 		//System.out.println(system.supremumDatatypes(_UNSIGNED_SHORT, _BYTE));
-		System.out.println(system.supremumDatatypes(_INTEGER, _DOUBLE));
+		//System.out.println(system.supremumDatatypes(_INTEGER, _DOUBLE));
 		//System.out.println(system.supremumDatatypes(_DOUBLE, _INTEGER));
 	}
 	

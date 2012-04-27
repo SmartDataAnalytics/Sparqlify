@@ -29,7 +29,7 @@ public class QueryExecutionFactorySparqlifyDs
 	
 	@Override
 	public QueryExecutionStreaming createQueryExecution(Query query) {
-		System.out.println(query);
+		//System.out.println(query);
 		
 		try {
 			return new QueryExecutionSparqlify(system, dataSource.getConnection(), true, query, this);

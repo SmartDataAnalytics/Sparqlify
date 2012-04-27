@@ -260,7 +260,7 @@ public class RdfView
 		}
 		
 		
-		System.out.println("Binding = " + bindingMap);
+		//System.out.println("Binding = " + bindingMap);
 
 		if(rawConstraints == null) {
 			rawConstraints = Collections.emptyList();
@@ -354,7 +354,7 @@ public class RdfView
 		}
 		
 		
-		System.out.println("Binding = " + binding);
+		//System.out.println("Binding = " + binding);
 
 		SqlNode sqlExpr;
 		if(sqlStr.startsWith("select")) {

@@ -261,12 +261,13 @@ public class ViewRewriter {
 		SqlNode a = rewriteMM(generator, op.getLeft());
 		SqlNode b = rewriteMM(generator, op.getRight());
 		
+		/*
 		if(b.getAliasName() == null) {
 			
 			System.out.println("hmm");
 			
 			//b = SqlSelectBlockCollector.makeSqlBlock(generator, b);
-		}
+		}*/
 		
 		SqlNode result = SqlNodeBinding.join(generator, a, b, JoinType.INNER);		
 		return result;

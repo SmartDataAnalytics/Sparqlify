@@ -53,6 +53,8 @@ import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
 import org.apache.commons.lang.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sparql.DnfUtils;
 
@@ -128,6 +130,8 @@ class ArgExpr {
  */
 @Deprecated
 public class SqlNodeBinding {
+	private static final Logger logger = LoggerFactory.getLogger(SqlNodeBinding.class);
+	
 	// Whether the whole expression represented by this node has an alias
 	// Technically, if an alias exists, the underlying SQL statement will be
 	// wrapped such as in:
@@ -729,9 +733,10 @@ public class SqlNodeBinding {
 	public static SqlNode join(ColRelGenerator generator, SqlNode _a, SqlNode _b,
 			JoinType joinType) {
 
+		/*
 		if(joinType == JoinType.LEFT) {
 			System.out.println("debug");
-		}
+		}*/
 		
 		
 		// Generate fresh aliases for the members of the join
@@ -787,25 +792,28 @@ public class SqlNodeBinding {
 		
 		SqlNode c = doJoinRename(generator, a, a.getAliasName(), b, b.getAliasName());
 
+		/*
 		if(a instanceof SqlUnionN || b instanceof SqlUnionN) {
 			System.out.println("debug");
 		}
 		
 		if(!c.getAliasToColumn().equals(b.getAliasToColumn())) {
 			System.out.println("debug");			
-		}
-		
+		}*/
+
+		/*
 		if(a instanceof SqlTable && b instanceof SqlTable) {
 			SqlTable x = (SqlTable)a;
 			SqlTable y = (SqlTable)b;
 			
-			
+
 			if(x.getTableName().equals(y.getTableName())) {
 				System.out.println("Same table");
 				System.out.println(a.getSparqlVarToExprs());
 				System.out.println(b.getSparqlVarToExprs());
 			}
 		}
+		*/
 		
 		
 		SqlJoin result = SqlJoin.create(joinType, a, b);
@@ -1270,7 +1278,7 @@ public class SqlNodeBinding {
     			
     			
     			if(exprs.isEmpty()) {
-    				System.out.println("WARN: Variable does not exist for sorting");
+    				logger.warn("Variable does not exist for sorting");
     				continue;
     			} else if(exprs.size() > 1) {
     				throw new RuntimeException("Should not happen"); // because we grouped by the var
@@ -1478,9 +1486,11 @@ public class SqlNodeBinding {
 					expanderMap.put(Var.alloc(entry.getKey()), entry.getValue());
 				}*/
 
+				/*
 				if(expr instanceof E_LessThan) {
 					System.out.println("lessthan here");
 				}
+				*/
 				
 				// Expand variables in the filter expression
 				// Example: Given ?r = term(...) and Filter(regex(?r...))
@@ -1580,11 +1590,11 @@ public class SqlNodeBinding {
 			Expr expr = item.getExpr();
 			
 			SqlExpr sqlExpr = forcePushDown(expr, substitutor);
-			System.out.println(sqlExpr);
+			//System.out.println(sqlExpr);
 		}
 		
-		//throw new RuntimeException("Implement me");
-		return result;
+		throw new RuntimeException("Implement me");
+		//return result;
 	}
 
 	/**

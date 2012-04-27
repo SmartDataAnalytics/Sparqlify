@@ -246,7 +246,7 @@ public class RdfViewSystem2
 		RdfView copy = view.copySubstitute(rename);
 		
 		// Rename the variables in the view to make them globally unique
-		System.out.println("Renamed: " + copy);
+		logger.trace("Renamed variables of view: " + copy);
 
 		this.views.add(copy);
 		
@@ -391,9 +391,11 @@ public class RdfViewSystem2
 	
 	private void index(RdfView view) {
 		
+		/*
 		if(view.getName().equals("lgd_node_tags_string")) {
 			System.out.println("Debug");
 		}
+		*/
 		
 		RestrictionManager restrictions = new RestrictionManager();
 		view.setRestrictions(restrictions);
@@ -530,7 +532,7 @@ public class RdfViewSystem2
 		//Op result = augmented;
 		Op result = optimizedFilters;
 		
-		System.out.println(result);
+		//System.out.println("Algebra with optimized filters: " + result);
 		
 		return result;
 		
@@ -637,7 +639,7 @@ public class RdfViewSystem2
 		}
 			
 		
-		System.out.println("Order:\n" + Joiner.on("\n").join(order));
+		//System.out.println("Order:\n" + Joiner.on("\n").join(order));
 		
 		Set<ViewQuad> viewQuads = quadToCandidates.get(order.get(0));
 		getApplicableViewsRec2(0, order, viewQuads, quadToCandidates, restrictions, null, result);
@@ -666,9 +668,12 @@ public class RdfViewSystem2
 			// Prefix constraints
 			for(int i = 0; i < 4; ++i) {
 				Node n = QuadUtils.getNode(quad, i);
+				
+				/*
 				if(!(n instanceof Var)) {
 					System.out.println("debug");
 				}
+				*/
 				
 				Var var = (Var)QuadUtils.getNode(quad, i);
 				
@@ -818,6 +823,8 @@ public class RdfViewSystem2
 			++subId;
 
 			String viewName = viewQuad.getView().getName();
+			
+			/*
 			if(viewName.equals("view_nodes")) {
 				System.out.println("debug");
 			}
@@ -830,6 +837,7 @@ public class RdfViewSystem2
 			if(viewName.equals("view_lgd_relation_specific_resources")) {
 				System.out.println("debug");
 			}
+			*/
 
 
 			RestrictionManager subRestrictions = new RestrictionManager(restrictions);
@@ -929,7 +937,7 @@ public class RdfViewSystem2
 			NestedStack<RdfViewInstance> nextInstances = new NestedStack<RdfViewInstance>(instances, instance);
 
 			if(isRecursionEnd) {
-				System.out.println("got: " + getCandidateNames(nextInstances));
+				//System.out.println("QuadPattern candidate: " + getCandidateNames(nextInstances));
 				/*
 				TwoWayBinding completeBinding = new TwoWayBinding();
 				List<RdfViewInstance> list = instances.asList();

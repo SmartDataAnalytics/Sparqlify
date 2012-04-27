@@ -37,7 +37,7 @@ public class QueryExecutionFactorySparqlView
 	public QueryExecutionStreaming createQueryExecution(Query query) {
 		Query rewritten = SparqlViewSystem.rewrite(query, system, dialect);
 		//logger.trace("Rewritten query: " + rewritten);
-		System.out.println("Rewritten query: " + rewritten);
+		//System.out.println("Rewritten query: " + rewritten);
 		QueryExecutionStreaming result = factory.createQueryExecution(rewritten);
 
 		return result;

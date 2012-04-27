@@ -212,7 +212,7 @@ public class CnfUtils {
 	
 	public static Expr handle(ExprFunction expr)
 	{
-		System.out.println("Converting to KNF: [" + expr.getClass() + "]: " + expr);
+		//System.out.println("Converting to KNF: [" + expr.getClass() + "]: " + expr);
 
 		// not(and(A, B)) -> or(not A, not B)
 		// not(or(A, B)) -> or(not A, not B)

@@ -291,7 +291,7 @@ public class RdfViewSystemOld
 		// Rename the variables in the view to make them globally unique
 		
 		
-		System.out.println("Renamed: " + copy);
+		logger.trace("Renamed variables of view: " + copy);
 
 		this.views.add(copy);
 	
@@ -515,8 +515,8 @@ public class RdfViewSystemOld
 		SetMultimap<Var, Var> backA = HashMultimap.create(a.getParentToQueryBinding());
 		SetMultimap<Var, Var> backB = HashMultimap.create(b.getParentToQueryBinding());
 
-		System.out.println("BackA: " + backA);
-		System.out.println("BackB: " + backB);
+		//System.out.println("BackA: " + backA);
+		//System.out.println("BackB: " + backB);
 
 		// Now check if each parent variable in backA maps to the same
 		// query variables as in backB
@@ -530,8 +530,9 @@ public class RdfViewSystemOld
 				continue;
 			}
 			
+			
 			if(Sets.intersection(varsA, varsB).isEmpty()) {
-				System.out.println("RESULT: No self join");
+				//System.out.println("RESULT: No self join");
 				
 				return null;
 			}
@@ -553,7 +554,7 @@ public class RdfViewSystemOld
 		}
 
 		
-		System.out.println("RESULT: Self join");
+		//System.out.println("RESULT: Self join");
 		
 		
 		// Create a copy of a (this is needed because we might be trying
@@ -580,11 +581,13 @@ public class RdfViewSystemOld
 		
 		result.getBinding().addAll(mergedBinding);
 
+		/*
 		System.out.println("------------------------------------------------------");
 		System.out.println("a: " + a.getBinding());
 		System.out.println("b: " + b.getBinding());
 
 		System.out.println("MERGE RESULT: " + result.getBinding());
+		*/
 		//System.out.println("MERGE RESULT: " + result.getQueryQuads());
 		
 		return result;

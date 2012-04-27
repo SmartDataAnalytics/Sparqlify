@@ -126,11 +126,12 @@ public class IteratorResultSetSparqlifyBinding
 			Node resultValue = value == null ? null : value.asNode();
 			
 			if(resultValue == null) {
-				logger.warn("Null node for variable " + entry.getKey() + " - Might be undesired.");
+				logger.trace("Null node for variable " + entry.getKey() + " - Might be undesired.");
 				//throw new RuntimeException("Null node for variable " + entry.getKey() + " - Should not happen.");
-			}
+			} else {
 			
-			result.add((Var)entry.getKey(), resultValue);
+				result.add((Var)entry.getKey(), resultValue);
+			}
 		}
 
 		return result;
