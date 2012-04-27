@@ -326,7 +326,7 @@ public class SqlAlgebraToString
 							
 							
 							//columnNames.add(v.getName() + " IS NOT NULL");
-							columnNames.add("(" + target.getAliasName() + "." + v.getName() + " IS NOT NULL)");
+							columnNames.add(target.getAliasName() + "." + v.getName() + " IS NOT NULL");
 						}
 				
 						caseStr += "    WHEN (" + Joiner.on(" AND ").join(columnNames) + ") THEN " + "(" + exprStr + ")" + datatype + "\n";
