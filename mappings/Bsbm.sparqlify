@@ -48,7 +48,8 @@ Create View view_product As
     
     ?label       = spy:plainLiteral(?label)
     ?comment     = spy:plainLiteral(?comment)
-    ?producer    = spy:uri(concat(bsbm:producer, ?producer))
+    //?producer    = spy:uri(concat(bsbm:producer, ?producer))
+    ?producer    = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
     ?ppt1        = spy:plainLiteral(?propertyTex1)
     ?ppt2        = spy:plainLiteral(?propertyTex2)
     ?ppt3        = spy:plainLiteral(?propertyTex3)
