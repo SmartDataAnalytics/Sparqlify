@@ -391,7 +391,7 @@ abstract class SqlExprSerializerDefault
 	
 	public String _serialize(S_IsNotNull expr) {
 		String arg = serialize(expr.getExpr());
-		String result = "(" + arg + " IS NOT NULL + )";
+		String result = "(" + arg + " IS NOT NULL)";
 		
 		return result;
 	}
