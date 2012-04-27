@@ -31,6 +31,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
+import org.postgis.PGgeometry;
 
 import com.google.common.base.Joiner;
 import com.hp.hpl.jena.sdb.sql.SQLUtils;
@@ -225,6 +226,9 @@ class SqlExprSerializerPostgres
 			return SQLUtils.quoteStr(sqlDateTime.toString());
 		} else if (value instanceof Boolean) {
 			return value.toString();
+		} else if (value instanceof PGgeometry) {
+			//return "'SRID=4326;" + value.toString() + "'::geometry";
+			return "'SRID=4326;" + value.toString() + "'";
 		} else {
 			throw new RuntimeException("Don't know how to serialize " + value + " to an SQL string");
 		}

@@ -9,6 +9,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlMyRestrict;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlProjection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
@@ -184,7 +185,12 @@ public class SqlSelectBlockCollector {
 	public static SqlNode _makeSelectOrTable(SqlNode node) {
 		return MultiMethod.invokeStatic(SqlSelectBlockCollector.class, "makeSelectOrTable", node);		
 	}
-	
+
+	public static SqlNode makeSelectOrTable(SqlNodeEmpty node) {
+		// Should never come here
+		return node;
+	}
+
 	public static SqlNode makeSelectOrTable(SqlProjection node) {
 		return _makeSelect(node);
 	}

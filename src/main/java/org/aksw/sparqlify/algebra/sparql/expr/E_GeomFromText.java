@@ -14,6 +14,11 @@ public class E_GeomFromText
 {
     private static final String symbol = "ST_GeomFromText" ;
 
+    /*
+    @Override
+    public boolean isConstant() {
+    	return false;
+    }*/
 	
 	public E_GeomFromText(Expr arg) {
 		super(arg, symbol);
@@ -22,6 +27,8 @@ public class E_GeomFromText
 	
 	@Override
 	public NodeValue eval(NodeValue v) {
+		// TODO If we evaluate to an PGgeometry object, then the call to geomFormText will not be pushed. 
+
 		try {
 			return new NodeValueGeom(new PGgeometry(v.getString()));
 		} catch (SQLException e) {

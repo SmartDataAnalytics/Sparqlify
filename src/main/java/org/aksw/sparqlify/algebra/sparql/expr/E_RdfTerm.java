@@ -74,6 +74,20 @@ public class E_RdfTerm
     	
     	return true;
     }
+    
+    @Override
+    public NodeValue getConstant() {
+    	NodeValue result = RdfTerm.eval(
+    			this.getArgs().get(0).getConstant(),
+    			this.getArgs().get(1).getConstant(),
+    			this.getArgs().get(2).getConstant(),
+    			this.getArgs().get(3).getConstant()
+    		);
+    	
+    	//System.err.println(result);
+    	
+    	return result;
+    }
 
 	
 	@Override

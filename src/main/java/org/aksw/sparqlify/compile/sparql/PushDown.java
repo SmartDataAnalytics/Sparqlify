@@ -39,9 +39,12 @@ import org.aksw.sparqlify.algebra.sql.exprs.S_Substract;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
+import org.aksw.sparqlify.core.Vocab;
+import org.postgis.PGgeometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sdb.core.sqlnode.SqlSelectBlock;
 import com.hp.hpl.jena.sparql.expr.E_Add;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
@@ -494,8 +497,15 @@ public class PushDown {
 		}
 	}*/
 
+	public static Expr pushDown(NodeValue expr)  {
+		try {
+			return pushDownE(expr);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
-	public static Expr pushDown(NodeValue expr) {
+	public static Expr pushDownE(NodeValue expr) throws Exception {
 	SqlSelectBlock x;	
 		SqlExpr result = null;
 			
@@ -529,8 +539,13 @@ public class PushDown {
 		}
 		else if(expr instanceof NodeValueGeom){
 			result = new SqlExprValue(((NodeValueGeom) expr).getGeometry());
+		} else if (expr.isLiteral()) {
+			Node node = expr.asNode(); 
+			if(node.getLiteralDatatypeURI().equals(Vocab.wktLiteral)) {
+				result = new SqlExprValue(new PGgeometry(node.getLiteralLexicalForm()), DatatypeSystemDefault._GEOMETRY);
+			}
 		} else {
-			throw new RuntimeException("Unknow datatype of contsant");
+			throw new RuntimeException("Unknow datatype of constant: " + expr.getClass() + " ," + expr);
 		}
 
 		return new ExprSqlBridge(result);
