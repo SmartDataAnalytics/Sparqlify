@@ -271,8 +271,8 @@ Create View view_review As
     ?product     = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
     ?reviewer    = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Reviewer", ?person))
     ?date        = spy:typedLiteral(?reviewDate, xsd:date)
-    ?title       = spy:plainLiteral(?title, ?language)
-    ?text        = spy:plainLiteral(?text, ?language)
+    ?title       = spy:plainLiteral(?title, ?lang)
+    ?text        = spy:plainLiteral(?text, ?lang)
     ?rating1     = spy:typedLiteral(?rating1, xsd:int)
     ?rating2     = spy:typedLiteral(?rating2, xsd:int)
     ?rating3     = spy:typedLiteral(?rating3, xsd:int)
@@ -280,6 +280,6 @@ Create View view_review As
     ?publisher   = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
     ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
   From
-    review
+    [[SELECT *, upper(language) lang FROM review]]
 
   
