@@ -1103,17 +1103,47 @@ public class RdfViewSystem2
 		return OpJoin.create(_getApplicableViews(op.getLeft(), restrictions), _getApplicableViews(op.getRight(), restrictions));
 	}
 
+	
+	/**
+	 * Create a new retrictions manager, where "bound" retrictions are removed 
+	 * 
+	 * @param restrictions
+	 * @return
+	 */
+	public static RestrictionManager filterRestrictionsBound(RestrictionManager restrictions) {
+		RestrictionManager result = new RestrictionManager();
+		
+		for(Clause clause : restrictions.getCnf()) {
+			if(!FilterPlacementOptimizer2.doesClauseContainBoundExpr(clause)) {
+				// FIXME Creating a new NormalForm for each clause is somewhat overkill
+				result.stateCnf(new NestedNormalForm(Collections.singleton(clause)));
+			}
+		}
+	
+		return result;
+	}
+	
 	public Op getApplicableViews(OpLeftJoin op, RestrictionManager restrictions) 
 	{		
 		Op left = _getApplicableViews(op.getLeft(), restrictions);
 
 		//List<RestrictionManager> moreRestrictions = getRestrictions(left);
 
-		RestrictionManager subRestrictions = new RestrictionManager(restrictions);
+		RestrictionManager subRestrictions = filterRestrictionsBound(restrictions);//new RestrictionManager(restrictions);
 
-		RestrictionManager moreRestrictions = getRestrictions2(left);
+		RestrictionManager moreRestrictions = filterRestrictionsBound(getRestrictions2(left));
 		
+		// Filter out !Bound restrictions
 		if(moreRestrictions != null) {
+			/*
+			for(Clause clause : moreRestrictions.getCnf()) {
+				if(!FilterPlacementOptimizer2.doesClauseContainBoundExpr(clause)) {
+					// FIXME Creating a new NormalForm for each clause is somewhat overkill
+					subRestrictions.stateCnf(new NestedNormalForm(Collections.singleton(clause)));
+				}
+			}*/
+			
+			
 			subRestrictions.stateRestriction(moreRestrictions);
 		}
 		

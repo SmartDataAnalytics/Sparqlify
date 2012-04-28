@@ -9,6 +9,7 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
+import org.apache.commons.collections15.Predicate;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.algebra.Op;
@@ -22,9 +23,38 @@ import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.expr.E_Bound;
+import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.sparql.expr.ExprVar;
+
 
 /**
+ * A predicate that returns true if the given object is a subClass of a certain class.
+ * Uses Class.isAssignableFrom.
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ * @param <T>
+ */
+class PredicateInstanceOf<T>
+	implements Predicate<T>
+{
+	private Class<?> superClass;
+	
+	public PredicateInstanceOf(Class<?> superClass) {
+		this.superClass = superClass;
+	}
+	
+	
+	@Override
+	public boolean evaluate(T value) {
+		return value == null ? false : superClass.isAssignableFrom(value.getClass());
+	}		
+}
+
+/**
+ * 
  * @author raven
  *
  * Uses RestrictionManager for the filter expressions (indexed set of dnfs)
@@ -159,7 +189,43 @@ public class FilterPlacementOptimizer2 {
 		return op.copy(optimize(op.getSubOp(), cnf));
 	}
 	
-	public static Op _optimize(OpLeftJoin op, RestrictionManager cnf) {
+	public static boolean evalPredicate(Expr expr, Predicate<Expr> predicate) {
+		if(predicate.evaluate(expr)) {
+			return true;
+		} else if(expr.isFunction()) {
+			for(Expr arg : expr.getFunction().getArgs()) {
+				if(evalPredicate(arg, predicate)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+
+	
+	public static boolean doesClauseContainBoundExpr(Clause clause) {
+		
+		Predicate<Expr> predicate = new PredicateInstanceOf<Expr>(E_Bound.class);
+
+		/*
+		Expr test = new E_Bound(new ExprVar(Var.alloc("v")));
+		System.out.println("Predicate evaluated to: " + predicate.evaluate(test));
+		System.exit(0);
+		*/
+		
+		for(Expr expr : clause.getExprs()) {
+			if(evalPredicate(expr, predicate)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
+	
+	public static Op _optimize(OpLeftJoin op, RestrictionManager cnf) {		
 		// Only push those expression on the, that do not contain any
 		// variables of the right side
 		
@@ -172,7 +238,8 @@ public class FilterPlacementOptimizer2 {
 		for(Clause clause : cnf.getCnf()) {
 			Set<Var> clauseVars = clause.getVarsMentioned();
 
-			if(Sets.intersection(clauseVars, rightVars).isEmpty()) {
+
+			if(Sets.intersection(clauseVars, rightVars).isEmpty()) { //  Do we need to check && !doesClauseContainBoundExpr(clause)) {				
 				leftClauses.add(clause);
 			} else {
 				nonPushable.add(clause);
@@ -184,7 +251,8 @@ public class FilterPlacementOptimizer2 {
 		
 		Op leftJoin = OpLeftJoin.create(optimize(op.getLeft(), left), optimize(op.getRight(), left), new ExprList());
 
-		return surroundWithFilterIfNeccessary(leftJoin, np);
+		Op result = surroundWithFilterIfNeccessary(leftJoin, np);
+		return result;
 	}
 	
 	/*
