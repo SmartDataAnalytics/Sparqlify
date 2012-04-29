@@ -7,6 +7,14 @@ Sparqlify supports a subset of the SPARQL 1.0 query language plus sub queries. A
 Currently only PostgreSQL is supported. We will investigate which other relational database systems can be reasonably supported.
 Sparqlify rewrites a given SPARQL query into a single SQL query, thereby giving full control to the query planner of the underlying DB.
 
+## Supported SPARQL language features
+* Join, LeftJoin (i.e. Optional), Union, Sub queries
+* Filter predicates: comparison: (<=, <, =, >, >=) logical: (!, &&; ||) arithmetic: (+, -) spatial: st_intersects, geomFromText other: regex, lang, langMatches  
+* Aggregate functions: Count(*)
+
+NOTE: SPARQLs ternary logic (i.e. false, true and type error) is not consistently implemented yet. I plan to fix that soon. 
+
+
 ## Building
 
 * The easiest way to build the project is to run `mvn assembly:assembly`. This will generate a single stand-alone jar containing all necessary dependencies.
@@ -145,10 +153,8 @@ Find further examples in the folder `mappings`.
 ## Roadmap
 The following improvements are planned (currently in no particular order):
 
-* Get rid of the Sparqlify-namespace, and make the term-constructors first class entities.
 * Support of the GRAPH keyword in the construct clause of the view definitions.
 * Optimizations of LEFT-JOINS (Optional-Clauses)
-* Support for the `COUNT` keyword
 * Support for generic Aggregate functions
 * Configurable rewrites of SPARQL->SQL predicates (so make every SQL predicate available on the Sparql level)
 * Support for other relational database systems besides PostgreSQL.
