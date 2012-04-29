@@ -27,7 +27,10 @@ import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Regex;
 import org.aksw.sparqlify.algebra.sql.exprs.S_String;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregator;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregatorCount;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
@@ -260,7 +263,25 @@ abstract class SqlExprSerializerDefault
 		}
 	}
 	
-		
+	
+	public String _serialize(SqlExprAggregator expr) {
+		String result = this._serializeAgg(expr.getAggregator());
+		return result;
+	}
+	
+	
+	public String _serializeAgg(SqlAggregator aggregator) {
+		String result = MultiMethod.invoke(this, "serializeAgg", aggregator);
+		return result;
+	}
+	
+	public String serializeAgg(SqlAggregatorCount aggregator) {
+		return "COUNT(*)";
+	}
+	
+	
+	
+	
 		
 	public List<String> serializeArgs(List<SqlExpr> exprs) {
 		List<String> result = new ArrayList<String>();

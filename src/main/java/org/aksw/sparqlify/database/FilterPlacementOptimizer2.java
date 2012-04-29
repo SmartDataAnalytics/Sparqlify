@@ -10,11 +10,14 @@ import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
 import org.apache.commons.collections15.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
+import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
 import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
@@ -26,7 +29,6 @@ import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
 
 
 /**
@@ -61,6 +63,8 @@ class PredicateInstanceOf<T>
  *
  */
 public class FilterPlacementOptimizer2 {
+	private static final Logger logger = LoggerFactory.getLogger(FilterPlacementOptimizer2.class);
+	
 	public static Op optimize(Op op) {
 		RestrictionManager cnf = new RestrictionManager();
 		return (Op)MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
@@ -147,6 +151,11 @@ public class FilterPlacementOptimizer2 {
 
 	public static Op _optimize(OpProject op, RestrictionManager cnf) {
 		return new OpProject(optimize(op.getSubOp(), cnf), op.getVars());
+	}
+	
+	public static Op _optimize(OpExtend op, RestrictionManager cnf) {
+		logger.warn("OpExtend probably not optimally implemented");
+		return op.copy(optimize(op.getSubOp(), cnf));
 	}
 	
 	public static Op _optimize(OpGroup op, RestrictionManager cnf) {

@@ -14,6 +14,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_GeographyFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.E_GeomFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.E_Intersects;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sparql.expr.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;
@@ -36,7 +37,10 @@ import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Regex;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Substract;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregator;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregatorCount;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.core.Vocab;
@@ -66,9 +70,12 @@ import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.E_StrDatatype;
 import com.hp.hpl.jena.sparql.expr.E_Subtract;
 import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
+import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueDate;
 import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueDateTime;
 
@@ -261,6 +268,11 @@ class SqlPrePusher
 	}
 	
 	
+	/*
+	public static Aggregator _prePush(AggCount count) {
+		E_RdfTerm rdfTerm = asRdfTerm
+	}*/
+	
 	public static Expr _prePush(ExprFunction expr) {
 		return getLexicalValueOrExpr(expr);
 	}
@@ -441,6 +453,38 @@ public class PushDown {
 	}
 	*/
 
+	/* TODO: How to push down aggregator expressions?
+	 * Example: Given (Avg(?o) As ?x) 
+	 * We first need to group all *numeric* ?os into a single column,
+	 * in order to ensure there are not muliple candidates for ?o.
+	 * But this transformation has to happen at an earlier stage.
+	 * Hm, so that means: At this point we just push the expression,
+	 * but we assume that previous step did the right thing.
+	 * 
+	 * TODO Having thought about this for a bit longer, there is no point
+	 * in pushing down the ExprAggregator object, since at this point we cannot know
+	 */
+	public static Expr pushDown(ExprAggregator expr) {
+		
+		
+		SqlAggregator sqlAggregator = _pushDownAgg(expr.getAggregator());
+		
+		
+		Expr result = new ExprSqlBridge(new SqlExprAggregator(expr.getVar().getName(), sqlAggregator));
+		return result;
+	}
+	
+	public static SqlAggregator _pushDownAgg(Aggregator agg) {
+		SqlAggregator result = (SqlAggregator)MultiMethod.invokeStatic(PushDown.class, "pushDownAgg", agg);
+		return result;
+	}
+	
+	public static SqlAggregatorCount pushDownAgg(AggCount agg) {
+		return new SqlAggregatorCount();
+		//return new E_RdfTerm(new SqlExprValue(3), new SqlAggregatorCount(), null, null);
+	}
+	
+	
 	public static Expr pushDown(E_Lang expr) {
 		// TODO Not sure if the pushDownMM is right here
 		return pushDownMM(SqlPrePusher.asRdfTerm(expr.getArg()).getLanguageTag());

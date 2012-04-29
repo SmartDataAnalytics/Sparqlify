@@ -6,6 +6,7 @@ import java.util.List;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlAlias;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlDistinct;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlGroup;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlMyRestrict;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
@@ -47,6 +48,14 @@ public class SqlSelectBlockCollector {
 		SqlSelectBlock result = MultiMethod.invokeStatic(SqlSelectBlockCollector.class, "makeSelect", node);
 		
 		copyProjection(result, node);
+		
+		return result;
+	}
+	
+	public static SqlSelectBlock makeSelect(SqlGroup node) {
+		SqlSelectBlock result = _makeSelect(node.getSubNode());
+
+		System.err.println("TODO Handle group by vars if present");
 		
 		return result;
 	}

@@ -22,8 +22,10 @@ import org.aksw.sparqlify.algebra.sparql.transform.ExprDatatypeHash;
 import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sparql.transform.SqlExprUtils;
+import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprBase;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
@@ -69,7 +71,6 @@ import com.hp.hpl.jena.sdb.core.JoinType;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
@@ -1154,6 +1155,74 @@ public class SqlNodeBinding {
 	}
 
 	
+	public static SqlNode extend(SqlNode node, VarExprList varExprList) {
+
+
+		for(Entry<Var, Expr> entry : varExprList.getExprs().entrySet()) {
+			
+			Var var = entry.getKey();
+			Expr expr = entry.getValue();
+			
+			if(expr.isVariable()) {
+				Var otherVar = expr.asVar();
+				node.getSparqlVarToExprs().putAll(var, node.getSparqlVarToExprs().get(otherVar));
+			} else {
+				throw new RuntimeException("Implement me");
+			}
+			
+			//SqlExprList sqlExprs = shallowPushX(entry.getValue(), node.getSparqlVarToExprs(), node.getAliasToColumn());
+			//node.getAliasToColumn()
+			
+			
+		}
+		return node;
+	}
+
+	
+	public static SqlExprList shallowPushX(Expr expr, Multimap<Var, TermDef> sparqlVarToExprs, Map<String, SqlExpr> aliasToColumn) {
+		SqlExprList result = new SqlExprList();
+		if(expr.isVariable()) {
+			Var v = expr.asVar();
+			
+			Collection<TermDef> defs = sparqlVarToExprs.get(v);
+			
+			
+			if(defs.isEmpty()) {
+				logger.warn("Variable does not exist for sorting");
+				//continue;
+				return null;
+			} else if(defs.size() > 1) {
+				throw new RuntimeException("Should not happen"); // because we grouped by the var
+			}
+			
+			TermDef def = defs.iterator().next();
+			
+			Expr e = def.getExpr();
+			if(e instanceof E_RdfTerm) {
+				E_RdfTerm term = (E_RdfTerm)e;
+
+				result = new SqlExprList();
+				for(int i = 0; i < 4; ++i) {
+					Expr arg = term.getArgs().get(i);
+					SqlExpr sqlExpr = forceShallowPushDown(arg, aliasToColumn);
+					//SqlExpr sqlExpr = fullPush(arg, a);
+					
+					//SqlExpr sqlExpr = shallowPush(arg, a);
+					
+					result.add(sqlExpr);
+				}
+			} else {
+				throw new RuntimeException("Should not happen");
+			}
+		}
+		else {
+				result = shallowPush(new ExprList(expr), sparqlVarToExprs, aliasToColumn);
+			//pushed = fullPush(new ExprList(condition.getExpression()), a);
+			}
+		
+		return result;
+	}
+	
 	/**
 	 * Ordering requires some wrapping:
 	 * 
@@ -1269,45 +1338,11 @@ public class SqlNodeBinding {
 		// Build the sort conditions for our current node
     	for(SortCondition condition : conditions) {
     		
-    		SqlExprList pushed;
+    		SqlExprList pushed = shallowPushX(condition.getExpression(), orderByNode.getSparqlVarToExprs(), orderByNode.getAliasToColumn());
 
-    		if(condition.getExpression().isVariable()) {
-    			Var v = condition.getExpression().asVar();
-    			
-    			Collection<TermDef> exprs = orderByNode.getSparqlVarToExprs().get(v);
-    			
-    			
-    			if(exprs.isEmpty()) {
-    				logger.warn("Variable does not exist for sorting");
-    				continue;
-    			} else if(exprs.size() > 1) {
-    				throw new RuntimeException("Should not happen"); // because we grouped by the var
-    			}
-    			
-    			TermDef def = exprs.iterator().next();
-    			
-    			Expr expr = def.getExpr();
-    			if(expr instanceof E_RdfTerm) {
-    				E_RdfTerm term = (E_RdfTerm)expr;
-
-    				pushed = new SqlExprList();
-    				for(int i = 0; i < 4; ++i) {
-    					Expr arg = term.getArgs().get(i);
-    					SqlExpr sqlExpr = forceShallowPushDown(arg, orderByNode.getAliasToColumn());
-    					//SqlExpr sqlExpr = fullPush(arg, a);
-    					
-    					//SqlExpr sqlExpr = shallowPush(arg, a);
-    					
-    					pushed.add(sqlExpr);
-    				}
-    			} else {
-    				throw new RuntimeException("Should not happen");
-    			}
+    		if(pushed == null) {
+    			continue;
     		}
-    		else {
- 				pushed = shallowPush(new ExprList(condition.getExpression()), orderByNode);
-    			//pushed = fullPush(new ExprList(condition.getExpression()), a);
- 			}
     		
     		//SqlExprList pushed = forcePushDown(new ExprList(condition.getExpression()), a);
     		
@@ -1396,10 +1431,11 @@ public class SqlNodeBinding {
 	}*/
 	
 	
-	
+	/*
 	public static SqlExpr shallowPush(Expr expr, SqlNode node) {
-		return shallowPush(new ExprList(expr), node).get(0);
+		return shallowPush(new ExprList(expr), node.getSparqlVarToExprs(), node.getAliasToColumn()).get(0);
 	}
+	*/
 	
 	
 	public static Map<String, SqlExpr> createShallowAliasToColumn(Map<String, SqlExpr> aliasToColumn) {
@@ -1419,11 +1455,11 @@ public class SqlNodeBinding {
 	 * @param node
 	 * @return
 	 */	
-	public static SqlExprList shallowPush(ExprList exprs, SqlNode node) {
+	public static SqlExprList shallowPush(ExprList exprs, Multimap<Var, TermDef> sparqlVarToExprs, Map<String, SqlExpr> aliasToColumn) {//{SqlNode node) {
 		
-		Map<String, SqlExpr> aliasToColumn = createShallowAliasToColumn(node.getAliasToColumn());
+		Map<String, SqlExpr> shallowAliasToColumn = createShallowAliasToColumn(aliasToColumn);
 		
-		return fullPush(exprs, aliasToColumn, node.getSparqlVarToExprs());
+		return fullPush(exprs, shallowAliasToColumn, sparqlVarToExprs);
 	}
 	
 	
@@ -1579,22 +1615,41 @@ public class SqlNodeBinding {
 		return true;
 	}
 
-	public static SqlNode group(SqlNode a, VarExprList groupVars, List<ExprAggregator> exprAggregator) {
+	public static SqlNode group(SqlNode a, VarExprList groupVars, List<ExprAggregator> exprAggregator, Generator colGenerator) {
 		
 		NodeExprSubstitutor substitutor = createSubstitutor(a.getAliasToColumn());
 
-		
-		SqlGroup result = new SqlGroup(a);
+		// TODO: Somehow extend the aggregator with RDF term
+
+		List<SqlExprAggregator> sqlAggregators = new ArrayList<SqlExprAggregator>();
+		SqlGroup result = new SqlGroup(a, sqlAggregators);
 
 		for(ExprAggregator item : exprAggregator) {
+
+			//SqlExprAggregator sqlExprAggregator = PushDown.
 			Expr expr = item.getExpr();
 			
-			SqlExpr sqlExpr = forcePushDown(expr, substitutor);
+			SqlExprAggregator sqlExpr = (SqlExprAggregator)forcePushDown(expr, substitutor);
+			sqlAggregators.add(sqlExpr);
+			
+			String newColAlias = colGenerator.next();
+
+			
+			Expr exprVar = new ExprVar(Var.alloc(newColAlias));
+			Expr rdfTerm = E_RdfTerm.createTypedLiteral(exprVar, NodeValue.makeNode(sqlExpr.getDatatype().getXsd()));
+			
+			result.getSparqlVarToExprs().put(item.getVar(), new TermDef(rdfTerm));
+			result.getAliasToColumn().put(newColAlias, sqlExpr);
+
 			//System.out.println(sqlExpr);
 		}
 		
-		throw new RuntimeException("Implement me");
-		//return result;
+		//for(SqlExprAggregator item : sqlAggregators) {
+		//}
+		
+		
+		//throw new RuntimeException("Implement me");
+		return result;
 	}
 
 	/**
@@ -1979,13 +2034,10 @@ public class SqlNodeBinding {
 		}
 
 		
-		// TODO
 		// If a variable maps to a constant, than the mapping does not apply to any union member
 		// that does not define the constant.
 		// This means we have to introduce a column for discrimination, which contains NULL for
-		// all union members where to constaint is not applicable
- 
-		
+		// all union members where to constaint is not applicable 		
 		Generator aliasGen = Gensym.create("c");
 		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
 

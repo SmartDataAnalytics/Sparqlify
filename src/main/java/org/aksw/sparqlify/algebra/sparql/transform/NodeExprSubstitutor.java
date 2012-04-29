@@ -16,6 +16,7 @@ import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 
 
 /**
@@ -97,12 +98,27 @@ public class NodeExprSubstitutor {
 	}
 
 	public Expr _transform(ExprAggregator eAgg) {
+		
+		Expr newAggExpr = this.transformMM(eAgg.getAggregator().getExpr()); 
+		Aggregator newAgg = eAgg.getAggregator().copy(newAggExpr);
+		
+		Expr newAggVar = this.transformMM(eAgg.getAggVar());
+		
+		//ExprCopy.getInstance().copy(expr, eAgg.get)
+		
+		Expr result = new ExprAggregator(newAggVar.asVar(), newAgg);
+	
+		return result;
+
+		//System.out.println("Aggregate");
+		
+		//eAgg.getAggregator().
 		//AggCount 
 		//eAgg.get
 		
 		
 		
-		throw new NotImplementedException();
+		//throw new NotImplementedException();
 	}    
 }
 

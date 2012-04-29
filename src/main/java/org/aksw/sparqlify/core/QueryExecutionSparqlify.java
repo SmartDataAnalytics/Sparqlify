@@ -284,7 +284,7 @@ class QueryExecutionSelect
 			PrintStream ps = new PrintStream(baos);
 			write(ps, sqlNode.getSparqlVarToExprs());
 			
-			logger.debug(baos.toString());
+			logger.info(baos.toString());
 		}
 
 		

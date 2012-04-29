@@ -1049,7 +1049,16 @@ public class RdfViewSystem2
 	}
 	
 	
-	// We treat OpExtend as a filter for now
+	/**
+	 * We treat OpExtend as a filter for now
+	 * TODO This breaks for instance Count(*) as Jena also does renaming with extend:
+	 * 
+	 * Jena generates
+	 * Project(?c, Extend(?c, ?x, Group(Count(*) As ?x)))
+	 * So in this case, extend creates a new alias for a variable
+	 * 
+	 * 
+	 */
 	public Op getApplicableViews(OpExtend op, RestrictionManager _restrictions) {
 		RestrictionManager restrictions = new RestrictionManager(_restrictions);
 		
@@ -1059,9 +1068,14 @@ public class RdfViewSystem2
 			Expr item = new E_Equals(new ExprVar(var), expr);
 			restrictions.stateExpr(item);
 		}
+
+		//OpProject projection = new OpPro
 		
 		//return _getApplicableViews(OpFilterIndexed.filter(restrictions, op.getSubOp()), restrictions);
-		return OpFilterIndexed.filter(restrictions, _getApplicableViews(op.getSubOp(), restrictions));
+		Op filter =  OpFilterIndexed.filter(restrictions, _getApplicableViews(op.getSubOp(), restrictions));
+		
+		Op result = op.copy(filter);
+		return result;
 	}
 	
 	public Op getApplicableViews(OpFilter op, RestrictionManager restrictions) 

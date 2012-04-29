@@ -7,7 +7,6 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlProjection;
 import org.aksw.sparqlify.core.ColRelGenerator;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.SqlNodeBinding;
@@ -17,11 +16,11 @@ import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sdb.core.JoinType;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
+import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
 import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
 import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
@@ -329,7 +328,7 @@ public class ViewRewriter {
 	
 	public SqlNode rewrite(ColRelGenerator generator, OpGroup op) {
 		SqlNode subNode = rewriteMM(generator, op.getSubOp());
-		SqlNode result = SqlNodeBinding.group(subNode, op.getGroupVars(), op.getAggregators());
+		SqlNode result = SqlNodeBinding.group(subNode, op.getGroupVars(), op.getAggregators(), generator.forColumn());
 		
 		return result;
 	}
@@ -358,6 +357,17 @@ public class ViewRewriter {
 		return rewriteMM(generator, op);
 	}
 	
+	
+	public SqlNode rewrite(ColRelGenerator generator, OpExtend op) {		
+		SqlNode subNode = rewriteMM(generator, op.getSubOp());
+		if(subNode instanceof SqlNodeEmpty) {
+			return subNode;
+		}
+
+		SqlNode result = SqlNodeBinding.extend(subNode, op.getVarExprList());
+		return result;
+		
+	}
 	
 	public SqlNode rewriteMM(ColRelGenerator generator, Op op) {
 
