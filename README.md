@@ -71,6 +71,7 @@ Additionally, for convenience, prefixes can be declared, which are valid through
 As comments, you can use //, /\* \*/, and #. 
 
 Example:
+    
     /* This is a comment
      * /* You can even nest them! */
      */
@@ -89,7 +90,7 @@ Example:
     Constrain
         ?w prefix "http://my-organization.org/user/"
     From
-        mytable; // If you want to use an SQL query, it must be enclosed in double square brackets: [[SELECT id, work_page FROM mytable]]
+        mytable; // If you want to use an SQL query, the query (without trailing semicolon) must be enclosed in double square brackets: [[SELECT id, work_page FROM mytable]]
 
 A Sparqlify view definition consists of four clauses:
 
