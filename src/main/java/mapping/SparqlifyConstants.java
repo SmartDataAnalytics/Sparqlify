@@ -43,6 +43,7 @@ import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 
 public class SparqlifyConstants {
 	public static final FunctionLabel vectorLabel = new FunctionLabel("vector");
+	public static final String blankNodeLabel = "http://aksw.org/sparqlify/uri";
 	public static final String uriLabel = "http://aksw.org/sparqlify/uri";
 	public static final String rdfTermLabel = "http://aksw.org/sparqlify/rdfTerm";
 	public static final String plainLiteralLabel = "http://aksw.org/sparqlify/plainLiteral";

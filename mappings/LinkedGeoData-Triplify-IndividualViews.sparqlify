@@ -43,8 +43,8 @@ Create View classes_k As
         ?s lgdm:sourceKey ?k .
     }
     With
-        ?s = spy:uri(?object)
-        ?k = spy:plainLiteral(?k)
+        ?s = uri(?object)
+        ?k = plainLiteral(?k)
     Constrain
         ?s prefix "http://linkedgeodata.org/ontology/"
     From
@@ -55,8 +55,8 @@ Create View sub_classes As
         ?child rdfs:subClassOf ?parent .
     }
     With
-        ?child  = spy:uri(?child) 
-        ?parent = spy:uri(?parent) 
+        ?child  = uri(?child) 
+        ?parent = uri(?parent) 
     Constrain
         ?child  prefix "http://linkedgeodata.org/ontology/"
         ?parent prefix "http://linkedgeodata.org/ontology/"
@@ -72,10 +72,10 @@ Create View classes_kv As
         ?t lgdm:value ?v .
     }
     With
-        ?s = spy:uri(?object)
-        ?t = spy:uri(concat(?object, "/key/", ?k, "/value/", ?v))
-        ?k = spy:plainLiteral(?k)
-        ?v = spy:plainLiteral(?v)
+        ?s = uri(?object)
+        ?t = uri(concat(?object, "/key/", ?k, "/value/", ?v))
+        ?k = plainLiteral(?k)
+        ?v = plainLiteral(?v)
     Constrain
         ?s prefix "http://linkedgeodata.org/ontology/"
         ?t prefix "http://linkedgeodata.org/ontology/"
@@ -90,8 +90,8 @@ Create View view_resource_labels As
 		?s rdfs:label ?o .
 	}
 	With
-		?s = spy:uri(?resource)
-		?o = spy:plainLiteral(?label, ?language)
+		?s = uri(?resource)
+		?o = plainLiteral(?label, ?language)
 	Constrain
 		?s prefix "http://linkedgeodata.org/ontology/"
 	From
@@ -118,15 +118,15 @@ Create View lgd_nodes As
 		?n wgs:lat ?yy .
 	}
 	With
-		?n = spy:uri(concat(lgd:node, ?id))
-		?v = spy:typedLiteral(?version, xsd:int)
-		?u = spy:uri(concat(lgdo:user, ?user_id))
-		?d = spy:typedLiteral(?tstamp, xsd:dateTime)
-		?c = spy:typedLiteral(?changeset_id, xsd:int)
-		?g = spy:uri(concat(lgd-geom:node, ?id))
-		//?g = spy:typedLiteral(?geom, virtrdf:geometry)
-		?xx = spy:typedLiteral(?x, xsd:double)
-		?yy = spy:typedLiteral(?y, xsd:double)
+		?n = uri(concat(lgd:node, ?id))
+		?v = typedLiteral(?version, xsd:int)
+		?u = uri(concat(lgdo:user, ?user_id))
+		?d = typedLiteral(?tstamp, xsd:dateTime)
+		?c = typedLiteral(?changeset_id, xsd:int)
+		?g = uri(concat(lgd-geom:node, ?id))
+		//?g = typedLiteral(?geom, virtrdf:geometry)
+		?xx = typedLiteral(?x, xsd:double)
+		?yy = typedLiteral(?y, xsd:double)
 	From
 		[[SELECT *, ST_X(geom::geometry) x, ST_Y(geom::geometry) y FROM nodes]];
 
@@ -136,8 +136,8 @@ Create view lgd_sameAs_gadm As
 		?n owl:sameAs ?gadm .
     }
     With
-    	?n = spy:uri(concat(lgd:node, ?id))
-		?gadm = spy:uri(concat("http://gadm.geovocab.org/services/withinRegion?lat=", ?y , "&long=", ?x, "#point"))
+    	?n = uri(concat(lgd:node, ?id))
+		?gadm = uri(concat("http://gadm.geovocab.org/services/withinRegion?lat=", ?y , "&long=", ?x, "#point"))
 	From
 		[[SELECT id, ST_X(geom::geometry)::float4::text x, ST_Y(geom::geometry)::float4::text y FROM nodes]];
 
@@ -147,8 +147,8 @@ Create View lgd_node_geometries As
         ?n ogc:asWKT ?o .
     }
     With
-        ?n = spy:uri(concat(lgd-geom:node, ?id)) 
-        ?o = spy:typedLiteral(?geom, ogc:WKTLiteral)
+        ?n = uri(concat(lgd-geom:node, ?id)) 
+        ?o = typedLiteral(?geom, ogc:WKTLiteral)
     From
         nodes;
 
@@ -158,9 +158,9 @@ Create View lgd_node_tags_resource_k As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id)) 
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:node, ?node_id)) 
+		?p = uri(?property)
+		?o = uri(?object)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"
 		?o prefix "http://linkedgeodata.org/ontology/"
@@ -173,9 +173,9 @@ Create View lgd_node_tags_resource_kv As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:node, ?node_id))
+		?p = uri(?property)
+		?o = uri(?object)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"	
 		?o prefix "http://linkedgeodata.org/ontology/"	
@@ -187,9 +187,9 @@ Create View lgd_node_tags_boolean As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:boolean)
+		?s = uri(concat(lgd:node, ?node_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:boolean)
 	From
 		lgd_node_tags_boolean
 
@@ -198,10 +198,10 @@ Create View lgd_node_tags_int As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		//?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:int)
+		?s = uri(concat(lgd:node, ?node_id))
+		//?p = uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:int)
 	From
 		lgd_node_tags_int
 
@@ -210,9 +210,9 @@ Create View lgd_node_tags_float As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:float)
+		?s = uri(concat(lgd:node, ?node_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:float)
 	From
 		lgd_node_tags_float
 
@@ -222,9 +222,9 @@ Create View lgd_node_tags_text As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id)) 
-		?p = spy:uri(?property)
-		?o = spy:plainLiteral(?v, ?language)
+		?s = uri(concat(lgd:node, ?node_id)) 
+		?p = uri(?property)
+		?o = plainLiteral(?v, ?language)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/" "http://xmlns.com/foaf/0.1/"
 	From
@@ -235,9 +235,9 @@ Create View lgd_node_tags_string As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
-		?o = spy:plainLiteral(?v)
+		?s = uri(concat(lgd:node, ?node_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = plainLiteral(?v)
 	From
 		lgd_node_tags_string
 
@@ -258,13 +258,13 @@ Create View lgd_ways As
 		?w geom:geometry ?g .
 	}
 	With
-		?w = spy:uri(concat(lgd:way, ?id))
-		?v = spy:typedLiteral(?version, xsd:int)
-		?u = spy:uri(concat(lgdo:user, ?user_id))
-		?d = spy:typedLiteral(?tstamp, xsd:dateTime)
-		?c = spy:typedLiteral(?changeset_id, xsd:int)
-		//?g = spy:typedLiteral(?geom, virtrdf:geometry)
-		?g = spy:uri(concat(lgd-geom:way, ?id))
+		?w = uri(concat(lgd:way, ?id))
+		?v = typedLiteral(?version, xsd:int)
+		?u = uri(concat(lgdo:user, ?user_id))
+		?d = typedLiteral(?tstamp, xsd:dateTime)
+		?c = typedLiteral(?changeset_id, xsd:int)
+		//?g = typedLiteral(?geom, virtrdf:geometry)
+		?g = uri(concat(lgd-geom:way, ?id))
 	From
 		ways; 
 
@@ -275,8 +275,8 @@ Create View view_way_to_nodes As
 		?w lgdo:hasNodes ?wn .
 	}
 	With 
-		?w = spy:uri(concat(lgd:way, ?id))
-		?wn = spy:uri(concat(lgd:waynode, ?id))  
+		?w = uri(concat(lgd:way, ?id))
+		?wn = uri(concat(lgd:waynode, ?id))  
 	From
 		ways;
 */
@@ -287,8 +287,8 @@ Create View lgd_pos_seq As
 		?w lgdo:posSeq ?wn .
 	}
 	With 
-		?w = spy:uri(concat(lgd-geom:way, ?id))
-		?wn = spy:uri(concat(lgd-geom:posSeq, ?id))  
+		?w = uri(concat(lgd-geom:way, ?id))
+		?wn = uri(concat(lgd-geom:posSeq, ?id))  
 	From
 		ways;
 
@@ -297,7 +297,7 @@ Create View lgd_pos_seq_type As
 	    ?wn a rdf:Seq . 
 	}
 	With
-		?wn = spy:uri(concat(lgd-geom:posSeq, ?id))
+		?wn = uri(concat(lgd-geom:posSeq, ?id))
 	From
 		ways;
 
@@ -307,9 +307,9 @@ Create View view_waynodes As
 		?wn ?p ?n .
 	}
 	With
-		?wn = spy:uri(concat(lgd-geom:posSeq, ?way_id))
-		?p = spy:uri(concat(rdf:_, ?sequence_id))
-		?n = spy:uri(concat(lgd-geom:node, ?node_id))  
+		?wn = uri(concat(lgd-geom:posSeq, ?way_id))
+		?p = uri(concat(rdf:_, ?sequence_id))
+		?n = uri(concat(lgd-geom:node, ?node_id))  
 	From
 		way_nodes;
 
@@ -320,9 +320,9 @@ Create View lgd_ways_linestrings As
         ?w ogc:asWKT ?g .
     }
     With
-		//?w = spy:uri(concat(lgd:way, ?id))
-		?w = spy:uri(concat(lgd-geom:way, ?id))
-		?g = spy:typedLiteral(?linestring, ogc:WKTLiteral)
+		//?w = uri(concat(lgd:way, ?id))
+		?w = uri(concat(lgd-geom:way, ?id))
+		?g = typedLiteral(?linestring, ogc:WKTLiteral)
 	From
 		[[SELECT id, linestring FROM ways a WHERE a.id NOT IN (SELECT way_id FROM simple_polys)]];
     
@@ -333,9 +333,9 @@ Create View ways_polygons As
 		?w ogc:asWKT ?g .
 	}
 	With
-		//?w = spy:uri(concat(lgd:way, ?way_id))
-		?w = spy:uri(concat(lgd-geom:way, ?way_id))
-		?g = spy:typedLiteral(?polygon, ogc:WKTLiteral)
+		//?w = uri(concat(lgd:way, ?way_id))
+		?w = uri(concat(lgd-geom:way, ?way_id))
+		?g = typedLiteral(?polygon, ogc:WKTLiteral)
 	From
 		simple_polys;
 	
@@ -346,9 +346,9 @@ Create View lgd_way_tags_resource_k As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id)) 
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:way, ?way_id)) 
+		?p = uri(?property)
+		?o = uri(?object)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"
 		?o prefix "http://linkedgeodata.org/ontology/"
@@ -360,9 +360,9 @@ Create View lgd_way_tags_resource_kv As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id))
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:way, ?way_id))
+		?p = uri(?property)
+		?o = uri(?object)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"	
 		?o prefix "http://linkedgeodata.org/ontology/"	
@@ -374,9 +374,9 @@ Create View lgd_way_tags_boolean As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:boolean)
+		?s = uri(concat(lgd:way, ?way_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:boolean)
 	From
 		lgd_way_tags_boolean
 
@@ -385,10 +385,10 @@ Create View lgd_way_tags_int As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id))
-		//?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:int)
+		?s = uri(concat(lgd:way, ?way_id))
+		//?p = uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:int)
 	From
 		lgd_way_tags_int
 
@@ -397,9 +397,9 @@ Create View lgd_way_tags_float As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:float)
+		?s = uri(concat(lgd:way, ?way_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:float)
 	From
 		lgd_way_tags_float
 
@@ -408,9 +408,9 @@ Create View lgd_way_tags_text As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id)) 
-		?p = spy:uri(?property)
-		?o = spy:plainLiteral(?v, ?language)
+		?s = uri(concat(lgd:way, ?way_id)) 
+		?p = uri(?property)
+		?o = plainLiteral(?v, ?language)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/" "http://xmlns.com/foaf/0.1/"
 	From
@@ -421,9 +421,9 @@ Create View lgd_way_tags_string As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?way_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
-		?o = spy:plainLiteral(?v)
+		?s = uri(concat(lgd:way, ?way_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = plainLiteral(?v)
 	From
 		lgd_way_tags_string
 
@@ -448,14 +448,14 @@ Create View lgd_relations As
 		
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?id))
-		?v = spy:typedLiteral(?version, xsd:int)
-		?u = spy:uri(concat(lgdo:user, ?user_id))
-		?d = spy:typedLiteral(?tstamp, xsd:dateTime)
-		?c = spy:typedLiteral(?changeset_id, xsd:int)
-		//?g = spy:uri(concat(lgd-geom:relation, ?id))
+		?s = uri(concat(lgd:relation, ?id))
+		?v = typedLiteral(?version, xsd:int)
+		?u = uri(concat(lgdo:user, ?user_id))
+		?d = typedLiteral(?tstamp, xsd:dateTime)
+		?c = typedLiteral(?changeset_id, xsd:int)
+		//?g = uri(concat(lgd-geom:relation, ?id))
 		
-		?m = spy:uri(concat(lgd:relation, ?id, "/members"))  
+		?m = uri(concat(lgd:relation, ?id, "/members"))  
 		
 	From
 		[[SELECT id, version, user_id, tstamp, changeset_id FROM relations]]; 
@@ -468,11 +468,11 @@ Create View lgd_relation_members_seq_nodes As
 		?i lgdo:ref  ?n
 	}
 	With
-		?m = spy:uri(concat(lgd:relation, ?relation_id, "/members"))  
-		?p = spy:uri(concat(rdf:_, ?sequence_id))
-		?i = spy:uri(concat(lgd:relation, ?relation_id, "/member", ?sequence_id))
-		?r = spy:plainLiteral(?member_role)  
-		?n = spy:uri(concat(lgd:node, ?member_id))
+		?m = uri(concat(lgd:relation, ?relation_id, "/members"))  
+		?p = uri(concat(rdf:_, ?sequence_id))
+		?i = uri(concat(lgd:relation, ?relation_id, "/member", ?sequence_id))
+		?r = plainLiteral(?member_role)  
+		?n = uri(concat(lgd:node, ?member_id))
 	From
 		[[SELECT * FROM relation_members WHERE member_type = 'N']];
 
@@ -483,11 +483,11 @@ Create View lgd_relation_members_seq_ways As
 		?i lgdo:ref  ?n
 	}
 	With
-		?m = spy:uri(concat(lgd:relation, ?relation_id, "/members"))  
-		?p = spy:uri(concat(rdf:_, ?sequence_id))
-		?i = spy:uri(concat(lgd:relation, ?relation_id, "/member", ?sequence_id))
-		?r = spy:plainLiteral(?member_role)  
-		?n = spy:uri(concat(lgd:way, ?member_id))
+		?m = uri(concat(lgd:relation, ?relation_id, "/members"))  
+		?p = uri(concat(rdf:_, ?sequence_id))
+		?i = uri(concat(lgd:relation, ?relation_id, "/member", ?sequence_id))
+		?r = plainLiteral(?member_role)  
+		?n = uri(concat(lgd:way, ?member_id))
 	From
 		[[SELECT * FROM relation_members WHERE member_type = 'W']];
 
@@ -499,11 +499,11 @@ Create View lgd_relation_members_seq_relations As
 		?i lgdo:ref  ?n
 	}
 	With
-		?m = spy:uri(concat(lgd:relation, ?relation_id, "/members"))  
-		?p = spy:uri(concat(rdf:_, ?sequence_id))
-		?i = spy:uri(concat(lgd:relation, ?relation_id, "/member", ?sequence_id))
-		?r = spy:plainLiteral(?member_role)  
-		?n = spy:uri(concat(lgd:relation, ?member_id))
+		?m = uri(concat(lgd:relation, ?relation_id, "/members"))  
+		?p = uri(concat(rdf:_, ?sequence_id))
+		?i = uri(concat(lgd:relation, ?relation_id, "/member", ?sequence_id))
+		?r = plainLiteral(?member_role)  
+		?n = uri(concat(lgd:relation, ?member_id))
 	From
 		[[SELECT * FROM relation_members WHERE member_type = 'R']];
 
@@ -514,8 +514,8 @@ Create View relation_members_nodes As
 		?s lgdo:hasMember ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id)) 
-		?o = spy:uri(concat(lgd:node, ?member_id))
+		?s = uri(concat(lgd:relation, ?relation_id)) 
+		?o = uri(concat(lgd:node, ?member_id))
 	From
 		[[SELECT relation_id, member_id FROM relation_members WHERE member_type = 'N']];
 */
@@ -529,9 +529,9 @@ Create View lgd_relation_tags_resource_k As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id)) 
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:relation, ?relation_id)) 
+		?p = uri(?property)
+		?o = uri(?object)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"
 		?o prefix "http://linkedgeodata.org/ontology/"
@@ -543,9 +543,9 @@ Create View lgd_relation_tags_resource_kv As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id))
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:relation, ?relation_id))
+		?p = uri(?property)
+		?o = uri(?object)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"	
 		?o prefix "http://linkedgeodata.org/ontology/"	
@@ -557,9 +557,9 @@ Create View lgd_relation_tags_boolean As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:boolean)
+		?s = uri(concat(lgd:relation, ?relation_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:boolean)
 	From
 		lgd_relation_tags_boolean
 
@@ -568,10 +568,10 @@ Create View lgd_relation_tags_int As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id))
-		//?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:int)
+		?s = uri(concat(lgd:relation, ?relation_id))
+		//?p = uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:int)
 	From
 		lgd_relation_tags_int
 
@@ -580,9 +580,9 @@ Create View lgd_relation_tags_float As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', ?k))
-		?o = spy:typedLiteral(?v, xsd:float)
+		?s = uri(concat(lgd:relation, ?relation_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', ?k))
+		?o = typedLiteral(?v, xsd:float)
 	From
 		lgd_relation_tags_float
 
@@ -591,9 +591,9 @@ Create View lgd_relation_tags_text As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:way, ?relation_id)) 
-		?p = spy:uri(?property)
-		?o = spy:plainLiteral(?v, ?language)
+		?s = uri(concat(lgd:way, ?relation_id)) 
+		?p = uri(?property)
+		?o = plainLiteral(?v, ?language)
 	Constrain
 		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/" "http://xmlns.com/foaf/0.1/"
 	From
@@ -604,9 +604,9 @@ Create View lgd_relation_tags_string As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:relation, ?relation_id))
-		?p = spy:uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
-		?o = spy:plainLiteral(?v)
+		?s = uri(concat(lgd:relation, ?relation_id))
+		?p = uri(concat('http://linkedgeodata.org/ontology/', spy:urlEncode(?k)))
+		?o = plainLiteral(?v)
 	From
 		lgd_relation_tags_string
 
@@ -620,9 +620,9 @@ Create View view_prefixed_properties As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		?p = spy:uri(?property)
-		?o = spy:uri(?object)
+		?s = uri(concat(lgd:node, ?node_id))
+		?p = uri(?property)
+		?o = uri(?object)
 	From
 		node_generic_resources;
 
@@ -636,9 +636,9 @@ Create View view_prefixed_properties As
 		?s ?p ?o .
 	}
 	With
-		?s = spy:uri(concat(lgd:node, ?node_id))
-		?p = spy:uri(?property)
-		?o = spy:uri(concat(?object_prefix, ?v))
+		?s = uri(concat(lgd:node, ?node_id))
+		?p = uri(?property)
+		?o = uri(concat(?object_prefix, ?v))
 	From
 		lgd_node_tags_prefix;
 

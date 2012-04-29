@@ -44,27 +44,27 @@ Create View view_product As
     ?s dc:date                      ?publishDate .
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
+    ?s           = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
     
-    ?label       = spy:plainLiteral(?label)
-    ?comment     = spy:plainLiteral(?comment)
-    //?producer    = spy:uri(concat(bsbm:producer, ?producer))
-    ?producer    = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
-    ?ppt1        = spy:plainLiteral(?propertyTex1)
-    ?ppt2        = spy:plainLiteral(?propertyTex2)
-    ?ppt3        = spy:plainLiteral(?propertyTex3)
-    ?ppt4        = spy:plainLiteral(?propertyTex4)
-    ?ppt5        = spy:plainLiteral(?propertyTex5)
-    ?ppt6        = spy:plainLiteral(?propertyTex6)
-    ?ppn1        = spy:typedLiteral(?propertyNum1, xsd:Integer)
-    ?ppn2        = spy:typedLiteral(?propertyNum2, xsd:Integer)
-    ?ppn3        = spy:typedLiteral(?propertyNum3, xsd:Integer)
-    ?ppn4        = spy:typedLiteral(?propertyNum4, xsd:Integer)
-    ?ppn5        = spy:typedLiteral(?propertyNum5, xsd:Integer)
-    ?ppn6        = spy:typedLiteral(?propertyNum6, xsd:Integer)
+    ?label       = plainLiteral(?label)
+    ?comment     = plainLiteral(?comment)
+    //?producer    = uri(concat(bsbm:producer, ?producer))
+    ?producer    = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
+    ?ppt1        = plainLiteral(?propertyTex1)
+    ?ppt2        = plainLiteral(?propertyTex2)
+    ?ppt3        = plainLiteral(?propertyTex3)
+    ?ppt4        = plainLiteral(?propertyTex4)
+    ?ppt5        = plainLiteral(?propertyTex5)
+    ?ppt6        = plainLiteral(?propertyTex6)
+    ?ppn1        = typedLiteral(?propertyNum1, xsd:Integer)
+    ?ppn2        = typedLiteral(?propertyNum2, xsd:Integer)
+    ?ppn3        = typedLiteral(?propertyNum3, xsd:Integer)
+    ?ppn4        = typedLiteral(?propertyNum4, xsd:Integer)
+    ?ppn5        = typedLiteral(?propertyNum5, xsd:Integer)
+    ?ppn6        = typedLiteral(?propertyNum6, xsd:Integer)
 
-    ?publisher   = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?publisher   = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     product
 
@@ -76,8 +76,8 @@ Create View view_producttypeproduct As
     ?product a ?productType .
   }
   With
-    ?product     = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
-    ?productType = spy:uri(concat(bsbm-inst:ProductType, ?producttype))
+    ?product     = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
+    ?productType = uri(concat(bsbm-inst:ProductType, ?producttype))
   From 
     [[SELECT a.nr, a.producer, b."producttype" FROM product a JOIN producttypeproduct b ON (b.product = a.nr)]]
 
@@ -87,8 +87,8 @@ Create View view_productfeatureproduct As
   	?product bsbm:productFeature ?feature .
   }
   With
-    ?product = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
-    ?feature = spy:uri(concat(bsbm-inst:ProductFeature, ?productfeature))
+    ?product = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr))
+    ?feature = uri(concat(bsbm-inst:ProductFeature, ?productfeature))
   From
     [[SELECT a.nr, a.producer, b."productfeature" FROM product a JOIN productfeatureproduct b ON (b.product = a.nr)]]
 
@@ -104,12 +104,12 @@ Create View view_producttype As
     ?s dc:date         ?publishDate .    
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:ProductType, ?nr))
-    ?label       = spy:plainLiteral(?label)
-    ?comment     = spy:plainLiteral(?comment)
+    ?s           = uri(concat(bsbm-inst:ProductType, ?nr))
+    ?label       = plainLiteral(?label)
+    ?comment     = plainLiteral(?comment)
 
-    ?publisher   = spy:uri(concat(bsbm-inst:StandardizationInstitution, ?publisher))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?publisher   = uri(concat(bsbm-inst:StandardizationInstitution, ?publisher))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     producttype
 
@@ -119,8 +119,8 @@ Create View view_producttype_subclasses As
     ?s rdfs:subClassOf ?superClass .
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:ProductType, ?nr))
-    ?superClass  = spy:uri(concat(bsbm-inst:ProductType, ?parent))
+    ?s           = uri(concat(bsbm-inst:ProductType, ?nr))
+    ?superClass  = uri(concat(bsbm-inst:ProductType, ?parent))
   From
     [[SELECT nr, parent FROM producttype WHERE parent IS NOT NULL]]
 
@@ -136,12 +136,12 @@ Create View view_productfeature As
     ?s dc:date         ?publishDate .    
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:ProductFeature, ?nr))
-    ?label       = spy:plainLiteral(?label)
-    ?comment     = spy:plainLiteral(?comment)
+    ?s           = uri(concat(bsbm-inst:ProductFeature, ?nr))
+    ?label       = plainLiteral(?label)
+    ?comment     = plainLiteral(?comment)
 
-    ?publisher   = spy:uri(concat(bsbm-inst:StandardizationInstitution, ?publisher))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?publisher   = uri(concat(bsbm-inst:StandardizationInstitution, ?publisher))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     productfeature
 
@@ -161,13 +161,13 @@ Create View view_producer As
     ?s dc:date         ?publishDate .    
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromProducer, ?nr, "/Producer", ?nr))
-    ?label       = spy:plainLiteral(?label)
-    ?comment     = spy:plainLiteral(?comment)
-    ?homepage    = spy:uri(?homepage)
-    ?country     = spy:uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
-    ?publisher   = spy:uri(concat(bsbm-inst:dataFromProducer, ?nr, "/Producer", ?nr))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?s           = uri(concat(bsbm-inst:dataFromProducer, ?nr, "/Producer", ?nr))
+    ?label       = plainLiteral(?label)
+    ?comment     = plainLiteral(?comment)
+    ?homepage    = uri(?homepage)
+    ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
+    ?publisher   = uri(concat(bsbm-inst:dataFromProducer, ?nr, "/Producer", ?nr))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     producer
 
@@ -187,13 +187,13 @@ Create View view_vendor As
     ?s dc:date         ?publishDate .    
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromVendor, ?nr, "/Vendor", ?nr))
-    ?label       = spy:plainLiteral(?label)
-    ?comment     = spy:plainLiteral(?comment)
-    ?homepage    = spy:uri(?homepage)
-    ?country     = spy:uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
-    ?publisher   = spy:uri(concat(bsbm-inst:dataFromVendor, ?nr, "/Vendor", ?nr))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?s           = uri(concat(bsbm-inst:dataFromVendor, ?nr, "/Vendor", ?nr))
+    ?label       = plainLiteral(?label)
+    ?comment     = plainLiteral(?comment)
+    ?homepage    = uri(?homepage)
+    ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
+    ?publisher   = uri(concat(bsbm-inst:dataFromVendor, ?nr, "/Vendor", ?nr))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     vendor
 
@@ -214,16 +214,16 @@ Create View view_offer As
     ?s dc:date         ?publishDate .    
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromVendor, ?publisher, "/Offer", ?nr))
-    ?product     = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
-    ?vendor      = spy:uri(concat(bsbm-inst:dataFromVendor, ?vendor, "/Vendor", ?vendor))
-    ?price       = spy:typedLiteral(?price, bsbm:USD)    
-    ?validFrom   = spy:typedLiteral(?validFrom, xsd:date)
-    ?validTo     = spy:typedLiteral(?validTo, xsd:date)    
-    ?deliveryDays= spy:typedLiteral(?deliveryDays, xsd:Integer)
-    ?offerWebpage= spy:uri(concat("http://vendor", ?vendor, ".com/offers/Offer", ?nr))
-    ?publisher   = spy:uri(concat(bsbm-inst:dataFromVendor, ?vendor, "/Vendor", ?vendor))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?s           = uri(concat(bsbm-inst:dataFromVendor, ?publisher, "/Offer", ?nr))
+    ?product     = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
+    ?vendor      = uri(concat(bsbm-inst:dataFromVendor, ?vendor, "/Vendor", ?vendor))
+    ?price       = typedLiteral(?price, bsbm:USD)    
+    ?validFrom   = typedLiteral(?validFrom, xsd:date)
+    ?validTo     = typedLiteral(?validTo, xsd:date)    
+    ?deliveryDays= typedLiteral(?deliveryDays, xsd:Integer)
+    ?offerWebpage= uri(concat("http://vendor", ?vendor, ".com/offers/Offer", ?nr))
+    ?publisher   = uri(concat(bsbm-inst:dataFromVendor, ?vendor, "/Vendor", ?vendor))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     offer
 
@@ -238,12 +238,12 @@ Create View view_person As
     ?s dc:date         ?publishDate .    
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Reviewer", ?nr))
-    ?name        = spy:plainLiteral(?name)
-    ?mbox        = spy:plainLiteral(?mbox_sha1sum)
-    ?country     = spy:uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
-    ?publisher   = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?s           = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Reviewer", ?nr))
+    ?name        = plainLiteral(?name)
+    ?mbox        = plainLiteral(?mbox_sha1sum)
+    ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
+    ?publisher   = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     person
 
@@ -267,18 +267,18 @@ Create View view_review As
     ?s dc:date         ?publishDate .
   }
   With
-    ?s           = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Review", ?nr))
-    ?product     = spy:uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
-    ?reviewer    = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Reviewer", ?person))
-    ?date        = spy:typedLiteral(?reviewDate, xsd:date)
-    ?title       = spy:plainLiteral(?title, ?lang)
-    ?text        = spy:plainLiteral(?text, ?lang)
-    ?rating1     = spy:typedLiteral(?rating1, xsd:int)
-    ?rating2     = spy:typedLiteral(?rating2, xsd:int)
-    ?rating3     = spy:typedLiteral(?rating3, xsd:int)
-    ?rating4     = spy:typedLiteral(?rating4, xsd:int)
-    ?publisher   = spy:uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
-    ?publishDate = spy:typedLiteral(?publishDate, xsd:date)
+    ?s           = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Review", ?nr))
+    ?product     = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
+    ?reviewer    = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Reviewer", ?person))
+    ?date        = typedLiteral(?reviewDate, xsd:date)
+    ?title       = plainLiteral(?title, ?lang)
+    ?text        = plainLiteral(?text, ?lang)
+    ?rating1     = typedLiteral(?rating1, xsd:int)
+    ?rating2     = typedLiteral(?rating2, xsd:int)
+    ?rating3     = typedLiteral(?rating3, xsd:int)
+    ?rating4     = typedLiteral(?rating4, xsd:int)
+    ?publisher   = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
+    ?publishDate = typedLiteral(?publishDate, xsd:date)
   From
     [[SELECT *, upper(language) lang FROM review]]
 

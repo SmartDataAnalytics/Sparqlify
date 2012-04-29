@@ -52,6 +52,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.slf4j.Logger;
     import org.slf4j.LoggerFactory;
 
+    import mapping.SparqlifyConstants;
 }
 
 
@@ -102,6 +103,18 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     }
     public String getTokenErrorDisplay(Token t) {
         return t.toString();
+    }
+
+
+    public E_Function createFunction(String label, Expr ... args) {
+        ExprList exprs = new ExprList();
+        for(Expr arg : args) {
+            if(arg != null) {
+                exprs.add(arg);
+            }
+        }
+        
+        return new E_Function(label, exprs);        
     }
 
 }
@@ -163,8 +176,15 @@ varBindings returns [List<Expr> value]
 	
 
 varBinding returns [Expr value]
-	: ^(VAR_BINDING	a=var b=expression) {$value = new E_Equals(new ExprVar($a.value), $b.value);}
+	: ^(VAR_BINDING	a=var b=typeCtorExpression) {$value = new E_Equals(new ExprVar($a.value), $b.value);}
 	;
+	
+typeCtorExpression returns [Expr value]
+    : ^(BNODE a=expression) {$value = createFunction(SparqlifyConstants.blankNodeLabel, $a.value); } 
+    | ^(URI a=expression) {$value = createFunction(SparqlifyConstants.uriLabel, $a.value); }
+    | ^(PLAIN_LITERAL a=expression b=expression?) {$value = createFunction(SparqlifyConstants.plainLiteralLabel, $a.value, $b.value); }
+    | ^(TYPED_LITERAL a=expression b=expression) {$value = createFunction(SparqlifyConstants.typedLiteralLabel, $a.value, $b.value); }
+    ;
 	
 sqlRelation returns [Relation value]
 	: ^(SQL_RELATION a=SQL_QUERY) {$value = new QueryString($a.text);}

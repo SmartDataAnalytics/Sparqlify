@@ -71,8 +71,10 @@ Additionally, for convenience, prefixes can be declared, which are valid through
 As comments, you can use //, /\* \*/, and #. 
 
 Example:
-
-    Prefix spy:<http://aksw.org/sparqlify/>
+    /* This is a comment
+     * /* You can even nest them! */
+     */
+    // Prefixes are valid throughout the file
     Prefix dbp:<http://dbpedia.org/ontology/>
     Prefix ex:<http://ex.org/>
 
@@ -82,12 +84,12 @@ Example:
             ?s ex:workPage ?w .
         }
     With
-        ?s = spy:uri(concat('http://mydomain.org/person', ?id)) // Define ?s to be an URI generated from the concatenation of a prefix with mytable's id-column.
-        ?w = spy:uri(?work_page) // ?w is assigned the URIs in the column 'work_page' of 'mytable'
+        ?s = uri(concat('http://mydomain.org/person', ?id)) // Define ?s to be an URI generated from the concatenation of a prefix with mytable's id-column.
+        ?w = uri(?work_page) // ?w is assigned the URIs in the column 'work_page' of 'mytable'
     Constrain
         ?w prefix "http://my-organization.org/user/"
     From
-        mytable;
+        mytable; // If you want to use an SQL query, it must be enclosed in double square brackets: [[SELECT id, work_page FROM mytable]]
 
 A Sparqlify view definition consists of four clauses:
 
@@ -103,29 +105,31 @@ The construct clause is similar to that of a Sparql-Construct query.
 This clause contains a set of variable bindings that express the "glue" between the RDF and the RDB worlds.
 A variable binding takes the form `?sparql_var = term-contructor(sqlExpr1, ..., sqlExprN)`.
 
-Currently, the term constructor names are located in the `http://aksw.org/sparqlify/` namespace, and are called *blankNode*, *uri*, *plainLiteral*, *typedLiteral* and *rdfTerm*.
-The term constructor rdfTerm is a generalization of the former ones, and has the signature:
+Term constructors are *blankNode(expr)*, *uri(expr)*, *plainLiteral(expr[, expr]) *, *typedLiteral(expr, expr)*.
+The first argument of the term constructors is an expression denoting value of the rdf term being constructed.
+The second argument of plainLiteral and typedLiteral are expressions evaluating to the language tag or datatype, respectively.
+Note that the language tag is optional.
 
-    rdfTerm(termType, value, datatype, languageTag).
-
-The available abbreviations and the relation to rdfTerm are shown below:
-
-* blankNode(x) -> rdfTerm(0, x, '', '')
-* uri(x) -> rdfTerm(1, x, '', '')
-* plainLiteral(x) -> rdfTerm(2, x, '', '')
-* plainLiteral(x, l) -> rdfTerm(2, x, '', l)
-* typedLiteral(x, d) -> rdfTerm(3, x, d, '')
+Expressions within a term constructor can make use of
+* constants
+* concat
+* urlEncode
+* urlDecode
 
 #### Examples
-    Prefix spy:<http://aksw.org/sparqlify/>
+    Prefix spy:<http://aksw.org/sparqlify/> // Include this prefix in your mapping file to use urlen/decode
+
     Prefix lgd:<http://linkedgeodata.org/triplify/>
     Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
 
     ...
-    ?a = spy:uri(concat('http://linkedgeodata.org/triplify/node', ?node_id)
-    ?b = spy:uri(concat(lgd:node, ?node_id)) // same as above
-    ?c = spy:plainLiteral(?v, ?lang)
-    ?d = spy:typedLiteral(?age, xsd:int)
+    ?a = uri(concat('http://linkedgeodata.org/triplify/node', ?node_id)
+    ?b = uri(concat(lgd:node, ?node_id)) // same as above
+    ?c = plainLiteral(?v, ?lang)
+    ?d = typedLiteral(?age, xsd:int)
+    ?e = plainLiteral(concat("http://ex.org", spy:urlEncode(?name))
+    ?f = uri(spy:urlDecode(?encodedUrl))
+    ?h = uri(concat(lgd:node, ?id)) // Note that uris can also be abbreviated. However, at the moment a prefix can not be used by its own.
 
 
 ### Constrain

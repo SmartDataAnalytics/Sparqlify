@@ -254,18 +254,17 @@ varBinding
 */
 
 varBinding
-    : var '=' expression -> ^(VAR_BINDING var expression)
+    : var '=' typeCtorExpression -> ^(VAR_BINDING var typeCtorExpression)
     ;	
 
-/*
-termCtor
-    : BLANK_NODE
-    | URI
-    | PLAIN_LITERAL
-    | TYPED_LITERAL
-    | RDF_TERM
+typeCtorExpression
+    : BNODE '(' expression ')' -> ^(BNODE expression)
+    | URI '(' expression ')' -> ^(URI expression)
+    | PLAIN_LITERAL '(' expression (',' expression)? ')' -> ^(PLAIN_LITERAL expression expression?)
+    | TYPED_LITERAL '(' expression ',' expression ')' -> ^(TYPED_LITERAL expression expression)
     ;
-*/
+
+
 
 //     $>
 
