@@ -1,0 +1,30 @@
+Create View test As
+	Construct {
+		?s a <http://foo.bar>
+	}
+	With
+		?s = uri(?id)
+	From
+		test
+
+
+Create View test10 As
+	Construct {
+		?s a <http://foo.bar>
+	}
+	With
+		?s = uri(?id)
+	From
+		test10
+
+Create View ap As
+	Construct {
+		?s a plx:Publication .
+		?s plx:isbm ?i .
+	}
+	With
+		?s = uri(concat(plx:publication, ?ap))
+		?i = uri(concat(plx:isbm, ?bn))
+	From
+		ap
+		

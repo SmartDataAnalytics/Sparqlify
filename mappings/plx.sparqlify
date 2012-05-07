@@ -1,0 +1,13 @@
+Prefix plx:<http://ex.org/>
+
+Create View ap As
+	Construct {
+		?s a plx:Publication .
+		?s plx:isbm ?i .
+	}
+	With
+		?s = uri(concat(plx:publication, ?ap))
+		?i = uri(concat(plx:isbm, ?bn))
+	From
+		ap
+		

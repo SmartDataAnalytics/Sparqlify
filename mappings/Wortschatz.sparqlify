@@ -2,7 +2,7 @@
  * This is a configuration for the wortschatz schema
  *
  */
-Prefix spy:<http://aksw.org/sparqlify/>
+//Prefix spy:<http://aksw.org/sparqlify/>
 
 Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
 Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -24,11 +24,11 @@ Create View view_co_n As
 		?x wso:sigma ?s .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/word/', ?w1_id))
-		?b = spy:uri(concat('http://aksw.org/wortschatz/word/', ?w2_id))
-		?x = spy:uri(concat('http://aksw.org/wortschatz/co-occurence/direct/', ?w1_id, '/', ?w2_id))
-		?f = spy:typedLiteral(?freq, xsd:long) 
-		?s = spy:typedLiteral(?sig, xsd:long)
+		?a = uri(concat('http://aksw.org/wortschatz/word/', ?w1_id))
+		?b = uri(concat('http://aksw.org/wortschatz/word/', ?w2_id))
+		?x = uri(concat('http://aksw.org/wortschatz/co-occurence/direct/', ?w1_id, '/', ?w2_id))
+		?f = typedLiteral(?freq, xsd:long) 
+		?s = typedLiteral(?sig, xsd:long)
 	From
 		[[SELECT w1_id, w2_id, freq::bigint, sig::bigint FROM co_n]];
 
@@ -47,11 +47,11 @@ Create View view_co_s As
 		?x wso:sigma ?s .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/word/', ?w1_id))
-		?b = spy:uri(concat('http://aksw.org/wortschatz/word/', ?w2_id))
-		?x = spy:uri(concat('http://aksw.org/wortschatz/co-occurence/sentence/', ?w1_id, '/', ?w2_id))
-		?f = spy:typedLiteral(?freq, xsd:long)
-		?s = spy:typedLiteral(?sig, xsd:long)
+		?a = uri(concat('http://aksw.org/wortschatz/word/', ?w1_id))
+		?b = uri(concat('http://aksw.org/wortschatz/word/', ?w2_id))
+		?x = uri(concat('http://aksw.org/wortschatz/co-occurence/sentence/', ?w1_id, '/', ?w2_id))
+		?f = typedLiteral(?freq, xsd:long)
+		?s = typedLiteral(?sig, xsd:long)
 	From
 		[[SELECT w1_id, w2_id, freq::bigint, sig::bigint FROM co_s]];
 
@@ -62,8 +62,8 @@ Create View view_inv_so As
 		?a wso:source ?b .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/sentence/', ?s_id))
-		?b = spy:uri(concat('http://aksw.org/wortschatz/source/', ?so_id))
+		?a = uri(concat('http://aksw.org/wortschatz/sentence/', ?s_id))
+		?b = uri(concat('http://aksw.org/wortschatz/source/', ?so_id))
 	From
 		inv_so;
 
@@ -74,8 +74,8 @@ Create View view_inv_w As
 		?a wso:partOf ?b .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/word/', ?w_id))
-		?b = spy:uri(concat('http://aksw.org/wortschatz/sentence/', ?s_id))
+		?a = uri(concat('http://aksw.org/wortschatz/word/', ?w_id))
+		?b = uri(concat('http://aksw.org/wortschatz/sentence/', ?s_id))
 	From
 		inv_w;
 
@@ -86,8 +86,8 @@ Create View view_sentences As
 		?a rdfs:label ?b .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/sentence/', ?s_id))
-		?b = spy:plainLiteral(?sentence)
+		?a = uri(concat('http://aksw.org/wortschatz/sentence/', ?s_id))
+		?b = plainLiteral(?sentence)
 	From
 		sentences;
 
@@ -99,9 +99,9 @@ Create View view_words As
 		?a wso:frequency ?f .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/word/', ?w_id))
-		?b = spy:plainLiteral(?word)
-		?f = spy:typedLiteral(?freq, xsd:long)
+		?a = uri(concat('http://aksw.org/wortschatz/word/', ?w_id))
+		?b = plainLiteral(?word)
+		?f = typedLiteral(?freq, xsd:long)
 	From
 		words;
 
@@ -113,9 +113,9 @@ Create View view_sources As
 		?a wso:date ?f .
 	}
 	With
-		?a = spy:uri(concat('http://aksw.org/wortschatz/source/', ?so_id))
-		?b = spy:uri(concat(?source))
-		?f = spy:typedLiteral(?date, xsd:dateTime)
+		?a = uri(concat('http://aksw.org/wortschatz/source/', ?so_id))
+		?b = uri(concat(?source))
+		?f = typedLiteral(?date, xsd:dateTime)
 	From		
 		sources;
 

@@ -35,6 +35,7 @@ public class RdfViewDatabase {
 		rawTypeToSql.put("osmentitytype", DatatypeSystemDefault._STRING);
 
 		rawTypeToSql.put("bool", DatatypeSystemDefault._BOOLEAN);
+		rawTypeToSql.put("int2", DatatypeSystemDefault._INTEGER);
 		rawTypeToSql.put("int4", DatatypeSystemDefault._INTEGER);
 		rawTypeToSql.put("int8", DatatypeSystemDefault._INTEGER);
 

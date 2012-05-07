@@ -2,10 +2,20 @@
 
 ## Introduction
 
-This is an experimental RDB-RDF mapper, which is being developed for the [LinkedGeoData](http://linkedgeodata.org) project.
-Sparqlify supports a subset of the SPARQL 1.0 query language plus sub queries. A detailed description of the features is pending.
-Currently only PostgreSQL is supported. We will investigate which other relational database systems can be reasonably supported.
-Sparqlify rewrites a given SPARQL query into a single SQL query, thereby giving full control to the query planner of the underlying DB.
+Sparqlify is a novel SPARQL-SQL rewriter whose development began in April 2011 in the course of the [LinkedGeoData](http://linkedgeodata.org) project.
+
+This system's features/traits are:
+* An intuitive language for expressing RDB-RDF mappings with only very little syntactic noise.
+* Sparqlify will find out by itself which views it needs to select for answering a SPARQL query. (I just state this for clarity)
+* SPARQL queries are rewritten into a single SQL statement, so that the underlying RDBMS has maximum control over query planning.
+* Scalability: Sparqlify does not evaluate expressions in memory. All SPARQL filters end up in the corresponding SQL statement.  
+* The system is a plain RDB-RDF mapper without ontological commitment (there is no need to define things as e.g. owl:Class)
+* A powerful rewriting engine that analyzes filter expressions in order to eleminate self joins and joins with unsatisfiable conditions.
+* Predicates can originate from database columns.
+* Initial support for spatial datatypes and predicates.   
+* A subset of the SPARQL 1.0 query language plus sub queries are supported.
+* Currently Sparqlify only works with PostgreSQL/Postgis.  
+ 
 
 ## Supported SPARQL language features
 * Join, LeftJoin (i.e. Optional), Union, Sub queries
