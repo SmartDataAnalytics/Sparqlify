@@ -10,6 +10,8 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.apache.commons.collections15.Transformer;
 import org.openjena.atlas.lib.Sink;
 import org.openjena.riot.out.SinkTripleOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.ResultSet;
@@ -26,13 +28,19 @@ import com.talis.rdfwriters.json.JSONJenaWriter;
  * 
  */
 class SparqlFormatterUtils {
-
+	public static final Logger logger = LoggerFactory.getLogger(SparqlFormatterUtils.class);
+	
 	public static Model triplesToModel(Iterator<Triple> iterator) {
 		Model model = ModelFactory.createDefaultModel();
 		
 		while(iterator.hasNext()) {
 			Triple triple = iterator.next();
 			Statement stmt = com.hp.hpl.jena.sparql.util.ModelUtils.tripleToStatement(model, triple);
+			if(stmt == null) {
+				logger.warn("Invalid triple detected: " + triple);
+				continue;
+			}
+			
 			model.add(stmt);
 		}
 

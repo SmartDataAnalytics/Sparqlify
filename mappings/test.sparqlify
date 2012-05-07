@@ -1,3 +1,5 @@
+
+/*
 Create View test As
 	Construct {
 		?s a <http://foo.bar>
@@ -27,4 +29,29 @@ Create View ap As
 		?i = uri(concat(plx:isbm, ?bn))
 	From
 		ap
+*/	
 		
+
+/*
+Prefix spy:<http://aksw.org/sparqlify/>
+
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix foaf:<http://xmlns.com/foaf/0.1/>
+Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+*/
+Prefix plx:<http://panlex.org/plx>
+
+Create View ap As
+	Construct { 
+	?s a plx:Publication . 
+	?s plx:isbn ?i . 
+}
+With
+	?s = uri(concat(plx:publication, ?ap))
+	?i = uri(concat(plx:isbn, ?bn))
+From
+	ap
+		
+	
