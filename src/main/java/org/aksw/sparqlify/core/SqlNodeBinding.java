@@ -22,7 +22,6 @@ import org.aksw.sparqlify.algebra.sparql.transform.ExprDatatypeHash;
 import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sparql.transform.SqlExprUtils;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;

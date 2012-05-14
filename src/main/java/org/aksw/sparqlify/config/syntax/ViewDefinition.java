@@ -3,8 +3,6 @@ package org.aksw.sparqlify.config.syntax;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.openjena.atlas.io.IndentedWriter;

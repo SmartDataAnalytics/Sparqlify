@@ -1,9 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
-import java.sql.SQLException;
-
 import org.apache.commons.lang.NotImplementedException;
-import org.postgis.PGgeometry;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction2;

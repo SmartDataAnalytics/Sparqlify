@@ -1,12 +1,6 @@
 package org.aksw.sparqlify.sparqlview;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
-
-import org.aksw.sparqlify.core.ConstraintContainer;
-import org.aksw.sparqlify.core.RdfView;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 
 import sparql.TwoWayBinding;
 
@@ -17,10 +11,6 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 public class ViewInstance {

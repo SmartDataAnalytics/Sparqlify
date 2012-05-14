@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.util.Collection;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
-import org.aksw.commons.collections.diff.IDiff;
-import org.aksw.commons.sparql.core.impl.ModelSparqlEndpoint;
 import org.aksw.commons.util.Files;
 
 import com.hp.hpl.jena.rdf.model.Model;

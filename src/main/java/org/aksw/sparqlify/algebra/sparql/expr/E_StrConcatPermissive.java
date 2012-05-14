@@ -2,12 +2,10 @@ package org.aksw.sparqlify.algebra.sparql.expr;
 
 import java.util.List;
 
-import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.XSDFuncOp;
 
 /**
  * A 'permissive' version of Jena's E_StrConcat, that does not

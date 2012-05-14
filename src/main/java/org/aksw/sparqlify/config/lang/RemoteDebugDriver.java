@@ -1,16 +1,10 @@
 package org.aksw.sparqlify.config.lang;
 
-import java.io.FileReader;
-
-import org.aksw.sparqlify.config.lang.SparqlifyConfigLexer;
-import org.aksw.sparqlify.config.lang.SparqlifyConfigParser;
-import org.aksw.sparqlify.config.lang.SparqlifyConfigTree;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.antlr.stringtemplate.StringTemplateGroup;
 
 public class RemoteDebugDriver {
 	public static void main(String[] args) throws Exception {

@@ -6,7 +6,6 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
-import org.aksw.sparqlify.algebra.sql.exprs.S_LessThan;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalOr;
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
 import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.E_LogicalOr;

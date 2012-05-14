@@ -6,12 +6,10 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode;
 
 /**
  * Compute a hash for an expression based on their structure and

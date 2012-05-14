@@ -6,11 +6,9 @@ import java.util.Set;
 
 import org.aksw.sparqlify.restriction.Restriction;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
  * A clause with restrictions derived for the variables

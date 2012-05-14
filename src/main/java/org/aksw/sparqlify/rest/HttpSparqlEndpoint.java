@@ -7,13 +7,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.commons.util.strings.StringUtils;
 
 import com.hp.hpl.jena.sparql.engine.http.HttpParams;
 

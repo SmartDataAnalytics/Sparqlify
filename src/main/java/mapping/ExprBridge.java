@@ -1,13 +1,9 @@
 package mapping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 
-import com.google.common.base.Joiner;
 import com.hp.hpl.jena.sparql.expr.Expr;
 
 public class ExprBridge {

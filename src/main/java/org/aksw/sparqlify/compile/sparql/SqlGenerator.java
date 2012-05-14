@@ -1,16 +1,6 @@
 package org.aksw.sparqlify.compile.sparql;
 
-import java.util.Map.Entry;
-
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlSelectBlock;
-
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
 
 public class SqlGenerator
 {

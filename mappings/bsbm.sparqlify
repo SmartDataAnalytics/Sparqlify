@@ -82,7 +82,7 @@ Create View view_product As
     ?ppn6        = typedLiteral(?propertyNum6, xsd:Integer)
 */
     ?publisher   = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     product
 
@@ -127,7 +127,7 @@ Create View view_producttype As
     ?comment     = plainLiteral(?comment)
 
     ?publisher   = uri(concat(bsbm-inst:StandardizationInstitution, ?publisher))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     producttype
 
@@ -159,7 +159,7 @@ Create View view_productfeature As
     ?comment     = plainLiteral(?comment)
 
     ?publisher   = uri(concat(bsbm-inst:StandardizationInstitution, ?publisher))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     productfeature
 
@@ -185,7 +185,7 @@ Create View view_producer As
     ?homepage    = uri(?homepage)
     ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
     ?publisher   = uri(concat(bsbm-inst:dataFromProducer, ?nr, "/Producer", ?nr))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     producer
 
@@ -211,7 +211,7 @@ Create View view_vendor As
     ?homepage    = uri(?homepage)
     ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
     ?publisher   = uri(concat(bsbm-inst:dataFromVendor, ?nr, "/Vendor", ?nr))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     vendor
 
@@ -236,12 +236,12 @@ Create View view_offer As
     ?product     = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
     ?vendor      = uri(concat(bsbm-inst:dataFromVendor, ?vendor, "/Vendor", ?vendor))
     ?price       = typedLiteral(?price, bsbm:USD)    
-    ?validFrom   = typedLiteral(?validFrom, xsd:date)
-    ?validTo     = typedLiteral(?validTo, xsd:date)    
+    ?validFrom   = typedLiteral(?validFrom, xsd:dateTime)
+    ?validTo     = typedLiteral(?validTo, xsd:dateTime)    
     ?deliveryDays= typedLiteral(?deliveryDays, xsd:Integer)
     ?offerWebpage= uri(concat("http://vendor", ?vendor, ".com/offers/Offer", ?nr))
     ?publisher   = uri(concat(bsbm-inst:dataFromVendor, ?vendor, "/Vendor", ?vendor))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     offer
 
@@ -261,7 +261,7 @@ Create View view_person As
     ?mbox        = plainLiteral(?mbox_sha1sum)
     ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
     ?publisher   = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     person
 
@@ -288,7 +288,7 @@ Create View view_review As
     ?s           = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Review", ?nr))
     ?product     = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?product))    
     ?reviewer    = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Reviewer", ?person))
-    ?date        = typedLiteral(?reviewDate, xsd:date)
+    ?date        = typedLiteral(?reviewDate, xsd:dateTime)
     ?title       = plainLiteral(?title, ?lang)
     ?text        = plainLiteral(?text, ?lang)
     ?rating1     = typedLiteral(?rating1, xsd:int)
@@ -296,7 +296,7 @@ Create View view_review As
     ?rating3     = typedLiteral(?rating3, xsd:int)
     ?rating4     = typedLiteral(?rating4, xsd:int)
     ?publisher   = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/RatingSite", ?publisher))
-    ?publishDate = typedLiteral(?publishDate, xsd:date)
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From
     [[SELECT *, upper(language) lang FROM review]]
 

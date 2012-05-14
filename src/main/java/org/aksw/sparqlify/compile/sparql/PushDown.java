@@ -14,7 +14,6 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_GeographyFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.E_GeomFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.E_Intersects;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sparql.expr.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;

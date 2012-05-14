@@ -1,9 +1,5 @@
 package mapping;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Set;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 

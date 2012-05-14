@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
 import org.aksw.commons.jena.util.QuadUtils;
-import org.aksw.commons.sparql.core.SparqlEndpoint;
 
 import sparql.DnfUtils;
 import sparql.FilterCompiler;
@@ -48,7 +47,7 @@ public class IncrementalQueryUpdateManager
 	Set<QuadFilter> quadFilters = new HashSet<QuadFilter>();
 	
 	
-	private SparqlEndpoint sparqlEndpoint;
+	private ModelSparqlEndpoint sparqlEndpoint;
 	private Query query;
 	
 	//private Set<Quad> dirtyQuads = new HashSet<Quad>();
@@ -85,7 +84,7 @@ public class IncrementalQueryUpdateManager
 	 * @return
 	 */
 	public boolean doesExist(Quad quad) {
-		return sparqlEndpoint.executeAsk(FilterCompiler.askForQuad(quad));
+		return sparqlEndpoint.createQueryExecution(FilterCompiler.askForQuad(quad)).execAsk();
 	}
 	
 	public ResultSet processQuads(Iterable<Quad> quads)
@@ -138,7 +137,7 @@ public class IncrementalQueryUpdateManager
 		qs = qs.substring(0, hackPos) + filter + "}";
 		
 		
-		ResultSet rs = sparqlEndpoint.executeSelect(qs);
+		ResultSet rs = sparqlEndpoint.createQueryExecution(qs).execSelect();
 		return rs;
 	}
 	
@@ -232,7 +231,7 @@ public class IncrementalQueryUpdateManager
 		diff.remove(quad);
 	}
 
-	public IncrementalQueryUpdateManager(String queryString, SparqlEndpoint sparqlEndpoint)
+	public IncrementalQueryUpdateManager(String queryString, ModelSparqlEndpoint sparqlEndpoint)
 		throws SQLException
 	{		
 		this.sparqlEndpoint = sparqlEndpoint;
@@ -322,10 +321,10 @@ public class IncrementalQueryUpdateManager
 	
 	
 	// TODO The incemental update manager is separate from the view
-	public static void sparqlIntoView(SparqlEndpoint sparqlEndpoint, String queryString, ViewTable viewTable)
+	public static void sparqlIntoView(ModelSparqlEndpoint sparqlEndpoint, String queryString, ViewTable viewTable)
 		throws SQLException
 	{
-		ResultSet rs = sparqlEndpoint.executeSelect(queryString);
+		ResultSet rs = sparqlEndpoint.createQueryExecution(queryString).execSelect();
 		while(rs.hasNext()) {
 			Binding binding = rs.nextBinding();
 			

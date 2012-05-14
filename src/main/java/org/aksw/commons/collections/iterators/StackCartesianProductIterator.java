@@ -1,10 +1,8 @@
 package org.aksw.commons.collections.iterators;
 
-import java.awt.Adjustable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
 

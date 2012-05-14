@@ -3,7 +3,6 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 
 import com.hp.hpl.jena.sparql.expr.Expr;

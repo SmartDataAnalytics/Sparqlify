@@ -7,7 +7,6 @@ import java.util.List;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprFunction0;
@@ -15,11 +14,9 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction1;
 import com.hp.hpl.jena.sparql.expr.ExprFunction2;
 import com.hp.hpl.jena.sparql.expr.ExprFunction3;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
-import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueDecimal;
 
 
 public class ExprCopy {

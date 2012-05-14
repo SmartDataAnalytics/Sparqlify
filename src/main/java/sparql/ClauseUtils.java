@@ -1,10 +1,7 @@
 package sparql;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.aksw.sparqlify.database.Clause;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.BindingRoot;

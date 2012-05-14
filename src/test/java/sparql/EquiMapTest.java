@@ -3,9 +3,9 @@ package sparql;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
-
 import junit.framework.Assert;
+
+import org.junit.Test;
 
 
 public class EquiMapTest

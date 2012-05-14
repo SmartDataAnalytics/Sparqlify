@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.jena.util.QueryUtils;
-import org.aksw.commons.sparql.core.SparqlEndpoint;
 import org.aksw.commons.util.reflect.MultiMethod;
 
 import com.hp.hpl.jena.graph.Graph;
@@ -40,11 +39,11 @@ public class UpdateGraph
 	}
 
 
-	private SparqlEndpoint endpoint;
+	private ModelSparqlEndpoint endpoint;
 	
 	private int batchSize = 128;
 	
-	public UpdateGraph(SparqlEndpoint endpoint)
+	public UpdateGraph(ModelSparqlEndpoint endpoint)
 	{
 		this.endpoint = endpoint;
 	}
@@ -170,7 +169,7 @@ public class UpdateGraph
 		String queryStr = query.toString();
 		
 		// TODO Limit and offset...
-		ResultSet rs = endpoint.executeSelect(queryStr);
+		ResultSet rs = endpoint.createQueryExecution(queryStr).execSelect();
 	
 		Set<Quad> inserts = new HashSet<Quad>();
 		Set<Quad> deletes = new HashSet<Quad>();

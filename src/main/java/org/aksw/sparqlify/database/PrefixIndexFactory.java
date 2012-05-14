@@ -1,7 +1,5 @@
 package org.aksw.sparqlify.database;
 
-import org.aksw.commons.factory.Factory1;
-import org.apache.poi.hssf.record.formula.functions.T;
 
 /*
 interface IndexFactory

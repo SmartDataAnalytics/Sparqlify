@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.database;
 
 import java.util.AbstractSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;

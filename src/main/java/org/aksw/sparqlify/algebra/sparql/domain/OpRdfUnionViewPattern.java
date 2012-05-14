@@ -3,7 +3,6 @@ package org.aksw.sparqlify.algebra.sparql.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.aksw.sparqlify.core.RdfViewConjunction;
 import org.openjena.atlas.io.IndentedWriter;
 

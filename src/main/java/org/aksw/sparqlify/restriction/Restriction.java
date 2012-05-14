@@ -3,8 +3,6 @@ package org.aksw.sparqlify.restriction;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.apache.commons.lang.NotImplementedException;
 

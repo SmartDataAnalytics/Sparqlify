@@ -3,7 +3,6 @@ package org.aksw.sparqlify.rest;
 import java.lang.reflect.Type;
 
 import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;

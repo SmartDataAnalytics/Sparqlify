@@ -1,8 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import java.util.Arrays;
 import java.util.List;
-
-import scala.actors.threadpool.Arrays;
 
 public class SqlJoinN
 	extends SqlNodeBaseN

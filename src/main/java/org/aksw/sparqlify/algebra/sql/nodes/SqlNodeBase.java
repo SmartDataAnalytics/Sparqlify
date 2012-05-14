@@ -1,9 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

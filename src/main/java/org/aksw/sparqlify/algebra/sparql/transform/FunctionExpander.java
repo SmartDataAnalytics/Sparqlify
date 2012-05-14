@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.hp.hpl.jena.sparql.expr.E_Concat;
 import com.hp.hpl.jena.sparql.expr.E_Function;
 import com.hp.hpl.jena.sparql.expr.E_StrDatatype;
 import com.hp.hpl.jena.sparql.expr.Expr;

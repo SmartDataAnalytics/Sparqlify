@@ -5,7 +5,6 @@ import java.net.URLDecoder;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionBase1;
-import com.hp.hpl.jena.sparql.function.FunctionBase4;
 
 /**
  * The opposite of the Sparql standards' "encode_for_uri" (right now its my UrlEncode):

@@ -11,7 +11,6 @@ import org.aksw.sparqlify.expr.util.ExprUtils;
 
 import sparql.ClauseUtils;
 import sparql.CnfUtils;
-import sparql.DnfUtils;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.algebra.Op;

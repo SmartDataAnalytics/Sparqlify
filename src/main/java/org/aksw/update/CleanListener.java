@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.commons.collections.CacheSet;
-import org.aksw.commons.sparql.core.SparqlEndpoint;
 
 import sparql.FilterCompiler;
 
@@ -37,10 +36,10 @@ public class CleanListener
 	private Set<Quad> verifyDeletes = new HashSet<Quad>();
 
 	
-	private SparqlEndpoint endpoint;
+	private ModelSparqlEndpoint endpoint;
 	
 	
-	public CleanListener(SparqlEndpoint endpoint)
+	public CleanListener(ModelSparqlEndpoint endpoint)
 	{
 		this.endpoint = endpoint;
 	}
@@ -51,7 +50,7 @@ public class CleanListener
 		for(Quad quad : quads) {
 			String askQuery = FilterCompiler.askForQuad(quad);
 			System.out.println(askQuery);
-			boolean exists = endpoint.executeAsk(askQuery);
+			boolean exists = endpoint.createQueryExecution(askQuery).execAsk();
 
 			/*
 			 TODO Can we set the caches here? I guess not

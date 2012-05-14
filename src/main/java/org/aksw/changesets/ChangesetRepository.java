@@ -3,9 +3,9 @@ package org.aksw.changesets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.aksw.commons.collections.diff.Diff;
 import org.aksw.commons.collections.diff.IDiff;

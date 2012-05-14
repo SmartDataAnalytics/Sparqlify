@@ -6,7 +6,6 @@ import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.OpVisitor;
 import com.hp.hpl.jena.sparql.algebra.Transform;
 import com.hp.hpl.jena.sparql.algebra.op.Op1;
-import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 
 public class OpFilterIndexed

@@ -1,11 +1,10 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SqlFunctionDefinition;
 import org.apache.commons.lang.NotImplementedException;
-
-import scala.actors.threadpool.Arrays;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionN;

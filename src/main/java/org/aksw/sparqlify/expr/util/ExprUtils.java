@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.expr.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -9,8 +10,6 @@ import java.util.Set;
 import org.aksw.commons.collections.IterableCollection;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.Pair;
-
-import scala.actors.threadpool.Arrays;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;

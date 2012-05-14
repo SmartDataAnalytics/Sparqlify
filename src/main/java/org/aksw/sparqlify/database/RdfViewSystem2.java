@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import sparql.TwoWayBinding;
 
-import com.google.common.base.Joiner;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Algebra;

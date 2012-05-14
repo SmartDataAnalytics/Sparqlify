@@ -1,13 +1,5 @@
 package mapping;
 
-import java.util.Arrays;
-
-import org.aksw.commons.util.reflect.MultiMethod;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
-import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 
 /*
 public class AggregatorCopy {

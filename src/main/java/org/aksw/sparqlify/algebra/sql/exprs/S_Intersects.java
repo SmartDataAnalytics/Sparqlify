@@ -2,7 +2,6 @@ package org.aksw.sparqlify.algebra.sql.exprs;
 
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatypeGeography;
 
 /**
  *

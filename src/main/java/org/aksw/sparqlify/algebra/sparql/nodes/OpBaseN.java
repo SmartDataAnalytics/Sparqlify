@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
-
 
 public class OpBaseN {
 	private List<Op> elements = new ArrayList<Op>();
