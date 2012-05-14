@@ -20,7 +20,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<spring.version>2.5.6</spring.version>
-		<aksw.commons.version>0.9</aksw.commons.version>
+		<aksw.commons.version>0.3</aksw.commons.version>
 	</properties>
 
 
