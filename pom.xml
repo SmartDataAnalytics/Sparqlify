@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>sparqlify</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>Sparqlify SPARQL-&gt;SQL rewriter</name>
 	<url>http://aksw.org/Projects/Sparqlify</url>
 
@@ -29,7 +29,7 @@
 		<connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
 		<!-- developerConnection></developerConnection -->
 		<!-- url>https://my-project.googlecode.com/svn</url -->
-		<tag>sparqlify-0.1</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 
