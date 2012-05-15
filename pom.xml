@@ -1,9 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.aksw.commons</groupId>
+	<groupId>org.aksw</groupId>
 	<artifactId>sparqlify</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
+	<name>Sparqlify SPARQL->SQL rewriter</name>
+	<url>http://aksw.org/Projects/Sparqlify</url>
+
 
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
@@ -20,41 +23,76 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<spring.version>2.5.6</spring.version>
-		<aksw.commons.version>0.3</aksw.commons.version>
+		<aksw.commons.version>0.4</aksw.commons.version>
 	</properties>
+
+	<scm>
+		<connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
+		<!-- developerConnection></developerConnection -->
+		<!-- url>https://my-project.googlecode.com/svn</url -->
+		<tag>HEAD</tag>
+	</scm>
 
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<configuration>
-					<systemProperties>
-						<systemProperty>
-							<name>jetty.port</name>
-							<value>8080</value>
-						</systemProperty>
-					</systemProperties>
-					<reload>manual</reload>
-				</configuration>
-			</plugin>
+
+			<!-- That's a sledge hammer solution - but at least it works ... -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.3</version>
 				<configuration>
-					<skipTests>true</skipTests>
+					<arguments>-P!source-artifacts</arguments>
+					<useReleaseProfile>false</useReleaseProfile>
+					<goals>-Dmaven.test.skip=true deploy</goals>
 				</configuration>
 			</plugin>
+
+
+			<!--Maven Compiler Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
+					<!--We use 1.6 -->
+					<source>${compiler.version}</source>
+					<target>${compiler.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr3-maven-plugin</artifactId>
@@ -70,17 +108,46 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<name>jetty.port</name>
+							<value>8080</value>
+						</systemProperty>
+					</systemProperties>
+					<reload>manual</reload>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
 		<repository>
-			<id>maven.aksw.org/internal</id>
+			<id>maven.aksw.internal</id>
 			<name>University Leipzig, AKSW Maven2 Internal Repository</name>
 			<url>http://maven.aksw.org/repository/internal/</url>
 		</repository>
 
 		<repository>
-			<id>maven.aksw.org/snapshots</id>
+			<id>maven.aksw.snapshots</id>
 			<name>University Leipzig, AKSW Maven2 Snapshot Repository</name>
 			<url>http://maven.aksw.org/repository/snapshots/</url>
 		</repository>
@@ -136,30 +203,30 @@
 			<artifactId>bonecp</artifactId>
 			<version>0.7.1.RELEASE</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.jamonapi</groupId> -->
-<!-- 			<artifactId>jamon</artifactId> -->
-<!-- 			<version>2.7</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>net.sourceforge.secondstring</groupId> -->
-<!-- 			<artifactId>secondstring</artifactId> -->
-<!-- 			<version>20060615</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>log4j</groupId> -->
-<!-- 			<artifactId>log4j</artifactId> -->
-<!-- 			<version>1.2.14</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.mod4j.org.apache.commons</groupId> -->
-<!-- 			<artifactId>cli</artifactId> -->
-<!-- 			<version>1.0.0</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.jamonapi</groupId> -->
+		<!-- <artifactId>jamon</artifactId> -->
+		<!-- <version>2.7</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>net.sourceforge.secondstring</groupId> -->
+		<!-- <artifactId>secondstring</artifactId> -->
+		<!-- <version>20060615</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mod4j.org.apache.commons</groupId>
+			<artifactId>cli</artifactId>
+			<version>1.0.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.collections</groupId>
 			<artifactId>collections-generic</artifactId>
@@ -167,27 +234,27 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.ini4j</groupId> -->
-<!-- 			<artifactId>ini4j</artifactId> -->
-<!-- 			<version>0.5.1</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>javax.mail</groupId> -->
-<!-- 			<artifactId>mail</artifactId> -->
-<!-- 			<version>1.4.1</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.codehaus.groovy</groupId> -->
-<!-- 			<artifactId>groovy</artifactId> -->
-<!-- 			<version>1.7.2</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.ini4j</groupId> -->
+		<!-- <artifactId>ini4j</artifactId> -->
+		<!-- <version>0.5.1</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>javax.mail</groupId> -->
+		<!-- <artifactId>mail</artifactId> -->
+		<!-- <version>1.4.1</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.codehaus.groovy</groupId> -->
+		<!-- <artifactId>groovy</artifactId> -->
+		<!-- <version>1.7.2</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -202,14 +269,14 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		
-<!-- 		<dependency> -->
-<!-- 			<groupId>commons-compress</groupId> -->
-<!-- 			<artifactId>commons-compress</artifactId> -->
-<!-- 			<version>20050911</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>commons-compress</groupId> -->
+		<!-- <artifactId>commons-compress</artifactId> -->
+		<!-- <version>20050911</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -231,73 +298,47 @@
 			<version>3.2.1</version>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.hsqldb</groupId> -->
-<!-- 			<artifactId>hsqldb</artifactId> -->
-<!-- 			<version>2.0.0</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.thoughtworks.xstream</groupId> -->
-<!-- 			<artifactId>xstream</artifactId> -->
-<!-- 			<version>1.3.1</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
-		
+		<!-- <dependency> -->
+		<!-- <groupId>org.hsqldb</groupId> -->
+		<!-- <artifactId>hsqldb</artifactId> -->
+		<!-- <version>2.0.0</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.thoughtworks.xstream</groupId> -->
+		<!-- <artifactId>xstream</artifactId> -->
+		<!-- <version>1.3.1</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.apache.derby</groupId> -->
-<!-- 			<artifactId>derby</artifactId> -->
-<!-- 			<version>10.6.1.0</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.derby</groupId> -->
+		<!-- <artifactId>derby</artifactId> -->
+		<!-- <version>10.6.1.0</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
 
 
 		<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-top</artifactId> 
 			<version>0-incubating</version> <scope>compile</scope> </dependency> -->
 
-<!--
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.10.0</version>
-			<scope>runtime</scope>
-		</dependency>
-			<exclusions>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
+		<!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
+			<version>2.10.0</version> <scope>runtime</scope> </dependency> <exclusions> 
+			<exclusion> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
+			</exclusion> </exclusions> -->
 
-				</exclusion>
-			</exclusions>
-  -->
-  
-  
-  		<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer version - ->
-		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-core</artifactId>
-			<version>2.7.0-incubating</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-arq</artifactId>
-			<version>2.9.0-incubating</version>
-			<scope>compile</scope>
-		</dependency>
-		-->
-		<!--
-		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-iri</artifactId>
-			<version>0.9.0-incubating</version>
-			<scope>compile</scope>
-		</dependency>
-		  -->
+
+		<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer 
+			version - -> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId> 
+			<version>2.7.0-incubating</version> <scope>compile</scope> </dependency> 
+			<dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId> 
+			<version>2.9.0-incubating</version> <scope>compile</scope> </dependency> -->
+		<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
+			<version>0.9.0-incubating</version> <scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>com.hp.hpl.jena</groupId>
 			<artifactId>sdb</artifactId>
@@ -333,15 +374,8 @@
 			<scope>compile</scope>
 		</dependency>
 
-<!--
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.16</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-  -->
+		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<version>5.1.16</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr-runtime</artifactId>
@@ -363,12 +397,28 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>c3p0</groupId> -->
-<!-- 			<artifactId>c3p0</artifactId> -->
-<!-- 			<version>0.9.1.2</version> -->
-<!-- 			<type>jar</type> -->
-<!-- 			<scope>compile</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>c3p0</groupId> -->
+		<!-- <artifactId>c3p0</artifactId> -->
+		<!-- <version>0.9.1.2</version> -->
+		<!-- <type>jar</type> -->
+		<!-- <scope>compile</scope> -->
+		<!-- </dependency> -->
 	</dependencies>
+
+
+	<distributionManagement>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<name>AKSW Internal Release Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven.aksw.snapshots</id>
+			<name>AKSW Snapshot Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
 </project>

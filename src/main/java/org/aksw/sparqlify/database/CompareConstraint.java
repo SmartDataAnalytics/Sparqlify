@@ -1,8 +1,11 @@
 package org.aksw.sparqlify.database;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.openrdf.query.algebra.Compare.CompareOp;
 
+interface CompareOp
+{
+	
+}
 
 public class CompareConstraint
 	implements Constraint
