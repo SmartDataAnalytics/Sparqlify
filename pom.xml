@@ -22,7 +22,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<spring.version>2.5.6</spring.version>
-		<aksw.commons.version>0.4</aksw.commons.version>
+		<aksw.commons.version>0.5-SNAPSHOT</aksw.commons.version>
 	</properties>
 
 	<scm>
@@ -182,12 +182,6 @@
 		<dependency>
 			<groupId>org.aksw.commons</groupId>
 			<artifactId>sparql</artifactId>
-			<version>${aksw.commons.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.aksw.commons</groupId>
-			<artifactId>model</artifactId>
 			<version>${aksw.commons.version}</version>
 			<scope>compile</scope>
 		</dependency>
