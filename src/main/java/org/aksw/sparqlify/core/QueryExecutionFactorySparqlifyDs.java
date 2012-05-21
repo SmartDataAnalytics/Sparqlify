@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -31,9 +32,26 @@ public class QueryExecutionFactorySparqlifyDs
 	public QueryExecutionStreaming createQueryExecution(Query query) {
 		//System.out.println(query);
 		
+		Connection conn = null;
 		try {
-			return new QueryExecutionSparqlify(system, dataSource.getConnection(), true, query, this);
+			conn = dataSource.getConnection();
+			// Turning off auto commit is a prerequisite for streaming result sets
+			// (at least on PostgreSQL)
+			conn.setAutoCommit(false);
+
+			QueryExecutionStreaming result = new QueryExecutionSparqlify(system, conn, true, query, this);
+			
+			conn.commit();
+			
+			return result;
 		} catch (SQLException e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+				} catch(SQLException f) {
+					throw new RuntimeException(f);
+				}
+			}
 			throw new RuntimeException(e);
 		}
 	}
