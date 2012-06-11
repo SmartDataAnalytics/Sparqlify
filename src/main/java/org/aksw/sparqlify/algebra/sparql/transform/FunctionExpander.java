@@ -326,8 +326,8 @@ public class FunctionExpander {
 				
 					// Create a copy rather than doing it in-place. Might spare me some headache in a few months.
 					List<String> tmp = new ArrayList<String>(args);
-					tmp.set(2, "(" + tmp.get(2) + ")" + " * 1000.0");
-					tmp.add("false"); // Use spheroid - unfortunately neither true nor false mimics virtuosos behavior exactly :(
+					//tmp.set(2, "(" + tmp.get(2) + ")" + " / 1000.0");
+					//tmp.add("false"); // Use spheroid - unfortunately neither true nor false mimics virtuosos behavior exactly :(
 					return function.getFuncName() + "(" + Joiner.on(", ").join(tmp) +  ")";
 				}
 			}, "boolean", false, "geometry", "geometry", "float");
@@ -346,7 +346,7 @@ public class FunctionExpander {
 				
 				@Override
 				public String transform(S_Function function, List<String> args) {				
-					return function.getFuncName() + "(" + Joiner.on(", ").join(args) +  ")::geometry";
+					return "ST_SetSRID(" + function.getFuncName() + "(" + Joiner.on(", ").join(args) +  ")::geometry" + ", 4326)";
 				}
 			},
 					
