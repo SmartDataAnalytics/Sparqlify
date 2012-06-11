@@ -9,7 +9,8 @@
 Prefix spy:<http://aksw.org/sparqlify/>
 Prefix ogc:<http://www.opengis.net/rdf#>
 
-Prefix dc:<http://purl.org/dc/elements/1.1/>
+#Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix dcterms:<http://purl.org/dc/terms/>
 Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
 Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
@@ -110,8 +111,8 @@ Create View lgd_nodes As
 	    ?n a lgdm:Node .
 	    ?n a spatial:Feature .
 	    ?n lgdo:version ?v .
-	    ?n dc:contributor ?u .
-		?n dc:modified ?d .
+	    ?n dcterms:contributor ?u .
+		?n dcterms:modified ?d .
 		?n lgdo:changeset ?c .
 		?n geom:geometry ?g .
 		?n wgs:long ?xx .
@@ -252,8 +253,8 @@ Create View lgd_ways As
 	    ?w a lgdm:Way .
 	    ?w a spatial:Feature .
 	    ?w lgdo:version ?v .
-	    ?w dc:contributor ?u .
-		?w dc:modified ?d .
+	    ?w dcterms:contributor ?u .
+		?w dcterms:modified ?d .
 		?w lgdo:changeset ?c .
 		?w geom:geometry ?g .
 	}
@@ -438,8 +439,8 @@ Create View lgd_relations As
 	    ?s a lgdm:Relation .
 	    ?s a spatial:Feature .
 	    ?s lgdo:version ?v .
-	    ?s dc:contributor ?u .
-		?s dc:modified ?d .
+	    ?s dcterms:contributor ?u .
+		?s dcterms:modified ?d .
 		?s lgdo:changeset ?c .
 		//?w geom:geometry ?g .
 		
