@@ -115,8 +115,14 @@ Create View lgd_nodes As
 		?n dcterms:modified ?d .
 		?n lgdo:changeset ?c .
 		?n geom:geometry ?g .
+		
+		?g a geom:Geometry .
+		?g ogc:asWKT ?o .
+		
 		?n wgs:long ?xx .
 		?n wgs:lat ?yy .
+		
+		?n owl:sameAs ?gadm .
 	}
 	With
 		?n = uri(concat(lgd:node, ?id))
@@ -125,13 +131,18 @@ Create View lgd_nodes As
 		?d = typedLiteral(?tstamp, xsd:dateTime)
 		?c = typedLiteral(?changeset_id, xsd:int)
 		?g = uri(concat(lgd-geom:node, ?id))
+		?o = typedLiteral(?geom, ogc:WKTLiteral)
 		//?g = typedLiteral(?geom, virtrdf:geometry)
 		?xx = typedLiteral(?x, xsd:double)
 		?yy = typedLiteral(?y, xsd:double)
+		
+		?gadm = uri(concat("http://gadm.geovocab.org/services/withinRegion?lat=", ?y_text , "&long=", ?x_text, "#point"))
+		
 	From
-		[[SELECT *, ST_X(geom::geometry) x, ST_Y(geom::geometry) y FROM nodes]];
+		[[SELECT *, ST_X(geom::geometry) x, ST_Y(geom::geometry) y, ST_X(geom::geometry)::float4::text x_text, ST_Y(geom::geometry)::float4::text y_text FROM nodes]];
 
 
+/*
 Create view lgd_sameAs_gadm As
     Construct {		
 		?n owl:sameAs ?gadm .
@@ -141,6 +152,7 @@ Create view lgd_sameAs_gadm As
 		?gadm = uri(concat("http://gadm.geovocab.org/services/withinRegion?lat=", ?y , "&long=", ?x, "#point"))
 	From
 		[[SELECT id, ST_X(geom::geometry)::float4::text x, ST_Y(geom::geometry)::float4::text y FROM nodes]];
+
 
 Create View lgd_node_geometries As
     Construct {
@@ -152,7 +164,7 @@ Create View lgd_node_geometries As
         ?o = typedLiteral(?geom, ogc:WKTLiteral)
     From
         nodes;
-
+*/
 
 Create View lgd_node_tags_resource_k As
 	Construct {
@@ -269,6 +281,32 @@ Create View lgd_ways As
 	From
 		ways; 
 
+Create View lgd_ways_linestrings As
+    Construct {
+        ?w a geom:Geometry . 
+        ?w ogc:asWKT ?g .
+    }
+    With
+		//?w = uri(concat(lgd:way, ?id))
+		?w = uri(concat(lgd-geom:way, ?id))
+		?g = typedLiteral(?linestring, ogc:WKTLiteral)
+	From
+		[[SELECT id, linestring FROM ways a WHERE a.id NOT IN (SELECT way_id FROM simple_polys)]];
+    
+
+Create View ways_polygons As
+	Construct {
+	    ?w a geom:Geometry .
+		?w ogc:asWKT ?g .
+	}
+	With
+		//?w = uri(concat(lgd:way, ?way_id))
+		?w = uri(concat(lgd-geom:way, ?way_id))
+		?g = typedLiteral(?polygon, ogc:WKTLiteral)
+	From
+		simple_polys;
+	
+
 
 /*
 Create View view_way_to_nodes As
@@ -313,33 +351,6 @@ Create View view_waynodes As
 		?n = uri(concat(lgd-geom:node, ?node_id))  
 	From
 		way_nodes;
-
-
-Create View lgd_ways_linestrings As
-    Construct {
-        ?w a geom:Geometry . 
-        ?w ogc:asWKT ?g .
-    }
-    With
-		//?w = uri(concat(lgd:way, ?id))
-		?w = uri(concat(lgd-geom:way, ?id))
-		?g = typedLiteral(?linestring, ogc:WKTLiteral)
-	From
-		[[SELECT id, linestring FROM ways a WHERE a.id NOT IN (SELECT way_id FROM simple_polys)]];
-    
-
-Create View ways_polygons As
-	Construct {
-	    ?w a geom:Geometry .
-		?w ogc:asWKT ?g .
-	}
-	With
-		//?w = uri(concat(lgd:way, ?way_id))
-		?w = uri(concat(lgd-geom:way, ?way_id))
-		?g = typedLiteral(?polygon, ogc:WKTLiteral)
-	From
-		simple_polys;
-	
 
 
 Create View lgd_way_tags_resource_k As
