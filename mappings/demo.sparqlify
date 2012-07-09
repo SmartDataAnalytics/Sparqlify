@@ -1,0 +1,56 @@
+Prefix spy:<http://aksw.org/sparqlify/>
+Prefix ogc:<http://www.opengis.net/rdf#>
+
+Prefix dcterms:<http://purl.org/dc/terms/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+
+Prefix lgd:<http://linkedgeodata.org/triplify/>
+Prefix lgd-geom:<http://linkedgeodata.org/geometry/>
+Prefix lgdo:<http://linkedgeodata.org/ontology/>
+Prefix lgdm:<http://linkedgeodata.org/meta/>
+
+Prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+Prefix spatial:<http://geovocab.org/spatial#>
+Prefix geom:<http://geovocab.org/geometry#>
+
+
+
+Create View pois As
+    Construct {
+        ?s a ?t .
+        ?s geom:geometry ?geo .
+    }
+    With
+        ?s = uri(concat("http://ex.org/", ?id))
+        ?t =  uri(?type)
+        ?geo = typedLiteral(?geom, ogc:WKTLiteral)
+    From
+        pois;
+
+
+Create View labels As
+    Construct {
+        ?s rdfs:label ?l .
+    }
+    With
+        ?s = uri(?resource)
+        ?l =  plainLiteral(?label, ?language)
+    Constrain
+        ?s prefix "http://linkedgeodata.org/ontology/"
+    From
+        resource_labels;
+
+
+Create View static_triples As
+    Construct {
+        lgdo:Bakery a owl:Class .
+        lgdo:School a owl:Class .
+        lgdo:Pub a owl:Class .
+    };
+
+
