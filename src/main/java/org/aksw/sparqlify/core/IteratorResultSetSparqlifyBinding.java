@@ -53,6 +53,12 @@ public class IteratorResultSetSparqlifyBinding
 		//NodeExprSubstitutor substitutor = new NodeExprSubstitutor(sparqlVarMap);
 		BindingMap binding = new BindingHashMap();
 
+		
+		/*
+		for(int i = 1; i <= meta.getColumnCount(); ++i) {
+			binding.add(Var.alloc("" + i), node)
+		}*/	
+		
 		// Substitute the variables in the expressions
 		for(int i = 1; i <= meta.getColumnCount(); ++i) {
 			String colName = meta.getColumnName(i);
@@ -64,6 +70,12 @@ public class IteratorResultSetSparqlifyBinding
 			}
 			
 			Node node = nodeValue.asNode();
+			
+			
+			// FIXME We also add bindings that enable us to reference the columns by their index
+			// However, we indexes and column-names are in the same namespace here, so there might be clashes
+			binding.add(Var.alloc("" + i), node);
+			
 			binding.add(Var.alloc(colName), node);
 		}
 		

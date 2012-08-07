@@ -390,6 +390,28 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		
+		
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
+		</dependency>
+            
+		<dependency>
+			<groupId>net.sourceforge.jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+			<version>2.6.12</version>
+		</dependency>
+		
+		<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV files  -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.168</version>
+		</dependency>
+            
+		
 		<!-- <dependency> -->
 		<!-- <groupId>c3p0</groupId> -->
 		<!-- <artifactId>c3p0</artifactId> -->

@@ -220,7 +220,7 @@ memberAccess
 
 viewTemplateDefStmt
     : CREATE VIEW TEMPLATE NAME AS CONSTRUCT viewTemplateDef ';'?
-    	-> ^(viewTemplateDef)
+    	-> viewTemplateDef
     ;
 
 viewTemplateDef

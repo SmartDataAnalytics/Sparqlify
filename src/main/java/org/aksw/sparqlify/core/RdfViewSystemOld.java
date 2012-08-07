@@ -235,6 +235,15 @@ public class RdfViewSystemOld
 {
 	private static final Logger logger = LoggerFactory.getLogger(RdfViewSystemOld.class);
 
+	public static void initSparqlifyFunctions() {
+		FunctionRegistry.get().put("http://aksw.org/sparqlify/rdfTerm", RdfTerm.class);
+
+		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlDecode", UrlDecode.class);
+
+		// Jena does not yet seem to have this strangely named encode_for_uri function
+		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlEncode", UrlEncode.class);		
+	}
+	
 	/**
 	 * Register core functions.
 	 * 
@@ -242,13 +251,7 @@ public class RdfViewSystemOld
 	 * 
 	 */
 	static {
-		FunctionRegistry.get().put("http://aksw.org/sparqlify/rdfTerm", RdfTerm.class);
-
-		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlDecode", UrlDecode.class);
-
-		// Jena does not yet seem to have this strangely named encode_for_uri function
-		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlEncode", UrlEncode.class);
-
+		initSparqlifyFunctions();
 	}
 	
 	private DataSource dataSource;

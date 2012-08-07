@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.hpl.jena.sparql.core.BasicPattern;
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.core.VarExprList;
+import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.syntax.Template;
 
@@ -49,6 +52,31 @@ public class ViewTemplateDefinition {
 	public List<Expr> getVarBindings() {
 		return varBindings;
 	}
+	
+	public VarExprList getVarExprList() {
+		VarExprList result = new VarExprList();
+		
+		 for(Expr item : this.getVarBindings()) {
+//			 if(!(item instanceof E_Equals)) {
+//				 throw new RuntimeException("Expected E_Equals");
+//			 }
+			 
+			 E_Equals e = (E_Equals)item;
+			 Expr left = e.getArg1();
+			 if(!left.isVariable()) {
+				 throw new RuntimeException("Variable expected, instead got: " + left);
+			 }
+			 
+			 Var var = left.asVar();
+			 Expr expr = e.getArg2();
+			 
+			 result.add(var, expr);
+		 }
+		
+		 return result;
+	}
+	
+	
 	public void setVarBindings(List<Expr> varBindings) {
 		this.varBindings = varBindings;
 	}

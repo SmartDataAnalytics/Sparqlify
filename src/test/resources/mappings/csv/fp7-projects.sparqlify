@@ -1,0 +1,14 @@
+
+
+Prefix xxx:<http://xxx.org/>
+Prefix doap:<http://usefulinc.com/ns/doap#>
+
+
+Create View Template fp7table As
+    Construct {
+        ?id a doap:Project .
+        ?id xxx:acronym ?acronym .
+    }
+    With
+        ?id = uri(concat("http://xxx.org/", ?1))
+        ?acronym = plainLiteral(?2)
