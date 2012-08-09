@@ -45,6 +45,7 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -130,6 +131,7 @@ public class CsvMapperCliMain {
 //			System.out.println(line);
 //
 //		}
+		
 
 		TemplateConfigParser parser = new TemplateConfigParser();
 
@@ -142,6 +144,8 @@ public class CsvMapperCliMain {
 		}
 
 	
+		System.out.println("Test here");
+
 		// TODO Move the method to a better place
 		RdfViewSystemOld.initSparqlifyFunctions();
 	
@@ -176,10 +180,12 @@ public class CsvMapperCliMain {
 		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);
 		ResultSetSparqlify rss = new ResultSetSparqlify(itBinding, vars, 0);
 		
-		
 
         // insertPrefixesInto(result) ;
         Template template = view.getConstructTemplate();
+        
+        System.out.println(template.getTriples());
+        
 
         Iterator<Triple> it = new ConstructIterator(template, rss);
         

@@ -33,7 +33,9 @@ public class TemplateConfigParser {
 		SparqlifyConfigParser parser = new SparqlifyConfigParser(tokens);
 		CommonTree ast = (CommonTree)parser.templateConfig().getTree();
 
-		//printAst(ast, 0);
+		
+		
+		AntlrTest.printAst(ast, 0);
 
 		SparqlifyConfigTree treeParser = new SparqlifyConfigTree(new CommonTreeNodeStream(ast));
 		TemplateConfig config = treeParser.templateConfig();

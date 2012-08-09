@@ -83,6 +83,9 @@ UNARY_NOT;
 UNARY_PLUS;
 UNARY_MINUS;
 UNARY;
+
+
+TODO;
 }
 
 @header {
@@ -554,18 +557,33 @@ constructTriples
     : triplesSameSubject ( DOT triplesSameSubject )* DOT? -> triplesSameSubject+
     ;
 
+/**
+ * FIXME I have no idea how I figured out that you can use {someTreeNodeObject} to emit custom nodes into the AST
+ * Furthermore, I am not sure how safe this dupNode() approach is (the trees need of course to be cloned!)
+ */
 triplesSameSubject
-    : varOrTerm propertyListNotEmpty[(CommonTree) $varOrTerm.tree] -> ^(TRIPLE propertyListNotEmpty)
+    : varOrTerm propertyListNotEmpty[(CommonTree) $varOrTerm.tree] -> propertyListNotEmpty
     | (t=triplesNode -> $t) (p=propertyListNotEmpty[(CommonTree) $t.tree]? -> ^(TRIPLE $triplesSameSubject $p?))
     ;
 
 propertyListNotEmpty[CommonTree subject]
-    : v=verb objectList[subject, (CommonTree) $v.tree] (SEMICOLON (v=verb objectList[subject, (CommonTree) $v.tree])?)* -> objectList+
+    : v=verb objectList[subject, (CommonTree) $v.tree] (SEMICOLON (v=verb objectList[subject, (CommonTree) $v.tree])?)* -> objectList+ // ^(TRIPLE objectList)+
+    ;
+
+objectList[CommonTree subject, CommonTree predicate]
+    : graphNode ( COMMA graphNode )* -> ^(TRIPLE ^(SUBJECT {subject.dupNode()}) ^(PREDICATE {predicate.dupNode()}) ^(OBJECT graphNode) )+
+    ;
+
+
+/*
+propertyListNotEmpty[CommonTree subject]
+    : v=verb objectList[subject, (CommonTree) $v.tree] (SEMICOLON (v=verb objectList[subject, (CommonTree) $v.tree])?)* -> ^(TRIPLE objectList)+
     ;
 
 objectList[CommonTree subject, CommonTree predicate]
     : graphNode ( COMMA graphNode )* -> (^(SUBJECT {subject}) ^(PREDICATE {predicate}) ^(OBJECT graphNode))+
     ;
+*/
 
 verb
     : varOrIRIref

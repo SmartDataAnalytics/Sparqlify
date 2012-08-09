@@ -432,7 +432,7 @@ groupGraphPatternSubCache
     ;
 
 triplesBlock
-    : ^(TRIPLES_BLOCK triplesSameSubjectPath+)
+    : ^(TRIPLES_BLOCK triplesSameSubjectPath[null]+)
     ;
 
 graphPatternNotTriples
@@ -475,7 +475,7 @@ constraint
     ;
 
 functionCall returns [Expr value]
-    : ^(FUNCTION a=iriRef ^(ARG_LIST b=argList)) { return new E_Function($a.value.toString(), $b.value); }
+    : ^(FUNCTION a=iriRef ^(ARG_LIST b=argList)) { value = new E_Function($a.value.toString(), $b.value); }
     ;
 
 // TODO Not sure if the return type is correct
@@ -493,16 +493,39 @@ expressionList returns [ExprList value]
 
 
 constructTemplate returns[Template value]
-    : ^(CONSTRUCT_TRIPLES a=constructTriples { $value = new Template(BasicPattern.wrap($a.value)); })
+    : ^(CONSTRUCT_TRIPLES a=constructTriples) { $value = new Template(BasicPattern.wrap($a.value)); }
     ;
 
 constructTriples returns [List<Triple> value]
 	@init { $value = new ArrayList<Triple>(); }
-    : triplesSameSubject[value]+
+	: triple[value]+
+    ;
+
+triple[List<Triple> triples]
+    : ^(TRIPLE ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples])) {$triples.add(new Triple($a.value, $b.value, $c.value)); }
+	;
+
+
+// TODO: Do we need this rule?
+triplesSameSubject[List<Triple> value]
+    : TODO //(^(TRIPLE objectList[value]))+
     ;
 
 
+
+
+// Object list is actually just a a single triple
+objectList[List<Triple> triples]
+	: ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples]) {$triples.add(new Triple($a.value, $b.value, $c.value)); System.out.println("Created triple: " + $triples); }
+	;
+
+
+
 /*
+triple returns [Triple value]
+    : ^(TRIPLE a=objectList) { $value = $a.value; }
+    ; 
+
 constructTemplate
     : ^(CONSTRUCT_TRIPLES constructTriples?)
     ;
@@ -510,17 +533,16 @@ constructTemplate
 constructTriples
     : triplesSameSubject[null]+
     ;
-*/
 
 triplesSameSubject[List<Triple> value]
-    : ^(TRIPLE objectList[value])
+    : ^(TRIPLE $t=objectList { $value.add($t); })
 //    | ^(TRIPLE triplesSameSubject[value] triplesSameSubject[value]?)
     ;
 
-
 objectList[Collection<Triple> triples]
-    : (^(SUBJECT a=varOrTerm?) ^(PREDICATE b=verb) ^(OBJECT c=graphNode)  {$triples.add(new Triple($a.value, $b.value, $c.value));})+
+    : ^(TRIPLE ^(SUBJECT a=varOrTerm?) ^(PREDICATE b=verb) ^(OBJECT c=graphNode)  {$triples.add(new Triple($a.value, $b.value, $c.value);})
     ;
+*/
 
 
 // FIXME Result can also be a path
@@ -530,9 +552,9 @@ verb returns [ Node value ]
     | path		  { if(true) { throw new NotImplementedException(); } }
     ;
 
-triplesSameSubjectPath
-    : ^(TRIPLE objectList[null])
-    | ^(TRIPLE triplesSameSubjectPath)
+triplesSameSubjectPath [List<Triple> value]
+    : ^(TRIPLE objectList[value])
+    | ^(TRIPLE triplesSameSubjectPath[value])
     ;
       
 path
@@ -570,14 +592,14 @@ pathOneInPropertySet
     : INVERSE? ( iriRef | A )
     ;
 	
-triplesNode
-    : ^(COLLECTION graphNode+)
-    | ^(TRIPLE objectList[null])
+triplesNode[List<Triple> triples] returns [Node value]
+    : ^(COLLECTION graphNode[triples]+)
+    | ^(TRIPLE objectList[triples])
     ;
 
-graphNode returns [Node value]
+graphNode[List<Triple> triples] returns [Node value]
     : a = varOrTerm { $value=$a.value; }
-    | triplesNode
+    | triplesNode[triples]
     ;
 
 varOrTerm returns [ Node value ]

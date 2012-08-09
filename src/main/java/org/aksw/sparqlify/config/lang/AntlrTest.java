@@ -72,7 +72,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * @author raven
  *
  */
-public class Test {
+public class AntlrTest {
 	
 	private static final Logger logger = LoggerFactory.getLogger("Parser");
 	
@@ -90,6 +90,7 @@ public class Test {
 		
 		System.out.println(p + ast.getText() + " | " + ast.getType());
 		//System.out.println(p + ast.getType() + " | " + ast.getToken() + " | " + ast.getText());
+		//System.out.println(ast.get);
 		
 		
 		for(int i = 0; i < ast.getChildCount(); ++i) {
