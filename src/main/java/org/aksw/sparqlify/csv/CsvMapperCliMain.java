@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.LogManager;
 
 import jxl.Sheet;
 import jxl.Workbook;
@@ -19,10 +20,10 @@ import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 
 import org.aksw.commons.sparql.api.core.ConstructIterator;
-import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
+import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
 import org.aksw.sparqlify.core.IteratorResultSetSparqlifyBinding;
@@ -34,7 +35,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.lang.StringUtils;
 import org.h2.tools.Csv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -95,9 +95,11 @@ public class CsvMapperCliMain {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws Exception {
+		/*
 		PropertyConfigurator.configure("log4j.properties");
 		LogManager.getLogManager().readConfiguration(
 				new FileInputStream("jdklog.properties"));
+		*/
 
 		CommandLineParser cliParser = new GnuParser();
 
@@ -116,6 +118,7 @@ public class CsvMapperCliMain {
 
 		cliOptions.addOption("c", "config", true, "Sparqlify config file");
 		cliOptions.addOption("f", "config", true, "Input data file");
+		cliOptions.addOption("v", "config", true, "View name (only needed if config contains more than one view)");
 
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
 
@@ -123,6 +126,8 @@ public class CsvMapperCliMain {
 
 		File dataFile = extractFile(commandLine, "f");
 
+		String viewName = StringUtils.trim(commandLine.getOptionValue("v"));
+		
 		// Iterator<List<String>> it = getCsvIterator(dataFile, "\t");
 
 //		while (it.hasNext()) {
@@ -144,7 +149,7 @@ public class CsvMapperCliMain {
 		}
 
 	
-		System.out.println("Test here");
+		//System.out.println("Test here");
 
 		// TODO Move the method to a better place
 		RdfViewSystemOld.initSparqlifyFunctions();
@@ -158,8 +163,41 @@ public class CsvMapperCliMain {
 		}
 		*/
 
+		List<NamedViewTemplateDefinition> views = config.getDefinitions();
 		
-		ViewTemplateDefinition view = config.getDefinitions().get(0);
+		if(views.isEmpty()) {
+			logger.warn("No view definitions found");
+		}
+		
+		// Index the views by name
+		Map<String, NamedViewTemplateDefinition> nameToView = new HashMap<String, NamedViewTemplateDefinition>();
+		for(NamedViewTemplateDefinition view : views) {
+			String name = view.getName();
+			
+			if(nameToView.containsKey(name)) {
+				logger.warn("Omitting duplicate view definition: " + name);
+			}
+			
+			nameToView.put(name, view);
+		}
+		
+		
+		ViewTemplateDefinition view = null;
+		if(StringUtils.isEmpty(viewName)) {
+			if(views.size() == 1) {
+				view = views.get(0);
+			} else {
+				logger.error("Multiple views present in config file; please specify which to use");
+				printHelpAndExit(1);
+			}
+		} else {
+			view = nameToView.get(viewName);
+			if(view == null) {
+				logger.error("View '" + viewName + "' not found in config file");
+				System.exit(1);
+			}
+		}
+		
 		VarExprList varExprs = view.getVarExprList();
 		
 		List<String> vars = new ArrayList<String>();
@@ -172,7 +210,7 @@ public class CsvMapperCliMain {
 			
 			Expr e = SparqlSubstitute.substituteExpr(entry.getValue());
 			//Expr e = FunctionExpander.transform(ex);
-			System.out.println(e);
+			//System.out.println(e);
 			
 			sparqlVarMap.put(entry.getKey(), new TermDef(e));
 		}
@@ -184,7 +222,7 @@ public class CsvMapperCliMain {
         // insertPrefixesInto(result) ;
         Template template = view.getConstructTemplate();
         
-        System.out.println(template.getTriples());
+        //System.out.println(template.getTriples());
         
 
         Iterator<Triple> it = new ConstructIterator(template, rss);
@@ -193,11 +231,12 @@ public class CsvMapperCliMain {
         
         while(it.hasNext()) {
         	Triple t = it.next();
-        	logger.debug("Triple: " + t);
+        	//logger.trace("Triple: " + t);
         	        	
         	Statement stmt = ModelUtils.tripleToStatement(result, t);
 
         	if(stmt == null) {
+        		// TODO: We should also print out the row of the result set where this happenend
         		logger.warn("Omitting null statement, triple was: " + t);
         		continue;
         	}

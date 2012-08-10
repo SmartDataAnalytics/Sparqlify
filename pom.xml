@@ -136,6 +136,7 @@
 					<reload>manual</reload>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 	<repositories>

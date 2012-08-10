@@ -147,9 +147,11 @@ public class MainConstructView {
 	 */
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws Exception {
+		/*
 		PropertyConfigurator.configure("log4j.properties");
 		LogManager.getLogManager().readConfiguration(
 				new FileInputStream("jdklog.properties"));
+		*/
 
 		CommandLineParser cliParser = new GnuParser();
 

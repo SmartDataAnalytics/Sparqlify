@@ -22,6 +22,8 @@ import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 public class ViewDefinition {
 	private String name;
+	
+	// FIXME: Either make ViewDefinition inherit from ViewTemplateDefinition, or get rid of this nesting alltogether
 	private ViewTemplateDefinition viewTemplateDefinition;
 	private ExprList filters = new ExprList();
 	

@@ -47,6 +47,7 @@ STRING_LIST;
 
 TEMPLATE;
 VIEW_TEMPLATE_DEFINITION;
+NAMED_VIEW_TEMPLATE_DEFINITION;
 CONSTRUCT_VIEW_DEFINITION;
 
 
@@ -223,7 +224,7 @@ memberAccess
 
 viewTemplateDefStmt
     : CREATE VIEW TEMPLATE NAME AS CONSTRUCT viewTemplateDef ';'?
-    	-> viewTemplateDef
+    	-> ^(NAMED_VIEW_TEMPLATE_DEFINITION NAME viewTemplateDef)
     ;
 
 viewTemplateDef
@@ -829,7 +830,8 @@ iriRefOrFunction
     ;
 
 rdfLiteral
-    : string ( LANGTAG | ( REFERENCE iriRef ) )?
+    : string LANGTAG? -> ^(PLAIN_LITERAL string LANGTAG?)
+    | string REFERENCE iriRef -> ^(TYPED_LITERAL string iriRef)
     ;
 
 numericLiteral

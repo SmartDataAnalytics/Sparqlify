@@ -127,7 +127,7 @@ templateConfig returns[TemplateConfig config]
 	;
 
 templateConfigItem[TemplateConfig config]
-	: x=viewTemplateDefinition { config.getDefinitions().add($x.value); }
+	: x=namedViewTemplateDefinition { config.getDefinitions().add($x.value); }
 	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
 	;
 
@@ -159,9 +159,12 @@ sparqlifyConfigItem[Config config]
 	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
 	;
 
+namedViewTemplateDefinition returns [NamedViewTemplateDefinition value]
+	: ^(NAMED_VIEW_TEMPLATE_DEFINITION a=NAME b=viewTemplateDefinition) {$value = new NamedViewTemplateDefinition($a.text, $b.value);}
+	;
 	
 viewTemplateDefinition returns [ViewTemplateDefinition value]
-	: ^(VIEW_TEMPLATE_DEFINITION a=constructTemplate b=varBindings?) { $value = new ViewTemplateDefinition($a.value, $b.value); }
+	: ^(VIEW_TEMPLATE_DEFINITION a=constructTemplate b=varBindings?) {$value = new ViewTemplateDefinition($a.value, $b.value);}
 	;
 
 
@@ -320,8 +323,12 @@ bindingValueList
     : ^(BINDING_VALUE bindingValue*)
     ;
     	
-bindingValue
-    : iriRef | rdfLiteral | numericLiteral | booleanLiteral | UNDEF
+bindingValue returns [Node value]
+    : a=iriRef {$value=$a.value;}
+    | a=rdfLiteral {$value=$a.value;}
+    | numericLiteral
+    | booleanLiteral
+    | UNDEF
     ;
     
 update
@@ -598,7 +605,7 @@ triplesNode[List<Triple> triples] returns [Node value]
     ;
 
 graphNode[List<Triple> triples] returns [Node value]
-    : a = varOrTerm { $value=$a.value; }
+    : a = varOrTerm {$value = $a.value;}
     | triplesNode[triples]
     ;
 
@@ -618,7 +625,7 @@ var returns [ Var value ]
 
 graphTerm returns [Node value]
     : a=iriRef         {$value = $a.value;} 
-    | rdfLiteral       {$value = $a.value;}
+    | a=rdfLiteral       {$value = $a.value;}
     | b=numericLiteral {$value = $b.value.asNode();}
     | b=booleanLiteral {$value = $b.value.asNode();}
     | a=blankNode      {$value = $a.value;}
@@ -749,7 +756,10 @@ iriRefOrFunction returns [Expr value]
     ;
 
 rdfLiteral returns [Node value]
-    : a=string ( b=LANGTAG | ( REFERENCE c=iriRef ) )? { $value = Node.createLiteral($a.value, $b.text, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
+    : ^(PLAIN_LITERAL a=string b=LANGTAG?) {$value = Node.createLiteral($a.value, $b.text, null);}
+    | ^(TYPED_LITERAL a=string c=iriRef) {$value = Node.createLiteral($a.value, null, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
+    
+    //: a=string ( b=LANGTAG | ( REFERENCE c=iriRef ) )? { $value = Node.createLiteral($a.value, $b.text, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
     ;
 
 numericLiteral returns [ NodeValue value ]

@@ -35,7 +35,7 @@ public class TemplateConfigParser {
 
 		
 		
-		AntlrTest.printAst(ast, 0);
+		//AntlrTest.printAst(ast, 0);
 
 		SparqlifyConfigTree treeParser = new SparqlifyConfigTree(new CommonTreeNodeStream(ast));
 		TemplateConfig config = treeParser.templateConfig();

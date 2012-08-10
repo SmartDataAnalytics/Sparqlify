@@ -11,13 +11,13 @@ import java.util.List;
  *
  */
 public class TemplateConfig {
-	private List<ViewTemplateDefinition> definitions = new ArrayList<ViewTemplateDefinition>();
+	private List<NamedViewTemplateDefinition> definitions = new ArrayList<NamedViewTemplateDefinition>();
 
-	public List<ViewTemplateDefinition> getDefinitions() {
+	public List<NamedViewTemplateDefinition> getDefinitions() {
 		return definitions;
 	}
 
-	public void setViewDefinitions(List<ViewTemplateDefinition> definitions) {
+	public void setViewDefinitions(List<NamedViewTemplateDefinition> definitions) {
 		this.definitions = definitions;
 	}
 }

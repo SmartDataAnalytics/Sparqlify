@@ -8,22 +8,32 @@ Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
 Prefix fp7-o:<http://xxx.org/ontology/>
 Prefix fp7-r:<http://xxx.org/resource/>
 
+Prefix geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
 
-/*
-Create View Template coordinators As
+Create View Template fp7geocode As
 	Construct {
-		?project pf7-o:coordinator ?partner .
+		?cityUri
+			geo:long ?long ;
+			geo:lat ?lat .
 	}
 	With
-        ?partnerUri = uri(concat("http://xxx.org/resource/partner/", fn:urlEncode(?6)))
-        ?projectUri = uri(concat("http://xxx.org/resource/", ?1))
-*/
+	        ?cityUri = uri(concat("http://xxx.org/resource/city/", fn:urlEncode(?1), "/", fn:urlEncode(?2)))
+	        ?long = typedLiteral(?6, xsd:float)
+		?lat = typedLiteral(?7, xsd:float)
 
-Create View Template fp7table As
+
+
+Create View Template fp7coordinators As
+	Construct {
+		?projectUri fp7-o:coordinator ?partnerUri .
+	}
+	With
+            ?partnerUri = uri(concat("http://xxx.org/resource/partner/", fn:urlEncode(?6)))
+            ?projectUri = uri(concat("http://xxx.org/resource/project/", ?1))
+
+
+Create View Template fp7main As
     Construct {
-    	?projectUri
-    		a doap:Project .
-    
         ?projectUri
         	a doap:Project ;
         	fp7-o:id ?projectId ;
@@ -82,7 +92,7 @@ Create View Template fp7table As
 			rdfs:label ?soAggregatedLabel .
     }
     With
-        ?projectUri = uri(concat("http://xxx.org/resource/", ?1))
+        ?projectUri = uri(concat("http://xxx.org/resource/project/", ?1))
         ?projectId = typedLiteral(?1, xsd:int)
         
         ?acronym = plainLiteral(?2)
@@ -90,10 +100,10 @@ Create View Template fp7table As
         ?callUri = uri(concat("http://xxx.org/resource/call/", ?3))
         ?callLabel = plainLiteral(?3)
         
-        ?instrumentUri = uri(concat("http://xxx.org/resource/in", ?4))
+        ?instrumentUri = uri(concat("http://xxx.org/resource/instrument/", ?4))
         ?instrumentLabel = plainLiteral(?4)
         
-        ?yearUri = uri(concat("http://dbpedia.org/resource/year", ?5))
+        ?yearUri = uri(concat("http://dbpedia.org/resource/year/", ?5))
         ?yearLabel = plainLiteral(?5)
         
         ?partnerUri = uri(concat("http://xxx.org/resource/partner/", ?6))
@@ -107,12 +117,12 @@ Create View Template fp7table As
         ?organisationClassUri = uri("http://xxx.org/resource/oc/" + fn:urlEncode(?9))
         ?organisationClassLabel = plainLiteral(?9)
         
-        //?ecFunding = typedLiteral(?10, xsd:decimal)
-        ?ecFunding = plainLiteral(?10)
+        ?ecFunding = typedLiteral(?10, xsd:decimal)
+        //?ecFunding = plainLiteral(?10)
         
         ?addressUri = uri(concat("http://xxx.org/resource/address/", ?6))
         
-        ?cityUri = uri(concat("http://xxx.org/resource/city/", fn:urlEncode(?11)))
+        ?cityUri = uri(concat("http://xxx.org/resource/city/", fn:urlEncode(?12), "/", fn:urlEncode(?11)))
         ?cityLabel = plainLiteral(?11)
         
         ?countryUri = uri(concat("http://xxx.org/resource/country/", fn:urlEncode(?12)))
@@ -130,7 +140,7 @@ Create View Template fp7table As
         ?soDescriptionUri = uri(concat("http://xxx.org/resource/so-d/", fn:urlEncode(?16)))
         ?soDescriptionLabel = plainLiteral(?16)
         
-        ?soAggregatedUri = uri(concat("http://xxx.org/resource/so-a", fn:urlEncode(?17)))
+        ?soAggregatedUri = uri(concat("http://xxx.org/resource/so-a/", fn:urlEncode(?17)))
         ?soAggregatedLabel = plainLiteral(?17)
         
         

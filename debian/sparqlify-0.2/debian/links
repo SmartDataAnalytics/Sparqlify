@@ -1,1 +1,2 @@
 /usr/share/sparqlify/sparqlify.sh	/usr/bin/sparqlify
+/usr/share/sparqlify/sparqlify-csv.sh       /usr/bin/sparqlify-csv
