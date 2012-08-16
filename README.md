@@ -177,22 +177,29 @@ This is an example view for creating RDF from a table with geocoded cities with 
 
 Note that 'osm' stands for OpenStreetMap, and osm\_entity\_type is either 'node', 'way' or 'relation'.
 
+
+    Prefix fn:<http://aksw.org/sparqlify/> //Needed for urlEncode and urlDecode.
+    Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+    Prefix owl:<http://www.w3.org/2002/07/owl#>
+    Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+    Prefix geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
+
     Create View Template geocode As
       Construct {
         ?cityUri
           owl:sameAs ?lgdUri .
 
-         ?lgdUri
-           rdfs:label ?cityLabel ;
-           geo:long ?long ;
-           geo:lat ?lat .
-        }
-        With
-          ?cityUri = uri(concat("http://fp7-pp.publicdata.eu/resource/city/", fn:urlEncode(?2), "-", fn:urlEncode(?1)))
-          ?cityLabel = plainLiteral(?1)
-          ?lgdUri = uri(concat("http://linkedgeodata.org/triplify/", ?4, ?5))
-          ?long = typedLiteral(?6, xsd:float)
-          ?lat = typedLiteral(?7, xsd:float)
+        ?lgdUri
+          rdfs:label ?cityLabel ;
+          geo:long ?long ;
+          geo:lat ?lat .
+      }
+      With
+        ?cityUri = uri(concat("http://fp7-pp.publicdata.eu/resource/city/", fn:urlEncode(?2), "-", fn:urlEncode(?1)))
+        ?cityLabel = plainLiteral(?1)
+        ?lgdUri = uri(concat("http://linkedgeodata.org/triplify/", ?4, ?5))
+        ?long = typedLiteral(?6, xsd:float)
+        ?lat = typedLiteral(?7, xsd:float)
 
 
 ### Usage
