@@ -206,11 +206,10 @@ If you installed the Debian package, the following command will be system wide a
 
 Options are:
 
-* Server Configuration
-  * -f [file]   The CSV file to map. Currently must be excel flavour; for instance tabs will currently not work.
-  * -c [file]   The Sparqlify mapping file containting the 'Create View *Template* ...' statements.
-  * -v [view\_name]   If the mapping file (given as the -c option) contains more than one view, the name of the view to use for the mapping must be specified.
-  * -h   Currently not implemented. Use this flag to treat the first row of the CSV file as the headers. In this case, you can refer to the columns by name.
+* -f [file]   The CSV file to map. Currently must be excel flavour; for instance tabs will currently not work.
+* -c [file]   The Sparqlify mapping file containting the 'Create View *Template* ...' statements.
+* -v [view\_name]   If the mapping file (given as the -c option) contains more than one view, the name of the view to use for the mapping must be specified.
+* -h   Currently not implemented. Use this flag to treat the first row of the CSV file as the headers. In this case, you can refer to the columns by name.
 
 Example:
 
