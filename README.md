@@ -175,6 +175,8 @@ The view definition syntax is almost the same as above; the differences being:
 This is an example view for creating RDF from a table with geocoded cities with schema:
 (city\_name, country\_name, osm\_entity\_type, osm\_id, longitude, latitude)
 
+
+Colums can be referenced either by name (see the -h option) or by index (1-based).
 Note that 'osm' stands for OpenStreetMap, and osm\_entity\_type is either 'node', 'way' or 'relation'.
 
 
