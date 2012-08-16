@@ -1,5 +1,8 @@
 # Sparqlify SPARQL->SQL rewriter
 
+## News
+16 Aug 2012 There is now the sparqlify-csv command line tool for easy transformation of CSV (excel flavour) files.
+
 ## Introduction
 
 Sparqlify is a novel SPARQL-SQL rewriter whose development began in April 2011 in the course of the [LinkedGeoData](http://linkedgeodata.org) project.
@@ -28,6 +31,7 @@ NOTE: SPARQLs ternary logic (i.e. false, true and type error) is not consistentl
 ## Building
 
 * The easiest way to build the project is to run `mvn assembly:assembly`. This will generate a single stand-alone jar containing all necessary dependencies.
+
 
 ## Usage
 
@@ -159,6 +163,61 @@ In order to avoid unnecessary SQL-joins (and reduce the query-rewriting time), p
 Find further examples in the folder `mappings`.
 
 **TODO** Detailed Documentation of the Sparqlify Mapping Language
+
+
+## Sparqlify-CSV
+sparqlify-csv is a command line tool for mapping CSV files to RDf.
+The view definition syntax is almost the same as above; the differences being:
+
+* Instead of `Create View viewname As Construct` start your views with `CREATE VIEW TEMPLATE viewname As Construct`
+* There is no FROM and CONSTRAINT clause
+
+This is an example view for creating RDF from a table with geocoded cities with schema:
+(city\_name, country\_name, osm\_entity\_type, osm\_id, longitude, latitude)
+
+Note that 'osm' stands for OpenStreetMap, and osm\_entity\_type is either 'node', 'way' or 'relation'.
+
+    Create View Template geocode As
+      Construct {
+        ?cityUri
+          owl:sameAs ?lgdUri .
+
+         ?lgdUri
+           rdfs:label ?cityLabel ;
+           geo:long ?long ;
+           geo:lat ?lat .
+        }
+        With
+          ?cityUri = uri(concat("http://fp7-pp.publicdata.eu/resource/city/", fn:urlEncode(?2), "-", fn:urlEncode(?1)))
+          ?cityLabel = plainLiteral(?1)
+          ?lgdUri = uri(concat("http://linkedgeodata.org/triplify/", ?4, ?5))
+          ?long = typedLiteral(?6, xsd:float)
+          ?lat = typedLiteral(?7, xsd:float)
+
+
+### Usage
+If you installed the Debian package, the following command will be system wide available:
+
+* sparqlify-csv [options]
+
+ Alternatively, you can also run from the JAR:
+
+* java -cp target/sparqlify-{version}-jar-with-dependencies.jar org.aksw.sparqlify.csv.CsvMapperCliMain [options]
+
+Options are:
+
+* Server Configuration
+  * -f [file]   The CSV file to map. Currently must be excel flavour; for instance tabs will currently not work.
+  * -c [file]   The Sparqlify mapping file containting the 'Create View *Template* ...' statements.
+  * -v [view\_name]   If the mapping file (given as the -c option) contains more than one view, the name of the view to use for the mapping must be specified.
+  * -h   Currently not implemented. Use this flag to treat the first row of the CSV file as the headers. In this case, you can refer to the columns by name.
+
+Example:
+
+    sparqlify-csv -f data.csv -c mappings.sparqlify -v myview
+
+Any RDF data will be written to STDOUT in the N-TRIPLES format. Log output is written the STDERR.
+
 
 ## Roadmap
 The following improvements are planned (currently in no particular order):
