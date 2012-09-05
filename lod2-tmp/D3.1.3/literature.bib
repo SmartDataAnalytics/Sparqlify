@@ -1,0 +1,293 @@
+
+
+@article{KonstantinouSM08,
+  author = {Nikolaos Konstantinou and Dimitrios-Emmanuel Spanos and Nikolas Mitrou},
+  interhash = {f3eef517d846ddc0a1c63aa29d8ffb76},
+  intrahash = {d029506539a67d91b90e0ea4e540f483},
+  journal = {J. Web Eng.},
+  number = 1,
+  pages = {1-24},
+  title = {Ontology and Database Mapping: A Survey of Current Implementations and Future Directions.},
+  url = {http://www.rintonpress.com/xjwe7/jwe-7-1/001-024.pdf},
+  volume = 7,
+  year = 2008,
+  keywords = {RDB2RDF survey},
+  ee = {http://www.rintonpress.com/journals/jwe/abstractsJWE7-1.html},
+  added-at = {2011-02-05T15:46:28.000+0100},
+  biburl = {http://www.bibsonomy.org/bibtex/2d029506539a67d91b90e0ea4e540f483/sebastian}
+}
+
+@techreport{lod2_3_1_1,
+  author = {Sebastian Hellmann and Jörg Unbehauen and Amrapali Zaveri and Jens Lehmann and  S\"oren Auer and Sebastian Tramp and Hugh Williams and Orri Erling and Ted Thibodeau Jr. and Kingsley Idehen and Andreas Blumauer and Helmut Nagy},
+  number = {LOD2 D3.1.1},
+  title = {Report on Knowledge Extraction from Structured Sources},
+  note = {http://lod2.eu/Deliverable/D3.1.1.html},
+  year = 2011,
+  keywords = {RDB2RDF survey},
+}
+
+@misc{rfc4180,
+  author="Y. Shafranovich",
+  title="{Common Format and MIME Type for Comma-Separated Values (CSV) Files}",
+  series="Request for Comments",
+  number="4180",
+  howpublished="RFC 4180 (Informational)",
+  publisher="IETF",
+  organization="Internet Engineering Task Force",
+  year=2005,
+  month=oct,
+    url="http://www.ietf.org/rfc/rfc4180.txt",
+}
+
+@article{TBL98,
+  added-at = {2009-03-02T22:37:56.000+0100},
+  author = {Lee, Tim Berners},
+  biburl = {http://www.bibsonomy.org/bibtex/2059390a45e6f3e2af1c882ec23b20592/dominikb1888},
+  interhash = {cf3e6a62c1ac47d28abf17ce5f63cb88},
+  intrahash = {059390a45e6f3e2af1c882ec23b20592},
+  keywords = {dbms diplomarbeit mysql},
+  month = {09},
+  note = {Design Issues (published on the Web)},
+  timestamp = {2009-03-02T22:37:56.000+0100},
+  title = {Relational databases on the semantic web},
+  url = {http://www.w3.org/DesignIssues/RDB-RDF.html},
+  year = 1998
+}
+
+@inproceedings{ghawi2007database,
+    author = {Ghawi, R. and Cullot, N.},
+    booktitle = {Third International Workshop on Database Interoperability (InterDB 2007)},
+    citeulike-article-id = {6074141},
+    comment = {Good background overview in section 2, and related work in section 6. 
+
+There are 2 types of database-to-ontology mappings: 
+1. creating ontology from db, i.e. simply mapping the tables to classes, the rows to subject, the columns to predicates and the cells to objects.
+2. mapping a db to an existing ontology; requires more complex mapping.
+
+A system is proposed that combines different heterogenic datasources and provides a query Webservice to perform semantic queries as if it were one source. To achieve this, is proposes to use a central domain-model ontology. A query based on the central ontology is analyzed and distributed over the various datasources, as the central query-Webservice knows which data is available where. The different datasources have two mappings. One is the mapping of their local data representation (e.g. relational db) to a local ontology. The second is the mapping from the local ontology to the central ontology. 
+
+The only part detailed enough to be useful is the automatic mapping generation (generating from db) method used by DB2OWL. They say DB2OWL uses the R2O language to define the resulting mapping description. The mapping rules is explained in detail, but is actually stolen from Stojanovic et al., 2002, with the exception of a few detailes that weren't even possible for Stojanovic because it was written in the pre-OWL era. Although this work is referred as 'related work', shame on the authors for giving so little credit to Stojanovic! The good news is that they do a better job at explaining the method. 
+
+The document does mention a similarity estimation process to estimate how good two ontologies match, but does not elaborate on this process nor the mapping of the local ontology to the central ontology - while this is the hard part! I should find a source that explains the rest, if that has been actually worked out.
+
+(Stojanovic et al, 2002): Ljiljana Stojanovic, Nenad Stojanovic, Raphael Volz. Migrating data-intensive web sites into the Semantic Web; In Proceedings of the 2002 ACM Symposium on Applied Computing (2002), pp. 1100-1107. },
+    keywords = {classification, db2owl, mapping, mapping-generation, r2o, tables-to-rdf},
+    posted-at = {2009-11-05 12:53:43},
+    priority = {0},
+    title = {{Database-to-Ontology Mapping Generation for Semantic Interoperability}},
+    year = {2007}
+}
+
+@article{perez2009semantics_sparql,
+ author = {P{\'e}rez, Jorge and Arenas, Marcelo and Gutierrez, Claudio},
+ title = {Semantics and complexity of SPARQL},
+ journal = {ACM Trans. Database Syst.},
+ issue_date = {August 2009},
+ volume = {34},
+ number = {3},
+ month = sep,
+ year = {2009},
+ issn = {0362-5915},
+ pages = {16:1--16:45},
+ articleno = {16},
+ numpages = {45},
+ url = {http://doi.acm.org/10.1145/1567274.1567278},
+ doi = {10.1145/1567274.1567278},
+ acmid = {1567278},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Complexity, RDF, SPARQL, query language, semantic Web},
+} 
+
+@techreport{sparql08rec,
+  added-at = {2008-10-25T09:59:56.000+0200},
+  author = {Prud'hommeaux, Eric and Seaborne, Andy},
+  biburl = {http://www.bibsonomy.org/bibtex/2bc888057ccf0e4f578386681e19f922d/deynard},
+  editor = {Prud'hommeaux, Eric and Seaborne, Andy},
+  institution = {W3C},
+  interhash = {dc198da0f907f0129249cab866bbe3d4},
+  intrahash = {bc888057ccf0e4f578386681e19f922d},
+  keywords = {sparql},
+  month = {January},
+  timestamp = {2008-10-25T09:59:56.000+0200},
+  title = {SPARQL Query Language for RDF},
+  type = {W3C Recommendation},
+  url = {http://www.w3.org/TR/rdf-sparql-query/},
+  year = 2008
+}
+
+
+@inproceedings{Schmidt2010SparqlQueryOpt,
+ author = {Schmidt, Michael and Meier, Michael and Lausen, Georg},
+ title = {Foundations of SPARQL query optimization},
+ booktitle = {13th Int. Conf. on Database Theory},
+ series = {ICDT '10},
+ year = {2010},
+ isbn = {978-1-60558-947-3},
+ location = {Lausanne, Switzerland},
+ pages = {4--33},
+ numpages = {30},
+ url = {http://doi.acm.org/10.1145/1804669.1804675},
+ doi = {10.1145/1804669.1804675},
+ acmid = {1804675},
+ publisher = {ACM},
+ keywords = {RDF, SPARQL, SPARQL algebra, complexity, query optimization, semantic query optimization},
+} 
+
+@MISC{virtuosoRdfViews,
+title = {Mapping Relational Data to RDF with Virtuoso's RDF Views},
+howpublished={\url{http://virtuoso.openlinksw.com/whitepapers/relational%20rdf%20views%20mapping.html}}
+}
+
+
+@MISC{ultrawrap,
+title = {Ultrawrap},
+howpublished={\url{http://http://capsenta.com/ultrawrap.html}}
+}
+
+
+@misc{d2rserver,
+  abstract = {D2R Server is a tool for publishing the con- tent of relational databases on the Semantic Web. Database content is mapped to RDF by a declar- ative mapping which specifies how resources are identified and how property values are generated from database content. Based on this mapping, D2R Server allows Web agents to retrieve RDF and XHTML representations of resources and to query non-RDF databases using the SPARQL query lan- guage over the SPARQL protocol. The gener- ated representations are richly interlinked on RDF and XHTML level in order to enable browsers and crawlers to navigate database content.},
+  added-at = {2011-11-02T14:56:33.000+0100},
+  author = {Bizer, Christian and Cyganiak, Richard},
+  biburl = {http://www.bibsonomy.org/bibtex/282f2b0008fd60e33ea33c402d8ec0315/mgraube},
+  howpublished = {Poster at the 5th Int. Semantic Web Conf. (ISWC2006)},
+  interhash = {4ce895cd36755265c8215b1359e5c26d},
+  intrahash = {82f2b0008fd60e33ea33c402d8ec0315},
+  keywords = {sys:relevantfor:comvantage Linked_Data MGraube Semantic_Web Tool},
+  timestamp = {2011-11-02T14:56:33.000+0100},
+  title = {D2R Server – Publishing Relational Databases on the Semantic Web},
+  url = {http://www4.wiwiss.fu-berlin.de/bizer/pub/Bizer-Cyganiak-D2R-Server-ISWC2006.pdf},
+  year = 2006
+}
+
+@techreport{Cyganiak:2005,
+  abstract = {The SPARQL query language for RDF provides Semantic Web developers with a powerful tool to extract information from large datasets. This report describes a transformation from SPARQL into the relational algebra, an abstract intermediate language for the expression and analysis of queries. This makes existing work on query planning and optimization available to SPARQL implementors. A further translation into SQL is outlined, and mismatches between SPARQL semantics and 
+the relational approach are discussed. 
+},
+  added-at = {2010-05-13T11:34:37.000+0200},
+  author = {Cyganiak, R.},
+  bdsk-file-1 = {YnBsaXN0MDDUAQIDBAUIJidUJHRvcFgkb2JqZWN0c1gkdmVyc2lvblkkYXJjaGl2ZXLRBgdUcm9vdIABqAkKFRYXGyIjVSRudWxs0wsMDQ4RFFpOUy5vYmplY3RzV05TLmtleXNWJGNsYXNzog8QgASABqISE4ACgAOAB1lhbGlhc0RhdGFccmVsYXRpdmVQYXRo0hgNGRpXTlMuZGF0YU8RAh4AAAAAAh4AAgAADE1hY2ludG9zaCBIRAAAAAAAAAAAAAAAAAAAAMcr3C9IKwAAAGDpeB9BIHJlbGF0aW9uYWwgYWxnZWJyYSM1RjQzNEMucGRmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX0NMxvi8aAAAAAAAAAAAAAIABQAACSAAAAAAAAAAAAAAAAAAAAAEMjAwNQAQAAgAAMcrzh8AAAARAAgAAMb4oEgAAAABACAAYOl4AGDoOABg5K4AYOSsABOujgAICHQACAhnAACRjQACAGVNYWNpbnRvc2ggSEQ6VXNlcnM6a2F3OkRvY3VtZW50czp3b3JrOm1hdGVyaWFsOmFydGljbGVzOkN5Z2FuaWFrOjIwMDU6QSByZWxhdGlvbmFsIGFsZ2VicmEjNUY0MzRDLnBkZgAADgBIACMAQQAgAHIAZQBsAGEAdABpAG8AbgBhAGwAIABhAGwAZwBlAGIAcgBhACAAZgBvAHIAIABTAFAAQQBSAFEATAAuAHAAZABmAA8AGgAMAE0AYQBjAGkAbgB0AG8AcwBoACAASABEABIAXFVzZXJzL2thdy9Eb2N1bWVudHMvd29yay9tYXRlcmlhbC9hcnRpY2xlcy9DeWdhbmlhay8yMDA1L0EgcmVsYXRpb25hbCBhbGdlYnJhIGZvciBTUEFSUUwucGRmABMAAS8AABUAAgAK//8AAIAF0hwdHh9YJGNsYXNzZXNaJGNsYXNzbmFtZaMfICFdTlNNdXRhYmxlRGF0YVZOU0RhdGFYTlNPYmplY3RfEEkuLi8uLi9tYXRlcmlhbC9hcnRpY2xlcy9DeWdhbmlhay8yMDA1L0EgcmVsYXRpb25hbCBhbGdlYnJhIGZvciBTUEFSUUwucGRm0hwdJCWiJSFcTlNEaWN0aW9uYXJ5EgABhqBfEA9OU0tleWVkQXJjaGl2ZXIACAARABYAHwAoADIANQA6ADwARQBLAFIAXQBlAGwAbwBxAHMAdgB4AHoAfACGAJMAmACgAsICxALJAtIC3QLhAu8C9gL/A0sDUANTA2ADZQAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAN3},
+  biburl = {http://www.bibsonomy.org/bibtex/2ffba5c52019a0ab90aa84aa35bdb257e/kweiand},
+  date-added = {2010-05-11 17:01:46 +0200},
+  date-modified = {2010-05-12 16:32:57 +0200},
+  institution = {Digital Media Systems Laboratory, HP Laboratories Bristol},
+  interhash = {0187c0da31415fb87e3404a996242aa9},
+  intrahash = {ffba5c52019a0ab90aa84aa35bdb257e},
+  keywords = {Querying RDF, SPARQL,},
+  nocites = {75},
+  timestamp = {2010-05-13T11:34:37.000+0200},
+  title = {{A relational algebra for SPARQL}},
+  year = 2005
+}
+
+@inproceedings{sparql2efficientsql,
+ author = {Elliott, Brendan and Cheng, En and Thomas-Ogbuji, Chimezie and Ozsoyoglu, Z. Meral},
+ title = {A complete translation from SPARQL into efficient SQL},
+ booktitle = {Int. Database Engineering \& Applications Symp.},
+ series = {IDEAS '09},
+ year = {2009},
+ isbn = {978-1-60558-402-7},
+ location = {Cetraro - Calabria, Italy},
+ pages = {31--42},
+ numpages = {12},
+ url = {http://doi.acm.org/10.1145/1620432.1620437},
+ doi = {10.1145/1620432.1620437},
+ acmid = {1620437},
+ publisher = {ACM},
+ keywords = {RDF, SPARQL, SQL, semantic web},
+} 
+@article{semanticspressparql2sql,
+title = "Semantics preserving SPARQL-to-SQL translation",
+journal = "Data and Knowledge Engineering",
+volume = "68",
+number = "10",
+pages = "973 - 1000",
+year = "2009",
+note = "",
+issn = "0169-023X",
+doi = "10.1016/j.datak.2009.04.001",
+url = "http://www.sciencedirect.com/science/article/pii/S0169023X09000469",
+author = "Artem Chebotko and Shiyong Lu and Farshad Fotouhi",
+keywords = "SPARQL-to-SQL translation",
+keywords = "SPARQL semantics",
+keywords = "SPARQL",
+keywords = "SQL",
+keywords = "RDF",
+keywords = "query",
+keywords = "RDF store",
+keywords = "RDBMS"
+}
+@incollection{sparqloverrelational,
+ author = {Lu, Jing and Cao, Feng and Ma, Li and Yu, Yong and Pan, Yue},
+ chapter = {An Effective SPARQL Support over Relational Databases},
+ title = {Semantic Web, Ontologies and Databases},
+ editor = {Christophides, Vassilis and Collard, Martine and Gutierrez, Claudio},
+ year = {2008},
+ isbn = {978-3-540-70959-6},
+ pages = {57--76},
+ numpages = {20},
+ url = {http://dx.doi.org/10.1007/978-3-540-70960-2_4},
+ doi = {10.1007/978-3-540-70960-2_4},
+ acmid = {1423679},
+ publisher = {Springer-Verlag},
+ address = {Berlin, Heidelberg},
+}
+@article{bsbm,
+  added-at = {2011-02-02T10:47:44.000+0100},
+  author = {Bizer, Christian and Schultz, Andreas},
+  bibdate = {2009-10-30},
+  bibsource = {DBLP,
+		 http://dblp.uni-trier.de/db/journals/ijswis/ijswis5.html#BizerS09},
+  biburl = {http://www.bibsonomy.org/bibtex/27f30724f741812c8c3cb33b62dbf74bf/hannesm},
+  interhash = {ff7313abb5e18bd94fef51c43af3f8d0},
+  intrahash = {7f30724f741812c8c3cb33b62dbf74bf},
+  journal = {Int. J. Semantic Web Inf. Syst},
+  keywords = {imported},
+  number = 2,
+  pages = {1--24},
+  timestamp = {2011-02-02T10:47:44.000+0100},
+  title = {The Berlin {SPARQL} Benchmark},
+  url = {http://www.igi-global.com/articles/details.asp?ID=35035},
+  volume = 5,
+  year = 2009
+} 
+@inproceedings{triplify,
+  abstract = {In this paper we present Triplify - a simplistic but effective approach to publish Linked Data from relational databases. Triplify is based on mapping HTTP-URI requests onto relational database queries. Triplify transforms the resulting relations into RDF statements and publishes the data on the Web in various RDF serializations, in particular as Linked Data. The rationale for developing Triplify is that the largest part of information on the Web is already stored in structured form, often as data contained in relational databases, but usually published by Web applications only as HTML mixing structure, layout and content. In order to reveal the pure structured information behind the current Web, we have implemented Triplify as a light-weight software component, which can be easily integrated into and deployed by the numerous, widely installed Web applications. Our approach includes a method for publishing update logs to enable incremental crawling of linked data sources. Triplify is complemented by a library of con?gurations for common relational schemata and a REST-enabled data source registry. Triplify con?gurations containing mappings are provided for many popular Web applications, including osCommerce, WordPress, Drupal, Gallery, and phpBB. We will show that despite its light-weight architecture Triplify is usable to publish very large datasets, such as 160GB of geo data from the OpenStreetMap project. },
+  added-at = {2009-12-16T14:33:13.000+0100},
+  author = {Auer, S\"oren and Dietzold, Sebastian and Lehmann, Jens and Hellmann, Sebastian and Aumueller, David},
+  biburl = {http://www.bibsonomy.org/bibtex/2b1ea2bb0abe0d8c5ee076be9980a19fd/alexjdl},
+  booktitle = {18th International World Wide Web Conference},
+  interhash = {a85723140aa84c8947a473aeec1bd26c},
+  intrahash = {b1ea2bb0abe0d8c5ee076be9980a19fd},
+  keywords = {InformationIntegration},
+  month = {April},
+  pages = {621--621},
+  timestamp = {2009-12-16T14:33:13.000+0100},
+  title = {Triplify - Light-Weight Linked Data Publication from Relational Databases},
+  url = {http://www2009.eprints.org/63/},
+  year = 2009
+}
+
+@inproceedings{rewriting-queries-on-sparql-views,
+  added-at = {2011-04-04T00:00:00.000+0200},
+  author = {Le, Wangchao and Duan, Songyun and Kementsietsidis, Anastasios and Li, Feifei and Wang, Min},
+  biburl = {http://www.bibsonomy.org/bibtex/2ce72e60e3899000a38e8d478a0e2dffd/dblp},
+  booktitle = {WWW},
+  crossref = {conf/www/2011},
+  editor = {Srinivasan, Sadagopan and Ramamritham, Krithi and Kumar, Arun and Ravindra, M. P. and Bertino, Elisa and Kumar, Ravi},
+  ee = {http://doi.acm.org/10.1145/1963405.1963497},
+  interhash = {71d7074f9b31c1ed64d96bbaf3fb2d7b},
+  intrahash = {ce72e60e3899000a38e8d478a0e2dffd},
+  isbn = {978-1-4503-0632-4},
+  keywords = {dblp},
+  pages = {655-664},
+  publisher = {ACM},
+  timestamp = {2011-04-04T00:00:00.000+0200},
+  title = {Rewriting queries on SPARQL views.},
+  url = {http://dblp.uni-trier.de/db/conf/www/www2011.html#LeDKLW11},
+  year = 2011
+}
+
+
+
