@@ -149,8 +149,12 @@ public class Main {
 		cpConfig.setUsername(dbconf.getUsername()); 
 		cpConfig.setPassword(dbconf.getPassword());
 		*/
+		
 		cpConfig.setMinConnectionsPerPartition(5);
 		cpConfig.setMaxConnectionsPerPartition(20);
+//		cpConfig.setMinConnectionsPerPartition(1);
+//		cpConfig.setMaxConnectionsPerPartition(1);
+		
 		cpConfig.setPartitionCount(1);
 		//BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool	
 

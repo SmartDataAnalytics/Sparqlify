@@ -74,9 +74,13 @@ public class IteratorResultSetSparqlifyBinding
 			
 			// FIXME We also add bindings that enable us to reference the columns by their index
 			// However, we indexes and column-names are in the same namespace here, so there might be clashes
-			binding.add(Var.alloc("" + i), node);
+			Var indexVar = Var.alloc("" + i);
+			binding.add(indexVar, node);
 			
-			binding.add(Var.alloc(colName), node);
+			Var colVar = Var.alloc(colName);
+			if(!binding.contains(colVar)) {
+				binding.add(colVar, node);
+			}
 		}
 		
 		
