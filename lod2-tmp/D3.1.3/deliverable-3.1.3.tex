@@ -1007,7 +1007,7 @@ An $SqlNode := (S, P, B)$ as an triplet consisting of:
 \begin{itemize}
   \item a \emph{SQL algebra expression} $S$ which represents the relation.
   \item a \emph{projection} $P$, which maps column-names to SQL-expressions, similar to the AS keyword of SQL (\texttt{expr AS column-name})
-  \item a \emph{binding} $B$, which maps SPARQL variables to sets of expressions over the column-names of the projection.
+  \item a \emph{variable definition} $B$, which expresses the SPARQL variables (of a query) as expressions over the column-names of $S$.
 \end{itemize}
 These entities are used in the SQL translation phase. 
 
@@ -1028,7 +1028,9 @@ For example consider this optimization: ?s = ?o, ?s = uri(``http://ex.org'', ?id
 
 
 \section{Candidate View Selection}
-Sparqlify's approach for candidate view selection is largely influenced by ~\cite{rewriting-queries-on-sparql-views}, which we briefly summarize here.
+It should be noted, that Sparqlify's approach for candidate view selection is largely inspired by ~\cite{rewriting-queries-on-sparql-views}.
+However, we have slightly improved some of the formalizations and introduced new optimizations.
+%However,  which we briefly summarize here.
 Given a query subject to rewriting, this query is first transformed into its equivalent SPARQL AET.
 The leaf nodes are then all of type QUAD-PATTERN-SET.
 
@@ -1322,47 +1324,20 @@ Currently, Sparqlify supports the following two restrictions:
   a term type restriction function as: $\mathfrak{t}: Var \rightarrow \Omega \left ( T  \right)$
   \item \emph{prefix restrictions} This function maps variables to the set of URI prefix strings. $\mathfrak{n}: Var \rightarrow \Omega \left( String \right)$
 \end{itemize}
-In the future, this may be extended to include for instance value ranges, such as $rangeRestriction: \left \{?age \rightarrow [0, 100] \right\}$ 
+In the future, this may be extended to include for instance equals restrictions $equals: \left \{?p \rightarrow rdf:type \right\}$
+or value range restrictions, such as $rangeRestriction: \left \{?age \rightarrow [0, 100] \right\}$.
+Note that negated restrictions, such as ``does not have certain namespaces'' are currently not supported.
 
-\subsubsection{OK, I must think how to think a bit more on how to describe this part properly}
-\todo{Basically: Based on the varible bindings, derive restrictions for the views; then index the views accordingly. For a query quad: get all constraints, convert to DNF, for each clause get the restrictions, and use them for the lookup. Finally union the resulting view instances.}
 
-Given a constraint expressions, we can infer a set of constraints by:
-\begin{enumerate}
-  \item Convert the constraint into the disjunctive normal form (DNF).$\bigvee \bigwedge$\todo{clauses must have AND, so we can use it as index lookup}
-  \item  
-\end{enumerate}
-
-Based on a view definition, we can iterate all its quads and derive a constraint map as follows:
+Deriving the restrictions for the variables of a view definitions is relatively simple:
 \begin{itemize}
-  \item If a variable appears in the graph or predicate component of a quad, we 
-  \item If the query contained filters, we can infer constrainst as well.\todo{State explicitly: We support inequalities, prefix and type constraints} %such as \{ ?g ?s ?p ?o . Filter(?s = ?o \&\& ?o = rdfs:Class) \}
-  \item If a variable definition 
+  \item Base on the term constructor of a variable definition, we can directly infer the variable's rdf term type restriction.
+  \item The prefix restrictions can be directly derived from a view's startsWith constraints. Note that a prefix constraint implies a URI-term-type restriction. 
+  \item As stated, startsWith constraints can be derived from URI term constructors whose argument either has the form \texttt{string-constant} or \texttt{concat(string-constant, \ldots)}.
+  The restriction can then be derived in a separate step. 
 \end{itemize}
+We use these restrictions for indexing the views, as show in ~\autoref{tab:view-index}. 
 
-
-A view index is used to index to index views by the constraint
-
-
-\begin{itemize}
-  \item A view index, which for each quad of a view stores component wise information about the corresponding RDF term type and potential uri prefix,
-as shown in ~\autoref{tab:view-index}.
-  \item An 
-\end{itemize}  
-
-to infer constraints for the variables of the query, 
-
-Further note, that we are able to derive the following constraints for the variables:
-\begin{itemize}
-  \item If a query variable appears in the graph or predicate component of a quad, this variable is constrained to be an URI.
-  \item If the query contained filters, we can infer constrainst as well.\todo{State explicitly: We support inequalities, prefix and type constraints} %such as \{ ?g ?s ?p ?o . Filter(?s = ?o \&\& ?o = rdfs:Class) \}
-  \item If a variable definition 
-\end{itemize}
-
-%Answering a query on a single view that only defines variable free quads is equivalent to answering a query on an ordinary triple store.
-%Conversely, answering a query on a set of views can be seen as a generalization of answering a query on a triple store.
-%This fact suggests, that traditional relational indexing and query planning techniques can be reused for candidate view selection.
-%\todo{No! The thing is, as soon as we try out a binding, the set of constraints changes, and therefore affects the next lookup.}
 
 \begin{table}
 \begin{scriptsize}
@@ -1380,13 +1355,26 @@ If a component in a quad has more than one prefix, the same view-quad may be ind
 \end{table}
 
 
-\todo{Whether using embedded In-Memory relational databases, such as Derby or H2, makes things faster is subject for future work}
-TODO WRITE:
-Based on the constraints of a query quad, we can determine the view candidates.
-Conversely, picking a view candidate may add further constraints to variables, and therefore may reduce the set of
-candidates for the lookup with the next query quad. 
-\todo{Not sure whether we can express that in a relation query?}
-Example: Select * { ?s maintainer ?x . ?}
+Deriving restrictions for a quad is more complex, as it requires analyzing all filter expressions that effect the quad in question.
+
+Given a constraint expression $c$, we can infer the restrictions that apply to $vars(c)$ by:
+\begin{enumerate}
+  \item If $c$ is converted into conjunctive normal form (CNF), i.e. $\bigwedge_{i} \bigvee_{j} (\lnot) x_{ij}$,
+  then we can derive ``global'' restrictions based on all single-literal-clauses, i.e clauses of the form $\left \{ (L right \right \}$.
+  For instance, from a clause $\left \{ equals \left ( ?p, rdf:type \right ) \right \}$ we can derive that the prefix of ?p must \texttt{be rdf:type}.
+  % Give a pointer on where it is used - i.e. pruning of join condiditions
+  \item If $c$ is converted into the disjunctive normal form (DNF), i.e. $\bigvee_{i} \bigwedge_{j} (\lnot) x_{ij}$, then it is possible to derive
+  constraints on a per-clause basis. We exploit this property to perform lookups of view candidates in the view index on a per-clause basis. 
+\end{enumerate}
+
+
+\todo{Describe the lookup procedure}
+Once we have obtained a set of views $V_q$ for a given query quad $q$, the next step to create the view instances.
+Note that when binding the query variables to those of a view, the query variables inherits all constraints and restrictions that apply to the view variables.
+The binding closure thereby helps to also capture indirect constraints: In the ~\autoref{fig:binding-multimap} we see, that the closure additionally
+adds $\left \{?a \rightarrow ?y \right \}$ and $\left \{?c \rightarrow ?x \right \}$, and therefore any restrictions on
+$?x$ and $?y$ carry over to $?a$ and $?c$, respectively.
+These new restrictions can then be used to make successive lookups more selective.
 
 
 \begin{figure}[!h]
@@ -1461,13 +1449,17 @@ Create View example As
 Having described how to perform an efficient lookup for a single query quad in the previous section, we here present our optimized approach
 for finding candidate views for a quad pattern. 
 
-Our optimized malgorithm for finding view candidates for a single QUAD-PATTERN-SET set proceeds as follows:\todo{Move this to the end as an optimization}
+Our optimized malgorithm for finding view candidates for a single QUAD-PATTERN-SET set proceeds as follows:
 
 \begin{itemize}
-  \item  Find the query quad pattern that we believe has the least number of consistent bindings to view quad candidates.
-  The rationale is, that as soon as a binding becomes inconsistent we can cut off searching this branch as any further JOIN will yield an empty result set.\todo{Probably add more detail} 
-  \item Order the views that share most variables first. By this, the variables will inherit any constraints (from views and the query) early which gives a chance to quickly detect inconsistencies.   
-  \item Now that we have established an order on the query quads, take the first one and retrieve all its non-inconsistent candidate bindings.
+  \item  Find the query quad pattern that we believe 
+  \item Pick the quad that has the least number of consistent bindings.
+  The rationale is, that as soon as a binding becomes inconsistent we can cut off searching this branch as any further JOIN will yield an empty result set. 
+  \item Order the views that share most variables first. By this, the variables will inherit any constraints (from views and the query) early which gives a chance to quickly detect inconsistencies.
+  If there are now more quads that share variables with the prior ones, pick the next one with the fewest candidates.
+  \item By this we have now established an order on the query quads. The next step is to perform the JOIN as of ~\autoref{eq:candidate-set} in this order. 
+  however, this time we take all restrictions into account, and re-perform the lookups.
+  Whenever restrictions become unsatisfiable, we can skip the building of current join candidate and advance to the next one.
   \item For every candidate binding $x$, recursively perform the following:
   \begin{itemize}
     \item Take the next query-quad $qq$, and perform a lookup for all its view candidates $C_qq$ by considering all corresponding new and prior constraints.
@@ -1478,21 +1470,9 @@ Our optimized malgorithm for finding view candidates for a single QUAD-PATTERN-S
   \end{itemize}
 \end{itemize}
 
-  
-%\begin{verbatim}
-%Constraints are
-%?v1 = rdfs:comment
-%\end{verbatim}
-
-
 Following the algorithm in ~\autoref{alg:canditate-finding}, we therefore start with the set of view instance candites of (?s ?v1 ?o).
-We now essentially create the cross join between all candidate sets, as shown in ~\autoref{tab:view-instance-join} in order to retrieve a union of joins of view instances. The result is depicted in ~\autoref{tab:view-instance-join-result}. 
-
-
-
-
-
-
+%Then we perform the join between all candidate sets, as shown in ~\autoref{tab:view-instance-join} in order to retrieve a union of joins of view instances.
+The result is depicted in ~\autoref{tab:view-instance-join-result}. 
 
 
 
@@ -1872,8 +1852,8 @@ A note on Join and Left Join: Joins occur between using sub-queries.
 
 
 \subsection{Union}
-A union of two or more SqlNodes, $Union(s_1, s_2, \ldots, s_n)$ essentially results in the outer union of all
-the union's members, and a merge of all involved variable bindings.
+A union of two or more SqlNodes, $Union(s_1, s_2, \ldots, s_n)$ conceptually results in the outer union of all
+the union's members, thereby updating the column references to the new projection and taking the binding merge of all involved variable bindings.
 
 A noteworthy thing about unions is, that they can lead to multiple bindings for the same variable:
 This case arises when two or more of its members define variable bindings for the same variable, such as one member with $?s = uri(?workpage)$ and another with $?s = uri(?age)$.
@@ -2022,8 +2002,10 @@ Note, that we only need to be able to rewrite SPARQL SELECT queries, as the othe
 	For efficiency, Sparqlify appends a \texttt{LIMIT 1} to the corresponding SELECT query. 
 \item \emph{DESCRIBE}: This is the most complex query to express in terms of a set of SELECT statements. 
 	Things that need to be considered are: DESCRIBE queries may contain a WHERE clause and any combination of constants and variables may be subject to the description.
-	Furthermore, as specified in \todo{describe spec}, a describe query should include the concise bounded description (CBD) and all reifications.
-	However, at present, Sparqlify only returns the triples whose subjects match the resources to be described.    
+	Furthermore, the SPARQL specification does not define of which triples make up the description of a resource\footnote{\url{http://www.w3.org/TR/rdf-sparql-query/\#describe}},
+	and instead leaves the choice to the query processor.
+	Several descriptions are used in practice.\footnote{\url{http://answers.semanticweb.com/questions/1648/how-is-sparql-describe-used-in-practice}}
+	Sparqlify currently only supports the one that yields the triples whose subjects match the resources to be described.    
 \end{itemize}
 
 
