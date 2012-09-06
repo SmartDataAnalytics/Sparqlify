@@ -1751,72 +1751,28 @@ Similarly, in the case $A_2 \times B_1$ the view variables $?h$ and $?i$ are equ
 This means, that the second join does not have to be considered for our query, which means that a single JOIN is sufficient for answering the
 first part of the query.
 
-\begin{figure}
-\begin{scriptsize}
-\begin{lstlisting}
-Variable Definitions of the views 'types' and 'comment':
-types:    ?x = uri(?ts) = rdfterm(1, ?ts, '', '')
-          ?y = uri(?to) = rdfterm(1, ?to, '', '')
-
-comments: ?h = uri(?cs) = rdfterm(1, ?cs, '', '')
-          ?i = plainLiteral(?co) = rdfterm(2, ?co, '', '')
-
-Binding for B_1:
-    ?s = {?h}
-    ?v_1 = {rdfs:comment}
-    ?o = {?i}
-
-Binding for A_1:
-    ?s = {?x, ?y}
-    ?t = {rdf:type}
-
-Binding for A_2:
-      ?s = {?h, ?i}
-      ?t = {rdfs:comment}
-
-For A_1 x B_1 (types x comment):
-    Common variables: {?s}
-    Join condition therefore is: ?h = ?x OR ?h = ?y    
-
-Substituting the variables with the corresponding definiton
-and rewriting yields:
-?h = ?x:
-    (rdfterm(1, ?cs, '', '') = rdfterm(1, ?ts, '', '')) 
-    (1 = 1 && ?cs = ?ts && '' == '' && '' == '' &&) 
-    (true && ?cs = ?ts && true && true) 
-    (?cs = ?ts)
-
-?h = ?y:
-    (rdfterm(1, ?cs, '', '') = rdfterm(1, ?to, '', ''))
-    (1 == 1 && ?cs = ?to && '' == '' && '' == '' &&)
-    (true && ?cs = ?to && true && true)
-    (?cs = ?to)
-    
--> (?cs = ?ts || ?cs = ?to)
-
-For A_2 x B_1 (comment x comment):
-    Common variables: {s}
-    Join condition therefore is: ?h = ?h OR ?h = ?i  
-
-Substituting the variables with the corresponding definiton
-and rewriting yields:
-    ?h = ?i
-    uri(?cs) = plainLiteral(?co)
-    rdfterm(1, ?cs, '', '') = rdfterm(2, ?co, '', '')
-    (1 == 2 && ?cs == ?co && true && true) 
-->  FALSE
-
-\end{lstlisting}
-\end{scriptsize}
-\caption{Rewrite of the join condititions for $A_1 \times B_1$ and $A_2 \times B_2$. The latter gives FALSE, which means that the join can be
-pruned. As a result, only a single of our original query JOIN needs to be passed to the SQL rewriting phase. }
-\label{fig:join-rewrite-expr}
-\end{figure}
 
 
 Joining two SqlNodes requires the derivation of appropriate JOIN conditions for any variables they have in common.
 Since variables may have multiple alternative definitions, such as introduced by unions, the overall structure of
-the join condition becomes a DNF, as shown in~\autoref{alg:join}.
+the join condition becomes a DNF. The algorithm is shown in~\autoref{alg:join}, whereas its application on the
+running example is shown in \autoref{fig:join-rewrite-expr}.
+The final SQL query and mapping for our example is obtained when serializng the relation algebra expression as an SQL query string is shown in ~\autoref{fig:rewrite-final-result}.
+
+\begin{figure}[!h]
+\begin{scriptsize}
+\begin{lstlisting}
+?s = {uri(cs)}
+?t = {rdf:type}
+?v1 = {rdfs:comment} 
+?o = {uri(co}}
+SELECT a_1.cs, a_2.co FROM sql_types a_1 JOIN sql_comments a_2
+    WHERE (a_1.cs = a_2.co) AND (a_2.cs = a_2.to);
+\end{lstlisting}
+\end{scriptsize}
+\caption{The final binding and SQL query after rewriting the query of the running example.}
+\label{fig:rewrite-final-result}
+\end{figure}
 
 
 \begin{figure}[!h]
@@ -1850,12 +1806,6 @@ Identity
 \caption{The state of the SqlNode obtained after rewriting the QUAD-PATTERN-SET of the running example.}
 \end{figure}
 
-The relation algebra expression is eventually serialized as the SQL query string:
-\begin{lstlisting}
-SELECT a_1.cs, a_2.co FROM sql_types a_1 JOIN sql_comments a_2 WHERE a_1.cs = a_2.co;
-\end{lstlisting}
-
-
 \begin{figure}
 \begin{lstlisting} 
 
@@ -1874,6 +1824,69 @@ foreach(variable v common to both A and B) {
 \end{lstlisting}
 \caption{Algorithm for deriving a DNF of join condiditons based on the defining expressions of all shared variables.}
 \label{alg:join}
+\end{figure}
+
+
+\begin{figure}[!h]
+\begin{scriptsize}
+\begin{lstlisting}
+Variable Definitions of the views 'types' and 'comment':
+types:    ?x = uri(?ts) = rdfterm(1, ?ts, '', '')
+          ?y = uri(?to) = rdfterm(1, ?to, '', '')
+
+comments: ?h = uri(?cs) = rdfterm(1, ?cs, '', '')
+          ?i = plainLiteral(?co) = rdfterm(2, ?co, '', '')
+
+Binding for B_1:
+    ?s = {?h}
+    ?v_1 = {rdfs:comment}
+    ?o = {?i}
+
+Binding for A_1:
+    ?s = {?x, ?y}
+    ?t = {rdf:type}
+
+Binding for A_2:
+      ?s = {?h, ?i}
+      ?t = {rdfs:comment}
+
+For A_1 x B_1 (types x comment):
+    Common variables: {?s}
+    Join condition therefore is: (?h = ?x) AND (?h = ?y)    
+
+Substituting the variables with the corresponding definitons
+and rewriting yields:
+?h = ?x:
+    (rdfterm(1, ?cs, '', '') = rdfterm(1, ?ts, '', '')) 
+    (1 = 1 && ?cs = ?ts && '' == '' && '' == '' &&) 
+    (true && ?cs = ?ts && true && true) 
+    (?cs = ?ts)
+
+?h = ?y:
+    (rdfterm(1, ?cs, '', '') = rdfterm(1, ?to, '', ''))
+    (1 == 1 && ?cs = ?to && '' == '' && '' == '' &&)
+    (true && ?cs = ?to && true && true)
+    (?cs = ?to)
+    
+-> (?cs = ?ts) AND (?cs = ?to)
+
+For A_2 x B_1 (comment x comment):
+    Common variables: {s}
+    Join condition therefore is: ?h = ?h OR ?h = ?i  
+
+Substituting the variables with the corresponding definitons
+and rewriting yields:
+    ?h = ?i
+    uri(?cs) = plainLiteral(?co)
+    rdfterm(1, ?cs, '', '') = rdfterm(2, ?co, '', '')
+    (1 == 2 && ?cs == ?co && true && true) 
+->  FALSE
+
+\end{lstlisting}
+\end{scriptsize}
+\caption{Rewrite of the join condititions for $A_1 \times B_1$ and $A_2 \times B_2$. The latter gives FALSE, which means that the join can be
+pruned. As a result, only a single JOIN needs to be included in the resulting SQL algebra and consequently in the final SQL query string. }
+\label{fig:join-rewrite-expr}
 \end{figure}
 
 %A note on Join and Left Join: Joins occur between using sub-queries.
