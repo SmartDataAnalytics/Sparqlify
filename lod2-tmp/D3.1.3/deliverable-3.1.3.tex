@@ -81,7 +81,7 @@ The second part is then dedicated to technical details.
 
 
 \chapter{User's manual}
-In this chapter we explain how to obtain, configure and launch the Sparqlify server, 
+In this chapter we explain how to obtain, configure and launch the Sparqlify server and, further, 
 how to write RDF views for relational databases.
 We also describe example use-cases and best practices.
 
@@ -131,7 +131,7 @@ sudo apt-get update
 \begin{lstlisting}
 sudo apt-get install sparqlify
 \end{lstlisting}
-This package makes the "sparqlify" command available on the system.
+This package makes the ``sparqlify'' command available on the system.
 \end{itemize}
  
 \section{Running the Sparqlify Server}
@@ -194,7 +194,7 @@ The term logical table thereby refers to anything for which a tabular representa
 It is important to note that the aim of the section is to give users an informal impression of the mapping language.
 For this reason the focus lies on the description of how RDF data is created from logical tables using Sparqlify-ML.
 If you are interested in formal aspects of the mapping language or the process of rewriting SPARQL queries to SQL, please refer to
-the technical documentation in ~\autoref{sec:tech-doc}.
+the technical documentation in~\autoref{sec:tech-doc}.
 In the following we introduce the core concepts of Sparqlify-ML based on an example.
 \begin{figure}[!p] % has been [!h] before
 \centering
@@ -267,7 +267,7 @@ Create View MyRdfView_for_Employee As
 \caption{Mapping example with employees.}
 \label{fig:ex:mapping:employee}
 \end{figure}
-\autoref{fig:ex:mapping:employee} shows three things:
+In~\autoref{fig:ex:mapping:employee} these are presented, namely:
 \begin{itemize} 
 \item a relation holding information about employees,
 \item a Sparqlify-ML view definition and 
@@ -277,24 +277,24 @@ The RDF is obtained by applying the Sparqlify-ML mapping for each row of the emp
 The Sparqlify-ML view definition is composed of three clauses, namely \emph{Construct}, \emph{With} and \emph{From},
 which are explained in the following.
 
-The \emph{From clause} specifies the logical table from which to obtain the rows that should be mapped.
+The \emph{From} clause specifies the logical table from which to obtain the rows that should be mapped.
 In our example, it refers to the physical table or view named \emph{employee}.
 Note that SQL queries can be directly
-specified in the From clause by escaping them with double brackets:
+specified in the \emph{From} clause by escaping them with double brackets:
 \begin{lstlisting}
 ...
    From
       [[Select id, name, age From employee]]
 \end{lstlisting}
 
-The \emph{With clause} is used to declare how to generate RDF terms from (expressions over) the columns of the logical table and
+The \emph{With} clause is used to declare how to generate RDF terms from (expressions over) the columns of the \emph{logical table} and
 how to associate these RDF terms with SPARQL variables.
-As such, the With clause is the bridge between the relational and the RDF data models.
-The variables on the left-hand side of the \texttt{=}-sign can be referenced in the Construct clause, whereas
-the "variables" on the right-hand side are actually interpreted as names referring to the columns of the logical table.
+As such, the \emph{With} clause is the bridge between the relational and the RDF data models.
+The variables on the left-hand side of the \texttt{=}-sign can be referenced in the \emph{Construct} clause, whereas
+the "variables" on the right-hand side are actually interpreted as names referring to the columns of the \emph{logical table}.
 
-Formally, the With clause contains a set of \emph{variable bindings}, which are expressions of the form \texttt{sparql-var = rdf-term-constructor(args)}.
-The \emph{RDF term constructors} are function symbols for constructing RDF terms, i.e. blank nodes, URIs, plain and typed literals, from the logical table.
+Formally, the \emph{With} clause contains a set of \emph{variable bindings}, which are expressions of the form \texttt{sparql-var = rdf-term-constructor(args)}.
+The \emph{RDF term constructors} are function symbols for constructing RDF terms, i.e. blank nodes, URIs, plain and typed literals, from the \emph{logical table}.
 The corresponding parameters are as follows:
 \begin{itemize}
   \item $blankNode(x)$: Creates a blank node with $x$ as identifier.
@@ -318,10 +318,10 @@ The arguments $x$ and $y$ are expressions composed of the following elements:
 \end{itemize}
            
 The \emph{Construct} clause specifies an RDF template. 
-For each row of the underlying table, the With clause is evaluated.
+For each row of the underlying table, the \emph{With} clause is evaluated.
 This in turn yields the variable-value bindings for instantiating the template in order to obtain the final RDF graph.
   
-The \emph{Constrain} clause does not have a direct influence on the RDF generation. 
+The \emph{Constraint} clause does not have a direct influence on the RDF generation. 
 A Sparqlify-ML processor may consider the provided constraints in order to apply certain optimizations.
 Currently, Sparqlify-ML only offers a \emph{prefix} constraint, which applies to URIs and whose 
 syntax is: \texttt{sparql-var PREFIX string [, string]*}.
@@ -661,7 +661,7 @@ Subsequently, we explain the rewriting process from SPARQL to SQL in detail.
 Some things that are noteworthy in advance are:
 \begin{itemize}
   \item All modern RDF stores operate on quads; so does Sparqlify.
-		For this reason we also base our discussion on quads and quad patterns, and do not bother with triples and triple patterns.
+		For this reason we also base our discussion on quads and quad patterns and do not bother with triples and triple patterns.
 		In all cases where only triples are shown, one should assume these triples to actually be quads with their graph set to Jena's default graph constant \url{urn:x-arq:DefaultGraph}, 
   \item Likewise, we also define an RDF graph as a set of quads.
 		In order to avoid confusion, we emphasize that the term \emph{RDF graph} --- despite being called ``graph'' --- is formally actually a quadrivalent relation.
@@ -681,7 +681,7 @@ Some things that are noteworthy in advance are:
 This section introduces a simple example which is used for demonstrating the stages of the query translation.
 \autoref{fig:running_example} shows two Sparqlify-ML views and
 corresponding relations. One maps URIs to type URIs, the other maps URIs to literal comments.
-The query was chosen as it demonstrates a case where a quad \texttt{(?s ?t ?s)} implicitly constrains its own terms (the subject and object position need to be equal)
+The query was chosen as it demonstrates a case where a quad \texttt{(:g ?s ?t ?s)} \todo{add :g here, such that it is a quad} implicitly constrains its own terms (the subject and object position need to be equal)
 without an additional filter statement. Note that the default graph URIs have been omitted for brevity in both the view and the query.
 Also note, that each column referenced by the variable binding carries a datatype which must be taken into account during the rewriting.  
 
@@ -922,25 +922,25 @@ A \emph{binding} $B$ is a mapping-function from variables to a set of variables 
 In the following we always use bindings to map from \emph{query variables} to \emph{view variables} and constants.
 Furthermore, we define helper functions with the goal of easing operating on sets of variables:
 \begin{itemize}
-\item $keys(b, v) := \left\{ k | \exists k: v \in b(k) \right\}$ is the function that for a given variable (or constant) returns all the binding's keys that map to a set containing it.
-\item $Keys(b, V) := \bigcup_{v \in V} \left \{ keys(b, v) \right \}$ is similar to above, however it takes a set of variables as the argument
-\item $Values(b, K) := \bigcup_{v \in V} \left \{ b(v) \right \}$ returns the union of the value-sets for a set of keys.
+\item $\mathit{keys}(b, v) := \left\{ k | \exists k: v \in b(k) \right\}$ is the function that for a given variable (or constant) returns all the binding's keys that map to a set containing it.
+\item $\mathit{Keys}(b, V) := \bigcup_{v \in V} \left \{ keys(b, v) \right \}$ is similar to above, however it takes a set of variables as the argument.
+\item $\mathit{Values}(b, K) := \bigcup_{v \in V} \left \{ b(v) \right \}$ returns the union of the value-sets for a set of keys.
 \end{itemize}
 
 
 \paragraph{Binding Merge}
-Two bindings can be merged by combining all their mappings. $b_1 \oplus b_2 := \{q \rightarrow v | q \in {dom(b_1) \cup dom(b_2)} \wedge v = b_1(q) \cup b_2(q)\}$ 
+Two bindings can be merged by combining all their mappings. $b_1 \oplus b_2 := \{q \rightarrow v | q \in {dom(b_1) \cup dom(b_2)}, v = b_1(q) \cup b_2(q)\}$.
 
 \paragraph{Creation of Bindings}
 In our system, bindings are always created from a pair of quads. We define $\beta$ as the function which creates a binding
 by mapping the respective components of two quads $q$ and $r$:
- $\beta(q, r) = \bigoplus_{i \in I} \left \{q_i \rightarrow \left \{r_i \right \} \right \}$
+ $\beta(q, r) = \bigoplus_{i \in I} \left \{q_i \rightarrow \left \{r_i \right \} \right \}$.
 
 \paragraph{Binding Closure}
 We define $B^{i+1} := \bigcup_{k \in dom(B^i)} \left \{ k \rightarrow Values(b, Keys(b(k))) \right \}$
 The binding closure is used to establish a mapping from a query variable to \emph{all} its related view variables.
 Because view variables are associated with a set of constraints, the binding closure indirectly gives access to all contraints that must simultaneously apply to a query variable.
-An example is shown in ~\autoref{fig:binding-multimap}.
+An example is shown in~\autoref{fig:binding-multimap}.
 
 \paragraph{Constraint}
 %\todo{Not sure if we should differ between constraint-level and rewrite level unsatisfiablity}
@@ -961,7 +961,7 @@ We define $vars(c)$ as the set of variables mentioned in the predicate.
 In contrast to constraints, which are \emph{expressions}, restrictions are \emph{functions} that indirectly express constraints.
 Currently, Sparqlify supports prefix and rdf term type restrictions.
 An example of a restriction is $prefixes: \left \{ ?s \rightarrow \left \{ "http://ex.org", "http://example.org") \right \} \right \}$.
-They are used for indexing and looking up views. More detail are given in ~\autoref{sec:optimized-candidate-selection}.
+They are used for indexing and looking up views. More detail are given in~\autoref{sec:optimized-candidate-selection}.
  
 
 %\todo{Maybe we should talk about predicates; and let a constraint be something that exists independently of a var, such as [=5], or [>10]}
@@ -1017,7 +1017,7 @@ A binding is unsatisfiable, if any variable is mapped to multiple (i.e. non-equa
 %Note that we do not consider constraints of the queries or the views at this stage.
 
 \paragraph{Constraint-level Unsatisfiability}
-Unsatisfiablity on the level of constraints on query and view variables (prefix and rdf-term-type constraints) .
+Unsatisfiablity on the level of constraints on query and view variables (prefix and rdf-term-type constraints).
 For instance, if two variables ?s and ?o are equated, where ?s is an uri and ?o a literal, the equation must always yield false.
 
 \paragraph{Rewrite-level Unsatisfiability}
@@ -1028,7 +1028,7 @@ For example consider this optimization: ?s = ?o, ?s = uri(``http://ex.org'', ?id
 
 
 \section{Candidate View Selection}
-It should be noted, that Sparqlify's approach for candidate view selection is largely inspired by ~\cite{rewriting-queries-on-sparql-views}.
+It should be noted, that Sparqlify's approach for candidate view selection is largely inspired by~\cite{rewriting-queries-on-sparql-views}.
 However, we have slightly improved some of the formalizations and introduced new optimizations.
 %However,  which we briefly summarize here.
 Given a query subject to rewriting, this query is first transformed into its equivalent SPARQL AET.
@@ -1089,13 +1089,13 @@ Distinct (
 \end{figure}
 
 Note that the constant normalization could even be applied to the views, in which case any constants would be moved into the variable definitions.
-This may lead to a slightly cleaner formalization, as bindings would no longer have to refer to contants, i.e. the definition of a
+This may lead to a slightly cleaner formalization, as bindings would no longer have to refer to constants, i.e. the definition of a
 bindings would become $B := Var \rightarrow  \Omega{ \left ( Var \right ) }$.
 An analysis of this point of view is left for future work.  
 
 
 \subsection{Candidate Selection}
-The basic idea is to perform a bottom-up traversal of such AET and derive a new one by replacing all its QUAD-PATTERN-SETs with \emph{UNIONs of JOINs of candidate view-instances}.
+The basic idea is to perform a bottom-up traversal of such an AET and derive a new one by replacing all its QUAD-PATTERN-SETs with \emph{UNIONs of JOINs of candidate view-instances}.
 
 
 \subsubsection{Algorithm for finding view candidates for QUAD-PATTERN-SETs}
@@ -1177,8 +1177,8 @@ comment
 
 
 The next step is then to join each query quads candidate view instance set (~\autoref{eq:view-instance-join}). This yields a relation where each row contains view instances,
-as shown in ~\autoref{tab:view-instance-join-result}.
-Each row will eventually result in a join of the instances's underlying SQL relations.
+as shown in~\autoref{tab:view-instance-join-result}.
+Each row will eventually result in a join of the instances' underlying SQL relations.
 
 
 
@@ -1313,7 +1313,7 @@ no
 
 \subsection{Optimized Candidate Selection}
 \label{sec:optimized-candidate-selection}
-The challenge with ~\autoref{eq:candidate-set} is, how to \emph{efficiently} find the set of candidate view instances for a given query quad $p$.
+The challenge with~\autoref{eq:candidate-set} is, how to \emph{efficiently} find the set of candidate view instances for a given query quad $p$.
 Note that theses quads we are dealing with only consist of variables because of the constant normalization.
 
 Our solution is based on deriving \emph{restrictions} from the \emph{constraints} that apply to the query and view variables.
@@ -1336,7 +1336,7 @@ Deriving the restrictions for the variables of a view definitions is relatively 
   \item As stated, startsWith constraints can be derived from URI term constructors whose argument either has the form \texttt{string-constant} or \texttt{concat(string-constant, \ldots)}.
   The restriction can then be derived in a separate step. 
 \end{itemize}
-We use these restrictions for indexing the views, as show in ~\autoref{tab:view-index}. 
+We use these restrictions for indexing the views, as show in~\autoref{tab:view-index}. 
 
 
 \begin{table}
@@ -1371,7 +1371,7 @@ Given a constraint expression $c$, we can infer the restrictions that apply to $
 \todo{Describe the lookup procedure}
 Once we have obtained a set of views $V_q$ for a given query quad $q$, the next step to create the view instances.
 Note that when binding the query variables to those of a view, the query variables inherits all constraints and restrictions that apply to the view variables.
-The binding closure thereby helps to also capture indirect constraints: In the ~\autoref{fig:binding-multimap} we see, that the closure additionally
+The binding closure thereby helps to also capture indirect constraints: In the~\autoref{fig:binding-multimap} we see, that the closure additionally
 adds $\left \{?a \rightarrow ?y \right \}$ and $\left \{?c \rightarrow ?x \right \}$, and therefore any restrictions on
 $?x$ and $?y$ carry over to $?a$ and $?c$, respectively.
 These new restrictions can then be used to make successive lookups more selective.
@@ -1457,7 +1457,7 @@ Our optimized malgorithm for finding view candidates for a single QUAD-PATTERN-S
   The rationale is, that as soon as a binding becomes inconsistent we can cut off searching this branch as any further JOIN will yield an empty result set. 
   \item Order the views that share most variables first. By this, the variables will inherit any constraints (from views and the query) early which gives a chance to quickly detect inconsistencies.
   If there are now more quads that share variables with the prior ones, pick the next one with the fewest candidates.
-  \item By this we have now established an order on the query quads. The next step is to perform the JOIN as of ~\autoref{eq:candidate-set} in this order. 
+  \item By this we have now established an order on the query quads. The next step is to perform the JOIN as of~\autoref{eq:candidate-set} in this order. 
   however, this time we take all restrictions into account, and re-perform the lookups.
   Whenever restrictions become unsatisfiable, we can skip the building of current join candidate and advance to the next one.
   \item For every candidate binding $x$, recursively perform the following:
@@ -1470,9 +1470,9 @@ Our optimized malgorithm for finding view candidates for a single QUAD-PATTERN-S
   \end{itemize}
 \end{itemize}
 
-Following the algorithm in ~\autoref{alg:canditate-finding}, we therefore start with the set of view instance candites of (?s ?v1 ?o).
+Following the algorithm in~\autoref{alg:canditate-finding}, we therefore start with the set of view instance candites of (?s ?v1 ?o).
 %Then we perform the join between all candidate sets, as shown in ~\autoref{tab:view-instance-join} in order to retrieve a union of joins of view instances.
-The result is depicted in ~\autoref{tab:view-instance-join-result}. 
+The result is depicted in~\autoref{tab:view-instance-join-result}. 
 
 
 
@@ -1591,7 +1591,7 @@ Create View types As
 \label{fig:running-example}
 \end{figure}
 
-Given a view instance set, we can detect and remove self-join using the algorithm in ~\autoref{algo:self-join-check}.
+Given a view instance set, we can detect and remove self-join using the algorithm in~\autoref{algo:self-join-check}.
 
 \begin{figure}[!h]
 \begin{lstlisting}
@@ -1647,13 +1647,13 @@ When translating a single view instance to an SqlNode, one has to take into acco
 inherited through bindings to appropriate SQL filter constraints:
 Recall that in our example we have an instance of the view ``types'' with the binding $(?s = \{?x, ?y\}, ?t = \{rdf:type\})$
 and the underlying SQL relation named ``sql\_types''.
-The translation to an SqlNodeis a follows:
+The translation to an SqlNode is a follows:
 The view definition of \texttt{types} contains the bindings $?x = uri(?ts)$ and $?y = uri(?to)$.
 Because the binding equates $?s$ to both $?x$ and $?y$, it is implied that $?x$ must equal $?y$. 
 By substituting $?x$ and $?y$ with their defining expressions, which are based on SQL columns, we eventually derive an SQL filter expression $ts = to$.
 Furthermore, once $?x$ and $?y$ are constrained to be equal, it is sufficient to only retain one of the bindings for $?s$.
 
-The translation and the resulting SQL AET are shown in ~\autoref{fig:trans-view-instance}. 
+The translation and the resulting SQL AET are shown in~\autoref{fig:trans-view-instance}. 
 
 \begin{figure}[!h]
 \centering
@@ -1735,7 +1735,7 @@ applied which yield SQL expressions.
 Note that because all view variables in such set need to be equal,
 we can create a logical conjunction of equals expressions obtained by
 picking one of the variables and equating it to each of the remaining ones.
-In our example, only ?s maps to multiple variables, and results in the join condition $(?cs = ?ts) \&\& (?cs = ?to)$ as shown in ~\autoref{fig:join-rewrite-expr}. 
+In our example, only ?s maps to multiple variables, and results in the join condition $(?cs = ?ts) \&\& (?cs = ?to)$ as shown in~\autoref{fig:join-rewrite-expr}. 
 Similarly, in the case $A_2 \times B_1$ the view variables $?h$ and $?i$ are equated, leading to uri(?cs) = plainLiteral(?co), and eventually false.
 This means, that the second join does not have to be considered for our query, which means that a single JOIN is sufficient for answering the
 first part of the query.
@@ -1757,9 +1757,12 @@ Binding
 Expressions
 First Join:
 ?h = ?x && ?h = ?y
-(rdfterm(1, ?cs, '', '') = rdfterm(1, ?ts, '', '')) && (rdfterm(1, ?cs, '', '') = rdfterm(1, ?to, '', ''))
-(1 = 1 && ?cs = ?ts && '' == '' && '' == '' &&) && (1 == 1 && ?cs = ?to && '' == '' && '' == '' &&)
-(true && ?cs = ?ts && true && true) && (true && ?cs = ?to && true && true)
+(rdfterm(1, ?cs, '', '') = rdfterm(1, ?ts, '', '')) 
+    && (rdfterm(1, ?cs, '', '') = rdfterm(1, ?to, '', ''))
+(1 = 1 && ?cs = ?ts && '' == '' && '' == '' &&) 
+    && (1 == 1 && ?cs = ?to && '' == '' && '' == '' &&)
+(true && ?cs = ?ts && true && true) 
+    && (true && ?cs = ?to && true && true)
 (?cs = ?ts) && (?cs = ?to)
 
 Second Join:
@@ -1777,7 +1780,7 @@ FALSE
 
 Joining two SqlNodes requires the derivation of appropriate JOIN conditions for any variables they have in common.
 Since variables may have multiple alternative definitions, such as introduced by unions, the overall structure of
-the join condition becomes a DNF, as shown in ~\autoref{alg:join}.
+the join condition becomes a DNF, as shown in~\autoref{alg:join}.
 
 
 \begin{figure}[!h]
@@ -1862,7 +1865,7 @@ In order to disambigate which bindings to apply, we can exploit the property of 
 Therefore, given a tuple of the union, any binding for which any of its referenced columns is NULL does not apply. Note that in the case of LEFT-JOINs it may happen that none of the bindings
 apply\footnote{Another case where this can happen is, if a view definition references columns containing NULL values. Although, strictly speaking, such mapping is invalid, as it does not yield a valid RDF graph, Sparqlify allows it.}, which
 results in an unbound RDF term.
-Special treatment has been done with bindings to constants, such as $?o = typedLiteral(``5'', xsd:double)$: In order to discriminate for member they apply,
+Special treatment has been done with bindings to constants, such as $?o = typedLiteral($``$5$''$, xsd:double)$: In order to discriminate for member they apply,
 they are pushed into columns of appropriate data type into the respective member-relation. The binding is then updated accordingly, such as $?o = plainLiteral(?autoGeneratedColumnOfTypeDouble, xsd:double)$.
 
 
@@ -1883,7 +1886,8 @@ Additionally, meh. man kann halt gemeinsame ausdrueke rausfaktorisieren und komm
 
 
 \begin{verbatim}
-SELECT a_1.cs, a_2.co FROM sql\_types a_1 JOIN sql\_comments a_2 WHERE a_1.cs = a_2.co;\todo{ref this statement in prev section}
+SELECT a_1.cs, a_2.co FROM sql\_types a_1 JOIN sql\_comments a_2 
+  WHERE a_1.cs = a_2.co;\todo{ref this statement in prev section}
 \end{verbatim}
 
 \begin{figure}[!h]
@@ -2023,15 +2027,15 @@ OpenStreetMap\emph{http://www.openstreetmap.org/}
 database\footnote{Using the ``simple schema'' provided and supported by the respective OpenStreetMap tools.},
 where it gives access to more than 20 billion triples backed by about 3 billion physical rows.
 There are two smaller use cases related to linguistic resources. 
-One is the mapping of the Wortschatz database\url{www.wortschatz.uni-leipzig.de/}, where the virtual RDF contains reified statements, which however can be maintained and queried efficiently with the Sparqlify system.
+One is the mapping of the Wortschatz database~\url{www.wortschatz.uni-leipzig.de/}, where the virtual RDF contains reified statements, which however can be maintained and queried efficiently with the Sparqlify system.
 The other is PanLex\todo{ask Seppl for one sentence about it.}.
 
 
 While initial benchmark results with the BSBM\footnote{\url{http://www4.wiwiss.fu-berlin.de/bizer/berlinsparqlbenchmark/}} indicates a performance comparable with D2R, a thorough benchmark yet needs to be performed.
 A research question is how the SPARQL 1.1 features\footnote{\url{http://www.w3.org/TR/sparql11-query/}}, such as property paths of arbitrary length, can be efficiently supported in SPARQL-SQL rewriters.
-Furthermore, although we believe that Sparqlify-ML is easier to use while offering the very similar functionality as the RDF based mapping language R2R-ML\footnote{\url{http://www.w3.org/TR/r2rml/}},
+Furthermore, although we believe that Sparqlify-ML is easier to use while offering the very similar functionality as the RDF based mapping language R2RML\footnote{\url{http://www.w3.org/TR/r2rml/}},
 the latter has been standardized very recently and should therefore be supported by the Sparqlify system. Yet, we strive to promote Sparqlify-ML,
-with the goal of a mapping language in this spirit eventually becoming an alternative to R2R-ML.
+with the goal of a mapping language in this spirit eventually becoming an alternative to R2RML.
 \todo{In case you think this makes bad blood, we could change alternative to complementary - or just skip this statement.} 
 
 It is also noteworthy, that Sparqlify-ML was designed with the goal to enable SPARQL-SQL rewriting.
