@@ -662,7 +662,8 @@ Some things that are noteworthy in advance are:
 \begin{itemize}
   \item All modern RDF stores operate on quads; so does Sparqlify.
 		For this reason we also base our discussion on quads and quad patterns and do not bother with triples and triple patterns.
-		In all cases where only triples are shown, one should assume these triples to actually be quads with their graph set to Jena's default graph constant \url{urn:x-arq:DefaultGraph}, 
+		In all cases where only triples are shown, one should assume these triples to actually be quads with their graph set to Jena's default graph constant
+		\url{urn:x-arq:DefaultGraph}, abbreviated as \texttt{:g}, 
   \item Likewise, we also define an RDF graph as a set of quads.
 		In order to avoid confusion, we emphasize that the term \emph{RDF graph} --- despite being called ``graph'' --- is formally actually a quadrivalent relation.
         Throughout this section we make use of notions such as ``Select \{ ?g ?s ?p ?o \}'' which should be considered to refer to quads.      
@@ -681,7 +682,7 @@ Some things that are noteworthy in advance are:
 This section introduces a simple example which is used for demonstrating the stages of the query translation.
 \autoref{fig:running_example} shows two Sparqlify-ML views and
 corresponding relations. One maps URIs to type URIs, the other maps URIs to literal comments.
-The query was chosen as it demonstrates a case where a quad \texttt{(:g ?s ?t ?s)} \todo{add :g here, such that it is a quad} implicitly constrains its own terms (the subject and object position need to be equal)
+The query was chosen as it demonstrates a case where a quad \texttt{(:g ?s ?t ?s)} implicitly constrains its own terms (the subject and object position need to be equal)
 without an additional filter statement. Note that the default graph URIs have been omitted for brevity in both the view and the query.
 Also note, that each column referenced by the variable binding carries a datatype which must be taken into account during the rewriting.  
 
@@ -863,7 +864,8 @@ however, slightly adapted to the Sparqlify system.
 	\item PROJECT(M, vars): A projection on the pattern $a$, which only retains the columns mentioned in \emph{vars}.
 	\item DISTINCT(a): Removes any duplicate result rows.
 \end{itemize}
-For the SQL algebra, one essentially has to replace \emph{pattern} with \emph{relation}.\todo{I know this does not sound very scientific but for the deliverable I would just leave it like this.}
+For the SQL algebra, one essentially has to replace \emph{pattern} with \emph{relation}.
+%\todo{I know this does not sound very scientific but for the deliverable I would just leave it like this.}
 In fact, in terms of expressiveness both algebras have been proven to be equivalent~\cite{sparqloverrelational}. 
 
 \begin{figure}[!h]
@@ -1373,7 +1375,8 @@ Given a constraint expression $c$, we can infer the restrictions that apply to $
 \end{enumerate}
 
 
-\todo{Describe the lookup procedure}
+
+%\todo{Describe the lookup procedure}
 Once we have obtained a set of views $V_q$ for a given query quad $q$, the next step to create the view instances.
 Note that when binding the query variables to those of a view, the query variables inherits all constraints and restrictions that apply to the view variables.
 The binding closure thereby helps to also capture indirect constraints: In the~\autoref{fig:binding-multimap} we see, that the closure additionally
@@ -1467,11 +1470,12 @@ Our optimized malgorithm for finding view candidates for a single QUAD-PATTERN-S
   Whenever restrictions become unsatisfiable, we can skip the building of current join candidate and advance to the next one.
   \item For every candidate binding $x$, recursively perform the following:
   \begin{itemize}
-    \item Take the next query-quad $qq$, and perform a lookup for all its view candidates $C_qq$ by considering all corresponding new and prior constraints.
-    Create a new binding $z$, by merging the binding $x$ it with the binding $y$ of the new candidate. If $z$ is inconsistent, try next view candidate
-    of $C-q$, otherwise we repeat this step for the next query-quad.\todo{z becomes the new x.}
-  \item If there are no more query-quads to pick from, we add the current set of view-instances to our result set.
-  \todo{The set of view-instances eventually gets joined, and the result set become a union.}
+    \item If possible, take the next query-quad $q$, and perform a lookup for all its view candidates $V_q$ by considering all corresponding new and prior constraints.
+    For each candidate, create a new binding $z$, by merging the prior bindings $x$ with the one to the the new candidate.
+    If this binding new binding is inconsistent, try next view candidate.
+	Otherwise, continue with the next query quad.
+  \item If there is no next query quad, we have successfully created a set of candidate view instances whose bindings do not result in
+	knowingly unsatisfiable join conditions. Add this set of instances to our result set.
   \end{itemize}
 \end{itemize}
 
@@ -1856,7 +1860,7 @@ foreach(query variable in binding) {
 \label{alg:join}
 \end{figure}
 
-A note on Join and Left Join: Joins occur between using sub-queries.
+%A note on Join and Left Join: Joins occur between using sub-queries.
 
 
 \subsection{Union}
@@ -1875,25 +1879,26 @@ they are pushed into columns of appropriate data type into the respective member
 
 
 One reasonable optimization is to reduce the number of columns a full outer union would generate, by factoring out structural equivalent binding expressions, and assigning them the same set of columns.
-\todo{If time gets too short we can just leave it at that and remove the rest.}
-\paragraph{Structural Equivalence of Expressions} We define the structural equivalence, structEquiv(a, b) of two expressions as follows:\todo{Use partial function style?}
-\begin{enumerate}
-  \item true if either a and b are leaf nodes, and datatype(a) == datatype(b)
-  \item a and b have the same operator and same number of arguments, and each pair of arguments is structural equivalent.\todo{Meh, I know this can be expressed in such a nice way, but I can't think of it} 
-  \item false otherwise.
-\end{enumerate}
-The idea is, that we can ``factor out'' structural equivalent expressions of variable definitions in order to reduce the number of columns.
 
 
-Additionally, meh. man kann halt gemeinsame ausdrueke rausfaktorisieren und kommt daher mit weniger spalten aus.
-- Structural equivalent expressions (leaf nodes (variables and constants) are replaced by their datatype) 
+%\todo{If time gets too short we can just leave it at that and remove the rest.}
+%\paragraph{Structural Equivalence of Expressions} We define the structural equivalence, structEquiv(a, b) of two expressions as follows:\todo{Use partial function style?}
+%\begin{enumerate}
+%  \item true if either a and b are leaf nodes, and datatype(a) == datatype(b)
+%  \item a and b have the same operator and same number of arguments, and each pair of arguments is structural equivalent.\todo{Meh, I know this can be expressed in such a nice way, but I can't think of it} 
+%  \item false otherwise.
+%\end{enumerate}
+%The idea is, that we can ``factor out'' structural equivalent expressions of variable definitions in order to reduce the number of columns.
+
+%Additionally, meh. man kann halt gemeinsame ausdrueke rausfaktorisieren und kommt daher mit weniger spalten aus.
+%- Structural equivalent expressions (leaf nodes (variables and constants) are replaced by their datatype) 
 
 
 
-\begin{verbatim}
-SELECT a_1.cs, a_2.co FROM sql\_types a_1 JOIN sql\_comments a_2 
-  WHERE a_1.cs = a_2.co;\todo{ref this statement in prev section}
-\end{verbatim}
+%\begin{verbatim}
+%SELECT a_1.cs, a_2.co FROM sql\_types a_1 JOIN sql\_comments a_2 
+%  WHERE a_1.cs = a_2.co;\todo{ref this statement in prev section}
+%\end{verbatim}
 
 \begin{figure}[!h]
 \begin{tabular}{ccc} \toprule
@@ -2028,20 +2033,19 @@ In this deliverable we presented the \emph{Sparqlify} project, which comprises
 \end{itemize}
 
 Sparqlify has been successfully deployed in the LinkedGeoData project on the
-OpenStreetMap\emph{http://www.openstreetmap.org/}
+OpenStreetMap\footnote{\url{http://www.openstreetmap.org/}}
 database\footnote{Using the ``simple schema'' provided and supported by the respective OpenStreetMap tools.},
 where it gives access to more than 20 billion triples backed by about 3 billion physical rows.
-There are two smaller use cases related to linguistic resources. 
-One is the mapping of the Wortschatz database~\url{www.wortschatz.uni-leipzig.de/}, where the virtual RDF contains reified statements, which however can be maintained and queried efficiently with the Sparqlify system.
-The other is PanLex\todo{ask Seppl for one sentence about it.}.
+There are also use cases related to linguistic resources.
+One is the mapping of the Wortschatz database\footnote{\url{www.wortschatz.uni-leipzig.de/}}, where the virtual RDF contains reified statements, which however can be maintained and queried efficiently with the Sparqlify system.
+%The other is PanLex\todo{ask Seppl for one sentence about it.}.
 
 
 While initial benchmark results with the BSBM\footnote{\url{http://www4.wiwiss.fu-berlin.de/bizer/berlinsparqlbenchmark/}} indicates a performance comparable with D2R, a thorough benchmark yet needs to be performed.
 A research question is how the SPARQL 1.1 features\footnote{\url{http://www.w3.org/TR/sparql11-query/}}, such as property paths of arbitrary length, can be efficiently supported in SPARQL-SQL rewriters.
 Furthermore, although we believe that Sparqlify-ML is easier to use while offering the very similar functionality as the RDF based mapping language R2RML\footnote{\url{http://www.w3.org/TR/r2rml/}},
-the latter has been standardized very recently and should therefore be supported by the Sparqlify system. Yet, we strive to promote Sparqlify-ML,
-with the goal of a mapping language in this spirit eventually becoming an alternative to R2RML.
-\todo{In case you think this makes bad blood, we could change alternative to complementary - or just skip this statement.} 
+the latter has been standardized very recently and should therefore be supported by the Sparqlify system. Yet, we believe that
+Sparqlify-ML is in most cases easier to learn and use than R2RML, and therefore see future efforts on improving Sparqlify-ML as complementary. 
 
 It is also noteworthy, that Sparqlify-ML was designed with the goal to enable SPARQL-SQL rewriting.
 Therefore its language features for data transformation are limited to simple functions,
@@ -2064,30 +2068,15 @@ sparqlifyConfig
     : sparqlifyConfigStmt+ EOF!
     ;
 
-
-constructViewConfig
-    : constructViewConfigStmt+ EOF!
-    ;
-
-constructViewConfigStmt 
-    : viewDefStmtConstruct
-    | prefixDefStmt
-    ;
-
 sparqlifyConfigStmt 
     : viewDefStmt
     | prefixDefStmt
     ;
 
-
 viewDefStmt
-    : CREATE VIEW NAME AS CONSTRUCT viewTemplateDef varConstraintsClause? (FROM relationRef)? ';'?
+    : CREATE VIEW NAME AS CONSTRUCT
+          viewTemplateDef varConstraintsClause? (FROM relationRef)? ';'?
     ;
-
-viewDefStmtConstruct
-    : CREATE CONSTRUCT VIEW NAME AS SQL_QUERY ';'?
-    ;
-
 
 varConstraintsClause
     : CONSTRAIN varConstraint+
@@ -2106,10 +2095,6 @@ stringList
     : string (COMMA? string)*
     ;
 
-viewTemplateDefStmt
-    : CREATE VIEW TEMPLATE NAME AS CONSTRUCT viewTemplateDef ';'?
-    ;
-
 viewTemplateDef
 	: constructTemplate varBindingPart?
 	;
@@ -2126,11 +2111,11 @@ relationRef
     ;
 
 varBindingPart
-    : WITH varBinding+ -> ^(VAR_BINDINGS varBinding+)
+    : WITH varBindingItem+ -> ^(VAR_BINDINGS varBindingItem+)
     ;
 
 
-varBinding
+varBindingItem
     : var '=' typeCtorExpression
     ;	
 
