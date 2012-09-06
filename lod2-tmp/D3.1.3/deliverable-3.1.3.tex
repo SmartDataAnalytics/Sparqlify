@@ -916,11 +916,16 @@ Here we first define the most important concepts, and then present our approach 
 \paragraph{Quad}
 A \emph{quad} is in element of an RDF graph. We use the notion $q_i$ with $i \in I$ and $I := \left\{g, s, p, o \right\}$ to refer to a quad's $i$-th component. 
 
-\paragraph{Binding}
-A \emph{binding} $B$ is a mapping-function from variables to a set of variables and constants $B := Var \rightarrow  \Omega{ \left ( Var \cup Const \right ) }$.
+\paragraph{Binding and Binding Function}
+A \emph{binding} $b$ is defined as a function $b \subseteq Var \rightarrow \Omega{ \left ( Var \cup Const \right ) }$.
+%Furthermore we require the existance of a \emph{binding function} $b_f := $ for bindings.
+%This implies, that 
+%Furthermore we define $b$'s \emph{binding function} as $b_f(k) := \left \{ v | (k, v) \in b \right \}$
+%In the remainder of this document, we use $b$ and $b_f$ interchangeably.
+% is a mapping-function from variables to a set of variables and constants $B := Var \rightarrow  \Omega{ \left ( Var \cup Const \right ) }$.
 %For an instance of a binding $b \subset B$, we use the notion $b(x)$ to refer to the set related to x.
 In the following we always use bindings to map from \emph{query variables} to \emph{view variables} and constants.
-Furthermore, we define helper functions with the goal of easing operating on sets of variables:
+Furthermore, we define helper functions with the goal of easing the operations on sets of variables:
 \begin{itemize}
 \item $keys(b, v) := \left\{ k | \exists k: v \in b(k) \right\}$ is the function that for a given variable (or constant) returns all the binding's keys that map to a set containing it.
 \item $Keys(b, V) := \bigcup_{v \in V} \left \{ keys(b, v) \right \}$ is similar to above, however it takes a set of variables as the argument
@@ -1419,7 +1424,7 @@ Create View example As
 \begin{verbatim}
 ?a -> { ?x }
 ?b -> { ?x, ?y }
-?c -> { ?y })
+?c -> { ?y }
 \end{verbatim}
 \end{scriptsize}
 \end{minipage}
