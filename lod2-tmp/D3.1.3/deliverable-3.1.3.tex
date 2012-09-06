@@ -1800,7 +1800,7 @@ Since variables may have multiple alternative definitions, such as introduced by
 the join condition becomes a DNF, as shown in ~\autoref{alg:join}.
 
 
-\begin{table}
+\begin{figure}[!h]
 \begin{tabular}{ccc}
 \toprule
 SQL & Projection & Binding \\
@@ -1829,7 +1829,7 @@ Identity
 \bottomrule
 \end{tabular}
 \caption{The state of the SqlNode obtained after rewriting the QUAD-PATTERN-SET of the running example.}
-\end{table}
+\end{figure}
 
 The relation algebra expression is eventually serialized as the SQL query string:
 \begin{lstlisting}
@@ -1906,7 +1906,7 @@ Additionally, meh. man kann halt gemeinsame ausdrueke rausfaktorisieren und komm
 SELECT a_1.cs, a_2.co FROM sql\_types a_1 JOIN sql\_comments a_2 WHERE a_1.cs = a_2.co;\todo{ref this statement in prev section}
 \end{verbatim}
 
-\begin{table}
+\begin{figure}[!h]
 \begin{tabular}{ccc} \toprule
 Types' SqlNode & Comment's SqlNode & Union's SqlNode \\ \midrule
 
@@ -1994,7 +1994,7 @@ ex:Leipzig & & ex:City & rdfs:comment \\ \hline
 
 \end{tabular}
 \caption{Example of the result set for the query Select * \{ ?s ?p ?o \} on the given views}
-\end{table}
+\end{figure}
 
   
 
