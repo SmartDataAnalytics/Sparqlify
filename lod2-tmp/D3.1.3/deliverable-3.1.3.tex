@@ -1993,7 +1993,11 @@ ex:Leipzig & & ex:City & rdfs:comment \\ \hline
 
 
 \end{tabular}
-\caption{Example of the result set for the query Select * \{ ?s ?p ?o \} on the given views}
+\caption{The resulting SqlNode after optimizing the outer union yeld by processing the query \texttt{Select * \{ ?s ?p ?o \}} on the given views.
+Because all variable definitions of ?s were structurally equivalent, they could be combined into the same column.
+The predicate URIs had to be pushed into columns (of type string) into the respective member as to discriminate them.
+The corresponding columns could then be collapsed aswell because of structurally equivalent variable definitions.
+The object columns could not be further optimized. Note that the column names of the projection are usually automatically assigned by the system. Here we have labeled them for clarity.}
 \end{figure}
 
   
