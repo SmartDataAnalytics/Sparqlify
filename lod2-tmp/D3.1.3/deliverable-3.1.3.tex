@@ -838,8 +838,9 @@ Thereby we make the following assumptions and observations:
 As already indicated in the previous section, our approach to rewriting of SPARQL queries is based on algebraic expression tree (AET) transformations. 
 For both SPARQL and SQL there exist algebraic representations for the structure of queries besides their syntactic representation.
 Note that an RDF graph, despite being called \emph{graph}, is according to its formal definition a triliteral (for triples) or quadrilateral (for quads) \emph{relation}.
-The twist with RDF graphs is, that the columns have complex datatypes, such as the union of URIs, blanknodes and literals. For this reason, in this document we not
-go too deeply into the differences of the two algebras, as we use a set of operators that is common to both of them.
+The twist with RDF graphs is, that the columns have complex datatypes, such as the union of URIs, blanknodes and literals.
+In this document we not
+describe the differences of the two algebras in details, as we use a set of operators that is common to both of them.
 There are subtle differences in the interpretation of the algebras, and in the representation of result sets.
 For example a ``row'' in a SPARQL result set is a set of mappings from variable-names to their respective value, in SQL the variable corresponds to a column
 and is part of the schema.
@@ -929,9 +930,9 @@ A \emph{binding} $b$ is defined as a function $b \subseteq Var \rightarrow \Omeg
 In the following we always use bindings to map from \emph{query variables} to \emph{view variables} and constants.
 Furthermore, we define helper functions with the goal of easing the operations on sets of variables:
 \begin{itemize}
-\item $\mathit{keys}(b, v) := \left\{ k | \exists k: v \in b(k) \right\}$ is the function that for a given variable (or constant) returns all the binding's keys that map to a set containing it.
-\item $\mathit{Keys}(b, V) := \bigcup_{v \in V} \left \{ keys(b, v) \right \}$ is similar to above, however it takes a set of variables as the argument.
-\item $\mathit{Values}(b, K) := \bigcup_{v \in V} \left \{ b(v) \right \}$ returns the union of the value-sets for a set of keys.
+\item $\mathit{keys}(b, v) := \left\{ k | \exists k: v \in b(k) \right\}$ is the function that for a given variable (or constant) $v$ returns all the binding's keys that map to sets containing $v$.
+\item $\mathit{Keys}(b, V) := \bigcup_{v \in V} \left \{ keys(b, v) \right \}$ is similar to above, however it takes a set of variables $V$ as the argument.
+\item $\mathit{Values}(b, K) := \bigcup_{k \in K} \left \{ b(k) \right \}$ returns the union of the value-sets for a set of keys $K$.
 \end{itemize}
 
 
@@ -944,7 +945,8 @@ by mapping the respective components of two quads $q$ and $r$:
  $\beta(q, r) = \bigoplus_{i \in I} \left \{q_i \rightarrow \left \{r_i \right \} \right \}$.
 
 \paragraph{Binding Closure}
-We define $B^{i+1} := \bigcup_{k \in dom(B^i)} \left \{ k \rightarrow Values(b, Keys(b(k))) \right \}$
+We use $b^*$ to denote the binding closure of a binding $b = b^0$, which is computed by
+iteratively applying the following rule, until there are no more changes: We define $b^{i+1} := \bigcup_{k \in dom(b^i)} \left \{ k \rightarrow Values(b^i, Keys(b^i, b^i(k))) \right \}$
 The binding closure is used to establish a mapping from a query variable to \emph{all} its related view variables.
 Because view variables are associated with a set of constraints, the binding closure indirectly gives access to all contraints that must simultaneously apply to a query variable.
 An example is shown in~\autoref{fig:binding-multimap}.
@@ -1750,39 +1752,64 @@ This means, that the second join does not have to be considered for our query, w
 first part of the query.
 
 \begin{figure}
-\begin{verbatim}
-Variable Definitions
-?x = uri(?ts) = rdfterm(1, ?ts, '', '')
-?y = uri(?to) = rdfterm(1, ?to, '', '')
-?h = uri(?cs) = rdfterm(1, ?cs, '', '')
-?i = plainLiteral(?co) = rdfterm(2, ?co, '', '')
+\begin{scriptsize}
+\begin{lstlisting}
+Variable Definitions of the views 'types' and 'comment':
+types:    ?x = uri(?ts) = rdfterm(1, ?ts, '', '')
+          ?y = uri(?to) = rdfterm(1, ?to, '', '')
 
-Binding
-?s = {?h, ?x, ?y} 
-?t = {rdf:type} 
-?v1 = {rdfs:comment} 
-?o = {?i} 
+comments: ?h = uri(?cs) = rdfterm(1, ?cs, '', '')
+          ?i = plainLiteral(?co) = rdfterm(2, ?co, '', '')
 
-Expressions
-First Join:
-?h = ?x && ?h = ?y
-(rdfterm(1, ?cs, '', '') = rdfterm(1, ?ts, '', '')) 
-    && (rdfterm(1, ?cs, '', '') = rdfterm(1, ?to, '', ''))
-(1 = 1 && ?cs = ?ts && '' == '' && '' == '' &&) 
-    && (1 == 1 && ?cs = ?to && '' == '' && '' == '' &&)
-(true && ?cs = ?ts && true && true) 
-    && (true && ?cs = ?to && true && true)
-(?cs = ?ts) && (?cs = ?to)
+Binding for B_1:
+    ?s = {?h}
+    ?v_1 = {rdfs:comment}
+    ?o = {?i}
 
-Second Join:
-?h = ?i
-uri(?cs) = plainLiteral(?co)
-rdfterm(1, ?cs, '', '') = rdfterm(2, ?co, '', '')
-(1 == 2 && ?cs == ?co && true && true) 
-FALSE
+Binding for A_1:
+    ?s = {?x, ?y}
+    ?t = {rdf:type}
 
-\end{verbatim}
-\caption{Rewrite of the join condititions.}
+Binding for A_2:
+      ?s = {?h, ?i}
+      ?t = {rdfs:comment}
+
+For A_1 x B_1 (types x comment):
+    Common variables: {?s}
+    Join condition therefore is: ?h = ?x OR ?h = ?y    
+
+Substituting the variables with the corresponding definiton
+and rewriting yields:
+?h = ?x:
+    (rdfterm(1, ?cs, '', '') = rdfterm(1, ?ts, '', '')) 
+    (1 = 1 && ?cs = ?ts && '' == '' && '' == '' &&) 
+    (true && ?cs = ?ts && true && true) 
+    (?cs = ?ts)
+
+?h = ?y:
+    (rdfterm(1, ?cs, '', '') = rdfterm(1, ?to, '', ''))
+    (1 == 1 && ?cs = ?to && '' == '' && '' == '' &&)
+    (true && ?cs = ?to && true && true)
+    (?cs = ?to)
+    
+-> (?cs = ?ts || ?cs = ?to)
+
+For A_2 x B_1 (comment x comment):
+    Common variables: {s}
+    Join condition therefore is: ?h = ?h OR ?h = ?i  
+
+Substituting the variables with the corresponding definiton
+and rewriting yields:
+    ?h = ?i
+    uri(?cs) = plainLiteral(?co)
+    rdfterm(1, ?cs, '', '') = rdfterm(2, ?co, '', '')
+    (1 == 2 && ?cs == ?co && true && true) 
+->  FALSE
+
+\end{lstlisting}
+\end{scriptsize}
+\caption{Rewrite of the join condititions for $A_1 \times B_1$ and $A_2 \times B_2$. The latter gives FALSE, which means that the join can be
+pruned. As a result, only a single of our original query JOIN needs to be passed to the SQL rewriting phase. }
 \label{fig:join-rewrite-expr}
 \end{figure}
 
@@ -1829,31 +1856,20 @@ SELECT a_1.cs, a_2.co FROM sql_types a_1 JOIN sql_comments a_2 WHERE a_1.cs = a_
 \end{lstlisting}
 
 
-
 \begin{figure}
 \begin{lstlisting} 
-foreach(query variable in binding) {
-    // Check if both sides participate in th
 
-    view_variables = binding[query_variable]
-    if(view_variables contains 0 or 1 element) { 
-        continue;
-    }
+foreach(variable v common to both A and B) {
+	dnf = {};
+    foreach(definition dA in defs(A, v)) {
     
-    variable = pick_one_from(view_variables);
-     
-	//foreach(common variable v in A and B) {
-		dnf = {};
-	    foreach(definition dA in defs(A, v)) {
-	    
-	    	and_clauses = {};
-	    	foreach(definition dB in defs(B, v)) {
-	    		and_clauses add rewrite(Equals(dA, dB));
-	    	}
-	    	
-	    	dnf add and_clauses;
-	    }
-	}
+    	and_clauses = {};
+    	foreach(definition dB in defs(B, v)) {
+    		and_clauses.add(rewrite(Equals(dA, dB)));
+    	}
+    	
+    	dnf.add(and_clauses);
+    }
 }
 \end{lstlisting}
 \caption{Algorithm for deriving a DNF of join condiditons based on the defining expressions of all shared variables.}
