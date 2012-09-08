@@ -294,7 +294,7 @@ public class RdfViewSystemOld
 		// Rename the variables in the view to make them globally unique
 		
 		
-		logger.trace("Renamed variables of view: " + copy);
+		//logger.trace("Renamed variables of view: " + copy);
 
 		this.views.add(copy);
 	

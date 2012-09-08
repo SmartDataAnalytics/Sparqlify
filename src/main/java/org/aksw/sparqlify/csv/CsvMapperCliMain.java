@@ -30,6 +30,7 @@ import org.aksw.sparqlify.core.IteratorResultSetSparqlifyBinding;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.rest.HttpSparqlEndpoint;
+import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -137,15 +138,24 @@ public class CsvMapperCliMain {
 //
 //		}
 		
+		LoggerCount loggerCount = new LoggerCount(logger);
+
 
 		TemplateConfigParser parser = new TemplateConfigParser();
 
 		InputStream in = new FileInputStream(configFile);
 		TemplateConfig config;
 		try {
-			config = parser.parse(in);
+			config = parser.parse(in, loggerCount);
 		} finally {
 			in.close();
+		}
+
+		
+		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+		
+		if(loggerCount.getErrorCount() > 0) {
+			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
 		}
 
 	

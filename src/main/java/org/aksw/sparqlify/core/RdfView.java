@@ -268,7 +268,7 @@ public class RdfView
 		ConstraintContainer constraints = new ConstraintContainer(rawConstraints);
 		
 
-		logger.warn("Sanity checking of given patterns against derived ones and vice versa not implemented yet.");
+		//logger.warn("Sanity checking of given patterns against derived ones and vice versa not implemented yet.");
 		// Derive regex patterns for all expressions
 		for(Entry<Node, Expr> entry : bindingMap.entrySet()) {
 

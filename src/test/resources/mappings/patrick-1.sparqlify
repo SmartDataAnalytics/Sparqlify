@@ -1,0 +1,11 @@
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+Create View ap As
+  Construct {
+    ?s a <http://panlex.org/plx/source> .
+  }
+  With
+    ?s = uri(concat('http://panlex.org/plx/', ?ap))
+  From
+    [[SELECT id As ap FROM nodes]]
+

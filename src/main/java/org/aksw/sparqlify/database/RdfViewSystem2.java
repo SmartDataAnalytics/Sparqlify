@@ -32,6 +32,7 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.restriction.Type;
+import org.aksw.sparqlify.validation.Validation;
 import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,10 +231,12 @@ public class RdfViewSystem2
 
 	}
 	
-	
+		
 	@Override
 	public void addView(RdfView view) {
 
+		//Validation.validateView(view);
+		
 		++viewId;
 
 		Set<Var> vars = view.getVarsMentioned();
@@ -245,7 +248,7 @@ public class RdfViewSystem2
 		RdfView copy = view.copySubstitute(rename);
 		
 		// Rename the variables in the view to make them globally unique
-		logger.trace("Renamed variables of view: " + copy);
+		//logger.trace("Renamed variables of view: " + copy);
 
 		this.views.add(copy);
 		

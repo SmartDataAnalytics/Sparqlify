@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class TemplateConfigParser {
 	private static final Logger logger = LoggerFactory.getLogger("Parser");
 
-	public TemplateConfig parse(InputStream in)
+	public TemplateConfig parse(InputStream in, Logger logger)
 			throws IOException, RecognitionException
 	{
 		CharStream cs = new ANTLRInputStream(in);
@@ -31,6 +31,8 @@ public class TemplateConfigParser {
 		
 
 		SparqlifyConfigParser parser = new SparqlifyConfigParser(tokens);
+		parser.setLogger(logger);
+		
 		CommonTree ast = (CommonTree)parser.templateConfig().getTree();
 
 		

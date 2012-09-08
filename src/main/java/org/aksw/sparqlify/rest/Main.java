@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.sql.Connection;
-import java.util.logging.LogManager;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
@@ -19,12 +18,12 @@ import org.aksw.sparqlify.core.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.RdfViewSystem;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.database.RdfViewSystem2;
+import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.log4j.PropertyConfigurator;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
@@ -122,19 +121,29 @@ public class Main {
 			printHelpAndExit(-1);
 		}
 
+		LoggerCount loggerCount = new LoggerCount(logger);
+		
 		ConfigParser parser = new ConfigParser();
 
 		InputStream in = new FileInputStream(configFile);
 		Config config;
 		try {
-			config = parser.parse(in);
+			config = parser.parse(in, loggerCount);
 		} finally {
 			in.close();
 		}
 
 		RdfViewSystem system = new RdfViewSystem2();
-		ConfiguratorRdfViewSystem.configure(config, system);
+		ConfiguratorRdfViewSystem.configure(config, system, loggerCount);
 
+
+		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+		
+		if(loggerCount.getErrorCount() > 0) {
+			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
+		}
+
+		
 		PGSimpleDataSource dataSourceBean = new PGSimpleDataSource();
 
 		dataSourceBean.setDatabaseName(dbName);

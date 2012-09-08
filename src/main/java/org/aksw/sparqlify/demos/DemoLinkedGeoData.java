@@ -15,6 +15,8 @@ import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.apache.log4j.PropertyConfigurator;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
@@ -40,6 +42,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class DemoLinkedGeoData {
 
+	public static final Logger logger = LoggerFactory.getLogger(DemoLinkedGeoData.class);
+	
 	public static void main(String[] args) throws Exception {
 		PropertyConfigurator.configure("log4j.properties");
 
@@ -117,13 +121,13 @@ public class DemoLinkedGeoData {
 		InputStream in = new FileInputStream(configFile);
 		Config config;
 		try {
-			config = parser.parse(in);
+			config = parser.parse(in, logger);
 		} finally {
 			in.close();
 		}
 
 		RdfViewSystemOld system = new RdfViewSystemOld();
-		ConfiguratorRdfViewSystem.configure(config, system);
+		ConfiguratorRdfViewSystem.configure(config, system, logger);
 
 		system.loadDatatypes(conn);
 

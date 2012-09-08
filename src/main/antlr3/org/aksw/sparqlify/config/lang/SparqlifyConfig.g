@@ -91,6 +91,8 @@ TODO;
 
 @header {
     package org.aksw.sparqlify.config.lang;
+    
+    import org.slf4j.Logger;
 }
 
 @lexer::header {
@@ -99,6 +101,20 @@ TODO;
 
 
 @members {
+    private Logger logger = null;
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    public void emitErrorMessage(String msg) {
+        if(this.logger != null) {
+        	this.logger.error(msg);
+        } else {
+        	System.err.println(msg);
+        }
+    }
+
 	public String getErrorMessage(RecognitionException e, String[] tokenNames)
 	{
 	    List stack = getRuleInvocationStack(e, this.getClass().getName());
