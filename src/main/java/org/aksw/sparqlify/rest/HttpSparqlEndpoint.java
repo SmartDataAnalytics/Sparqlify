@@ -109,7 +109,8 @@ public class HttpSparqlEndpoint {
 
 	
 	@GET
-	public StreamingOutput executeQueryXml(@Context HttpContext hc, @QueryParam("query") String queryString)
+	//@Produces(MediaType.APPLICATION_XML)
+	public StreamingOutput executeQueryXml(@QueryParam("query") String queryString)
 			throws Exception {
 
 		if(queryString == null) {
@@ -141,7 +142,7 @@ public class HttpSparqlEndpoint {
 	
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, "application/sparql-results+json"})
 	public StreamingOutput executeQueryJson(@QueryParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Json);
@@ -149,7 +150,7 @@ public class HttpSparqlEndpoint {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, "application/sparql-results+json"})
 	public StreamingOutput executeQueryJsonPost(@FormParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Json);
