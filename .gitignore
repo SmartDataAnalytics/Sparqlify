@@ -1,0 +1,15 @@
+.buildpath
+.classpath
+.project
+.settings
+target
+
+*.toc
+*.out
+*.pdf
+*.aux
+*.log
+*.bbl
+*.blg
+
+

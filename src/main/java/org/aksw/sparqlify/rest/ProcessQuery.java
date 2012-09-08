@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -26,8 +27,16 @@ public class ProcessQuery {
 			@Override
 			public void write(OutputStream output) throws IOException,
 					WebApplicationException {
+//				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//				writer.write(baos, obj);
+//				
+//				String str = baos.toString();
+//				System.out.println(str);
+				
 				writer.write(output, obj);
 				qe.close();
+				
+				output.flush();
 			}
 		};
 	}

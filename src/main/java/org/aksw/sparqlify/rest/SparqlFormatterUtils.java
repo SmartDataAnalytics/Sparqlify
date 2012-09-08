@@ -232,8 +232,11 @@ class SparqlFormatterUtils {
 	public static void writeText(OutputStream out, Iterator<Triple> it) {
 		Sink<Triple> sink = new SinkTripleOutput(out);
 		while(it.hasNext()) {
-			sink.send(it.next());
+			Triple triple = it.next();
+			sink.send(triple);
 		}
+		sink.flush();
+		//sink.close();
 	}
 
 	
