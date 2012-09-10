@@ -712,6 +712,11 @@ public class RdfViewSystem2
 		
 
 		Set<ViewQuad> viewQuads = new HashSet<ViewQuad>();
+		if(constraints.isEmpty()) {
+			// Add a dummy element to look up all views in the subsequent loop
+			constraints.add(new HashMap<String, Constraint>());			
+		}
+		
 		for(Map<String, Constraint> columnConstraints : constraints) {
 		
 			Collection<List<Object>> rows = table.select(columnConstraints);

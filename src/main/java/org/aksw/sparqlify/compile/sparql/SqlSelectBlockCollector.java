@@ -53,7 +53,20 @@ public class SqlSelectBlockCollector {
 	}
 	
 	public static SqlSelectBlock makeSelect(SqlGroup node) {
-		SqlSelectBlock result = _makeSelect(node.getSubNode());
+		SqlSelectBlock result;
+		
+		if(node.getSubNode() instanceof SqlSlice) {
+			
+			SqlSelectBlock tmp = _makeSelect(node.getSubNode());
+
+			result = new SqlSelectBlock(tmp.getAliasName(), tmp);
+			copyProjection(result, result);
+
+			
+		}
+		else {
+			result = _makeSelect(node.getSubNode());
+		}
 
 		System.err.println("TODO Handle group by vars if present");
 		

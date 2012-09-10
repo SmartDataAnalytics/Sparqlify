@@ -1,7 +1,9 @@
 package org.aksw.sparqlify.compile.sparql;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mapping.ExprArgs;
@@ -48,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sdb.core.sqlnode.SqlSelectBlock;
 import com.hp.hpl.jena.sparql.expr.E_Add;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -63,6 +64,7 @@ import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
 import com.hp.hpl.jena.sparql.expr.E_NotEquals;
+import com.hp.hpl.jena.sparql.expr.E_OneOf;
 import com.hp.hpl.jena.sparql.expr.E_Regex;
 import com.hp.hpl.jena.sparql.expr.E_Str;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
@@ -211,6 +213,16 @@ class SqlPrePusher
 		return new E_Equals(getTypeOrExpr(expr.getArg()), new ExprSqlBridge(new SqlExprValue(1)));
 	}
 	*/
+	
+
+	public static Expr _prePush(E_OneOf expr) {
+		ExprList newArgs = new ExprList();
+		for(Expr arg : expr.getArgs()) {
+			newArgs.add(getLexicalValueOrExpr(arg));
+		}
+		return ExprCopy.getInstance().copy(expr, newArgs);
+	}
+
 	
 	public static Expr _prePush(E_Intersects expr) {	
 		return new E_Intersects(getLexicalValueOrExpr(expr.getArg1()), getLexicalValueOrExpr(expr.getArg2()));
@@ -367,6 +379,47 @@ class SqlPusher
 		return S_LessThanOrEqual.create(args.get(0), args.get(1), datatypeSystem);
 	}
 
+	public static SqlExpr push(E_OneOf expr, SqlExprList args) {
+
+		List<SqlExpr> equals = new ArrayList<SqlExpr>();
+		
+		SqlExpr first = args.get(0);
+		for(int i = 1; i < args.size(); ++i) {
+			SqlExpr second = args.get(i);
+			
+			equals.add(S_Equal.create(first, second, datatypeSystem));
+		}
+		
+		if(equals.size() == 1) {
+			return equals.get(0);
+		}
+		
+		List<SqlExpr> current = new ArrayList<SqlExpr>();
+		List<SqlExpr> next = equals;
+		while(next.size() > 1) {
+			
+			List<SqlExpr> tmp = next;
+			next = current;
+			current = tmp;
+			next.clear();
+			
+			for(int i = 0; i < current.size(); i+=2) {
+				SqlExpr a = current.get(i);
+
+				if(i + 1 >= current.size()) {
+					next.add(a);
+				} else {
+					SqlExpr b = current.get(i + 1);
+					next.add(new S_LogicalOr(a, b));
+				}				
+			}
+		}
+		
+
+		SqlExpr result = next.get(0);
+		return result;
+	}
+	
 	public static SqlExpr push(E_Intersects expr, SqlExprList args) {
 		//return new S_Intersects(args.get(0), args.get(1));
 		return S_Intersects.create(args.get(0), args.get(1));
@@ -549,7 +602,7 @@ public class PushDown {
 	}
 	
 	public static Expr pushDownE(NodeValue expr) throws Exception {
-	SqlSelectBlock x;	
+
 		SqlExpr result = null;
 			
 		if(expr.isIRI()){

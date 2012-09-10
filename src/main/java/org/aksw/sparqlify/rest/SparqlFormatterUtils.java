@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.rest;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -182,7 +183,7 @@ class SparqlFormatterUtils {
 		
 		Model model = triplesToModel(iterator);
 		
-		writeXml(out, model);		
+		writeXml(out, model);
 	}
 	
 	public static void writeXml(OutputStream out, Model model) {
@@ -195,6 +196,11 @@ class SparqlFormatterUtils {
 
 	public static void writeXml(OutputStream out, ResultSet rs) {
 		ResultSetFormatter.outputAsXML(out, rs);
+	}
+	
+	public static void writeXml(OutputStream out, Boolean value) throws IOException {
+		ResultSetFormatter.outputAsXML(out, value);
+		//out.flush();
 	}
 
 	/*************************************************************************
