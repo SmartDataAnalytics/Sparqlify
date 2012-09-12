@@ -1,0 +1,165 @@
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+Prefix dcterms:<http://purl.org/dc/terms/>
+
+Prefix qar:<http://qa.linkeddata.org/resource/>
+
+Prefix qap:<http://qa.linkeddata.org/resource/linking-project/>
+Prefix qal:<http://qa.linkeddata.org/resource/linkset/>
+Prefix qae:<http://qa.linkeddata.org/resource/eval/>
+Prefix qaa:<http://qa.linkeddata.org/resource/agent/>
+
+Prefix qao:<http://qa.linkeddata.org/ontology/>
+
+Prefix void:<http://rdfs.org/ns/void#>
+
+Create View files As
+	Construct {
+		?s
+			a qao:File ;
+			rdfs:label ?l .
+	}
+	With
+		?s = uri(concat("http://qa.linkeddata.org/resource/file/", ?id))
+		?l = plainLiteral(?id)
+	From
+		files
+		
+
+Create View users As
+	Construct {
+		?s
+			a qao:User ;
+			rdfs:label ?l .
+	}
+	With
+		?s = uri(concat("http://qa.linkeddata.org/resource/user/", ?id))
+		?l = plainLiteral(?name)
+	From
+		users
+
+
+
+Create View projects As
+	Construct {
+		?s
+			a qao:Project ;
+			rdfs:label ?l ;
+			dcterms:creator ?u ;
+			dcterms:created ?d .
+	}
+	With
+		?s = uri(concat("http://qa.linkeddata.org/resource/project/", ?id))
+		?l = plainLiteral(?name)
+		?u = uri(concat("http://qa.linkeddata.org/resource/user/", ?user_id))
+		?d = typedLiteral(?creation_tstamp, xsd:dateTime)
+	From
+		projects
+
+
+Create View branches As
+	Construct {
+		?s
+			a qao:Branch ;
+			qao:project ?p ; 
+			rdfs:label ?l ;
+			dcterms:creator ?u ;
+			dcterms:created ?d .
+	}
+	With
+		?s = uri(concat("http://qa.linkeddata.org/resource/branch/", ?id))
+		?p = uri(concat("http://qa.linkeddata.org/resource/project/", ?project_id))
+		?l = plainLiteral(?name)
+		?u = uri(concat("http://qa.linkeddata.org/resource/user/", ?user_id))
+		?d = typedLiteral(?creation_tstamp, xsd:dateTime)
+	From
+		branches
+
+
+Create View linksets As
+	Construct {
+		?s
+			a qao:Linkset ;
+			qao:branch ?b ; 
+			//rdfs:label ?l ;
+			dcterms:creator ?u ;
+			dcterms:created ?d ;
+			qao:file ?f .
+	}
+	With
+		?s = uri(concat("http://qa.linkeddata.org/resource/linkset/", ?id))
+		?b = uri(concat("http://qa.linkeddata.org/resource/branch/", ?branch_id))
+		//?l = plainLiteral(?name)
+		?u = uri(concat("http://qa.linkeddata.org/resource/user/", ?user_id))
+		?d = typedLiteral(?creation_tstamp, xsd:dateTime)
+		?f = uri(concat("http://qa.likenddata.org/resource/file/", ?file_id))
+	From
+		linksets
+
+
+Create View evaluations As
+	Construct {
+		?s
+			a qao:Evaluation ;
+			//qao:linkset ?l ;
+			dcterms:creator ?u ;
+			dcterms:created ?d ;
+			qao:posFile ?pf ;
+			qao:negFile ?nf ;
+	}
+	With
+		?s = uri(concat("http://qa.linkeddata.org/resource/linkset/", ?id))
+		//?l = plainLiteral(concat("Evaluation of..."))
+		?u = uri(concat("http://qa.linkeddata.org/resource/user/", ?user_id))
+		//?d = typedLiteral(?creation_tstamp, xsd:dateTime)
+		?d = typedLiteral(?creation_date, xsd:dateTime)
+		?pf = uri(concat("http://qa.likenddata.org/resource/file/", ?pos_file_id))
+		?nf = uri(concat("http://qa.likenddata.org/resource/file/", ?neg_file_id))
+	From
+		evaluations
+
+
+Create View links As
+	Construct {
+		?x a qao:Link .
+		?x owl:annotatedSource ?s .
+		?x owl:annotatedProperty ?p .
+		?x owl:annotatedTarget ?o .
+	}
+	With
+		?x = uri(concat("http://qa.linkeddata.org/resource/link-", ?id))
+		?s = uri(?s)
+		?p = uri(?p)
+		?o = uri(?o)
+	From
+		links
+		
+
+Create View filelinks_content As
+	Construct {
+		?f qao:content ?c .
+		?c a rdf:Seq 
+	}
+	With
+		?f = uri(concat("http://qa.linkeddata.org/resource/file/", ?id))
+		?c = uri(concat("http://qa.linkeddata.org/resource/file/content/", ?id))
+	From
+		files
+	
+
+Create View filelinks As
+	Construct {
+		?c ?p ?l .
+	}
+	With
+		?c = uri(concat("http://qa.linkeddata.org/resource/file/content/", ?file_id))
+		?p = uri(concat(rdf:_, ?sequence_id))
+		?l = uri(concat("http://qa.linkeddata.org/resource/link-", ?link_id))
+	From
+		filelinks
+
+	

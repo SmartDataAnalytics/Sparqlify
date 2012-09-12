@@ -3,14 +3,18 @@ package org.aksw.sparqlify.expr.util;
 import java.math.BigDecimal;
 
 import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 public class NodeValueUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(NodeValueUtils.class);
+	
 	public static Object getValue(NodeValue expr) {
 		if(expr.isIRI()){
-			System.err.println("WARNING: HACK USED - Uri constants should be converted to RdfTerms first");
+			logger.debug("HACK - Uri constants should be converted to RdfTerms first");
 			return expr.asNode().getURI();
 		} else if(expr.isBoolean()) {
 			return expr.getBoolean();

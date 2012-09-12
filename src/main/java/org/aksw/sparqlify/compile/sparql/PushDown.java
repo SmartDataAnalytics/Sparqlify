@@ -466,6 +466,8 @@ class SqlPusher
  */
 public class PushDown {
 
+	public static final Logger logger = LoggerFactory.getLogger(PushDown.class);
+	
 	public static final Map<String, ExprPusher> userFuncToPusher = new HashMap<String, ExprPusher>();;
 
 	static {
@@ -607,7 +609,7 @@ public class PushDown {
 			
 		if(expr.isIRI()){
 			result = new SqlExprValue(expr.asNode().getURI());
-			System.err.println("WARNING: HACK USED - Uri constants should be converted to RdfTerms first");
+			logger.debug("HACK - Uri constants should be converted to RdfTerms first");
 		} else if(expr.isBoolean()) {
 			result = new SqlExprValue(expr.getBoolean() ? true : false);
 		} else if(expr.isNumber()) {

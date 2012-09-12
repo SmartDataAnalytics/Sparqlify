@@ -143,6 +143,7 @@ public class DatatypeSystemDefault
 	public static final SqlDatatype _BOOLEAN = dt("boolean", XSD.xboolean, Boolean.class);
 	public static final SqlDatatype _DATE = dt("date", XSD.date);
 	public static final SqlDatatype _DATE_TIME = dt("datetime", XSD.dateTime, GregorianCalendar.class);
+	//public static final SqlDatatype _TIMESTAMP = dt("timestamp", XSD.dateTime, GregorianCalendar.class);
 
 	public static final SqlDatatype _STRING = dt("string", XSD.xstring, String.class);
 

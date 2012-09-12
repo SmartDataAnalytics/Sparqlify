@@ -291,7 +291,7 @@
 			<artifactId>slf4j-ext</artifactId>
 			<version>1.6.0</version>
 			<type>jar</type>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
