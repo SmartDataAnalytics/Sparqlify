@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<uberwar>
+  <wars>
+    <war>org.aksw.sparqlify:sparqlify-server</war>
+    <war>org.kurtjx.snorql:snorql-webapp</war>
+    <war>de.fuberlin.wiwiss:pubby</war>
+  </wars>
+</uberwar>

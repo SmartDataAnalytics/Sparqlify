@@ -4,6 +4,7 @@
 .settings
 target
 
+*.jar
 *.toc
 *.out
 *.pdf
@@ -11,15 +12,30 @@ target
 *.log
 *.bbl
 *.blg
+*.dsc
+*.deb
+*.build
+*.changes
+*.gz
+*.substvars
 
-debian/sparqlify-0.2/debian/rules
-debian/sparqlify-0.2/debian/sparqlify.substvars
-debian/sparqlify-0.2/debian/sparqlify/
-debian/sparqlify-0.2/sparqlify.jar
-debian/sparqlify_0.2.dsc
-debian/sparqlify_0.2.tar.gz
-debian/sparqlify_0.2_all.deb
-debian/sparqlify_0.2_amd64.build
-debian/sparqlify_0.2_amd64.changes
+DEBIAN
+usr
+
+#debian/sparqlify-0.2/debian/rules
+#debian/sparqlify-0.2/debian/sparqlify.substvars
+#debian/sparqlify-0.2/debian/sparqlify/
+#debian/sparqlify-0.2/sparqlify.jar
+#debian/sparqlify_0.2.dsc
+#debian/sparqlify_0.2.tar.gz
+#debian/sparqlify_0.2_all.deb
+#debian/sparqlify_0.2_amd64.build
+#debian/sparqlify_0.2_amd64.changes
+
+sparqlify-core/debian/sparqlify-0.2/debian/rules
+sparqlify-core/debian/sparqlify-0.2/debian/rules
+
+rules
+
 
 

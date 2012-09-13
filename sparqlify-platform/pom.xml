@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>sparqlify-platform</artifactId>
+	<packaging>uberwar</packaging>
+
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Platform</name>
+	<url>http://aksw.org/Projects/Sparqlify</url>
+
+
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.2-SNAPSHOT</version>
+	</parent>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId> 
+					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath> 
+					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
+					</excludes> </overlay> </overlays> </configuration> -->
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven2-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<descriptor>src/assemble/merge.xml</descriptor>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-server</artifactId>
+			<type>war</type>
+			 <version>${parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fuberlin.wiwiss</groupId>
+			<artifactId>pubby</artifactId>
+			<type>war</type>
+			 <version>0.3.4-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.kurtjx.snorql</groupId>
+			<artifactId>snorql-webapp</artifactId>
+			<type>war</type>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+
+	</dependencies>
+</project>
+
