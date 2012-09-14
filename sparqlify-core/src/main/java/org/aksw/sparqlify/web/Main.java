@@ -211,7 +211,7 @@ public class Main {
 				"com.sun.jersey.config.property.resourceConfigClass",
 				"com.sun.jersey.api.core.PackagesResourceConfig");
 		sh.setInitParameter("com.sun.jersey.config.property.packages",
-				"org.aksw.sparqlify.rest");
+				"org.aksw.sparqlify.web");
 
 		Server server = new Server(port);
 		Context context = new Context(server, "/", Context.SESSIONS);
