@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.rest;
+package org.aksw.sparqlify.web;
 
 import java.lang.reflect.Type;
 

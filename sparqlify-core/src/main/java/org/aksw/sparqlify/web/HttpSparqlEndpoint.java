@@ -1,11 +1,10 @@
-package org.aksw.sparqlify.rest;
+package org.aksw.sparqlify.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -15,10 +14,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.mortbay.jetty.Response;
 import org.springframework.stereotype.Component;
 
 import com.hp.hpl.jena.sparql.engine.http.HttpParams;
@@ -64,20 +65,22 @@ public class HttpSparqlEndpoint {
 	//@Context
 	//@Autowired
 	@Resource
-	private DataSource dataSource;
+	private QueryExecutionFactory queryExecutionFactory;
+	//private DataSource dataSource;
 	
 	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+	public void setQueryExecutionFactory(QueryExecutionFactory queryExecutionFactory) {
+		this.queryExecutionFactory = queryExecutionFactory;
 	}
 	
-	public DataSource getDataSource() {
-		return dataSource;
+	public QueryExecutionFactory getQueryExecutionFactorys() {
+		return queryExecutionFactory;
 	}
 	
 	//@Context
 	//protected QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
 	public static QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
+	
 	
 	public HttpSparqlEndpoint() {
 		init();
@@ -89,6 +92,14 @@ public class HttpSparqlEndpoint {
 	
 	
 	public QueryExecutionFactory<QueryExecutionStreaming> getSparqler() throws Exception {
+		if(sparqler == null) {
+			sparqler = queryExecutionFactory;
+		}
+		
+		if(sparqler == null) {
+			throw new NullPointerException("The query execution factory has not been set.");
+		}
+		
 		/*
 		Connection conn = dataSource.getConnection();
 		 
@@ -215,4 +226,25 @@ public class HttpSparqlEndpoint {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Text);
 	}
 
+	
+	
+	/*
+	private String _corsHeaders;
+
+	private Response makeCORS(ResponseBuilder req, String returnMethod) {
+	   Response rb = req.ok()
+	      .header("Access-Control-Allow-Origin", "*")
+	      .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+	   if (!"".equals(returnMethod)) {
+	      rb.header("Access-Control-Allow-Headers", returnMethod);
+	   }
+
+	   return rb.build();
+	}
+
+	private Response makeCORS(ResponseBuilder req) {
+	   return makeCORS(req, _corsHeaders);
+	}
+	*/
 }

@@ -9,13 +9,20 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
-<!-- 	<context:component-scan base-package="cs" /> -->
-
 <!-- 	<task:annotation-driven /> -->
 
-	<context:component-scan base-package="org.aksw.sparqlify.rest"/>
 
 
+	<!-- 
+	:::: Packages for which to process Spring annotations
+	 -->
+	<context:component-scan base-package="org.aksw.sparqlify.web"/>
+	<context:component-scan base-package="org.aksw.sparqlify.platform.web"/>
+
+
+	<!-- 
+	:::: Enable Spring property substitution from external .properties file
+	 -->
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<!-- <property name="location" value="file:#{contextParameters.configDirectory + servletContext.contextPath}/platform.properties" />  -->
@@ -23,6 +30,9 @@
 	</bean>
 
 
+	<!-- 
+	:::: DataSource Configuration
+	 -->
 	<bean id="sparqlifyDS" scope="singleton"
 		class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
 		<property name="driverClass" value="${database.driverClass}" />
@@ -37,8 +47,34 @@
 		<property name="maxConnectionsPerPartition" value="${database.maxConnectionsPerPartition}" />
 
 		<property name="idleConnectionTestPeriod" value="${database.idleConnectionTestPeriod}" />
-		
-
 	</bean>
+
+
+	<!-- 
+	:::: Sparqilfy config parsing
+	 -->
+	<bean id="sparqlifyConfigFactory" class="org.aksw.sparqlify.config.loader.ConfigFactory">
+		<property name="configFile" value="file:#{systemProperties['configDirectory'] + servletContext.contextPath}/views.sparqlify/" />
+	</bean>
+	
+	<bean id="sparqlifyConfig" factory-bean="sparqlifyConfigFactory" factory-method="create" ></bean>
+
+
+	<!-- 
+	:::: Sparqilfy query execution factory creation
+	 -->
+	<bean id="sparqlifyQefFactory"
+		class="org.aksw.sparqlify.config.loader.SparqlifyQefFactory">
+		<property name="dataSource"><ref bean="sparqlifyDS"/></property>
+		<property name="config"><ref bean="sparqlifyConfig"/></property>
+		
+		<property name="maxQueryExecutionTime" value="${sparqlify.maxQueryExecutionTime}" />
+		<property name="maxResultSetRowCount" value="${sparqlify.maxResultSetRowCount}" />
+	</bean>
+
+
+	<bean id="sparqlifyQef" factory-bean="sparqlifyQefFactory" factory-method="create" />
+<!-- 		class="org.aksw.commons.sparql.api.core.QueryExecutionFactory" destroy-method="close"> -->
+
 
 </beans>

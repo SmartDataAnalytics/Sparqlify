@@ -52,6 +52,10 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.slf4j.Logger;
     import org.slf4j.LoggerFactory;
 
+	import com.hp.hpl.jena.shared.PrefixMapping;
+	import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
+
+
     import mapping.SparqlifyConstants;
 }
 
@@ -60,13 +64,32 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 	private static final Logger logger = LoggerFactory.getLogger("Parser");
 
 
+
 	PrefixMapping prefixMapping = new PrefixMappingImpl();
 	
-	void registerPrefix(String prefix, String uri) {
-		registerPrefix(new PrefixDecl(prefix, uri));
+	public PrefixMapping getPrefixMapping() {
+		return prefixMapping;
 	}
+
+	void registerPrefix(String prefix, String uri) {
+		registerPrefix(prefixMapping, new PrefixDecl(prefix, uri));
+	}
+
+/*
+	void registerPrefix(Config config, String prefix, String uri) {
+		registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
+	}
+
+	void registerPrefix(TemplateConfig config, String prefix, String uri) {
+		registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
+	}
+
+	void registerPrefix(ConstructConfig config, String prefix, String uri) {
+		registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
+	}
+*/
 	
-	void registerPrefix(PrefixDecl prefixDecl) {
+	void registerPrefix(PrefixMapping prefixMapping, PrefixDecl prefixDecl) {
 	    // Warn if prefix gets re-registered
 	    String uri = prefixMapping.getNsPrefixURI(prefixDecl.getPrefix());
 	    
@@ -122,7 +145,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 // $<Parser
 
 templateConfig returns[TemplateConfig config]
-	@init { $config = new TemplateConfig(); }
+	@init { $config = new TemplateConfig(); prefixMapping = $config.getPrefixMapping(); }
 	: templateConfigItem[config]+
 	;
 
@@ -133,16 +156,16 @@ templateConfigItem[TemplateConfig config]
 
 
 constructConfig returns[ConstructConfig config]
-	@init { $config = new ConstructConfig(); }
+	@init { $config = new ConstructConfig(); prefixMapping = $config.getPrefixMapping(); }
 	: constructConfigItem[config]+
 	;
 
 constructConfigItem[ConstructConfig config]
-	: x=constructViewDefinition { config.getViewDefinitions().add($x.value); }
+	: x=constructViewDefinition[config] { config.getViewDefinitions().add($x.value); }
 	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
 	;
 
-constructViewDefinition returns [ ConstructViewDefinition value ]
+constructViewDefinition[ConstructConfig config] returns [ ConstructViewDefinition value ]
 	: ^(CONSTRUCT_VIEW_DEFINITION a=NAME b=SQL_QUERY) { $value = new ConstructViewDefinition($a.text, $b.text, prefixMapping); }
 	;
 
@@ -150,7 +173,7 @@ constructViewDefinition returns [ ConstructViewDefinition value ]
 
 
 sparqlifyConfig returns[Config config]
-	@init { $config = new Config(); }
+	@init { $config = new Config(); prefixMapping = $config.getPrefixMapping(); }
 	: sparqlifyConfigItem[config]+
 	;
 	

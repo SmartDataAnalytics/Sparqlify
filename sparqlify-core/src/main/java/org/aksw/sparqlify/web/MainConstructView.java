@@ -1,41 +1,133 @@
-package org.aksw.sparqlify.rest;
+package org.aksw.sparqlify.web;
 
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.sql.Connection;
+import java.util.Iterator;
+import java.util.logging.LogManager;
 
+import org.aksw.commons.sparql.api.core.QueryExecutionDecorator;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
-import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
-import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.config.lang.ConfiguratorRdfViewSystem;
-import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.core.QueryExecutionFactorySparqlifyDs;
-import org.aksw.sparqlify.core.RdfViewSystem;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.database.RdfViewSystem2;
-import org.aksw.sparqlify.validation.LoggerCount;
+import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
+import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
+import org.aksw.sparqlify.config.lang.ConstructConfigParser;
+import org.aksw.sparqlify.config.syntax.ConstructConfig;
+import org.aksw.sparqlify.sparqlview.Dialect;
+import org.aksw.sparqlify.sparqlview.QueryExecutionFactorySparqlView;
+import org.aksw.sparqlify.sparqlview.SparqlViewSystem;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.log4j.PropertyConfigurator;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jolbox.bonecp.BoneCPConfig;
-import com.jolbox.bonecp.BoneCPDataSource;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-public class Main {
+
+class TripleIterator
+	implements Iterator<Triple> 
+{
+
+	private StmtIterator itStmt;
+	
+	
+	public TripleIterator(StmtIterator itStmt) {
+		this.itStmt = itStmt;
+	}
+
+
+	@Override
+	public boolean hasNext() {
+		return itStmt.hasNext();
+	}
+
+
+	@Override
+	public Triple next() {
+		return itStmt.next().asTriple();
+	}
+
+
+	@Override
+	public void remove() {
+		itStmt.remove();
+	}
+}
+
+
+class QueryExecutionStreamingWrapper
+	extends QueryExecutionDecorator
+	implements QueryExecutionStreaming
+{
+
+	public QueryExecutionStreamingWrapper(QueryExecution decoratee) {
+		super(decoratee);
+	}
+
+	@Override
+	public Iterator<Triple> execConstructStreaming() {
+		Model model = getDecoratee().execConstruct();
+		return new TripleIterator(model.listStatements());
+	}
+
+	@Override
+	public Iterator<Triple> execDescribeStreaming() {
+		Model model = getDecoratee().execDescribe();
+		return new TripleIterator(model.listStatements());
+	}	
+	
+	
+}
+
+class QueryExecutionFactoryStreamingWrapper
+	implements QueryExecutionFactory<QueryExecutionStreaming>
+{
+	private QueryExecutionFactory delegate;
+	
+	public QueryExecutionFactoryStreamingWrapper(QueryExecutionFactory delegate) {
+		this.delegate = delegate;
+	}
+	
+	@Override
+	public QueryExecutionStreaming createQueryExecution(String queryString) {
+		return new QueryExecutionStreamingWrapper(delegate.createQueryExecution(queryString));
+	}
+
+	@Override
+	public QueryExecutionStreaming createQueryExecution(Query query) {
+		return new QueryExecutionStreamingWrapper(delegate.createQueryExecution(query));
+	}
+
+	@Override
+	public String getId() {
+		return delegate.getId();
+	}
+
+	@Override
+	public String getState() {
+		return delegate.getState();
+	}
+	
+}
+
+
+
+
+public class MainConstructView {
 	/**
 	 * @param exitCode
 	 */
@@ -75,8 +167,11 @@ public class Main {
 		cliOptions.addOption("p", "password", true, "");
 		cliOptions.addOption("h", "hostname", true, "");
 
-		cliOptions.addOption("c", "config", true, "Sparqlify config file");
+		cliOptions.addOption("c", "config", true, "Construct view config file");
 
+		cliOptions.addOption("s", "service", true, "Backend Sparql Service");
+
+		
 		cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout");
 		cliOptions.addOption("n", "resultsetsize", true, "Maximum result set size");
 		
@@ -84,16 +179,38 @@ public class Main {
 
 		
 		// Parsing of command line args
-		String portStr = commandLine.getOptionValue("P", "7531");
-		//String backLogStr = commandLine.getOptionValue("B", "100");
-		//String contextStr = commandLine.getOptionValue("C", "/sparqlify");
+		String portStr = commandLine.getOptionValue("P", "7000");
+		String backLogStr = commandLine.getOptionValue("B", "100");
+		String contextStr = commandLine.getOptionValue("C", "/sparql");
 		int port = Integer.parseInt(portStr);
-		//int backLog = Integer.parseInt(backLogStr);
+		int backLog = Integer.parseInt(backLogStr);
 
 		String hostName = commandLine.getOptionValue("h", "localhost");
-		String dbName = commandLine.getOptionValue("d", "");
-		String userName = commandLine.getOptionValue("u", "");
-		String passWord = commandLine.getOptionValue("p", "");
+		
+		//
+		String dialectStr = commandLine.getOptionValue("d", "").trim().toLowerCase();
+		
+		Dialect dialect = null;
+		
+		if(!dialectStr.isEmpty()) {
+			for(Dialect candidate : Dialect.values()) {
+				if(candidate.toString().toLowerCase().equals(dialectStr)) {
+					dialect = candidate;
+					break;
+				}
+			}
+		} else {
+			dialect = Dialect.DEFAULT;
+		}
+		
+		if( dialect == null) {
+			throw new RuntimeException("No dialect '" + dialectStr + "' found");
+		}
+		
+		String serviceStr = commandLine.getOptionValue("s", "").trim();
+		
+		//String userName = commandLine.getOptionValue("u", "");
+		//String passWord = commandLine.getOptionValue("p", "");
 
 		String maxQueryExecutionTimeStr = commandLine.getOptionValue("t", null);
 		Integer maxQueryExecutionTime = maxQueryExecutionTimeStr == null
@@ -121,73 +238,36 @@ public class Main {
 			printHelpAndExit(-1);
 		}
 
-		LoggerCount loggerCount = new LoggerCount(logger);
-		
-		ConfigParser parser = new ConfigParser();
+		ConstructConfigParser parser = new ConstructConfigParser();
 
 		InputStream in = new FileInputStream(configFile);
-		Config config;
+		ConstructConfig config;
 		try {
-			config = parser.parse(in, loggerCount);
+			config = parser.parse(in);
 		} finally {
 			in.close();
 		}
 
+		/*
 		RdfViewSystem system = new RdfViewSystem2();
-		ConfiguratorRdfViewSystem.configure(config, system, loggerCount);
-
-
-		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
-		
-		if(loggerCount.getErrorCount() > 0) {
-			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
-		}
-
-		
-		PGSimpleDataSource dataSourceBean = new PGSimpleDataSource();
-
-		dataSourceBean.setDatabaseName(dbName);
-		dataSourceBean.setServerName(hostName);
-		dataSourceBean.setUser(userName);
-		dataSourceBean.setPassword(passWord);
-
-		BoneCPConfig cpConfig = new BoneCPConfig();
-		cpConfig.setDatasourceBean(dataSourceBean);
-		/*
-		cpConfig.setJdbcUrl(dbconf.getDbConnString()); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
-		cpConfig.setUsername(dbconf.getUsername()); 
-		cpConfig.setPassword(dbconf.getPassword());
+		ConfiguratorRdfViewSystem.configure(config, system);
 		*/
 		
-		cpConfig.setMinConnectionsPerPartition(5);
-		cpConfig.setMaxConnectionsPerPartition(20);
-//		cpConfig.setMinConnectionsPerPartition(1);
-//		cpConfig.setMaxConnectionsPerPartition(1);
+		SparqlViewSystem system = new SparqlViewSystem();
+		ConfiguratorConstructViewSystem.configure(config, system);
+
+		QueryExecutionFactory<QueryExecutionStreaming> backend = new QueryExecutionFactoryStreamingWrapper(new QueryExecutionFactoryHttp(serviceStr));
+
+		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlView(backend, system, dialect);
 		
-		cpConfig.setPartitionCount(1);
-		//BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool	
-
-		BoneCPDataSource dataSource = new BoneCPDataSource(cpConfig);
-
 		/*
-		ComboPooledDataSource pooledDataSource = new ComboPooledDataSource();
-		pooledDataSource.
-		*/
-		
-		Connection conn = dataSource.getConnection();
-		 
-		RdfViewSystemOld.loadDatatypes(conn, system.getViews());
-		conn.close();
-
-		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlifyDs(system, dataSource);
-		
 		if(maxQueryExecutionTime != null) {
 			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);
 		}
 		
 		if(maxResultSetSize != null) {
 			qef = QueryExecutionFactoryLimit.decorate(qef, false, maxResultSetSize);
-		}
+		}*/
 		
 		//sparqler = qef; //new QueryExecutionFactorySparqlify(system, conn);
 
@@ -213,7 +293,7 @@ public class Main {
 		sh.setInitParameter("com.sun.jersey.config.property.packages",
 				"org.aksw.sparqlify.rest");
 
-		Server server = new Server(port);
+		Server server = new Server(9999);
 		Context context = new Context(server, "/", Context.SESSIONS);
 		context.addServlet(sh, "/*");
 		
@@ -319,3 +399,4 @@ public class Main {
 	}
 
 }
+

@@ -39,7 +39,7 @@
 			<param-name>com.sun.jersey.config.property.packages</param-name>
 
 			<!--You need to change this line to match your package name -->
-			<param-value>org.aksw.sparqlify.rest</param-value>
+			<param-value>org.aksw.sparqlify.web</param-value>
 		</init-param>
 
 		<load-on-startup>1</load-on-startup>
@@ -50,6 +50,30 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
+
+
+
+	<servlet>
+		<servlet-name>SNORQL-Namespaces</servlet-name>
+		<!-- <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> -->
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+
+
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+
+			<!--You need to change this line to match your package name -->
+			<param-value>org.aksw.sparqlify.platform.web</param-value>
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SNORQL-Namespaces</servlet-name>
+		<url-pattern>/*</url-pattern>
+<!-- 		<url-pattern>/static/*</url-pattern> -->
+	</servlet-mapping>
 
 
 	<context-param>

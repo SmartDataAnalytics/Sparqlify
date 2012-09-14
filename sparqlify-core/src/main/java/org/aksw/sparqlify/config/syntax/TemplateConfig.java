@@ -3,15 +3,22 @@ package org.aksw.sparqlify.config.syntax;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hp.hpl.jena.shared.PrefixMapping;
+import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
+
 /**
- * A sparqlify configuration.
- * Currently simple a list of view definitions.
+ * A sparqlify configuration. Currently simple a list of view definitions.
  * 
  * @author raven
- *
+ * 
  */
 public class TemplateConfig {
+	private PrefixMapping prefixMapping = new PrefixMappingImpl();
 	private List<NamedViewTemplateDefinition> definitions = new ArrayList<NamedViewTemplateDefinition>();
+
+	public PrefixMapping getPrefixMapping() {
+		return prefixMapping;
+	}
 
 	public List<NamedViewTemplateDefinition> getDefinitions() {
 		return definitions;

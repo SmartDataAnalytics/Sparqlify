@@ -38,6 +38,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>sparqlify-server</artifactId>
 			<type>war</type>
 			<version>${parent.version}</version>
@@ -81,6 +86,11 @@
 		<dependency>
 			<groupId>org.tuckey</groupId>
 			<artifactId>urlrewritefilter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
 		</dependency>
 
 

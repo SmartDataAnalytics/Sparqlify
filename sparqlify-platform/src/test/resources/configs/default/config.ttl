@@ -15,7 +15,8 @@
 
 # Prefix declarations to be used in RDF output
 @prefix conf: <http://richard.cyganiak.de/2007/pubby/config.rdf#> .
-#@prefix meta: <http://example.org/metadata#> .
+
+# Comment out or remove the namespaces which you do not need
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -25,51 +26,28 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix dbpedia: <http://localhost:8080/resource/> .
-#@prefix p: <http://localhost:8080/property/> .
-#@prefix yago: <http://localhost:8080/class/yago/> .
-@prefix units: <http://dbpedia.org/units/> .
+@prefix dbo: <http://dbpedia.org/ontology/>
+@prefix dbr: <http://localhost:8080/resource/> .
 @prefix geonames: <http://www.geonames.org/ontology#> .
 @prefix prv:      <http://purl.org/net/provenance/ns#> .
 @prefix prvTypes: <http://purl.org/net/provenance/types#> .
 @prefix doap:     <http://usefulinc.com/ns/doap#> .
 @prefix void:     <http://rdfs.org/ns/void#> .
-@prefix ir:       <http://www.ontologydesignpatterns.org/cp/owl/informationrealization.owl#> .
-
-@prefix ogc:      <http://www.opengis.net/rdf#> .
-@prefix geom:     <http://geovocab.org/geometry#> .
-@prefix spatial:  <http://geovocab.org/spatial#> . 
-
-@prefix lgdo:     <http://linkedgeodata.org/ontology/> .
-@prefix lgd:      <http://linkedgeodata.org/triplify/> .
-@prefix lgd-geom: <http://linkedgeodata.org/geometry/> .
-@prefix lgdn:     <http://linkedgeodata.org/resource/node/> .
-@prefix lgdw:     <http://linkedgeodata.org/resource/way/> .
-@prefix lgdwn:    <http://linkedgeodata.org/resource/waynode/> .
-
-
-@prefix tlgdo:     <http://test.linkedgeodata.org/ontology/> .
-@prefix tlgd:      <http://test.linkedgeodata.org/triplify/> .
-@prefix tlgd-geom: <http://test.linkedgeodata.org/geometry/> .
-@prefix tlgdn:     <http://test.linkedgeodata.org/resource/node/> .
-@prefix tlgdw:     <http://test.linkedgeodata.org/resource/way/> .
-@prefix tlgdwn:    <http://test.linkedgeodata.org/resource/waynode/> .
-
-
+@prefix yago:      <http://dbpedia.org/class/yago/> .
 
 
 <> a conf:Configuration;
-    conf:projectName "LinkedGeoData";
-    conf:projectHomepage <http://linkedgeodata.org>;
-    conf:webBase <http://localhost/pubby/>;
+    conf:projectName "Your Project Name";
+    conf:projectHomepage <http://your-project-homepage.org>;
+    conf:webBase <http://localhost:7531/pubby/>;  # Change this to where your site runs
     conf:usePrefixesFrom <>;
     conf:defaultLanguage "en";
-    conf:indexResource <http://localhost/pubby/triplify/node29857233>;
+    conf:indexResource <http://localhost:7531/pubby/index>; # A resource that acts as a 'landing page'
  
    conf:dataset [
-        conf:sparqlEndpoint <http://localhost:9999/sparql>;
-        conf:sparqlDefaultGraph <http://linkedgeodata.org>;
-        conf:datasetBase <http://linkedgeodata.org/>;
+        conf:sparqlEndpoint <http://localhost:7531/sparql>;
+#        conf:sparqlDefaultGraph <http://example.org>;
+        conf:datasetBase <http://your-dataset-namespace.org/>;
         conf:fixUnescapedCharacters "(),'!$&*+;=@";
 	];
     .

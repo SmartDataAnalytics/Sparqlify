@@ -21,7 +21,7 @@
 			<param-name>com.sun.jersey.config.property.packages</param-name>
 
 			<!--You need to change this line to match your package name -->
-			<param-value>org.aksw.sparqlify.rest</param-value>
+			<param-value>org.aksw.sparqlify.web</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>

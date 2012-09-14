@@ -14,6 +14,11 @@
 <urlrewrite>
 
 	<rule>
+		<from>^/snorql/namespaces.js</from>
+		<to>/platform/namespaces.js</to>	
+	</rule>
+
+	<rule>
 		<from>^/snorql</from>
 		<to>/static/js/snorql</to>
 	</rule>

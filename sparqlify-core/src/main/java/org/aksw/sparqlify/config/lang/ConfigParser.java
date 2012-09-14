@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.validation.LoggerCount;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -16,8 +15,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class ConfigParser {
-	//private static final Logger logger = LoggerFactory.getLogger("Parser");
-
+	private static final Logger fallbackLogger = LoggerFactory.getLogger(ConfigParser.class);
 	
 	public Config parse(InputStream in, Logger logger)
 			throws IOException, RecognitionException
@@ -38,8 +36,8 @@ public class ConfigParser {
 		//printAst(ast, 0);
 
 		SparqlifyConfigTree treeParser = new SparqlifyConfigTree(new CommonTreeNodeStream(ast));
+
 		Config config = treeParser.sparqlifyConfig();
-		
 		
 		return config;
 	}
