@@ -28,6 +28,20 @@
 		<to>/snorql</to>
 	</outbound-rule>
 
+
+
+<!-- 	<rule> -->
+<!-- 		<from>^/pubby</from> -->
+<!-- 		<to>/ldi</to> -->
+<!-- 	</rule> -->
+
+<!-- 	<outbound-rule> -->
+<!-- 		<from>/pubby</from> -->
+<!-- 		<to>/ldi</to> -->
+<!-- 	</outbound-rule> -->
+
+
+
 <!--     <rule> -->
 <!--         <note> -->
 <!--             The rule means that requests to /test/status/ will be redirected to /rewrite-status -->

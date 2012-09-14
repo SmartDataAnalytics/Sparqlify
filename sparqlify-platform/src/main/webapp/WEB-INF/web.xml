@@ -76,6 +76,11 @@
 	</servlet-mapping>
 
 
+<!--
+:::: Pubby configuration.
+:::: TODO: Should there be a rewrite rule from '/pubby' to '/ldi' which means (L)inked (D)ata (I)nterface?
+ -->
+
 <!-- The pubby configuration is done in the application context -->
 <!-- 	<context-param> -->
 <!-- 		<param-name>config-file</param-name> -->
