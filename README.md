@@ -67,7 +67,7 @@ The Sparqlify Platform (under /sparqlify-platform) bundles Sparqlify with Pubby 
 At the root of the project (outside of the sparqlify-\* directories), run `mvn compile` to build all modules.
 Afterwards, lauch the platform using:
 
-    mvn jetty:run-war -Djetty.port=7531 -DconfigDirectory=/home/raven/Projects/Current/Eclipse/Sparqlify/sparqlify-platform/config/example
+    mvn jetty:run-war -Djetty.port=7531 -DconfigDirectory=/home/{your-user-account}/.../sparqlify-platform/config/{your-config-directory}
 
 The port is optional, but 7531 is Sparqlify's default.
 
@@ -76,9 +76,11 @@ Assuming the platform runs under `http://localhost:7531`, you can access the fol
 * `/snorql` shows the SNORQL web frontend
 * `/pubby` is the entry point to the Linked Data interface
 
-The configDirectory argument is mandatory and must point to a directory containing the files:
+The configDirectory argument is mandatory and must be an *absolute* path to a directory containing the files:
 * `platform.properties` This file contains configuration parameters that can be adjusted, such as the database connection.
 * `views.sparqlify` The set of Sparqlify view definition to use.
+
+I recommend to copy `config/example` to `config/your-project-config`.
 
 The platform *applies autoconfiguration to Pubby and Snorql*:
 * Snorql: Namespaces are those of the views.sparqlify file.
