@@ -70,6 +70,12 @@ Afterwards, lauch the platform using:
     mvn jetty:run-war -Djetty.port=7531 -DconfigDirectory=/home/raven/Projects/Current/Eclipse/Sparqlify/sparqlify-platform/config/example
 
 The port is optional, but 7531 is Sparqlify's default.
+
+Assuming the platform runs under `http://localhost:7531`, you can access the following services relative to this base url:
+* `/sparql` is Sparqlify's SPARQL endpoint
+* `/snorql` shows the SNORQL web frontend
+* `/pubby` is the entry point to the Linked Data interface
+
 The configDirectory argument is mandatory and must point to a directory containing the files:
 * `platform.properties` This file contains configuration parameters that can be adjusted, such as the database connection.
 * `views.sparqlify` The set of Sparqlify view definition to use.
