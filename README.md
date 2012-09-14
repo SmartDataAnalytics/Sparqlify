@@ -1,8 +1,8 @@
 # Sparqlify SPARQL->SQL rewriter
 
 ## News
-15 Sep 2012 Sparqlify Platform Alpha!
-16 Aug 2012 There is now the sparqlify-csv command line tool for easy transformation of CSV (excel flavour) files.
+* 15 Sep 2012 Sparqlify Platform Alpha!
+* 16 Aug 2012 There is now the sparqlify-csv command line tool for easy transformation of CSV (excel flavour) files.
 
 ## Introduction
 
@@ -23,8 +23,8 @@ This system's features/traits are:
 
 ## Supported SPARQL language features
 * Join, LeftJoin (i.e. Optional), Union, Sub queries
-* Filter predicates: comparison: (<=, <, =, >, >=) logical: (!, &&; ||) arithmetic: (+, -) spatial: st_intersects, geomFromText other: regex, lang, langMatches  
-* Aggregate functions: Count(*)
+* Filter predicates: comparison: (<=, <, =, >, >=) logical: (!, &&; ||) arithmetic: (+, -) spatial: st\_intersects, geomFromText other: regex, lang, langMatches  
+* Aggregate functions: Count(\*)
 
 NOTE: SPARQLs ternary logic (i.e. false, true and type error) is not consistently implemented yet. I plan to fix that soon. 
 
@@ -64,7 +64,7 @@ Agents can now access the SPARQL endpoint at `http://localhost:7531/sparql`
 ## Sparqlify Platform
 The Sparqlify Platform (under /sparqlify-platform) bundles Sparqlify with Pubby and Snorql.
 
-At the root of the project (outside of the sparqlify-* directories), run `mvn compile` to build all modules.
+At the root of the project (outside of the sparqlify-\* directories), run `mvn compile` to build all modules.
 Afterwards, lauch the platform using:
 
     mvn jetty:run-war -Djetty.port=7531 -DconfigDirectory=/home/raven/Projects/Current/Eclipse/Sparqlify/sparqlify-platform/config/example
