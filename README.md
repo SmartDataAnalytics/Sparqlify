@@ -67,7 +67,7 @@ The Sparqlify Platform (under /sparqlify-platform) bundles Sparqlify with Pubby 
 At the root of the project (outside of the sparqlify-\* directories), run `mvn compile` to build all modules.
 Afterwards, lauch the platform using:
 
-    mvn jetty:run-war -Djetty.port=7531 -DconfigDirectory=/home/{your-user-account}/.../sparqlify-platform/config/{your-config-directory}
+    mvn jetty:run-war -Djetty.port=7531 -DconfigDirectory=/home/{your-user-account}/.../{your-config-directory}
 
 The port is optional, but 7531 is Sparqlify's default.
 
@@ -80,7 +80,7 @@ The configDirectory argument is mandatory and must be an *absolute* path to a di
 * `platform.properties` This file contains configuration parameters that can be adjusted, such as the database connection.
 * `views.sparqlify` The set of Sparqlify view definition to use.
 
-I recommend to copy `config/example` to `config/your-project-config`.
+I recommend to first create a copy of the files in `/sparqlify-platform/config/example` under a different location, then adjust the parameters and finally launch the platform with `-DconfigDirectory=...` set appropriately.
 
 The platform *applies autoconfiguration to Pubby and Snorql*:
 * Snorql: Namespaces are those of the views.sparqlify file.
