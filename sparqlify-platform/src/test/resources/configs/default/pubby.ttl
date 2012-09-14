@@ -14,7 +14,7 @@
 # Then browse to http://localhost:8080/ .
 
 # Prefix declarations to be used in RDF output
-@prefix conf: <http://richard.cyganiak.de/2007/pubby/config.rdf#> .
+#@prefix conf: <http://richard.cyganiak.de/2007/pubby/config.rdf#> .
 
 # Comment out or remove the namespaces which you do not need
 #@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -36,20 +36,20 @@
 #@prefix yago:      <http://dbpedia.org/class/yago/> .
 
 
-<> a conf:Configuration;
-    conf:projectName "Your Project Name";
-    conf:projectHomepage <http://your-project-homepage.org>;
-    conf:webBase <http://localhost:7531/pubby/>;  # Change this to where your site runs
-    conf:usePrefixesFrom <>;
-    conf:defaultLanguage "en";
-    conf:indexResource <http://localhost:7531/pubby/index>; # A resource that acts as a 'landing page'
+#<> a conf:Configuration;
+#    conf:projectName "Your Project Name";
+#    conf:projectHomepage <http://your-project-homepage.org>;
+#    conf:webBase <http://localhost:7531/pubby/>;  # Change this to where your site runs
+#    conf:usePrefixesFrom <>;
+#    conf:defaultLanguage "en";
+#    conf:indexResource <http://localhost:7531/pubby/index>; # A resource that acts as a 'landing page'
  
-   conf:dataset [
-        conf:sparqlEndpoint <http://localhost:7531/sparql>;
+#   conf:dataset [
+#        conf:sparqlEndpoint <http://localhost:7531/sparql>;
 #        conf:sparqlDefaultGraph <http://example.org>;
-        conf:datasetBase <http://your-dataset-namespace.org/>;
-        conf:fixUnescapedCharacters "(),'!$&*+;=@";
-	];
+#        conf:datasetBase <http://your-dataset-namespace.org/>;
+#        conf:fixUnescapedCharacters "(),'!$&*+;=@";
+#	];
     .
 
 

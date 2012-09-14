@@ -29,6 +29,11 @@
 	</outbound-rule>
 
 
+	<rule>
+		<from>^/pubby/static</from>
+		<to>/static</to>
+	</rule>
+
 
 <!-- 	<rule> -->
 <!-- 		<from>^/pubby</from> -->
