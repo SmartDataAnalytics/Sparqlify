@@ -1,6 +1,7 @@
 # Sparqlify SPARQL->SQL rewriter
 
 ## News
+15 Sep 2012 Sparqlify Platform Alpha!
 16 Aug 2012 There is now the sparqlify-csv command line tool for easy transformation of CSV (excel flavour) files.
 
 ## Introduction
@@ -60,7 +61,7 @@ The following command will start the Sparqlify HTTP server on the default port.
 
 Agents can now access the SPARQL endpoint at `http://localhost:7531/sparql`
 
-### Sparqlify Platform
+## Sparqlify Platform
 The Sparqlify Platform (under /sparqlify-platform) bundles Sparqlify with Pubby and Snorql.
 
 At the root of the project (outside of the sparqlify-* directories), run `mvn compile` to build all modules.
@@ -73,7 +74,7 @@ The configDirectory argument is mandatory and must point to a directory containi
 * `platform.properties` This file contains configuration parameters that can be adjusted, such as the database connection.
 * `views.sparqlify` The set of Sparqlify view definition to use.
 
-The platform applies autoconfiguration to Pubby and Snorql:
+The platform *applies autoconfiguration to Pubby and Snorql*:
 * Snorql: Namespaces are those of the views.sparqlify file.
 * Pubby: The host name of all resources generated in the Sparqlify views is replaced with the URL of the platform (currently still needs to be configured via `platform.properties`)
 
@@ -85,9 +86,11 @@ Enable the apache `proxy_http` module:
 
 Then in your `/etc/apache2/sites-available/default` add lines such as
 
-        ProxyRequest Off
-	ProxyPass /resource http://localhost:7531/pubby/a/b/ retry=1
-        ProxyPassReverse /resource http://localhost:7531/a/b
+	ProxyRequest Off
+	ProxyPass /resource http://localhost:7531/pubby/bizer/bsbm/v01/ retry=1
+	ProxyPassReverse /resource http://localhost:7531/pubby/bizer/bsbm/v01/
+
+These entries will enable requests to `http://localhost/resource/...` rather than `http//localhost:7531/pubby/bizer/bsbm/v01/`.
 
 The `retry=1` means, that apache only waits 1 seconds before retrying again when it encounters an error (e.g. HTTP code 500) from the proxied resource.
 
