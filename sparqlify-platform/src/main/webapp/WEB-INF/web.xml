@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+
+	<display-name>Sparqlify Platform - powered by Pubby, Snorql and Sparqlify</display-name>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/applicationContext.xml</param-value>
+	</context-param>
+
+
+
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+
+	<servlet>
+		<servlet-name>staticAssets</servlet-name>
+		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>staticAssets</servlet-name>
+		<url-pattern>/static/*</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>Jersey Web Application</servlet-name>
+<!-- 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> -->
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+
+
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+
+			<!--You need to change this line to match your package name -->
+			<param-value>org.aksw.sparqlify.rest</param-value>
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+
+
+	<context-param>
+		<param-name>config-file</param-name>
+<!-- 		<param-value>${pubby.configFile}</param-value> -->
+		<param-value>config.ttl</param-value>
+	</context-param>
+
+	<servlet>
+		<servlet-name>WebURIServlet</servlet-name>
+		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.WebURIServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>PageURLServlet</servlet-name>
+		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.PageURLServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>PageURLServlet</servlet-name>
+		<url-pattern>pubby/page/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>PathPageURLServlet</servlet-name>
+		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.PathPageURLServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>PathPageURLServlet</servlet-name>
+		<url-pattern>pubby/pathpage/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DataURLServlet</servlet-name>
+		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.DataURLServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>DataURLServlet</servlet-name>
+		<url-pattern>pubby/data/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>PathDataURLServlet</servlet-name>
+		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.PathDataURLServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>PathDataURLServlet</servlet-name>
+		<url-pattern>pubby/pathdata/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>RootServlet</servlet-name>
+		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.RootServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Handles everything not caught by the others -->
+	<servlet-mapping>
+		<servlet-name>RootServlet</servlet-name>
+		<url-pattern>pubby/*</url-pattern>
+	</servlet-mapping>
+
+</web-app>

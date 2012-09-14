@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+	<description></description>
+
+	<bean id="sparqlifyDS" scope="singleton"
+		class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+		<property name="driverClass" value="${database.driverClass}" />
+
+		<property name="jdbcUrl" value="${database.jdbcUrl}" />
+		<property name="user" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+
+		<property name="partitions" value="${database.partitions}" />
+
+		<property name="minConnectionsPerPartition" value="${database.minConnectionsPerPartition}" />
+		<property name="maxConnectionsPerPartition" value="${database.maxConnectionsPerPartition}" />
+
+		<property name="idleConnectionTestPeriod" value="${database.idleConnectionTestPeriod}" />
+		
+
+<!-- 		<property name="initialPoolSize" value="${database.initialPoolSize}" /> -->
+<!-- 		<property name="minPoolSize" value="${database.minPoolSize}" /> -->
+<!-- 		<property name="maxPoolSize" value="${database.maxPoolSize}" /> -->
+<!-- 		<property name="idleConnectionTestPeriod" value="500" /> -->
+<!-- 		<property name="acquireIncrement" value="1" /> -->
+<!-- 		<property name="maxStatements" value="50" /> -->
+<!-- 		<property name="numHelperThreads" value="1" /> -->
+	</bean>
+
+
+</beans>
+        

@@ -4,7 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>sparqlify-platform</artifactId>
-	<packaging>uberwar</packaging>
+	<!-- <packaging>uberwar</packaging> -->
+	<packaging>war</packaging>
+
 
 	<name>Sparqlify SPARQL-&gt;SQL rewriter - Platform</name>
 	<url>http://aksw.org/Projects/Sparqlify</url>
@@ -26,15 +28,9 @@
 					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
 					</excludes> </overlay> </overlays> </configuration> -->
 			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven2-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<descriptor>src/assemble/merge.xml</descriptor>
-				</configuration>
-			</plugin>
+			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId> 
+				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor> 
+				</configuration> </plugin> -->
 		</plugins>
 	</build>
 
@@ -44,14 +40,14 @@
 			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>sparqlify-server</artifactId>
 			<type>war</type>
-			 <version>${parent.version}</version>
+			<version>${parent.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.fuberlin.wiwiss</groupId>
 			<artifactId>pubby</artifactId>
 			<type>war</type>
-			 <version>0.3.4-SNAPSHOT</version>
+			<version>0.3.4-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -59,6 +55,27 @@
 			<artifactId>snorql-webapp</artifactId>
 			<type>war</type>
 			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-spring</artifactId>
 		</dependency>
 
 

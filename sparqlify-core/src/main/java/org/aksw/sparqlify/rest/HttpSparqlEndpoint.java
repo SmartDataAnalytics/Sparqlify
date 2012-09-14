@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.annotation.Resource;
+import javax.sql.DataSource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -12,15 +14,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.springframework.stereotype.Component;
 
 import com.hp.hpl.jena.sparql.engine.http.HttpParams;
-import com.sun.jersey.api.core.HttpContext;
 
 
 class StreamingOutputString 
@@ -53,10 +54,27 @@ class StreamingOutputString
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
+@Component
 @Path("/sparql")
 @Produces("application/rdf+xml")
 public class HttpSparqlEndpoint {
 
+	//@Context
+	//@Resource(mappedName="java:/sparqlifyDS")
+	//@Context
+	//@Autowired
+	@Resource
+	private DataSource dataSource;
+	
+	
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	
 	//@Context
 	//protected QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
 	public static QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
@@ -71,6 +89,25 @@ public class HttpSparqlEndpoint {
 	
 	
 	public QueryExecutionFactory<QueryExecutionStreaming> getSparqler() throws Exception {
+		/*
+		Connection conn = dataSource.getConnection();
+		 
+		RdfViewSystemOld.loadDatatypes(conn, system.getViews());
+		conn.close();
+
+		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlifyDs(system, dataSource);
+		
+		if(maxQueryExecutionTime != null) {
+			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);
+		}
+		
+		if(maxResultSetSize != null) {
+			qef = QueryExecutionFactoryLimit.decorate(qef, false, maxResultSetSize);
+		}
+		*/
+		//System.out.println("My datasource context is " + dataSource);
+
+		
 		return sparqler;
 	}
 
