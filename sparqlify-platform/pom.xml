@@ -78,6 +78,11 @@
 			<artifactId>jersey-spring</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+		</dependency>
+
 
 	</dependencies>
 </project>

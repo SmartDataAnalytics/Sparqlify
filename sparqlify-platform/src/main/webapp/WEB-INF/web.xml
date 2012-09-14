@@ -10,9 +10,6 @@
 		<param-value>/WEB-INF/applicationContext.xml</param-value>
 	</context-param>
 
-
-
-	
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -21,20 +18,20 @@
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 
-
-	<servlet>
-		<servlet-name>staticAssets</servlet-name>
-		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>staticAssets</servlet-name>
-		<url-pattern>/static/*</url-pattern>
-	</servlet-mapping>
-
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>Jersey Web Application</servlet-name>
-<!-- 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> -->
+		<!-- <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class> -->
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
 
 
@@ -57,7 +54,7 @@
 
 	<context-param>
 		<param-name>config-file</param-name>
-<!-- 		<param-value>${pubby.configFile}</param-value> -->
+		<!-- <param-value>${pubby.configFile}</param-value> -->
 		<param-value>config.ttl</param-value>
 	</context-param>
 
@@ -111,16 +108,28 @@
 		<url-pattern>pubby/pathdata/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- Handles everything not caught by the others -->
 	<servlet>
 		<servlet-name>RootServlet</servlet-name>
 		<servlet-class>de.fuberlin.wiwiss.pubby.servlets.RootServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<!-- Handles everything not caught by the others -->
 	<servlet-mapping>
 		<servlet-name>RootServlet</servlet-name>
 		<url-pattern>pubby/*</url-pattern>
 	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>staticAssets</servlet-name>
+		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>staticAssets</servlet-name>
+		<url-pattern>/static/*</url-pattern>
+	</servlet-mapping>
+
 
 </web-app>
