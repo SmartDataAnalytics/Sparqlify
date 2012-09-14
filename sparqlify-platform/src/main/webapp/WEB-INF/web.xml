@@ -76,11 +76,12 @@
 	</servlet-mapping>
 
 
-	<context-param>
-		<param-name>config-file</param-name>
+<!-- The pubby configuration is done in the application context -->
+<!-- 	<context-param> -->
+<!-- 		<param-name>config-file</param-name> -->
 		<!-- <param-value>${pubby.configFile}</param-value> -->
-		<param-value>config.ttl</param-value>
-	</context-param>
+<!-- 		<param-value>config.ttl</param-value> -->
+<!-- 	</context-param> -->
 
 	<servlet>
 		<servlet-name>WebURIServlet</servlet-name>

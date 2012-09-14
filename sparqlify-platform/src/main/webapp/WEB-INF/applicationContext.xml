@@ -54,7 +54,7 @@
 	:::: Sparqilfy config parsing
 	 -->
 	<bean id="sparqlifyConfigFactory" class="org.aksw.sparqlify.config.loader.ConfigFactory">
-		<property name="configFile" value="file:#{systemProperties['configDirectory'] + servletContext.contextPath}/views.sparqlify/" />
+		<property name="configFile" value="file:#{systemProperties['configDirectory'] + servletContext.contextPath}/views.sparqlify" />
 	</bean>
 	
 	<bean id="sparqlifyConfig" factory-bean="sparqlifyConfigFactory" factory-method="create" ></bean>
@@ -76,5 +76,34 @@
 	<bean id="sparqlifyQef" factory-bean="sparqlifyQefFactory" factory-method="create" />
 <!-- 		class="org.aksw.commons.sparql.api.core.QueryExecutionFactory" destroy-method="close"> -->
 
+
+
+	<!-- 
+	:::: Servlet context injection
+	:::: Needed for Pubby
+	 -->
+	<bean id="servletContextBeanInjector" class="org.aksw.sparqlify.platform.config.ServletContextBeanInjector"/>
+
+	<!-- 
+	:::: Pubby configuration
+	 -->
+	<bean id="pubbyConfigFactory"
+		class="org.aksw.sparqlify.platform.config.PubbyConfigFactory">
+		<property name="baseConfigFile" value="file:#{systemProperties['configDirectory'] + servletContext.contextPath}/pubby.ttl" />
+	</bean>	 
+
+	<bean id="pubbyConfig" factory-bean="pubbyConfigFactory" factory-method="create" />
+
+
+	<bean id="pubbyConfigServletContextBridge" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject"><ref bean="servletContextBeanInjector"/></property>
+		<property name="targetMethod"><value>setAttribute</value></property>
+		<property name="arguments">
+			<list>
+       			<value>de.fuberlin.wiwiss.pubby.servlets.BaseServlet.serverConfiguration</value>
+       			<ref bean="pubbyConfig" />
+			</list>
+		</property>
+	</bean>	
 
 </beans>

@@ -17,23 +17,23 @@
 @prefix conf: <http://richard.cyganiak.de/2007/pubby/config.rdf#> .
 
 # Comment out or remove the namespaces which you do not need
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix dbo: <http://dbpedia.org/ontology/>
-@prefix dbr: <http://localhost:8080/resource/> .
-@prefix geonames: <http://www.geonames.org/ontology#> .
-@prefix prv:      <http://purl.org/net/provenance/ns#> .
-@prefix prvTypes: <http://purl.org/net/provenance/types#> .
-@prefix doap:     <http://usefulinc.com/ns/doap#> .
-@prefix void:     <http://rdfs.org/ns/void#> .
-@prefix yago:      <http://dbpedia.org/class/yago/> .
+#@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+#@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+#@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+#@prefix owl: <http://www.w3.org/2002/07/owl#> .
+#@prefix dc: <http://purl.org/dc/elements/1.1/> .
+#@prefix dcterms: <http://purl.org/dc/terms/> .
+#@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+#@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+#@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+#@prefix dbo: <http://dbpedia.org/ontology/>
+#@prefix dbr: <http://localhost:8080/resource/> .
+#@prefix geonames: <http://www.geonames.org/ontology#> .
+#@prefix prv:      <http://purl.org/net/provenance/ns#> .
+#@prefix prvTypes: <http://purl.org/net/provenance/types#> .
+#@prefix doap:     <http://usefulinc.com/ns/doap#> .
+#@prefix void:     <http://rdfs.org/ns/void#> .
+#@prefix yago:      <http://dbpedia.org/class/yago/> .
 
 
 <> a conf:Configuration;

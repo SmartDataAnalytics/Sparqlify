@@ -54,6 +54,14 @@
 			<type>war</type>
 			<version>0.3.4-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>de.fuberlin.wiwiss</groupId>
+			<artifactId>pubby</artifactId>
+			<classifier>classes</classifier>
+			<version>0.3.4-SNAPSHOT</version>
+		</dependency>
+		
 
 		<dependency>
 			<groupId>org.kurtjx.snorql</groupId>
@@ -79,6 +87,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+
+
+		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
 		</dependency>
@@ -92,7 +106,7 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
-
+		
 
 	</dependencies>
 </project>
