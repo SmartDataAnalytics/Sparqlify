@@ -1,0 +1,10 @@
+Preparations to run SP2B for an RDB2RDF mapper.
+
+1. Download the SP2 Benchmark
+2. Copy all files (except for this README) into the bin folder of sp2
+3. run sp2bsql.sh
+4. run  out_with_bag.sql on database
+5. run view.sql on database
+
+Have fun! 
+

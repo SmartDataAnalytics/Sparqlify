@@ -1,0 +1,126 @@
+/**
+ * Sparqlify configuration for the SP2 Benchmark
+ *
+ * Changelog:
+ *    0.1 (current) Initial version
+ *
+ * @author Jörg Unbehauen
+ *
+ */
+
+Prefix spy:<http://aksw.org/sparqlify/>
+
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix foaf:<http://xmlns.com/foaf/0.1/>
+Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rev:<http://purl.org/stuff/rev#>
+Prefix swrc: <http://swrc.ontoware.org/ontology#>
+Prefix bench: <http://localhost/vocabulary/bench/>
+
+Create View view_article As
+  Construct {
+	?doc dc:title ?title . 
+	?doc bench:abstract ?abstract .
+	?doc bench:cdrom ?cdrom .
+	?doc rdfs:seeAlso ?sa .
+	?doc swrc:month ?month .
+	?doc swrc:note	?note .
+	?doc swrc:pages ?pages .
+	?doc foaf:homepage ?hp .
+	?doc swrc:journal ?journal .
+	?doc rdf:type bench:Article .
+  } With 
+	?doc = uri(concat("http://localhost/publications/articles/", ?stringid))
+	?title = typedLiteral(?title, xsd:string)
+	?abstract = typedLiteral(?abstract, xsd:string)
+	?cdrom = typedLiteral(?cdrom, xsd:string)
+	?sa = typedLiteral(?seealso, xsd:string)
+	?month = typedLiteral(?mnth, xsd:integer)
+	?note =  typedLiteral(?note, xsd:string)
+	?pages =  typedLiteral(?pages, xsd:integer)
+	?hp = typedLiteral(?homepage, xsd:string) 
+	?journal = uri(concat("http://localhost/publications/journals/", ?venuedocstringid))
+  From v_pub_article
+
+Create View view_inprocs As
+  Construct {
+	?doc dc:title ?title .
+	?doc bench:booktitle ?booktitle. 
+	?doc bench:cdrom ?cdrom .
+	?doc rdfs:seeAlso ?sa .
+	?doc dcterms:issued ?issued .
+	?doc swrc:pages ?pages .
+	?doc foaf:homepage ?hp .
+	?doc dcterms:partOf ?proceed .
+	?doc rdf:type bench:Inproceedings .
+  } With 
+	?doc = uri(concat("http://localhost/publications/inprocs/", ?stringid))
+	?title = typedLiteral(?title, xsd:string)
+	?cdrom = typedLiteral(?cdrom, xsd:string)
+	?sa = typedLiteral(?seealso, xsd:string)
+	?issued = typedLiteral(?mnth, xsd:integer)
+	?pages =  typedLiteral(?pages, xsd:integer)
+	?hp = typedLiteral(?homepage, xsd:string) 
+	?booktitle = typedLiteral(?booktitle, xsd:string) 
+	?proceed = uri(concat("http://localhost/publications/procs/", ?venuedocstringid))
+  From v_pub_inproc
+
+
+
+Create View view_incolls As
+  Construct {
+	?doc dc:title ?title . 
+	?doc bench:booktitle ?booktitle .
+	?doc swrc:pages ?pages .
+	?doc foaf:homepage ?hp .
+	?doc rdf:type bench:Incollection .
+  } With 
+	?doc = uri(concat("http://localhost/publications/incolls/", ?stringid))
+	?title = typedLiteral(?title, xsd:string)
+	?booktitle = typedLiteral(?booktitle, xsd:string)
+	?pages =  typedLiteral(?pages, xsd:integer)
+	?hp = typedLiteral(?homepage, xsd:string) 
+  From v_pub_incoll
+
+Create View view_person As
+  Construct {
+	?person foaf:name ?name .
+  }  With
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+	?name = typedLiteral(?name, xsd:string)
+  From v_person
+
+Create View view_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/",?resourcepart,"/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
+
+Create View view_editor As
+  Construct {
+	?doc swrc:editor ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/",?resourcepart,"/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
+
+Create View view_reference As
+  Construct {
+	?doc1 dcterms:references ?bag .
+	?bag	?bagno	?doc2 .
+	?bag 	rdf:type rdf:Bag.
+  } With
+	?doc1 = uri(concat("http://localhost/publications/",?from_resourcepart,"/",  ?from_stringid))
+	?doc2 = uri(concat("http://localhost/publications/",?to_resourcepart,"/",  ?to_stringid))
+	?bagno = uri(concat("http://www.w3.org/1999/02/22-rdf-syntax-ns#_",  ?refno))
+	?bag = uri(concat("http://localhost/referencelist/",?from_resourcepart,"/",  ?from_stringid))
+  From v_reference
+
+
+
+
+
