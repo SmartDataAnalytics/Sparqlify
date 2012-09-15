@@ -421,16 +421,16 @@
 				
 				<exclusions>
 					<exclusion>
-						<groupId>org.apache.jena</groupId>
+						<groupId>com.hp.hpl.jena</groupId>
 						<artifactId>jena</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.apache.jena</groupId>
-						<artifactId>jena-iri</artifactId>
+						<groupId>com.hp.hpl.jena</groupId>
+						<artifactId>iri</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.apache.jena</groupId>
-						<artifactId>jena-arq</artifactId>
+						<groupId>com.hp.hpl.jena</groupId>
+						<artifactId>arq</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
