@@ -22,10 +22,8 @@ import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
-import com.hp.hpl.jena.sparql.expr.E_Concat;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
@@ -112,7 +110,7 @@ public class PubbyConfigFactory {
 	
 	
 	public String extractPrefix(Expr expr) {
-		if(expr instanceof E_Concat || expr instanceof E_StrConcatPermissive || expr instanceof E_StrConcat) {
+		if(expr instanceof E_StrConcatPermissive || expr instanceof E_StrConcat) {
 			ExprFunction fn = expr.getFunction();
 			
 			List<Expr> args = fn.getArgs();
