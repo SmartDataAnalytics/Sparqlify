@@ -148,6 +148,37 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.jboss.tattletale</groupId>
+				<artifactId>tattletale-maven</artifactId>
+				<version>1.1.0.Final</version>
+				<executions>
+					<execution>
+						<phase>verify</phase> <!-- needs to run after WAR package has been built -->
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<source>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</source>
+					<destination>${project.reporting.outputDirectory}/tattletale</destination>
+					<reports>
+						<report>jar</report>
+						<report>multiplejars</report>
+					</reports>
+					<profiles>
+						<profile>java6</profile>
+					</profiles>
+					<failOnWarn>true</failOnWarn>
+					<!-- excluding some jars, if jar name contains any of these strings 
+						it won't be analyzed -->
+					<excludes>
+						<exclude>commons-beanutils-core-</exclude>
+						<exclude>postgresql-</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
@@ -169,6 +200,20 @@
 			<url>http://download.java.net/maven/2/</url>
 			<layout>default</layout>
 		</repository>
+
+		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate 
+			classes in war files -->
+		<repository>
+			<id>jboss</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
 	</repositories>
 
 	<dependencyManagement>
@@ -248,13 +293,58 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.mod4j.org.apache.commons</groupId> -->
+			<!-- <artifactId>cli</artifactId> -->
+			<!-- <version>1.0.0</version> -->
+			<!-- <type>jar</type> -->
+			<!-- <scope>compile</scope> -->
+			<!-- </dependency> -->
 			<dependency>
-				<groupId>org.mod4j.org.apache.commons</groupId>
-				<artifactId>cli</artifactId>
-				<version>1.0.0</version>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.4</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>1.2</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>1.4.0</version>
+				<type>jar</type>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- commons-validator depends on commons-beanutils, which in turn depend 
+				on commons-beanutils-bean-collections. The latter conflicts with commons-collections, 
+				because of overlap in defined classes -->
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils-core</artifactId>
+				<version>1.8.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils-bean-collections</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+
+
 			<dependency>
 				<groupId>net.sourceforge.collections</groupId>
 				<artifactId>collections-generic</artifactId>
@@ -283,6 +373,7 @@
 			<!-- <type>jar</type> -->
 			<!-- <scope>compile</scope> -->
 			<!-- </dependency> -->
+
 			<dependency>
 				<groupId>postgresql</groupId>
 				<artifactId>postgresql</artifactId>
@@ -361,10 +452,18 @@
 			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-top</artifactId> 
 				<version>0-incubating</version> <scope>compile</scope> </dependency> -->
 
-			<!-- <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
-				<version>2.10.0</version> <scope>runtime</scope> </dependency> <exclusions> 
-				<exclusion> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
-				</exclusion> </exclusions> -->
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>2.10.0</version>
+				<scope>runtime</scope>
+			</dependency>
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>xerces</groupId> -->
+			<!-- <artifactId>xercesImpl</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
 
 
 			<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer 
@@ -374,51 +473,51 @@
 				<version>2.9.0-incubating</version> <scope>compile</scope> </dependency> -->
 			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
 				<version>0.9.0-incubating</version> <scope>compile</scope> </dependency> -->
-            <dependency>
-                <groupId>org.apache.jena</groupId>
-                <artifactId>jena-arq</artifactId>
-                <version>2.9.0-incubating</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jena</groupId>
-                <artifactId>jena-core</artifactId>
-                <version>2.7.0-incubating</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jena</groupId>
-                <artifactId>jena-iri</artifactId>
-                <version>0.9.0-incubating</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-					
-				
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-arq</artifactId>
+				<version>2.9.0-incubating</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-core</artifactId>
+				<version>2.7.0-incubating</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-iri</artifactId>
+				<version>0.9.0-incubating</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+
 			<dependency>
 				<groupId>com.hp.hpl.jena</groupId>
 				<artifactId>sdb</artifactId>
 				<version>1.3.4</version>
 				<type>jar</type>
 				<scope>compile</scope>
-				
+
 				<exclusions>
 					<exclusion>
 						<groupId>com.hp.hpl.jena</groupId>
@@ -569,11 +668,13 @@
 			<name>AKSW Internal Release Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/internal</url>
 		</repository>
+
 		<snapshotRepository>
 			<id>maven.aksw.snapshots</id>
 			<name>AKSW Snapshot Repository</name>
 			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
 		</snapshotRepository>
+
 	</distributionManagement>
 
 

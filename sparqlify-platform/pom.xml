@@ -56,12 +56,12 @@
 			<artifactId>sparqlify-core</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.aksw.sparqlify</groupId>
-			<artifactId>sparqlify-server</artifactId>
-			<type>war</type>
-			<version>${parent.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aksw.sparqlify</groupId> -->
+<!-- 			<artifactId>sparqlify-server</artifactId> -->
+<!-- 			<type>war</type> -->
+<!-- 			<version>${parent.version}</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>de.fuberlin.wiwiss</groupId>
