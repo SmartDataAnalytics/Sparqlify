@@ -17,8 +17,15 @@ import com.hp.hpl.jena.sparql.function.FunctionEnv;
 
 /**
  * Should supersede E_RdfTerm.
+ *
+ *
+ * SqlExprs must of the following types:
+ * type: integer
+ * value: any
+ * languageTag: string
+ * datatype: string
  * 
- * SqlExprs may be of arbitrary datatype, except for type which must be integer cast-able
+ * OUTDATED statement was: "SqlExprs may be of arbitrary datatype, except for type which must be integer cast-able"
  * 
  * @author raven
  *

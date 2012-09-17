@@ -14,6 +14,10 @@ import functions.RdfTerm;
 public class E_RdfTerm
 	extends ExprFunctionN
 {
+	public static E_RdfTerm createBlankNode(Expr expr) {
+		return new E_RdfTerm(NodeValue.makeInteger(0), expr, NodeValue.makeString(""), NodeValue.makeString(""));
+	}
+	
 	public static E_RdfTerm createUri(Expr expr) {
 		return new E_RdfTerm(NodeValue.makeInteger(1), expr, NodeValue.makeString(""), NodeValue.makeString(""));
 	}

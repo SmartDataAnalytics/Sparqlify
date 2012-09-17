@@ -84,13 +84,18 @@ Create View view_incolls As
 	?hp = typedLiteral(?homepage, xsd:string) 
   From v_pub_incoll
 
+
 Create View view_person As
-  Construct {
-	?person foaf:name ?name .
-  }  With
-	?person  = uri(concat("http://localhost/persons/", ?stringid))
-	?name = typedLiteral(?name, xsd:string)
-  From v_person
+    Construct {
+        ?person foaf:name ?name .
+    }
+    With
+        //?person  = uri(concat("http://localhost/persons/", ?stringid))
+        ?person = bnode(?stringid)
+        ?name = typedLiteral(?name, xsd:string)
+    From
+        v_person
+
 
 Create View view_author As
   Construct {
