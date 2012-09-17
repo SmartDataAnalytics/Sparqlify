@@ -47,5 +47,6 @@ sparqlify-platform/config/plx/
 sparqlify-platform/config/sp2/
 sparqlify-platform/dependency-tree.txt
 
-
+sparqlify-benchmark/sp2/sp2b
+sparqlify-benchmark/sp2/run-sparqlify-sp2.sh
 
