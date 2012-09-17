@@ -22,7 +22,9 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
 				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId> 
 					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath> 
 					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
@@ -56,12 +58,12 @@
 			<artifactId>sparqlify-core</artifactId>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.aksw.sparqlify</groupId> -->
-<!-- 			<artifactId>sparqlify-server</artifactId> -->
-<!-- 			<type>war</type> -->
-<!-- 			<version>${parent.version}</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.aksw.sparqlify</groupId> -->
+		<!-- <artifactId>sparqlify-server</artifactId> -->
+		<!-- <type>war</type> -->
+		<!-- <version>${parent.version}</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>de.fuberlin.wiwiss</groupId>
@@ -75,7 +77,7 @@
 			<artifactId>pubby</artifactId>
 			<classifier>classes</classifier>
 			<version>0.3.4-SNAPSHOT</version>
-			
+
 			<exclusions>
 				<exclusion>
 					<groupId>com.hp.hpl.jena</groupId>
