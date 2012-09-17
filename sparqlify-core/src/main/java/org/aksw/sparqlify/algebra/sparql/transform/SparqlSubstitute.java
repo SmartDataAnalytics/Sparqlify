@@ -67,6 +67,10 @@ public class SparqlSubstitute {
 			return new E_RdfTerm(
 					NodeValue.makeDecimal(3), expr.getArgs().get(0),
 					NodeValue.makeString(""), expr.getArgs().get(1));
+		} else if (expr.getFunctionIRI().equals(SparqlifyConstants.blankNodeLabel)) {
+			return new E_RdfTerm(
+					NodeValue.makeDecimal(0), expr.getArgs().get(0),
+					NodeValue.makeString(""), NodeValue.makeString(""));			
 		}
 
 		return expr;

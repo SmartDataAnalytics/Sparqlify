@@ -39,4 +39,14 @@ sparqlify-core/debian/sparqlify-0.2/debian/rules
 rules
 
 
+## Temporary excludes
+dependency-tree.txt
+sparqlify-core/src/test/resources/benchmark/sp2/translations.sql
+sparqlify-platform/config/linkedgeodata/
+sparqlify-platform/config/plx/
+sparqlify-platform/config/sp2/
+sparqlify-platform/dependency-tree.txt
+
+sparqlify-benchmark/sp2/sp2b
+sparqlify-benchmark/sp2/run-sparqlify-sp2.sh
 

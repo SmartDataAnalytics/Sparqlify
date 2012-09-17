@@ -32,7 +32,6 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.restriction.Type;
-import org.aksw.sparqlify.validation.Validation;
 import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -33,7 +33,8 @@ public class RdfTerm
 		int typeValue = type.getDecimal().intValue();
 		switch(typeValue) {
 		case 0: // Blank Node
-			return NodeValue.makeNode(Node.createAnon(new AnonId(toLexicalForm(node))));			
+			NodeValue result = NodeValue.makeNode(Node.createAnon(new AnonId(toLexicalForm(node))));
+			return result;
 		case 1: // URI
 			return NodeValue.makeNode(Node.createURI(toLexicalForm(node)));
 		case 2: // Plain Literal

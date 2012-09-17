@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Iterator;
-import java.util.logging.LogManager;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionDecorator;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
@@ -23,10 +22,9 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.log4j.PropertyConfigurator;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -294,7 +292,7 @@ public class MainConstructView {
 				"org.aksw.sparqlify.rest");
 
 		Server server = new Server(9999);
-		Context context = new Context(server, "/", Context.SESSIONS);
+		ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
 		context.addServlet(sh, "/*");
 		
 
