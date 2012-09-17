@@ -1,9 +1,17 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "$0" )" && pwd )"
+#DIR="$( cd "$( dirname "$0" )" && pwd )"
+DIR=`pwd`
+
+configDirArg="$1"
+
+if [[ "${configDirArg:0:1}" == "/" ]]; then
+	configDir="$configDirArg"
+else
+	configDir="$DIR/$configDirArg"
+fi
 
 
-configDir="$DIR/$1"
 port="${2:-7531}"
 
 cd "$DIR/../sparqlify-platform"
