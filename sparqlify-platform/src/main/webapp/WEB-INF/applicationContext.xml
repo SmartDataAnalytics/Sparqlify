@@ -91,6 +91,7 @@
 		class="org.aksw.sparqlify.platform.config.PubbyConfigFactory">
 		<property name="baseUrl" value="${platform.baseUrl}" />
 		<property name="sparqlifyConfig"><ref bean="sparqlifyConfig" /></property>
+		<property name="queryExecutionFactory"><ref bean="sparqlifyQef" /></property>
 		<property name="baseConfigFile" value="file:#{systemProperties['configDirectory'] + servletContext.contextPath}/pubby.ttl" />
 		<property name="projectName" value="${platform.projectName}" />
 		<property name="projectHomepage" value="${platform.projectHomepage}" />

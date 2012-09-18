@@ -8,6 +8,7 @@ import java.util.Set;
 
 import mapping.SparqlifyConstants;
 
+import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.aksw.sparqlify.config.lang.PrefixConstraint;
@@ -22,6 +23,7 @@ import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
@@ -30,13 +32,14 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.pubby.Configuration;
+import de.fuberlin.wiwiss.pubby.DataSourceRegistry;
 import de.fuberlin.wiwiss.pubby.vocab.CONF;
 
 
 public class PubbyConfigFactory {
 	
 	
-	//public static Resource pubbySparqlEndpoint = ResourceFactory.createResource("urn://sparqlify/platform/pubby/sparql-endpoint");
+	public static Resource pubbySparqlEndpoint = ResourceFactory.createResource("urn://sparqlify/platform/pubby/sparql");
 	
 	private static final Logger logger = LoggerFactory.getLogger(PubbyConfigFactory.class);
 
@@ -47,12 +50,21 @@ public class PubbyConfigFactory {
 	private String projectHomepage = "";
 	private File baseConfigFile;
 	private Config sparqlifyConfig;
+	private QueryExecutionFactory queryExecutionFactory;
 	
 	//"BaseServlet.serverConfiguration"
 	
 	public PubbyConfigFactory() {
 	}
 	
+	public QueryExecutionFactory getQueryExecutionFactory() {
+		return queryExecutionFactory;
+	}
+
+	public void setQueryExecutionFactory(QueryExecutionFactory queryExecutionFactory) {
+		this.queryExecutionFactory = queryExecutionFactory;
+	}
+
 	public void setBaseConfigFile(File file) {
 		this.baseConfigFile = file;
 	}
@@ -247,7 +259,7 @@ public class PubbyConfigFactory {
 		model.add(parentConfig, CONF.dataset, dataset);
 		
 		
-		Resource pubbySparqlEndpoint = model.createResource(baseUrl + "sparql");
+		//Resource pubbySparqlEndpoint = model.createResource(baseUrl + "sparql");
 		//PubbyConfigFactory.
 		
 		model.add(dataset, CONF.sparqlEndpoint, pubbySparqlEndpoint);
@@ -268,8 +280,14 @@ public class PubbyConfigFactory {
 	}
 	
 
+	// TODO Do not call this method more than once; it will register a datasource with the same name again
 	public Configuration create() {
 		//Model baseModel = FileManager.get().loadModel(baseConfigFile.getAbsoluteFile().toURI().toString()); 
+		
+		// TODO: We need to register a new sparql datasource with each call! 
+		QefDataSource dataSource = new QefDataSource(queryExecutionFactory, pubbySparqlEndpoint.getURI());
+		DataSourceRegistry.getInstance().put(pubbySparqlEndpoint.getURI(), dataSource);
+		
 		
 		for(int i = 0; i < 15; ++i) {
 			System.out.println("__________________________________________________________" + this.getClass().getName());
@@ -285,7 +303,7 @@ public class PubbyConfigFactory {
 		Resource config = model.createResource("urn://sparqlify/platform/pubby/config");
 
 		model.add(config, RDF.type, CONF.Configuration);
-		model.add(config, CONF.webBase, model.createResource(baseUrl + "pubby/"));
+		model.add(config, CONF.webBase, model.createResource(baseUrl));
 		model.add(config, CONF.projectName, model.createLiteral(projectName));
 		model.add(config, CONF.projectHomepage, model.createResource(projectHomepage));
 
