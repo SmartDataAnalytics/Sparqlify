@@ -14,6 +14,7 @@ Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
 Prefix foaf:<http://xmlns.com/foaf/0.1/>
 Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix dcterms: <http://purl.org/dc/terms/>
 Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
 Prefix rev:<http://purl.org/stuff/rev#>
 Prefix swrc: <http://swrc.ontoware.org/ontology#>
@@ -23,6 +24,8 @@ Create View view_article As
   Construct {
 	?doc dc:title ?title . 
 	?doc bench:abstract ?abstract .
+	?doc bench:booktitle ?booktitle .
+	?doc dc:publisher ?publisher.
 	?doc bench:cdrom ?cdrom .
 	?doc rdfs:seeAlso ?sa .
 	?doc swrc:month ?month .
@@ -31,9 +34,12 @@ Create View view_article As
 	?doc foaf:homepage ?hp .
 	?doc swrc:journal ?journal .
 	?doc rdf:type bench:Article .
+	?doc rdf:type foaf:Document .
   } With 
 	?doc = uri(concat("http://localhost/publications/articles/", ?stringid))
 	?title = typedLiteral(?title, xsd:string)
+	?publisher = typedLiteral(?publisher, xsd:string)
+	?booktitle = typedLiteral(?booktitle, xsd:string)
 	?abstract = typedLiteral(?abstract, xsd:string)
 	?cdrom = typedLiteral(?cdrom, xsd:string)
 	?sa = typedLiteral(?seealso, xsd:string)
@@ -46,7 +52,9 @@ Create View view_article As
 
 Create View view_inprocs As
   Construct {
+
 	?doc dc:title ?title .
+	?doc bench:abstract ?abstract .
 	?doc bench:booktitle ?booktitle. 
 	?doc bench:cdrom ?cdrom .
 	?doc rdfs:seeAlso ?sa .
@@ -55,12 +63,16 @@ Create View view_inprocs As
 	?doc foaf:homepage ?hp .
 	?doc dcterms:partOf ?proceed .
 	?doc rdf:type bench:Inproceedings .
+	?doc rdf:type foaf:Document .
+
   } With 
 	?doc = uri(concat("http://localhost/publications/inprocs/", ?stringid))
+	?abstract = typedLiteral(?abstract, xsd:string)
+	?booktitle = typedLiteral(?booktitle, xsd:string)
 	?title = typedLiteral(?title, xsd:string)
 	?cdrom = typedLiteral(?cdrom, xsd:string)
 	?sa = typedLiteral(?seealso, xsd:string)
-	?issued = typedLiteral(?mnth, xsd:integer)
+	?issued = typedLiteral(?issued, xsd:integer)
 	?pages =  typedLiteral(?pages, xsd:integer)
 	?hp = typedLiteral(?homepage, xsd:string) 
 	?booktitle = typedLiteral(?booktitle, xsd:string) 
@@ -72,30 +84,80 @@ Create View view_inprocs As
 Create View view_incolls As
   Construct {
 	?doc dc:title ?title . 
+	?doc rdfs:seeAlso ?sa .
 	?doc bench:booktitle ?booktitle .
 	?doc swrc:pages ?pages .
 	?doc foaf:homepage ?hp .
 	?doc rdf:type bench:Incollection .
+	?doc bench:cdrom ?cdrom .
+	?doc dcterms:issued ?issued .
+	?doc dc:publisher ?publisher.
+	?doc rdf:type foaf:Document .
   } With 
+
 	?doc = uri(concat("http://localhost/publications/incolls/", ?stringid))
+	?publisher = typedLiteral(?publisher, xsd:string)
 	?title = typedLiteral(?title, xsd:string)
 	?booktitle = typedLiteral(?booktitle, xsd:string)
 	?pages =  typedLiteral(?pages, xsd:integer)
 	?hp = typedLiteral(?homepage, xsd:string) 
+	?issued = typedLiteral(?issued, xsd:integer)
+	?sa = typedLiteral(?seealso, xsd:string)
+	?cdrom = typedLiteral(?cdrom, xsd:string)
   From v_pub_incoll
+
+Create View view_journal As
+  Construct {
+	?doc dc:title ?title . 
+	?doc swrc:number ?nr .
+	?doc swrc:volume ?volume .
+	?doc dcterms:issued ?issued .
+	?doc rdf:type bench:Journal .
+  } With 
+	?doc = uri(concat("http://localhost/publications/journals/", ?stringid))
+	?title = typedLiteral(?title, xsd:string)
+	?nr = typedLiteral(?nr, xsd:integer)
+	?volume = typedLiteral(?volume, xsd:integer)
+	?issued = typedLiteral(?issued, xsd:integer) 
+  From v_venue_journal
+
+Create View view_proceedings As
+  Construct {
+	?doc dc:title ?title .
+	?doc bench:booktitle ?booktitle  .
+	?doc swrc:number ?nr .
+	?doc foaf:homepage ?hp .
+	?doc dc:publisher ?publisher .
+	?doc swrc:isbn ?isbn .
+	?doc swrc:volume ?volume .
+	?doc dcterms:issued ?issued .
+	?doc swrc:series ?series .
+	?doc rdf:type bench:Proceedings .
+  } With 
+	?doc = uri(concat("http://localhost/publications/procs/", ?stringid))
+	?title = typedLiteral(?title, xsd:string)
+	?booktitle =  typedLiteral(?booktitle, xsd:string)
+	?nr = typedLiteral(?nr, xsd:integer)
+	?volume = typedLiteral(?volume, xsd:integer)
+	?issued = typedLiteral(?issued, xsd:integer) 
+	?series = typedLiteral(?series, xsd:integer)
+	?publisher = typedLiteral(?publisher, xsd:string)
+	?isbn = typedLiteral(?isbn, xsd:string)
+	?hp = typedLiteral(?homepage, xsd:string)
+
+
+  From v_venue_proceedings
+
 
 
 Create View view_person As
-    Construct {
-        ?person foaf:name ?name .
-    }
-    With
-        //?person  = uri(concat("http://localhost/persons/", ?stringid))
-        ?person = bnode(?stringid)
-        ?name = typedLiteral(?name, xsd:string)
-    From
-        v_person
-
+  Construct {
+	?person foaf:name ?name .
+	?person rdf:type foaf:person.
+  }  With
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+	?name = typedLiteral(?name, xsd:string)
+  From v_person
 
 Create View view_author As
   Construct {
@@ -124,6 +186,19 @@ Create View view_reference As
 	?bagno = uri(concat("http://www.w3.org/1999/02/22-rdf-syntax-ns#_",  ?refno))
 	?bag = uri(concat("http://localhost/referencelist/",?from_resourcepart,"/",  ?from_stringid))
   From v_reference
+
+Create View view_constants As
+  Construct {
+	bench:Journal rdfs:subClassOf foaf:Document.
+	bench:Proceedings rdfs:subClassOf foaf:Document.
+	bench:Inproceedings rdfs:subClassOf foaf:Document.
+	bench:Article rdfs:subClassOf foaf:Document.
+	bench:Www rdfs:subClassOf foaf:Document.
+	bench:MastersThesis rdfs:subClassOf foaf:Document.
+	bench:PhDThesis rdfs:subClassOf foaf:Document.
+	bench:Incollection rdfs:subClassOf foaf:Document.
+	bench:Book rdfs:subClassOf foaf:Document.
+  } from publication
 
 
 

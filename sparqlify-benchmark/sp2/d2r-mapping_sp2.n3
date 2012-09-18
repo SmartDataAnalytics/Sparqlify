@@ -1,0 +1,177 @@
+@prefix map: <http://code.google.com/p/sparqlmap/sp2map-0.1/> .
+@prefix db: <> .
+@prefix vocab: <vocab/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rev: <http://purl.org/stuff/rev#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix swrc: <http://swrc.ontoware.org/ontology#> .
+@prefix bench: <http://localhost/vocabulary/bench/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+map:database a d2rq:Database;
+	d2rq:jdbcDriver "org.postgresql.Driver";
+	d2rq:jdbcDSN "jdbc:postgresql://localhost/sp2-50k";
+	d2rq:username "postgres";
+	d2rq:password "postgres";
+	.
+
+
+
+####################### Article
+map:article a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/publications/articles/@@v_pub_article.stringid@@";
+	d2rq:class bench:Article;
+	d2rq:class foaf:Document;
+	.
+map:article_title a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property dc:title;		d2rq:column "v_pub_article.title";	d2rq:datatype xsd:string;  	.
+map:article_publisher a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property dc:publisher;		d2rq:column "v_pub_article.publisher";	d2rq:datatype xsd:string;  	.
+map:article_abstract a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:article;  	d2rq:property bench:abstract; 	d2rq:column "v_pub_article.abstract"; 	d2rq:datatype xsd:string;  	.
+map:article_booktitle a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:article;  	d2rq:property bench:booktitle; 	d2rq:column "v_pub_article.booktitle"; 	d2rq:datatype xsd:string;  	.
+map:article_cdrom a d2rq:PropertyBridge; 	d2rq:belongsToClassMap map:article;	d2rq:property bench:cdrom;	d2rq:column "v_pub_article.cdrom";	d2rq:datatype xsd:string;	.
+map:article_hp a d2rq:PropertyBridge; 		d2rq:belongsToClassMap map:article;	d2rq:property foaf:homepage;	d2rq:column "v_pub_article.homepage";	d2rq:datatype xsd:string;	.
+map:article_seealso a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property rdfs:seeAlso;	d2rq:column "v_pub_article.seealso";	d2rq:datatype xsd:string;	.
+map:article_month a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property swrc:month;	d2rq:column "v_pub_article.mnth";	d2rq:datatype xsd:integer;	.
+map:article_pages a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property swrc:pages;	d2rq:column "v_pub_article.pages";	d2rq:datatype xsd:integer;	.
+map:article_note a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:article;	d2rq:property swrc:note;	d2rq:column "v_pub_article.note";	d2rq:datatype xsd:string;	.
+map:article_journal a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property swrc:journal;	d2rq:uriPattern "http://localhost/publications/journals/@@v_pub_article.venuedocstringid@@";	.
+
+map:article_author a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property dc:creator;	d2rq:uriPattern "http://localhost/persons/@@v_author.personid@@"; 
+d2rq:join "v_pub_article.stringid = v_author.stringid"; 	.
+
+map:article_references a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property dcterms:references; d2rq:refersToClassMap map:ref2; 
+d2rq:join "v_reference.from_stringid= v_pub_article.stringid";   
+d2rq:condition "v_reference.from_resourcepart = 'articles'"; 	.
+
+
+
+###################### Inproceedings
+map:inproc a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_pub_inproc.stringid@@";
+	d2rq:class bench:Inproceedings;
+	d2rq:class foaf:Document;
+	.
+map:inproc_booktitle a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:inproc;  	d2rq:property bench:booktitle; 	d2rq:column "v_pub_inproc.booktitle"; 	d2rq:datatype xsd:string;  	.
+map:inproc_abstract a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:inproc;  	d2rq:property bench:abstract; 	d2rq:column "v_pub_inproc.abstract"; 	d2rq:datatype xsd:string;  	.
+map:inproc_title a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:inproc;	d2rq:property dc:title;		d2rq:column "v_pub_inproc.title";	d2rq:datatype xsd:string;  	.
+map:inproc_seealso a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:inproc;	d2rq:property rdfs:seeAlso;	d2rq:column "v_pub_inproc.seealso";	d2rq:datatype xsd:string;	.
+map:inproc_hp a d2rq:PropertyBridge; 		d2rq:belongsToClassMap map:inproc;	d2rq:property foaf:homepage;	d2rq:column "v_pub_inproc.homepage";	d2rq:datatype xsd:string;	.
+map:inproc_issued a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:inproc;	d2rq:property dcterms:issued;	d2rq:column "v_pub_inproc.issued";	d2rq:datatype xsd:integer;	.
+map:inproc_pages a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:inproc;	d2rq:property swrc:pages;	d2rq:column "v_pub_inproc.pages";	d2rq:datatype xsd:integer;	.
+map:inproc_note a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:inproc;	d2rq:property swrc:note;	d2rq:column "v_pub_inproc.note";	d2rq:datatype xsd:string;	.
+map:inproc_journal a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:inproc;	d2rq:property dcterms:partOf;	d2rq:uriPattern "http://localhost/publications/procs/@@v_pub_inproc.venuedocstringid@@";	.
+map:inproc_author a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:inproc;	d2rq:property dc:creator;	d2rq:uriPattern "http://localhost/persons/@@v_author.personid@@"; d2rq:join "v_pub_inproc.stringid = v_author.stringid"; 	.
+map:inproc_references a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:inproc;	d2rq:property dcterms:references; d2rq:refersToClassMap map:ref2; 
+d2rq:join "v_reference.from_stringid= v_pub_inproc.stringid";   
+d2rq:condition "v_reference.from_resourcepart = 'inprocs'"; 	.
+
+###################### Incolls
+map:incoll a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_pub_incoll.stringid@@";
+	d2rq:class bench:Incollection;
+	d2rq:class foaf:Document;
+	.
+map:incoll_seealso a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property rdfs:seeAlso;	d2rq:column "v_pub_incoll.seealso";	d2rq:datatype xsd:string;	.
+map:incoll_issued a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property dcterms:issued;	d2rq:column "v_pub_incoll.issued";	d2rq:datatype xsd:integer;	.
+map:incoll_publisher a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property dc:publisher;	d2rq:column "v_pub_incoll.publisher";	d2rq:datatype xsd:string;  	.
+map:incoll_cdrom a d2rq:PropertyBridge; 	d2rq:belongsToClassMap map:incoll;	d2rq:property bench:cdrom;	d2rq:column "v_pub_incoll.cdrom";	d2rq:datatype xsd:string;	.
+map:incoll_title a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:incoll;	d2rq:property dc:title;		d2rq:column "v_pub_incoll.title";	d2rq:datatype xsd:string;  	.
+map:incoll_booktitle a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property bench:booktitle;	d2rq:column "v_pub_incoll.booktitle";	d2rq:datatype xsd:string;	.
+map:incoll_hp a d2rq:PropertyBridge; 		d2rq:belongsToClassMap map:incoll;	d2rq:property foaf:homepage;	d2rq:column "v_pub_incoll.homepage";	d2rq:datatype xsd:string;	.
+map:incoll_pages a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:incoll;	d2rq:property swrc:pages;	d2rq:column "v_pub_incoll.pages";	d2rq:datatype xsd:integer;	.
+map:incoll_note a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:incoll;	d2rq:property swrc:note;	d2rq:column "v_pub_incoll.note";	d2rq:datatype xsd:string;	.
+map:incoll_author a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property dc:creator;	d2rq:uriPattern "http://localhost/persons/@@v_author.personid@@"; d2rq:join "v_pub_incoll.stringid = v_author.stringid"; 	.
+
+
+#################### Journals
+map:journal a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_venue_journal.stringid@@";
+	d2rq:class bench:Journal;
+	d2rq:class foaf:Document;
+	.
+map:journal_title a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property dc:title;		d2rq:column "v_venue_journal.title";	d2rq:datatype xsd:string;  	.
+map:journal_number a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property swrc:number;	d2rq:column "v_venue_journal.nr";	d2rq:datatype xsd:integer;  	.
+map:journal_volume a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property swrc:volume;		d2rq:column "v_venue_journal.volume";	d2rq:datatype xsd:integer;  	.
+map:journal_issued a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property dcterms:issued;		d2rq:column "v_venue_journal.issued";	d2rq:datatype xsd:integer;  	.
+map:journal_editor a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property swrc:editor;	d2rq:uriPattern "http://localhost/persons/@@v_editor.personid@@"; d2rq:join "v_venue_journal.stringid = v_editor.stringid"; 	.
+
+#################### Proceedings
+map:proc a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_venue_proceedings.stringid@@";
+	d2rq:class bench:Proceedings;
+	d2rq:class foaf:Document;
+	.
+map:proc_title a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property dc:title;			d2rq:column "v_venue_proceedings.title";	d2rq:datatype xsd:string;  	.
+map:proc_number a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property swrc:number;		d2rq:column "v_venue_proceedings.nr";		d2rq:datatype xsd:integer;  	.
+map:proc_volume a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property swrc:volume;		d2rq:column "v_venue_proceedings.volume";	d2rq:datatype xsd:integer;  	.
+map:proc_issued a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property dcterms:issued;		d2rq:column "v_venue_proceedings.issued";	d2rq:datatype xsd:integer;  	.
+map:proc_booktitle a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property bench:booktitle;			d2rq:column "v_venue_proceedings.booktitle";	d2rq:datatype xsd:string;  	.
+map:proc_hp a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property foaf:homepage;			d2rq:column "v_venue_proceedings.homepage";	d2rq:datatype xsd:string;  	.
+map:proc_publisher a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property dc:publisher;			d2rq:column "v_venue_proceedings.publisher";	d2rq:datatype xsd:string;  	.
+map:proc_isbn a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property swrc:isbn;			d2rq:column "v_venue_proceedings.isbn";	d2rq:datatype xsd:string;  	.
+map:proc_series a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property  swrc:series;			d2rq:column "v_venue_proceedings.series";	d2rq:datatype xsd:string;  	.
+map:proc_editor a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property swrc:editor;	d2rq:uriPattern "http://localhost/persons/@@v_editor.personid@@"; d2rq:join "v_venue_proceedings.stringid = v_editor.stringid";  .
+
+
+
+###################### Person
+map:person a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/persons/@@v_person.stringid@@";
+	d2rq:class foaf:Person;
+	.
+map:person_name a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:person;	d2rq:property foaf:name;		d2rq:column "v_person.name";	d2rq:datatype xsd:string;  	.
+
+###################### Author
+#map:author a d2rq:ClassMap;
+#	d2rq:dataStorage map:database;
+#	d2rq:uriPattern "http://localhost/publications/@@v_author.resourcepart@@/@@v_author.stringid@@";
+#	.
+#
+#map:author_doc a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:author;	d2rq:property dc:creator;	d2rq:uriPattern "http://localhost/persons/@@v_author.personid@@";	.
+
+###################### Editor
+#map:editor a d2rq:ClassMap;
+#	d2rq:dataStorage map:database;
+#	d2rq:uriPattern "http://localhost/publications/@@v_editor.resourcepart@@/@@v_editor.stringid@@";
+#	.
+#
+#map:editor_doc a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:editor;	d2rq:property swrc:editor;	d2rq:uriPattern "http://localhost/persons/@@v_editor.personid@@";	.
+
+
+##################### References 1
+#map:ref a d2rq:ClassMap;
+#	d2rq:dataStorage map:database;
+#	d2rq:uriPattern "http://localhost/publications/@@v_reference.from_resourcepart@@/@@v_reference.from_stringid@@";
+#	.
+#
+#map:ref_bag a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:ref;	d2rq:property dcterms:references;	
+#d2rq:refersToClassMap map:ref2; d2rq:join "v_reference.to_stringid= v_reference_2.to_stringid";  
+#d2rq:join "v_reference.from_stringid = v_reference_2.from_stringid"; 
+#d2rq:alias "v_reference AS v_reference_2"; .
+
+##################### References 2
+
+map:ref2 a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "http://localhost/reference/@@v_reference.from_resourcepart@@/@@v_reference.from_stringid@@";
+	d2rq:class rdf:Bag;
+	.
+
+map:ref2_bagcontent a d2rq:PropertyBridge; d2rq:belongsToClassMap map:ref2;	d2rq:dynamicProperty "http://www.w3.org/1999/02/22-rdf-syntax-ns#_@@v_reference.refno@@";	d2rq:uriPattern "http://localhost/publications/@@v_reference.to_resourcepart@@/@@v_reference.to_stringid@@";	.
+
+
+
+
+
