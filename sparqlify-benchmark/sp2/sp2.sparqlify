@@ -34,6 +34,7 @@ Create View view_article As
 	?doc foaf:homepage ?hp .
 	?doc swrc:journal ?journal .
 	?doc rdf:type bench:Article .
+	?doc rdf:type foaf:Document .
   } With 
 	?doc = uri(concat("http://localhost/publications/articles/", ?stringid))
 	?title = typedLiteral(?title, xsd:string)
@@ -62,6 +63,7 @@ Create View view_inprocs As
 	?doc foaf:homepage ?hp .
 	?doc dcterms:partOf ?proceed .
 	?doc rdf:type bench:Inproceedings .
+	?doc rdf:type foaf:Document .
 
   } With 
 	?doc = uri(concat("http://localhost/publications/inprocs/", ?stringid))
@@ -90,10 +92,10 @@ Create View view_incolls As
 	?doc bench:cdrom ?cdrom .
 	?doc dcterms:issued ?issued .
 	?doc dc:publisher ?publisher.
+	?doc rdf:type foaf:Document .
   } With 
 
 	?doc = uri(concat("http://localhost/publications/incolls/", ?stringid))
-	?doc bench:cdrom ?cdrom .
 	?publisher = typedLiteral(?publisher, xsd:string)
 	?title = typedLiteral(?title, xsd:string)
 	?booktitle = typedLiteral(?booktitle, xsd:string)
@@ -101,6 +103,7 @@ Create View view_incolls As
 	?hp = typedLiteral(?homepage, xsd:string) 
 	?issued = typedLiteral(?issued, xsd:integer)
 	?sa = typedLiteral(?seealso, xsd:string)
+	?cdrom = typedLiteral(?cdrom, xsd:string)
   From v_pub_incoll
 
 Create View view_journal As
@@ -121,7 +124,7 @@ Create View view_journal As
 Create View view_proceedings As
   Construct {
 	?doc dc:title ?title .
-	?doc bench:booktitle ?booktitle 
+	?doc bench:booktitle ?booktitle  .
 	?doc swrc:number ?nr .
 	?doc foaf:homepage ?hp .
 	?doc dc:publisher ?publisher .
@@ -183,6 +186,19 @@ Create View view_reference As
 	?bagno = uri(concat("http://www.w3.org/1999/02/22-rdf-syntax-ns#_",  ?refno))
 	?bag = uri(concat("http://localhost/referencelist/",?from_resourcepart,"/",  ?from_stringid))
   From v_reference
+
+Create View view_constants As
+  Construct {
+	bench:Journal rdfs:subClassOf foaf:Document.
+	bench:Proceedings rdfs:subClassOf foaf:Document.
+	bench:Inproceedings rdfs:subClassOf foaf:Document.
+	bench:Article rdfs:subClassOf foaf:Document.
+	bench:Www rdfs:subClassOf foaf:Document.
+	bench:MastersThesis rdfs:subClassOf foaf:Document.
+	bench:PhDThesis rdfs:subClassOf foaf:Document.
+	bench:Incollection rdfs:subClassOf foaf:Document.
+	bench:Book rdfs:subClassOf foaf:Document.
+  } from publication
 
 
 
