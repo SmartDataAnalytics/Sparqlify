@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 
@@ -19,6 +21,9 @@ import com.hp.hpl.jena.query.Query;
 public class QueryExecutionFactorySparqlifyDs
 	extends QueryExecutionFactoryBackQuery<QueryExecutionStreaming>
 {
+	private static final Logger logger = LoggerFactory.getLogger(QueryExecutionFactorySparqlifyDs.class);
+	
+	
 	private RdfViewSystem system;
 	private DataSource dataSource;
 
@@ -31,6 +36,8 @@ public class QueryExecutionFactorySparqlifyDs
 	@Override
 	public QueryExecutionStreaming createQueryExecution(Query query) {
 		//System.out.println(query);
+		
+		logger.info("Created qef for query: " + query);
 		
 		Connection conn = null;
 		try {
