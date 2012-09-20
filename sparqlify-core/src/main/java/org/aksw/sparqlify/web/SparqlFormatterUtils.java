@@ -190,6 +190,15 @@ class SparqlFormatterUtils {
 		writeRdfXml(out, model);
 	}
 
+	
+	public static void writeRdfXml(OutputStream out, Iterator<Triple> iterator) {
+		
+		Model model = triplesToModel(iterator);
+		
+		writeXml(out, model);
+	}
+
+	
 	public static void writeRdfXml(OutputStream out, Model model) {
 		model.write(out, "RDF/XML");
 	}
