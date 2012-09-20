@@ -35,7 +35,7 @@ public class ProcessQuery {
 				writer.write(output, obj);
 				qe.close();
 				
-				output.flush();
+				//output.flush();
 			}
 		};
 	}

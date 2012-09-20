@@ -55,7 +55,6 @@ class StreamingOutputString
  */
 @Component
 @Path("/sparql")
-@Produces("application/rdf+xml")
 public class HttpSparqlEndpoint {
 
 	//@Context
@@ -155,7 +154,8 @@ public class HttpSparqlEndpoint {
 
 	
 	@GET
-	//@Produces(MediaType.APPLICATION_XML)
+	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_XML)
 	public StreamingOutput executeQueryXml(@QueryParam("query") String queryString)
 			throws Exception {
 
@@ -166,6 +166,21 @@ public class HttpSparqlEndpoint {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
 	}
 
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	//@Produces(MediaType.APPLICATION_XML)
+	public StreamingOutput executeQueryXmlPost(@FormParam("query") String queryString)
+			throws Exception {
+
+		if(queryString == null) {
+			return StreamingOutputString.create("<error>No query specified. Append '?query=&lt;your SPARQL query&gt;'</error>");
+		}
+		
+		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
+	}
+
+	
 	/*
 	@GET
 	public Response executeQueryXml(@Context HttpContext hc, @QueryParam("query") String queryString, @QueryParam("format") String format)
@@ -202,6 +217,17 @@ public class HttpSparqlEndpoint {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Json);
 	}
 
+	
+	@GET
+	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(HttpParams.contentTypeRDFXML)
+	//@Produces("application/rdf+xml")
+	public StreamingOutput executeQueryRdfXml(@QueryParam("query") String queryString)
+			throws Exception {
+		return processQuery(queryString, SparqlFormatterUtils.FORMAT_RdfXml);
+	}	
+	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(HttpParams.contentTypeRDFXML)
@@ -210,16 +236,37 @@ public class HttpSparqlEndpoint {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_RdfXml);
 	}
 
+
+	
+	
 	@GET
 	@Produces("application/sparql-results+xml")
 	public StreamingOutput executeQueryResultSetXml(@QueryParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
 	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces("application/sparql-results+xml")
+	public StreamingOutput executeQueryResultSetXmlPost(@FormParam("query") String queryString)
+			throws Exception {
+		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
+	}
+
+	
 	
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public StreamingOutput executeQueryText(@QueryParam("query") String queryString)
+			throws Exception {
+		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Text);
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public StreamingOutput executeQueryTextPost(@FormParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Text);
 	}

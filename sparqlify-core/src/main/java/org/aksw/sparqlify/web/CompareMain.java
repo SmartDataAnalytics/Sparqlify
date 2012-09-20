@@ -85,7 +85,7 @@ public class CompareMain {
 		QueryExecutionFactory qefB = new QueryExecutionFactoryHttp(serviceUrlB);
 		
 		
-		QueryExecutionFactory qef = new QueryExecutionStreamingFactory(new QueryExecutionFactoryCompare(qefA, qefB));
+		QueryExecutionFactory qef = new QueryExecutionStreamingFactory(new QueryExecutionFactoryCompare(qefA, qefB, true));
 		
 		
 
