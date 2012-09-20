@@ -52,3 +52,4 @@ sparqlify-benchmark/sp2/run-sparqlify-sp2.sh
 
 sparqlify-benchmark/sp2/d2r
 sparqlify-benchmark/sp2/run-d2r-sp2.sh
+sparqlify-benchmark/sp2/config
