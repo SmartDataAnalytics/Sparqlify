@@ -23,14 +23,20 @@ map:database a d2rq:Database;
 	.
 
 
-
 ####################### Article
 map:article a d2rq:ClassMap;
 	d2rq:dataStorage map:database;
 	d2rq:uriPattern "http://localhost/publications/articles/@@v_pub_article.stringid@@";
 	d2rq:class bench:Article;
 	d2rq:class foaf:Document;
+#	d2rq:additionalClassDefinitionProperty map:article_sub_doc;
 	.
+#map:article_sub_doc a d2rq:AdditionalProperty;
+#    d2rq:propertyName rdfs:subClassOf;
+#    d2rq:propertyValue foaf:Document;
+#    .
+
+
 map:article_title a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property dc:title;		d2rq:column "v_pub_article.title";	d2rq:datatype xsd:string;  	.
 map:article_publisher a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:article;	d2rq:property dc:publisher;		d2rq:column "v_pub_article.publisher";	d2rq:datatype xsd:string;  	.
 map:article_abstract a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:article;  	d2rq:property bench:abstract; 	d2rq:column "v_pub_article.abstract"; 	d2rq:datatype xsd:string;  	.
@@ -58,7 +64,13 @@ map:inproc a d2rq:ClassMap;
 	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_pub_inproc.stringid@@";
 	d2rq:class bench:Inproceedings;
 	d2rq:class foaf:Document;
+#	d2rq:additionalClassDefinitionProperty map:inproc_sub_doc;
 	.
+#map:inproc_sub_doc a d2rq:AdditionalProperty;
+#    d2rq:propertyName rdfs:subClassOf;
+#    d2rq:propertyValue foaf:Document;
+#   .
+
 map:inproc_booktitle a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:inproc;  	d2rq:property bench:booktitle; 	d2rq:column "v_pub_inproc.booktitle"; 	d2rq:datatype xsd:string;  	.
 map:inproc_abstract a d2rq:PropertyBridge;  	d2rq:belongsToClassMap map:inproc;  	d2rq:property bench:abstract; 	d2rq:column "v_pub_inproc.abstract"; 	d2rq:datatype xsd:string;  	.
 map:inproc_title a d2rq:PropertyBridge;		d2rq:belongsToClassMap map:inproc;	d2rq:property dc:title;		d2rq:column "v_pub_inproc.title";	d2rq:datatype xsd:string;  	.
@@ -79,7 +91,12 @@ map:incoll a d2rq:ClassMap;
 	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_pub_incoll.stringid@@";
 	d2rq:class bench:Incollection;
 	d2rq:class foaf:Document;
+#	d2rq:additionalClassDefinitionProperty map:incoll_sub_doc;
 	.
+#map:incoll_sub_doc a d2rq:AdditionalProperty;
+#    d2rq:propertyName rdfs:subClassOf;
+#    d2rq:propertyValue foaf:Document;
+#    .
 map:incoll_seealso a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property rdfs:seeAlso;	d2rq:column "v_pub_incoll.seealso";	d2rq:datatype xsd:string;	.
 map:incoll_issued a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property dcterms:issued;	d2rq:column "v_pub_incoll.issued";	d2rq:datatype xsd:integer;	.
 map:incoll_publisher a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:incoll;	d2rq:property dc:publisher;	d2rq:column "v_pub_incoll.publisher";	d2rq:datatype xsd:string;  	.
@@ -98,7 +115,12 @@ map:journal a d2rq:ClassMap;
 	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_venue_journal.stringid@@";
 	d2rq:class bench:Journal;
 	d2rq:class foaf:Document;
+#	d2rq:additionalClassDefinitionProperty map:journal_sub_doc;
 	.
+#map:journal_sub_doc a d2rq:AdditionalProperty;
+#    d2rq:propertyName rdfs:subClassOf;
+#    d2rq:propertyValue foaf:Document;
+#    .
 map:journal_title a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property dc:title;		d2rq:column "v_venue_journal.title";	d2rq:datatype xsd:string;  	.
 map:journal_number a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property swrc:number;	d2rq:column "v_venue_journal.nr";	d2rq:datatype xsd:integer;  	.
 map:journal_volume a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:journal;	d2rq:property swrc:volume;		d2rq:column "v_venue_journal.volume";	d2rq:datatype xsd:integer;  	.
@@ -111,7 +133,13 @@ map:proc a d2rq:ClassMap;
 	d2rq:uriPattern "http://localhost/publications/inprocs/@@v_venue_proceedings.stringid@@";
 	d2rq:class bench:Proceedings;
 	d2rq:class foaf:Document;
+#	d2rq:additionalClassDefinitionProperty map:proc_sub_doc;
 	.
+#map:proc_sub_doc a d2rq:AdditionalProperty;
+#    d2rq:propertyName rdfs:subClassOf;
+#    d2rq:propertyValue foaf:Document;
+#    .
+
 map:proc_title a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property dc:title;			d2rq:column "v_venue_proceedings.title";	d2rq:datatype xsd:string;  	.
 map:proc_number a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property swrc:number;		d2rq:column "v_venue_proceedings.nr";		d2rq:datatype xsd:integer;  	.
 map:proc_volume a d2rq:PropertyBridge;	d2rq:belongsToClassMap map:proc;	d2rq:property swrc:volume;		d2rq:column "v_venue_proceedings.volume";	d2rq:datatype xsd:integer;  	.
@@ -170,6 +198,34 @@ map:ref2 a d2rq:ClassMap;
 	.
 
 map:ref2_bagcontent a d2rq:PropertyBridge; d2rq:belongsToClassMap map:ref2;	d2rq:dynamicProperty "http://www.w3.org/1999/02/22-rdf-syntax-ns#_@@v_reference.refno@@";	d2rq:uriPattern "http://localhost/publications/@@v_reference.to_resourcepart@@/@@v_reference.to_stringid@@";	.
+
+
+################ Add the subclass statements
+
+map:art_sub a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:constantValue bench:Article; .
+map:art_sub_p a d2rq:PropertyBridge; d2rq:belongsToClassMap map:art_sub;	d2rq:property rdfs:subClassOf; d2rq:constantValue foaf:Document; .
+
+map:inproc_sub a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:constantValue bench:Inproceedings; .
+map:inproc_sub_p a d2rq:PropertyBridge; d2rq:belongsToClassMap map:inproc_sub;	d2rq:property rdfs:subClassOf; d2rq:constantValue foaf:Document; .
+
+map:incoll_sub a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:constantValue bench:Incollection; .
+map:incoll_sub_p a d2rq:PropertyBridge; d2rq:belongsToClassMap map:incoll_sub;	d2rq:property rdfs:subClassOf; d2rq:constantValue foaf:Document; .
+
+map:journal_sub a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:constantValue bench:Journal; .
+map:journal_sub_p a d2rq:PropertyBridge; d2rq:belongsToClassMap map:journal_sub;	d2rq:property rdfs:subClassOf; d2rq:constantValue foaf:Document; .
+
+map:proc_sub a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:constantValue bench:Proceedings; .
+map:proc_sub_p a d2rq:PropertyBridge; d2rq:belongsToClassMap map:proc_sub;	d2rq:property rdfs:subClassOf; d2rq:constantValue foaf:Document; .
 
 
 
