@@ -3,6 +3,7 @@ package org.aksw.sparqlify.web;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
@@ -204,7 +205,17 @@ class SparqlFormatterUtils {
 	}
 
 	public static void writeXml(OutputStream out, ResultSet rs) {
-		ResultSetFormatter.outputAsXML(out, rs);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ResultSetFormatter.outputAsXML(baos, rs);
+		
+		String str = baos.toString();
+		
+		PrintStream ps = new PrintStream(out);
+		ps.println(str);
+
+		// TODO Hack: Writing from Jena directly seems to block for same reason
+		
+		//ResultSetFormatter.outputAsXML(out, rs);
 	}
 	
 	public static void writeXml(OutputStream out, Boolean value) throws IOException {
