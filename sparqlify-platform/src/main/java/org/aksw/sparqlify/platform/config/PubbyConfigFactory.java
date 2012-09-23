@@ -44,7 +44,8 @@ public class PubbyConfigFactory {
 	private static final Logger logger = LoggerFactory.getLogger(PubbyConfigFactory.class);
 
 	
-	private String baseUrl;
+	private String baseUri;
+	private String contextPath;
 	
 	private String projectName = "";
 	private String projectHomepage = "";
@@ -54,6 +55,14 @@ public class PubbyConfigFactory {
 	
 	//"BaseServlet.serverConfiguration"
 	
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+
 	public PubbyConfigFactory() {
 	}
 	
@@ -95,12 +104,12 @@ public class PubbyConfigFactory {
 	}
 
 	
-	public String getBaseUrl() {
-		return baseUrl;
+	public String getBaseUri() {
+		return baseUri;
 	}
 
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri;
 	}
 	
 	public String getProjectName() {
@@ -227,7 +236,7 @@ public class PubbyConfigFactory {
 		for(String prefix : prefixes) {
 			try {
 				URL url = new URL(prefix);
-				String hostname = url.getProtocol() + "://" + url.getHost() + "/";
+				String hostname = url.getProtocol() + "://" + url.getHost(); // + "/";
 				result.add(hostname);
 			} catch(Exception e) {
 				logger.warn("Failed to extract hostname from: [" + prefix +"]");
@@ -254,12 +263,12 @@ public class PubbyConfigFactory {
 	public void writeDatasetDesc(Model model, Resource parentConfig, String prefix) {
 		
 		Resource dataset = model.createResource(new AnonId());
-		Resource datasetBase = model.createResource(prefix);
+		Resource datasetBase = model.createResource(prefix + contextPath);
 		
 		model.add(parentConfig, CONF.dataset, dataset);
 		
 		
-		//Resource pubbySparqlEndpoint = model.createResource(baseUrl + "sparql");
+		//Resource pubbySparqlEndpoint = model.createResource(baseUri + "sparql");
 		//PubbyConfigFactory.
 		
 		model.add(dataset, CONF.sparqlEndpoint, pubbySparqlEndpoint);
@@ -289,9 +298,11 @@ public class PubbyConfigFactory {
 		DataSourceRegistry.getInstance().put(pubbySparqlEndpoint.getURI(), dataSource);
 		
 		
+		/*
 		for(int i = 0; i < 15; ++i) {
 			System.out.println("__________________________________________________________" + this.getClass().getName());
 		}
+		*/
 		
 		//Model model = baseModel;
 			
@@ -303,14 +314,17 @@ public class PubbyConfigFactory {
 		Resource config = model.createResource("urn://sparqlify/platform/pubby/config");
 
 		model.add(config, RDF.type, CONF.Configuration);
-		model.add(config, CONF.webBase, model.createResource(baseUrl));
+		model.add(config, CONF.webBase, model.createResource(baseUri));
 		model.add(config, CONF.projectName, model.createLiteral(projectName));
 		model.add(config, CONF.projectHomepage, model.createResource(projectHomepage));
 
 		
 		autoconfigure(model, config);
 		
+		System.out.println("Pubby configuration:");
+		System.out.println("-----------------------------------------------");
 		model.write(System.out, "TURTLE");
+		System.out.println("-----------------------------------------------");
 		
 		Configuration result = new Configuration(model);
 		

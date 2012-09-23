@@ -11,6 +11,7 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.syntax.Template;
 
 public class ViewTemplateDefinition {
+	//private static final Log
 	//private String name;
 	
 	private Template constructTemplate;
@@ -69,6 +70,13 @@ public class ViewTemplateDefinition {
 			 
 			 Var var = left.asVar();
 			 Expr expr = e.getArg2();
+	
+			 Expr previousValue = result.getExpr(var);
+			 if(previousValue != null) {				 
+				 throw new RuntimeException("Redefinition of variable " + var + " in view '" + "no name" + "' with: " + expr + ", was: " + previousValue);
+				 //continue;
+			 }
+			 
 			 
 			 result.add(var, expr);
 		 }

@@ -89,7 +89,8 @@
 	 -->
 	<bean id="pubbyConfigFactory"
 		class="org.aksw.sparqlify.platform.config.PubbyConfigFactory">
-		<property name="baseUrl" value="${platform.baseUrl}" />
+		<property name="baseUri" value="${platform.linkedData.baseUri}" />
+		<property name="contextPath" value="${platform.linkedData.contextPath}" />
 		<property name="sparqlifyConfig"><ref bean="sparqlifyConfig" /></property>
 		<property name="queryExecutionFactory"><ref bean="sparqlifyQef" /></property>
 		<property name="baseConfigFile" value="file:#{systemProperties['configDirectory'] + servletContext.contextPath}/pubby.ttl" />
