@@ -50,6 +50,16 @@ Create View view_article As
 	?journal = uri(concat("http://localhost/publications/journals/", ?venuedocstringid))
   From v_pub_article
 
+Create View view_article_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/articles/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
+
+
+
 Create View view_inprocs As
   Construct {
 
@@ -78,6 +88,13 @@ Create View view_inprocs As
 	?proceed = uri(concat("http://localhost/publications/procs/", ?venuedocstringid))
   From v_pub_inproc
 
+Create View view_inprocs_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/inprocs/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
 
 
 Create View view_incolls As
@@ -104,6 +121,14 @@ Create View view_incolls As
 	?sa = typedLiteral(?seealso, xsd:string)
 	?cdrom = typedLiteral(?cdrom, xsd:string)
   From v_pub_incoll
+
+Create View view_inprocs_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/inprocs/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
 
 Create View view_journal As
   Construct {
@@ -160,13 +185,13 @@ Create View view_person As
 	?name = typedLiteral(?name, xsd:string)
   From v_person
 
-Create View view_author As
-  Construct {
-	?doc dc:creator ?person .
-  } With 
-	?doc = uri(concat("http://localhost/publications/",?resourcepart,"/",  ?stringid))
-	?person  = uri(concat("http://localhost/persons/", ?stringid))
-  From v_author
+//Create View view_author As
+//  Construct {
+//	?doc dc:creator ?person .
+//  } With 
+//	?doc = uri(concat("http://localhost/publications/",?resourcepart,"/",  ?stringid))
+//	?person  = uri(concat("http://localhost/persons/", ?stringid))
+//  From v_author
 
 Create View view_editor As
   Construct {
