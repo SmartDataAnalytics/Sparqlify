@@ -382,7 +382,7 @@
 			<dependency>
 				<groupId>postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>8.4-701.jdbc4</version>
+				<version>9.1-901.jdbc4</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>

@@ -75,7 +75,6 @@ Create View view_inprocs As
 	?issued = typedLiteral(?issued, xsd:integer)
 	?pages =  typedLiteral(?pages, xsd:integer)
 	?hp = typedLiteral(?homepage, xsd:string) 
-	?booktitle = typedLiteral(?booktitle, xsd:string) 
 	?proceed = uri(concat("http://localhost/publications/procs/", ?venuedocstringid))
   From v_pub_inproc
 
@@ -113,6 +112,7 @@ Create View view_journal As
 	?doc swrc:volume ?volume .
 	?doc dcterms:issued ?issued .
 	?doc rdf:type bench:Journal .
+	?doc rdf:type foaf:Document .
   } With 
 	?doc = uri(concat("http://localhost/publications/journals/", ?stringid))
 	?title = typedLiteral(?title, xsd:string)
@@ -133,6 +133,7 @@ Create View view_proceedings As
 	?doc dcterms:issued ?issued .
 	?doc swrc:series ?series .
 	?doc rdf:type bench:Proceedings .
+	?doc rdf:type foaf:Docuent .
   } With 
 	?doc = uri(concat("http://localhost/publications/procs/", ?stringid))
 	?title = typedLiteral(?title, xsd:string)
