@@ -1,0 +1,240 @@
+/**
+ * This is a configuration for the wortschatz schema
+ *
+ */
+//Prefix spy:<http://aksw.org/sparqlify/>
+
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+
+prefix wso:<http://corpora.nlp2rdf.org/wortschatz/ontology/>
+Prefix wss:<http://corpora.nlp2rdf.org/wortschatz/sentence/>
+Prefix wsw:<http://corpora.nlp2rdf.org/wortschatz/word/>
+
+// co_n
+Create View view_co_n As
+    Construct {
+        ?a wso:coOccursDirectlyWith ?b .
+        ?x owl:annotatedSource ?a .
+        ?x owl:annotatedProperty wso:coOccursDirectlyWith .
+        ?x owl:annotatedTarget ?b .
+        ?x wso:frequency ?f .
+        ?x wso:sigma ?s .
+    }
+    With
+        //?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?language, '/', spy:urlEncode(?word1)))
+	// FIXME: urlEncode
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word1))
+        ?b = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word2))
+        ?x = uri(concat('http://corpora.nlp2rdf.org/wortschatz/co-occurence/direct/', ?lang, '/', ?word1, '/', ?word2))
+        ?f = typedLiteral(?freq, xsd:long)
+        ?s = typedLiteral(?sig, xsd:long)
+    From
+        [[SELECT
+	    a.w1_id,
+	    a.w2_id,
+	    a.freq::bigint,
+	    a.sig::bigint,
+	    b.word AS word1,
+	    c.word AS word2,
+	    d.lang
+	FROM
+	    co_n a
+	    JOIN words b ON ((b.w_id, b.lang) = (a.w1_id, a.lang))
+	    JOIN words c ON ((c.w_id, c.lang) = (a.w2_id, a.lang))
+            JOIN languages d ON (d.l_id = a.lang)
+	]];
+
+
+Create View view_co_s As
+    Construct {
+        ?a wso:coOccursInSentenceWith ?b .
+        ?x owl:annotatedSource ?a .
+        ?x owl:annotatedProperty wso:coOccursInSentenceWith .
+        ?x owl:annotatedTarget ?b .
+        ?x wso:frequency ?f .
+        ?x wso:sigma ?s .
+    }
+    With
+        // FIXME: urlEncode!!
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word1))
+        ?b = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word2))
+        ?x = uri(concat('http://corpora.nlp2rdf.org/wortschatz/co-occurence/sentence/', ?lang, '/', ?word1, '/', ?word2))
+        ?f = typedLiteral(?freq, xsd:long)
+        ?s = typedLiteral(?sig, xsd:long)
+    From
+       [[SELECT
+            a.w1_id,
+            a.w2_id,
+            a.freq::bigint,
+            a.sig::bigint,
+            b.word AS word1,
+            c.word AS word2,
+	    d.lang
+        FROM
+            co_s a
+            JOIN words b ON ((b.w_id, b.lang) = (a.w1_id, a.lang))
+            JOIN words c ON ((c.w_id, c.lang) = (a.w2_id, a.lang))
+	    JOIN languages d ON (d.l_id = a.lang)
+        ]];
+
+
+
+
+/*
+// co_s
+Create View view_co_s As
+    Construct {
+        ?a wso:coOccursInSentenceWith ?b .
+        ?a wso:hasLanguageWithID ?lid.
+        ?b wso:hasLanguageWithID ?lid.
+        ?a wso:hasLanguage ?l.
+        ?b wso:hasLanguage ?l.
+        ?x owl:annotatedSource ?a .
+        ?x owl:annotatedProperty wso:coOccursInSentenceWith .
+        ?x owl:annotatedTarget ?b .
+        ?x wso:frequency ?f .
+        ?x wso:sigma ?s .
+    }
+    With
+	// FIXME: urlEncode!!
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?language, '/', ?word1))
+        ?b = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?language, '/', ?word2))
+        ?x = uri(concat('http://corpora.nlp2rdf.org/wortschatz/co-occurence/sentence/', ?w1_id, '/', ?w2_id))
+        ?f = typedLiteral(?cos_freq, xsd:long)
+        ?s = typedLiteral(?sig, xsd:long)
+        ?lid = uri(concat('http://corpora.nlp2rdf.org/wortschatz/langID/', ?lid))
+        ?l = uri(concat('http://corpora.nlp2rdf.org/wortschatz/lang/', ?language))
+    From
+        [[SELECT
+	    w1_id,
+	    w2_id,
+	    co_s.freq::bigint AS cos_freq,
+	    sig::bigint,
+	    languages.lang AS language,
+	    words1.word AS word1,
+	    words2.word AS word2,
+	    co_s.lang AS lid
+	FROM
+	    co_s,
+	    languages,
+	    words AS words1,
+	    words AS words2
+	WHERE
+	    languages.l_id=co_s.lang AND
+		co_s.w1_id=words1.w_id AND
+		co_s.w2_id=words2.w_id]];
+
+*/
+
+// inv_so
+Create View view_inv_so As
+    Construct {
+        ?a wso:source ?b .
+    }
+    With
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/sentence/', ?lang, '/', ?s_id))
+        ?b = uri(concat('http://corpora.nlp2rdf.org/wortschatz/source/', ?lang, '/', ?so_id))
+    From
+        [[SELECT a.s_id, a.so_id, b.lang FROM inv_so a JOIN languages b ON (b.l_id = a .lang)]];
+
+
+
+// inv_w
+Create View view_inv_w As
+    Construct {
+        ?a wso:partOf ?b .
+    }
+    With
+	// FIXME: urlEncode
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word))
+        ?b = uri(concat('http://corpora.nlp2rdf.org/wortschatz/sentence/', ?lang, '/', ?s_id))
+    From
+        [[SELECT
+	    a.s_id,
+	    b.word,
+	    c.lang
+	FROM
+	    inv_w a
+	    JOIN words b ON ((b.w_id, b.lang) = (a.w_id, a.lang))
+	    JOIN languages c ON (c.l_id = a.lang)
+	]];
+
+
+// sentences
+Create View view_sentences As
+    Construct {
+	?a a wso:Sentence .
+        ?a rdfs:label ?b .
+        ?a wso:hasLanguage ?l .
+    }
+    With
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/sentence/', ?lang, '/', ?s_id))
+        ?b = plainLiteral(?sentence)
+        ?l = uri(concat('http://corpora.nlp2rdf.org/wortschatz/lang/', ?lang))
+    From
+        [[SELECT s_id, sentence, b.lang FROM sentences a JOIN languages b ON (b.l_id = a.lang)]];
+
+
+
+
+// words
+Create View view_words As
+    Construct {
+	?a
+	    a wso:Word ;
+       	    rdfs:label ?b ;
+            wso:frequency ?f ;
+            wso:hasLanguage ?l .
+    }
+    With
+	// FIXME: urlEncode
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word))
+        ?b = plainLiteral(?word)
+        ?f = typedLiteral(?freq, xsd:long)
+        ?l = uri(concat('http://corpora.nlp2rdf.org/wortschatz/lang/', ?lang))
+    From
+	[[SELECT a.word, a.freq, b.lang FROM words a JOIN languages b ON (b.l_id = a.lang)]];
+
+
+// sources
+Create View view_sources As
+    Construct {
+        ?a wso:sourceUri ?b .
+        ?a wso:date ?f .
+        ?a wso:hasLanguage ?l .
+    }
+    With
+        ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/source/', ?lang, '/', ?so_id))
+        ?b = uri(concat(?source))
+        ?f = typedLiteral(?date, xsd:dateTime)
+        ?l = uri(concat('http://corpora.nlp2rdf.org/wortschatz/lang/', ?lang))
+    From
+        [[SELECT
+	    a.so_id,
+	    a.source,
+	    a.date,
+	    b.lang
+	FROM
+	    sources a JOIN languages b ON (b.l_id = a.lang)
+	]];
+
+// languages
+
+Create View view_languages As
+    Construct {
+        ?s a wso:Language .
+        ?s rdfs:label ?l .
+        ?s owl:sameAs ?lexvo .
+    }
+    With
+//        ?s = uri(concat('http://corpora.nlp2rdf.org/wortschatz/langID/', ?lang))
+        ?s = uri(concat('http://corpora.nlp2rdf.org/wortschatz/lang/', ?lang))
+        ?l = plainLiteral(?lang)
+	?lexvo = uri(concat('http://lexvo.org/id/iso639-3/',?lang))
+    From
+        languages
+       
