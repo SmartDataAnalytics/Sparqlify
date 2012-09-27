@@ -14,6 +14,8 @@ prefix wso:<http://corpora.nlp2rdf.org/wortschatz/ontology/>
 Prefix wss:<http://corpora.nlp2rdf.org/wortschatz/sentence/>
 Prefix wsw:<http://corpora.nlp2rdf.org/wortschatz/word/>
 
+
+
 // co_n
 Create View view_co_n As
     Construct {
@@ -180,10 +182,27 @@ Create View view_sentences As
 
 
 
+/*
+Create View view_word_all As
+    Construct {
+	    ?a rdfs:seeAlso ?b .
+    }
+    With
+	// FIXME: urlEncode
+		?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/w/', ?word))
+        ?b = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word))
+        ?b = plainLiteral(?word, ?lang)
+//        ?f = typedLiteral(?freq, xsd:long)
+//        ?l = uri(concat('http://corpora.nlp2rdf.org/wortschatz/lang/', ?lang))
+    From
+	[[SELECT a.word, a.freq, b.lang FROM words a JOIN languages b ON (b.l_id = a.lang)]];
+*/
 
 // words
 Create View view_words As
     Construct {
+    ?x rdfs:seeAlso ?a .
+    
 	?a
 	    a wso:Word ;
        	    rdfs:label ?b ;
@@ -192,6 +211,8 @@ Create View view_words As
     }
     With
 	// FIXME: urlEncode
+	    ?x = uri(concat('http://corpora.nlp2rdf.org/wortschatz/w/', ?word))
+	
         ?a = uri(concat('http://corpora.nlp2rdf.org/wortschatz/word/', ?lang, '/', ?word))
         ?b = plainLiteral(?word)
         ?f = typedLiteral(?freq, xsd:long)

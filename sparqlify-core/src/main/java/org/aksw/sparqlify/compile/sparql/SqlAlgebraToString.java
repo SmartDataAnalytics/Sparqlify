@@ -29,7 +29,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnionN;
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.core.SqlNodeBinding;
 import org.openjena.atlas.io.IndentedWriter;
 
@@ -203,7 +203,7 @@ public class SqlAlgebraToString
 	 * @param node
 	 */
 	public static void groupBy(Var var, SqlNode target, SqlNode node, Generator generator) {
-		Collection<TermDef> tmp = node.getSparqlVarToExprs().get(var);
+		Collection<VarDef> tmp = node.getSparqlVarToExprs().get(var);
 		
 		// We need to group even if there is just a single expression for the var
 		// WRONG: If there is just a single expression, we can do a soft grouping
@@ -216,10 +216,10 @@ public class SqlAlgebraToString
 		
 		
 		// Create a copy of the exprs and sort by number of variables
-		List<TermDef> defs = new ArrayList<TermDef>(tmp);
-		Collections.sort(defs, new Comparator<TermDef>(){
+		List<VarDef> defs = new ArrayList<VarDef>(tmp);
+		Collections.sort(defs, new Comparator<VarDef>(){
 			@Override
-			public int compare(TermDef arg0, TermDef arg1) {
+			public int compare(VarDef arg0, VarDef arg1) {
 				return arg1.getExpr().getVarsMentioned().size() - arg1.getExpr().getVarsMentioned().size();
 			}});
 
@@ -268,7 +268,7 @@ public class SqlAlgebraToString
 			
 			
 			List<String> exprStrs = new ArrayList<String>();
-			for(TermDef def : defs) {
+			for(VarDef def : defs) {
 				
 				Expr e = def.getExpr();
 				
@@ -300,7 +300,7 @@ public class SqlAlgebraToString
 				String elseStr = "NULL" + datatype;
 				
 				for(int j = 0; j < defs.size(); ++j) {
-					TermDef def = defs.get(j);
+					VarDef def = defs.get(j);
 					Expr expr = def.getExpr();
 					
 					String exprStr = exprStrs.get(j);
@@ -363,7 +363,7 @@ public class SqlAlgebraToString
 
 		// Replace the projection
 		target.getSparqlVarToExprs().removeAll(var);
-		target.getSparqlVarToExprs().put(var, new TermDef(replacement));
+		target.getSparqlVarToExprs().put(var, new VarDef(replacement));
 	}
 	
 	

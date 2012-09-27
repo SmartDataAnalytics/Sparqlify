@@ -22,7 +22,7 @@ import com.hp.hpl.jena.sparql.core.Var;
 
 public abstract class SqlNodeBase implements SqlNode {
 	protected String aliasName;
-	private Multimap<Var, TermDef> sparqlVarToExpr = HashMultimap.create();
+	private Multimap<Var, VarDef> sparqlVarToExpr = HashMultimap.create();
 
 	private Map<String, SqlExpr> aliasToColumn = new HashMap<String, SqlExpr>();
 
@@ -75,7 +75,7 @@ public abstract class SqlNodeBase implements SqlNode {
 		this.aliasName = aliasName;
 	}
 
-	public Multimap<Var, TermDef> getSparqlVarToExprs() {
+	public Multimap<Var, VarDef> getSparqlVarToExprs() {
 		return sparqlVarToExpr;
 	}
 

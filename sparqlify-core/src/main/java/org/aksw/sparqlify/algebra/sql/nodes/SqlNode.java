@@ -29,7 +29,7 @@ public interface SqlNode {
 	// Mysql allows that, but the resulting column is then a varbinary, and therefore
 	// the semantics of the underlying objects get lost.
 	//Multimap<Node, Expr> getSparqlVarToExprs();
-	Multimap<Var, TermDef> getSparqlVarToExprs();
+	Multimap<Var, VarDef> getSparqlVarToExprs();
 	
 	// The order in which the variables should appear in the projection, may be null
 	// Not needed for now - this is done when creating the result set iterator

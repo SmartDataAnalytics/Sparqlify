@@ -24,7 +24,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystem;
 import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -148,8 +148,8 @@ public class AutoMapper {
 		return result;
 	}
 	
-	public static TermDef columnReferenceToUriTermDef(String prefix, ColumnsReference columnsReference) {
-		return new TermDef(columnReferenceToUriExpr(prefix, columnsReference));
+	public static VarDef columnReferenceToUriTermDef(String prefix, ColumnsReference columnsReference) {
+		return new VarDef(columnReferenceToUriExpr(prefix, columnsReference));
 	}
 	
 	public static Expr columnReferenceToUriExpr(String prefix, ColumnsReference columnsReference) {
@@ -308,7 +308,7 @@ public class AutoMapper {
 			Var mainVar = Var.alloc("s");
 
 
-			TermDef mainVarDef = columnReferenceToUriTermDef(prefix, primaryKey.getSource());
+			VarDef mainVarDef = columnReferenceToUriTermDef(prefix, primaryKey.getSource());
 			viewDefinition.addVarDef(mainVar, mainVarDef);
 			
 			Node classUri = Node.createURI(prefix + StringUtils.toUpperCamelCase(relation.getName()));
@@ -327,7 +327,7 @@ public class AutoMapper {
 
 				Var targetVar = Var.alloc(genFkTargetVar.next());
 				//StringUtils.toUpperCamelCase(fk.getSource().getT)
-				TermDef targetVarDef = columnReferenceToUriTermDef(prefix, fk.getSource());
+				VarDef targetVarDef = columnReferenceToUriTermDef(prefix, fk.getSource());
 				viewDefinition.addVarDef(targetVar, targetVarDef);
 
 				Node property = Node.createURI(prefix + StringUtils.toLowerCamelCase(fk.getTarget().getTableName())); 

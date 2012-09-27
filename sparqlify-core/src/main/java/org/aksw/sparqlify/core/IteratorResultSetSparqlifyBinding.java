@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.SinglePrefetchIterator;
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +31,10 @@ public class IteratorResultSetSparqlifyBinding
 	
 	private ResultSet rs;
 	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
-	private Multimap<Var, TermDef> sparqlVarMap;
+	private Multimap<Var, VarDef> sparqlVarMap;
 	
 	
-	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, TermDef> sparqlVarMap)
+	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, VarDef> sparqlVarMap)
 	{
 		this.rs = rs;
 		this.sparqlVarMap = sparqlVarMap;
@@ -88,7 +88,7 @@ public class IteratorResultSetSparqlifyBinding
 		
 		BindingMap result = new BindingHashMap();
 		
-		for(Entry<Var, Collection<TermDef>> entry : sparqlVarMap.asMap().entrySet()) {
+		for(Entry<Var, Collection<VarDef>> entry : sparqlVarMap.asMap().entrySet()) {
 			
 			//RDFNode rdfNode = null;
 			NodeValue value = null;
@@ -97,7 +97,7 @@ public class IteratorResultSetSparqlifyBinding
 			// We distinguish on how to create a varible by the columns that are used
 			// We use the most specific rdfTerm constructor
 			Set<Var> usedVars = new HashSet<Var>();
-			for(TermDef def : entry.getValue()) {
+			for(VarDef def : entry.getValue()) {
 	
 				Expr expr = def.getExpr();
 				

@@ -420,5 +420,38 @@ public class TwoWayBinding
 		}
 		
 		return result;
-	}	
+	}
+	
+	
+	
+	public Set<Var> getQueryVariables() {
+		return this.equiMap.getEquivalences().asMap().keySet();
+	}
+	
+	/**
+	 * 
+	 * @return The multimap that maps query variables to the corresponding set of view variables 
+	 */
+	public ISetMultimap<Var, Var> getVariableMap() {
+		return this.equiMap.getEquivalences();
+	}
+	
+	/**
+	 * 
+	 * @return The map that maps query variables to an optionally associated constant
+	 */
+	public Map<Var, Node> getConstantMap() {
+		return this.equiMap.getKeyToValue();
+	}
+
+	public Set<Var> getViewVariablesForQueryVariable(Var queryVar) {
+		return this.equiMap.getEquivalences().get(queryVar);
+	}
+	
+	public Set<Var> getViewVariables() {
+		return this.equiMap.getEquivalences().getInverse().asMap().keySet();		
+	}
 }
+
+
+

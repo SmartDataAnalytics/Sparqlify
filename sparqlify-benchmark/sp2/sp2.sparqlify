@@ -75,7 +75,7 @@ Create View view_inprocs As
 	?issued = typedLiteral(?issued, xsd:integer)
 	?pages =  typedLiteral(?pages, xsd:integer)
 	?hp = typedLiteral(?homepage, xsd:string) 
-	?booktitle = typedLiteral(?booktitle, xsd:string) 
+//	?booktitle = typedLiteral(?booktitle, xsd:string) 
 	?proceed = uri(concat("http://localhost/publications/procs/", ?venuedocstringid))
   From v_pub_inproc
 

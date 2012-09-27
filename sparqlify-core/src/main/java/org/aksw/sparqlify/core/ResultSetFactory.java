@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
@@ -25,7 +25,7 @@ public class ResultSetFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ResultSetSparqlify create(Statement stmt, String sqlQuery, Multimap<Var, TermDef> sparqlVarMap, List<Var> projectionVars)
+	public static ResultSetSparqlify create(Statement stmt, String sqlQuery, Multimap<Var, VarDef> sparqlVarMap, List<Var> projectionVars)
 		throws SQLException
 	{
 		List<String> resultVars = new ArrayList<String>();

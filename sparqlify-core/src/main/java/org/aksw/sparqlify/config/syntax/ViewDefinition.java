@@ -3,7 +3,7 @@ package org.aksw.sparqlify.config.syntax;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.openjena.atlas.io.IndentedWriter;
 import org.openjena.riot.system.PrefixMap;
@@ -181,7 +181,7 @@ public class ViewDefinition {
 		this.name = name;
 	}
 	
-	public void addVarDef(Var var, TermDef termDef) {
+	public void addVarDef(Var var, VarDef termDef) {
 		addVarDef(var, termDef.getExpr());
 	}
 	

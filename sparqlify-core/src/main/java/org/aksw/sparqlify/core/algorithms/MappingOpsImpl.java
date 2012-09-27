@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core;
+package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,11 +49,17 @@ import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.compile.sparql.SqlAlgebraToString;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
+import org.aksw.sparqlify.core.ArgExpr;
+import org.aksw.sparqlify.core.ColRelGenerator;
+import org.aksw.sparqlify.core.domain.Mapping;
+import org.aksw.sparqlify.core.domain.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.VarDefinition;
+import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.interfaces.MappingOps;
+import org.aksw.sparqlify.core.interfaces.TranslatorSql;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
-import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,291 +81,223 @@ import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 /**
- * DEPRECATED
+ * Maybe at some point we want to externalize some state of the rewriting,
+ * such as column names generators.
  * 
- * The attributios of this class have been added to SqlNodeBase
- * 
- * 
- * An sql node and a mapping of the sql-columns to sparql variables
- * 
- * Well to be precise:
- * 
- * This class represents an relational algebra operation.
- * 
- * Basically it is used for joins:
- * 
- * There is a set of sparql variables that are constructed from expressions over
- * the sql-columns. These variables might be equated to each other, which
- * results in join expressions
+ * I leave this class here for now as a reminder to myself.
  * 
  * 
- * 
- * 
- * @author raven
- * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
  */
-@Deprecated
-public class SqlNodeBinding {
-	private static final Logger logger = LoggerFactory.getLogger(SqlNodeBinding.class);
+class RewriteContext {
 	
-	// Whether the whole expression represented by this node has an alias
-	// Technically, if an alias exists, the underlying SQL statement will be
-	// wrapped such as in:
-	// Select {columns} From (underyling sql statement) As {alias}
-	private String alias;
+}
 
-	// FIXME The alias id should managed in some context
-	// So for each query the alias count starts at zero
-	// Now the count keeps increasing for each now query
-	public static int globalAliasId = 0;
 
-	private Map<Node, Expr> sparqlVarToExpr = new HashMap<Node, Expr>();
+/*
+ * Some thoughts:
+ * 
+ * The original SqlNode was (sparqlVarToExpr, aliasToColumn, [args])
+ * 
+ * Now we have the new mapping opject which is (sparqlVarToExpr, sqlNode) whereas sparqLVarToExpr is now referred to as varDefinition
+ * 
+ * So we are missing the aliasToColumn mapping.
+ * 
+ * The question is, whether this should be realized with the injection of SQL projections operators.
+ * I think my conclusion is yes: The rename operation injects an appropriate SQL projection (which should optimize away
+ * later - such as multiple subsequent projections)
+ *
+ *
+ */
 
-	// Helper columns - these variables become aliases for
-	// expressions on the underlying columns
-	// The helper columns can be referred to by the sparqlVar expressions.
-	private Map<Var, Expr> sqlVarToExpr = new HashMap<Var, Expr>();
 
-	// private Map<Var, SqlNode> sqlVarToExpr = new HashMap<Var, Expr>();
 
-	// Jena's SqlRestrict class is unfortunately no longer used, and
-	// all methods were made private
-	// Therefore we collect conditions here
-	// Note: We are using a set here in order to naturally merge duplicate
-	// constraints
-	// private Set<SqlExpr> conditions = new HashSet<SqlExpr>();
 
-	// SqlExpression corresponding to a relation
-	private SqlExpr sqlNode;
+public class MappingOpsImpl
+	implements MappingOps
+{
 
-	public SqlExpr getSqlNode() {
-		return sqlNode;
-	}
+	private static final Logger logger = LoggerFactory.getLogger(MappingOpsImpl.class);
 
-	public String getAlias() {
-		return alias;
-	}
+	private TranslatorSql sqlTranslator = new TranslatorSqlImpl();
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
+	
+	public Mapping rename(Mapping a, Map<String, String> rename) { return null; }
+	public Mapping join(Mapping a, Mapping b) { return null; }
+	public Mapping leftJoin(Mapping a, Mapping b) { return null; }
+	public Mapping union(Mapping a, Mapping b) { return null; }
 
-	public void setSqlNode(SqlExpr sqlNode) {
-		this.sqlNode = sqlNode;
-	}
-
-	public Map<Node, Expr> getSparqlVarToExpr() {
-		return sparqlVarToExpr;
-	}
-
-	public Map<Var, Expr> getSqlVarToExpr() {
-		return sqlVarToExpr;
-	}
-
-	public Set<Node> getSparqlVarsMentioned() {
-		return sparqlVarToExpr.keySet();
-	}
-
-	/*
-	 * public Set<SqlExpr> getConditions() { return conditions; }
-	 */
-
-	public SqlNodeBinding() {
-	}
-
-	public static E_RdfTerm expandConstant(Node node) {
-		int type;
-		Object lex = "";
-		String lang = "";
-		String dt = "";
-		
-		if(node.isBlank()) {
-			type = 0;
-			lex = node.getBlankNodeId().getLabelString();
-		} else if(node.isURI()) {
-			type = 1;
-			lex = node.getURI();
-		} else if(node.isLiteral()) {
-			
-			lex = node.getLiteral().getValue();
-			
-			//lex = node.getLiteralLexicalForm();
-
-			String datatype = node.getLiteralDatatypeURI();
-			if(datatype == null || datatype.isEmpty()) {
-				type = 2;
-				lang = node.getLiteralLanguage();
-			} else {
-				type = 3;
-				dt = node.getLiteralDatatypeURI();
-			}
-		} else {
-			throw new RuntimeException("Should not happen");
+	
+	
+	public static SqlExpr translateSql(RestrictedExpr<Expr> restExpr, TranslatorSql sqlTranslator) {
+		if(restExpr.getRestrictions().isUnsatisfiable()) {
+			return SqlExprValue.FALSE;
 		}
 
-		return new E_RdfTerm(
-				NodeValue.makeDecimal(type), NodeValue.makeNode(lex.toString(), lang, dt),
-				NodeValue.makeString(lang), NodeValue.makeString(dt));
+		SqlExpr result = sqlTranslator.translateSql(restExpr.getExpr());
 		
-		/*
-		return new E_Function(SparqlifyConstants.rdfTermLabel, SparqlSubstitute.makeExprList(
-				NodeValue.makeDecimal(type), NodeValue.makeNode(lex.toString(), lang, dt),
-				NodeValue.makeString(lang), NodeValue.makeString(dt)));
-		*/
-
+		return result;
 	}
-	
 	
 	
 	/**
-	 * Creates an sql node from a view instance
+	 * Returns a set of equals expressions,
+	 * created from equating all pickDefs to the given varDefs
+	 * 
+	 * The set is intended to be interpreted as a disjunction between the elements.
+	 * Empty set therefore indicates "no constraint"
+	 * null indicates "unsatisfiable constraint"
+	 * 
+	 * 
+	 * @param queryVar
+	 * @param viewInstance
+	 * @return
+	 */
+	public static Set<RestrictedExpr<Expr>> joinDefinitionsOnEquals(
+			Var queryVar,
+			ViewInstance viewInstance,
+			TranslatorSql sqlTranslator
+			)
+			/*
+			Var pickViewVar,
+			Collection<RestrictedExpr<Expr>> pickDefs,
+			Set<Var> viewVars,
+			VarDefinition varDefinition)
+			*/
+	{
+		Set<RestrictedExpr<Expr>> result = new HashSet<RestrictedExpr<Expr>>();
+	
+		Set<Var> viewVars = viewInstance.getBinding().get(queryVar);
+		VarDefinition varDefinition = viewInstance.getVarDefinition();
+		
+		// Pick one of the view variables
+		Var pickViewVar = viewVars.iterator().next();
+		
+		Collection<RestrictedExpr<Expr>> pickDefs = viewInstance.getDefinitionsForViewVariable(pickViewVar);
+
+		
+		boolean gotFalse = false;
+		for(Var viewVar : viewVars) {
+			if(viewVar.equals(pickViewVar)) {
+				continue;
+			}
+			
+			Collection<RestrictedExpr<Expr>> defs = varDefinition.getDefinitions(viewVar);
+
+			
+			for(RestrictedExpr<Expr> pickDef : pickDefs) {
+				for(RestrictedExpr<Expr> def : defs) {
+					
+					
+					RestrictedExpr<Expr> vdEquals = VariableDefinitionOps.equals(pickDef, def);
+					
+					
+					SqlExpr sqlExpr = translateSql(vdEquals, sqlTranslator);
+					
+					if(sqlExpr.equals(SqlExprValue.FALSE)) {
+						gotFalse = true;
+						continue;
+					}
+					
+					//result.add(sqlExpr);
+					result.add(null);
+				}
+				
+			}
+			
+		}
+		
+		if(result.isEmpty() && gotFalse) {
+			// If we got no non-false expression, return null
+			return null; 
+		} else {
+			return result;
+		}
+	}
+	
+
+
+	/*
+	public static SqlExpr translateSqlCnf(Set<Set<RestrictedExpr<Expr>>> cnf) {
+		
+	}
+	*/
+	
+	
+	/**
+	 * Creates a mapping from a view instance:
+	 * - For every binding variable, that maps to multiple things (contants + variables),
+	 *   we need to equate all these things being mapped to
+	 * 
+	 * Schematically, we need to transform the binding to variable definitions from the original structure
+	 * (query view definition)
+	 *  q    v   d
+	 *   
+	 *         / dx1
+	 *      ?x
+	 *    /    \ dxn
+	 * ?s  
+	 *    \    / dy1
+	 *      ?y
+	 *         \ dyn
+	 * 
+	 * to conceptually a CNF:
+	 * 
+	 * (dx1 = dy1 OR ... OR dx1 = dyn) AND ... AND (dxn = dy1 OR ... OR dxn = dyn)
+	 * 
+	 * However, as equals is transitive and symmetric, it is sufficient to just pick
+	 * the set of definitions for one view variable.
+	 * 
+	 * 
 	 * 
 	 * 
 	 * @param generator
 	 * @param viewInstance
 	 * @return
 	 */
-	public static SqlNode create(ColRelGenerator generator, RdfViewInstance viewInstance) {
-		//SqlNode result = new SqlNode();
+	public Mapping createMapping(ViewInstance viewInstance) {
 
-		// Instantiate the sqlNode:
-		// Assign it an alias, and update the sql references accordingly.
-		SqlNode sqlNode = viewInstance.getParent().getSqlNode();
-		SqlNode result;
+		Set<Var> queryVars = viewInstance.getBinding().getQueryVars();
 		
-		String alias = generator.nextRelation();
-
-		if (sqlNode instanceof SqlTable) {
-			SqlTable tmp = (SqlTable) sqlNode;
-			result = new SqlTable(alias, tmp.getTableName());
-		} else if (sqlNode instanceof SqlQuery) {
-
-			String outerAlias = generator.nextRelation();
-
-			SqlQuery tmp = (SqlQuery) sqlNode;
-			result = new SqlQuery(outerAlias, tmp.getQueryString(), alias);
+		//Set<Set<Expr>> cnf = new HashSet<Set<Expr>>();
+		Set<Set<RestrictedExpr<Expr>>> ands = new HashSet<Set<RestrictedExpr<Expr>>>();
+		for(Var queryVar : queryVars) {
 			
-			alias = outerAlias;
-		} else {
-			throw new NotImplementedException();
+			Set<RestrictedExpr<Expr>> ors = joinDefinitionsOnEquals(queryVar, viewInstance, sqlTranslator);
+			
+			ands.add(ors);
 		}
-
-		//result.setAlias(alias);
-		//result.setSqlNode(sqlRelation);
-
-		//Multimap<Var, Expr> tmpBinding = viewInstance.getSqlBinding();
-		Multimap<Var, VarDef> sqlBinding = viewInstance.getSqlBinding(); //HashMultimap.create();
-
+		
 		
 		/*
-		for(Entry<Var, Expr> entry : tmpBinding.entries()) {
-			Var var = entry.getKey();
-			
-			//Restriction r = viewInstance.getParent().getRestrictions().getRestriction(var);
-			
-			sqlBinding.put(entry.getKey(), new TermDef(entry.getValue(), r));
-		}*/
+		
+		if(!selfConditions.isEmpty()) {
+			SqlMyRestrict sqlRestrict;
+			sqlRestrict = new SqlMyRestrict(result
+					.getAliasName(), result);
 
-		// Add the constants
-		// 2011 Nov 1: Not sure if below is still correct. In the meanwhile constants are
-		// replaced with variables and corresponding filters.
-		// TODO URGENT: This is wrong here:
-		// We can't just add constants; we need to check whether we need
-		// to create filter statements
-		// SOLUTION: Here we replace with the defining expression, while there is a wrapping
-		// OpFilter that constrains the expr.
-		for(Entry<Var, Node> entry : viewInstance.getBinding().getEquiMap().getKeyToValue().entrySet()) {
-			Var var = entry.getKey();
-			
-			if(!sqlBinding.containsKey(entry.getKey())) {
-
-				
-				Expr definingExpr = viewInstance.getDefiningExpr(var);
-				Restriction r = viewInstance.getParent().getRestrictions().getRestriction(var);
-				
-				Expr expand = expandConstant(entry.getValue());
-				//sqlBinding.put(entry.getKey(), expand);
-
-				if(definingExpr == null) {
-					sqlBinding.put(var, new VarDef(expand, new Restriction(entry.getValue())));
-				} else {
-					sqlBinding.put(var, new VarDef(definingExpr, r));
-				}
-			}
+			sqlRestrict.getConditions().addAll(selfConditions);
+			sqlRestrict.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
+			sqlRestrict.getAliasToColumn().putAll(result.getAliasToColumn());
+		
+			result = sqlRestrict;
 		}
+		*/
 		
 		
 		
 		
 		
-		// Keep things separated: Perform the renaming of view variables to
-		// SQL column references (alias.columnName) here,
-		// and do the more complicated processing later
-		/* We do not replace variables with column references here
-		RenamerVars renamer = new RenamerVars(new HashSet<Var>(), alias + ".");
-		for (Entry<Node, Collection<Expr>> entry : tmpBinding.asMap()
-				.entrySet()) {
-
-			for (Expr expr : entry.getValue()) {
-				
-				// FIXME: Not sure if this is the best place for performing
-				// simple substitutions such as beef:uri -> beef:rdfTerm
-				Expr substituted = SparqlSubstitute.substituteExpr(expr);
-				
-				Expr renamed = substituted.applyNodeTransform(renamer);
-				sqlBinding.put(entry.getKey(), renamed);
-			}
-		}*/
-		
-		Set<Var> vars = new HashSet<Var>();
-		for(Entry<Var, Collection<VarDef>> entry : sqlBinding.asMap().entrySet()) {
-			for (VarDef expr : entry.getValue()) {
-				vars.addAll(expr.getExpr().getVarsMentioned());
-			}
-		}
-
-		//RenamerVars renamer = new RenamerVars(new HashSet<Var>(), alias + ".");
-		for(Var var : vars) {
-			
-			SqlDatatype datatype = viewInstance.getParent().getColumnToDatatype().get(var.getName());
-			
-			if(datatype == null) {
-				throw new RuntimeException("Datatype is null - no mapping for column named '" + var.getName() + "' in view " + viewInstance.getParent().getName());
-			}
-			
-			SqlExprColumn column = new SqlExprColumn(alias, var.getName(), datatype);
-			result.getAliasToColumn().put(var.getName(), column);
-		}
-
-		// Check for the variables that have been stated equal in the equimap, whether
-		// combining their corresponding patterns is satisfiable
 		
 		
 		
 		/*
-		for (Entry<Node, Collection<Expr>> entry : sqlBinding.asMap()
-				.entrySet()) {
-
-			for
-		RdfTermPattern pattern = null;
-*/
-
-		
-		// result.setSqlNode(sqlNode);
-
-		// TODO A query variable may be mapped to by multiple view-variables
-		// This means that these underlying columns must be made equal in
-		// the sql query; Example:
-		// View : {?s knows ?o } From Table(id, foreign_id)
-		// Query: {?x knows ?x }
-		
-		
 		List<SqlExpr> selfConditions = new ArrayList<SqlExpr>();
-		for (Entry<Var, Collection<VarDef>> entry : sqlBinding.asMap()
+		for (Entry<Var, Collection<VariableDefinition>> entry : sqlBinding.asMap()
 				.entrySet()) {
 
 			// In case that multiple view variables are bound to the same query
@@ -385,7 +323,7 @@ public class SqlNodeBinding {
 
 			 */
 			
-			
+			/*
 			NodeExprSubstitutor substitutor = createSubstitutor(result.getAliasToColumn());
 
 			
@@ -393,7 +331,7 @@ public class SqlNodeBinding {
 			Expr a = null;
 			Expr b = null;
 			
-			for (VarDef def : entry.getValue()) {
+			for (VariableDefinition def : entry.getValue()) {
 
 				b = def.getExpr();
 				
@@ -422,7 +360,7 @@ public class SqlNodeBinding {
 						throw new RuntimeException("Failed to push down '" + tmp + "'");
 					}
 					SqlExpr sqlExpr = ((ExprSqlBridge)x).getSqlExpr();
-					*/
+					* /
 					
 					selfConditions.add(sqlExpr);
 				}
@@ -451,6 +389,8 @@ public class SqlNodeBinding {
 
 
 		return result;
+		*/
+		return null;
 	}
 	
 	
@@ -497,7 +437,6 @@ public class SqlNodeBinding {
 	
 
 	
-	public static SqlExprOptimizer sqlTranslator = new SqlExprOptimizer();
 
 	/**
 	 * Replace all occurrences of variables within expr with those of the
@@ -507,7 +446,7 @@ public class SqlNodeBinding {
 	 * @param expr
 	 * @return
 	 */
-	public static SqlExpr rewriteExpr(SqlNodeBinding a, Expr expr) {
+	public static SqlExpr rewriteExpr(MappingOpsImpl a, Expr expr) {
 		// Expr tmp = expr.applyNodeTransform(new Renamer())
 
 		// Expr tmp = new E_Equals(a.getSparqlVarToExpr().get(var),
@@ -2204,7 +2143,7 @@ public class SqlNodeBinding {
 					if(termDef.getExpr().isConstant()) {
 						sqlNode.getSparqlVarToExprs().remove(var, termDef);
 						
-						NodeValue nv = ExprUtils.eval(expr);
+						NodeValue nv = null; // TODO Fix package of: ExprUtils.eval(expr);
 						Object o = NodeValueUtils.getValue(nv);
 						
 						SqlExprValue sv = new SqlExprValue(o);

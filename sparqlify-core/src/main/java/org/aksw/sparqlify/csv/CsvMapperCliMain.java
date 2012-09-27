@@ -21,7 +21,7 @@ import jxl.read.biff.BiffException;
 
 import org.aksw.commons.sparql.api.core.ConstructIterator;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
@@ -215,14 +215,14 @@ public class CsvMapperCliMain {
 			vars.add(var.getName());
 		}
 		
-		Multimap<Var, TermDef> sparqlVarMap = HashMultimap.create();
+		Multimap<Var, VarDef> sparqlVarMap = HashMultimap.create();
 		for(Entry<Var, Expr> entry : varExprs.getExprs().entrySet()) {
 			
 			Expr e = SparqlSubstitute.substituteExpr(entry.getValue());
 			//Expr e = FunctionExpander.transform(ex);
 			//System.out.println(e);
 			
-			sparqlVarMap.put(entry.getKey(), new TermDef(e));
+			sparqlVarMap.put(entry.getKey(), new VarDef(e));
 		}
 		
 		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);

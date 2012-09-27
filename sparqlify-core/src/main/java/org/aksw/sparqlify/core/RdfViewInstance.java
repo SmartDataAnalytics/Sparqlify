@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.sparqlify.algebra.sql.nodes.TermDef;
+import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.restriction.Restriction;
 
 import sparql.TwoWayBinding;
@@ -212,9 +212,9 @@ public class RdfViewInstance {
 	}
 	
 
-	public Multimap<Var, TermDef> getSqlBinding()
+	public Multimap<Var, VarDef> getSqlBinding()
 	{
-		Multimap<Var, TermDef> result = HashMultimap.create();
+		Multimap<Var, VarDef> result = HashMultimap.create();
 		Map<Node, Expr> parentBinding = parent.getBinding();
 		for(Entry<Node, Expr> entry : parentBinding.entrySet()) {
 			Var node = (Var)renamer.get(entry.getKey());
@@ -226,7 +226,7 @@ public class RdfViewInstance {
 		
 			for(Var queryVar : queryVars) {
 
-				result.put(queryVar, new TermDef(entry.getValue(), r));
+				result.put(queryVar, new VarDef(entry.getValue(), r));
 			}
 		}
 		
