@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core.interfaces;
 
+import java.util.List;
 import java.util.Map;
 
 import org.aksw.sparqlify.core.domain.Mapping;
@@ -23,5 +24,8 @@ public interface MappingOps {
 	
 	Mapping join(Mapping a, Mapping b);
 	Mapping leftJoin(Mapping a, Mapping b);
-	Mapping union(Mapping a, Mapping b);
+	
+	// A binary union would be sucky to compute (permanently moving projections around)
+	// Therfore we use one that deals with lists.
+	Mapping union(List<Mapping> members);
 }

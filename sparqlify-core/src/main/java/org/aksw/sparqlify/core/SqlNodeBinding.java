@@ -35,7 +35,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlGroup;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlMyRestrict;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeUtil;
@@ -223,13 +223,13 @@ public class SqlNodeBinding {
 	 * @param viewInstance
 	 * @return
 	 */
-	public static SqlNode create(ColRelGenerator generator, RdfViewInstance viewInstance) {
+	public static SqlNodeOld create(ColRelGenerator generator, RdfViewInstance viewInstance) {
 		//SqlNode result = new SqlNode();
 
 		// Instantiate the sqlNode:
 		// Assign it an alias, and update the sql references accordingly.
-		SqlNode sqlNode = viewInstance.getParent().getSqlNode();
-		SqlNode result;
+		SqlNodeOld sqlNode = viewInstance.getParent().getSqlNode();
+		SqlNodeOld result;
 		
 		String alias = generator.nextRelation();
 
@@ -468,7 +468,7 @@ public class SqlNodeBinding {
 		return result;
 	}
 	
-	public static SqlExprList forcePushDown(ExprList exprs, SqlNode node) {
+	public static SqlExprList forcePushDown(ExprList exprs, SqlNodeOld node) {
 		SqlExprList result = new SqlExprList();
 		for(Expr expr : exprs) {
 			SqlExpr sqlExpr = forcePushDown(expr, node.getAliasToColumn());
@@ -543,9 +543,9 @@ public class SqlNodeBinding {
 	 * @param right
 	 * @return
 	 */
-	public static SqlNode doJoinRename(ColRelGenerator generator, SqlNode left, String leftAlias, SqlNode right, String rightAlias)
+	public static SqlNodeOld doJoinRename(ColRelGenerator generator, SqlNodeOld left, String leftAlias, SqlNodeOld right, String rightAlias)
 	{
-		SqlNode result = new SqlNodeEmpty();
+		SqlNodeOld result = new SqlNodeEmpty();
 
 		if(leftAlias != null && leftAlias.equals(rightAlias)) {
 			throw new RuntimeException("Two aliases equal - should not happen");
@@ -657,12 +657,12 @@ public class SqlNodeBinding {
 	
 	
 	
-	public static NodeExprSubstitutor createSubstitutor(SqlNode node) {
+	public static NodeExprSubstitutor createSubstitutor(SqlNodeOld node) {
 		return createSubstitutor(node.getAliasToColumn());
 	}
 
 
-	public static Pair<SqlNode, SqlNode> createJoinAlias(SqlNode node, ColRelGenerator generator) {
+	public static Pair<SqlNodeOld, SqlNodeOld> createJoinAlias(SqlNodeOld node, ColRelGenerator generator) {
 		if(node instanceof SqlJoin || node.getAliasName() != null) {
 			// If the node is a join, then all the components already
 			// have aliases
@@ -685,7 +685,7 @@ public class SqlNodeBinding {
 			result.getSparqlVarToExprs().putAll(node.getSparqlVarToExprs());
 			*/
 			
-			SqlNode proj = createNewAlias(newAlias, node, generator);
+			SqlNodeOld proj = createNewAlias(newAlias, node, generator);
 			
 			return Pair.create(node, proj);
 			
@@ -704,7 +704,7 @@ public class SqlNodeBinding {
 		
 	}*/
 	
-	public static SqlNode join(ColRelGenerator generator, SqlNode _a, SqlNode _b,
+	public static SqlNodeOld join(ColRelGenerator generator, SqlNodeOld _a, SqlNodeOld _b,
 			JoinType joinType) {
 
 		/*
@@ -732,8 +732,8 @@ public class SqlNodeBinding {
 		String rightAlias = b.getAliasName();
 		*/
 		
-		SqlNode a = _a;
-		SqlNode b = _b;
+		SqlNodeOld a = _a;
+		SqlNodeOld b = _b;
 		
 
 		//if(a.getAliasName() == null && !(a instanceof SqlJoin) || a instanceof SqlUnionN) {
@@ -764,7 +764,7 @@ public class SqlNodeBinding {
 		
 		//
 		
-		SqlNode c = doJoinRename(generator, a, a.getAliasName(), b, b.getAliasName());
+		SqlNodeOld c = doJoinRename(generator, a, a.getAliasName(), b, b.getAliasName());
 
 		/*
 		if(a instanceof SqlUnionN || b instanceof SqlUnionN) {
@@ -956,7 +956,7 @@ public class SqlNodeBinding {
 			// For the given variable there is no satisfiable join
 			// so the join is empty
 			if(!foundSatisfiableJoinCondition) {
-				SqlNode x = new SqlNodeEmpty();
+				SqlNodeOld x = new SqlNodeEmpty();
 				x.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
 				x.getAliasToColumn().putAll(result.getAliasToColumn());
 				return x;
@@ -978,7 +978,7 @@ public class SqlNodeBinding {
 		// Treating the filter and the join condition separately causes us
 		// to miss the unsatisfiability in this case
 		if(!isSatisfiable(result.getConditions())) {
-			SqlNode x = new SqlNodeEmpty();
+			SqlNodeOld x = new SqlNodeEmpty();
 			x.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
 			x.getAliasToColumn().putAll(result.getAliasToColumn());
 			return x;
@@ -990,7 +990,7 @@ public class SqlNodeBinding {
 		return result;
 	}
 
-	public static SqlNode distinct(SqlNode a) {
+	public static SqlNodeOld distinct(SqlNodeOld a) {
 		SqlDistinct result = new SqlDistinct(a.getAliasName(), a);
 
 		result.getAliasToColumn().putAll(a.getAliasToColumn());
@@ -999,7 +999,7 @@ public class SqlNodeBinding {
 		return result;
 	}
 	
-	public static SqlNode slice(SqlNode a, ColRelGenerator generator, long start, long length) {
+	public static SqlNodeOld slice(SqlNodeOld a, ColRelGenerator generator, long start, long length) {
 
 		SqlSlice result = new SqlSlice(a, start, length);
 		result.getAliasToColumn().putAll(a.getAliasToColumn());
@@ -1045,7 +1045,7 @@ public class SqlNodeBinding {
 	 * @param target
 	 * @param source
 	 */
-	public static void createNewAlias(String alias, SqlNode target, SqlNode source) {
+	public static void createNewAlias(String alias, SqlNodeOld target, SqlNodeOld source) {
 		
 		target.getSparqlVarToExprs().putAll(source.getSparqlVarToExprs());
 
@@ -1057,8 +1057,8 @@ public class SqlNodeBinding {
 	
 
 	
-	public static void replaceAlias(String alias, SqlNode node, ColRelGenerator columnNameColRelGenerator) {
-		SqlNode tmp = createNewAlias(alias, node, columnNameColRelGenerator);
+	public static void replaceAlias(String alias, SqlNodeOld node, ColRelGenerator columnNameColRelGenerator) {
+		SqlNodeOld tmp = createNewAlias(alias, node, columnNameColRelGenerator);
 		
 		node.getAliasToColumn().clear();
 		node.getSparqlVarToExprs().clear();
@@ -1068,7 +1068,7 @@ public class SqlNodeBinding {
 	}
 
 
-	public static SqlAlias createNewAlias(String alias, SqlNode node, ColRelGenerator generator) {
+	public static SqlAlias createNewAlias(String alias, SqlNodeOld node, ColRelGenerator generator) {
 		SqlAlias result = new SqlAlias(alias, node);
 		
 		Map<Var, Expr> varRename = new HashMap<Var, Expr>();
@@ -1092,7 +1092,7 @@ public class SqlNodeBinding {
 	}
 
 
-	public static SqlProjection wrapWithProjection(String newAlias, SqlNode tmp, ColRelGenerator generator) {
+	public static SqlProjection wrapWithProjection(String newAlias, SqlNodeOld tmp, ColRelGenerator generator) {
 		
 		SqlProjection node = new SqlProjection(newAlias, tmp);
 		node.getAliasToColumn().putAll(tmp.getAliasToColumn());
@@ -1128,7 +1128,7 @@ public class SqlNodeBinding {
 	}
 
 	
-	public static SqlNode extend(SqlNode node, VarExprList varExprList) {
+	public static SqlNodeOld extend(SqlNodeOld node, VarExprList varExprList) {
 
 
 		for(Entry<Var, Expr> entry : varExprList.getExprs().entrySet()) {
@@ -1220,7 +1220,7 @@ public class SqlNodeBinding {
 	 * @param generator
 	 * @return
 	 */
-	public static SqlNode order(SqlNode a, List<SortCondition> conditions, ColRelGenerator generator) {
+	public static SqlNodeOld order(SqlNodeOld a, List<SortCondition> conditions, ColRelGenerator generator) {
 		List<SqlSortCondition> sqlConditions = new ArrayList<SqlSortCondition>();
 
 
@@ -1241,7 +1241,7 @@ public class SqlNodeBinding {
 		//}
 		
 			
-		SqlNode subSelect = createNewAlias(generator.nextRelation(), a, generator);
+		SqlNodeOld subSelect = createNewAlias(generator.nextRelation(), a, generator);
 
 		// Wrap whatever we have with a new projection (-> sub select)
 		// This new projection is the basis for the group by
@@ -1249,11 +1249,11 @@ public class SqlNodeBinding {
 		SqlProjection groupByNode = new SqlProjection(generator.nextRelation(), projection);
     	SqlSelectBlockCollector.copyProjection(groupByNode, tmp);
     	*/
-		SqlNode groupByNode = subSelect;
+		SqlNodeOld groupByNode = subSelect;
 
 		//SqlNode projection = subSelect;
 
-    	SqlNode tmp = createNewAlias(groupByNode.getAliasName(), subSelect, generator);
+    	SqlNodeOld tmp = createNewAlias(groupByNode.getAliasName(), subSelect, generator);
 
 		
 		// Transform the conditions
@@ -1281,7 +1281,7 @@ public class SqlNodeBinding {
     	// Now we have created the "group by projection"
     	// However, now we need to wrap it with another projection, in which we can add any expressions appearing in the order by
 		SqlProjection orderByNode = new SqlProjection(generator.nextRelation(), groupByNode);
-    	SqlNode tmp2 = createNewAlias(orderByNode.getAliasName(), groupByNode, generator);
+    	SqlNodeOld tmp2 = createNewAlias(orderByNode.getAliasName(), groupByNode, generator);
     	SqlSelectBlockCollector.copyProjection(orderByNode, tmp2);
     	
     	
@@ -1303,7 +1303,7 @@ public class SqlNodeBinding {
     	//SqlNode orderNode = wrapWithProjection(projection, generator); //new SqlProjection(projection.getAliasName(), projection);
     	
 
-    	SqlNode result = new SqlNodeOrder(orderByNode.getAliasName(), orderByNode, sqlConditions);
+    	SqlNodeOld result = new SqlNodeOrder(orderByNode.getAliasName(), orderByNode, sqlConditions);
 	
 
 		Generator gen = Gensym.create("o");
@@ -1436,7 +1436,7 @@ public class SqlNodeBinding {
 	}
 	
 	
-	public static SqlExpr fullPush(Expr expr, SqlNode node) {
+	public static SqlExpr fullPush(Expr expr, SqlNodeOld node) {
 		// Could be a bit more efficient...
 		SqlExprList tmp = fullPush(new ExprList(expr), node);
 		if(tmp.isEmpty()) {
@@ -1446,7 +1446,7 @@ public class SqlNodeBinding {
 		return tmp.get(0);
 	}
 	
-	public static SqlExprList fullPush(ExprList exprs, SqlNode node) {
+	public static SqlExprList fullPush(ExprList exprs, SqlNodeOld node) {
 		return fullPush(exprs, node.getAliasToColumn(), node.getSparqlVarToExprs());
 	}
 	
@@ -1588,7 +1588,7 @@ public class SqlNodeBinding {
 		return true;
 	}
 
-	public static SqlNode group(SqlNode a, VarExprList groupVars, List<ExprAggregator> exprAggregator, Generator colGenerator) {
+	public static SqlNodeOld group(SqlNodeOld a, VarExprList groupVars, List<ExprAggregator> exprAggregator, Generator colGenerator) {
 		
 		NodeExprSubstitutor substitutor = createSubstitutor(a.getAliasToColumn());
 
@@ -1632,8 +1632,8 @@ public class SqlNodeBinding {
 	 * @param newAlias
 	 * @param generator
 	 */
-	public static void updateProjection(SqlNode a, String newAlias, ColRelGenerator generator) {
-		SqlNode newProj = createNewAlias(newAlias, a, generator);
+	public static void updateProjection(SqlNodeOld a, String newAlias, ColRelGenerator generator) {
+		SqlNodeOld newProj = createNewAlias(newAlias, a, generator);
 		a = new SqlProjection(newAlias, a);
 		a.getAliasToColumn().putAll(newProj.getAliasToColumn());
 		a.getSparqlVarToExprs().putAll(newProj.getSparqlVarToExprs());
@@ -1642,12 +1642,12 @@ public class SqlNodeBinding {
 	// NOTE Does in place transformation!
 
 	
-	public static SqlNode project(SqlNode a, List<Var> vars, ColRelGenerator generator) {
+	public static SqlNodeOld project(SqlNodeOld a, List<Var> vars, ColRelGenerator generator) {
 		//return projectInPlace(a, vars, generator);
 		return projectWrap(a, vars, generator);
 	}
 	
-	public static SqlNode projectInPlace(SqlNode result, List<Var> vars, ColRelGenerator generator) {
+	public static SqlNodeOld projectInPlace(SqlNodeOld result, List<Var> vars, ColRelGenerator generator) {
 		
 		Set<String> referencedColumns = new HashSet<String>();
 		
@@ -1671,7 +1671,7 @@ public class SqlNodeBinding {
 	}
 	
 	
-	public static SqlNode projectWrap(SqlNode a, List<Var> vars, ColRelGenerator generator) {
+	public static SqlNodeOld projectWrap(SqlNodeOld a, List<Var> vars, ColRelGenerator generator) {
 
 		/*
 		if(a.getAliasName() == null) {
@@ -1700,7 +1700,7 @@ public class SqlNodeBinding {
 		String newAlias = generator.nextRelation();
 
 		
-		SqlNode newProj = createNewAlias(newAlias, a, generator);
+		SqlNodeOld newProj = createNewAlias(newAlias, a, generator);
 		SqlProjection result = new SqlProjection(newAlias, a);
 		result.getAliasToColumn().putAll(newProj.getAliasToColumn());
 		result.getSparqlVarToExprs().putAll(newProj.getSparqlVarToExprs());
@@ -1734,11 +1734,11 @@ public class SqlNodeBinding {
 	}
 	
 	
-	public static SqlNode filter(SqlNode a, ExprList exprs, ColRelGenerator generator) {
+	public static SqlNodeOld filter(SqlNodeOld a, ExprList exprs, ColRelGenerator generator) {
 
 		SqlExprList sqlExprs = fullPush(exprs, a);
 
-		SqlNode result;
+		SqlNodeOld result;
 
 		/*
 		if(a.getAliasName() == null) {
@@ -1982,7 +1982,7 @@ public class SqlNodeBinding {
 	 * @param b
 	 * @return
 	 */
-	public static SqlNode unionNew(ColRelGenerator generator, List<SqlNode> sqlNodes) {
+	public static SqlNodeOld unionNew(ColRelGenerator generator, List<SqlNodeOld> sqlNodes) {
 
 		// Prepare the data structures from which the
 		// result node will be created
@@ -2000,7 +2000,7 @@ public class SqlNodeBinding {
 
 		// Map each variable to the set of corresponding nodes
 		for (int i = 0; i < sqlNodes.size(); ++i) {
-			SqlNode sqlNode = sqlNodes.get(i);
+			SqlNodeOld sqlNode = sqlNodes.get(i);
 			for (Node var : sqlNode.getSparqlVarsMentioned()) {
 				varToSqlNode.put((Var)var, i);
 			}
@@ -2031,7 +2031,7 @@ public class SqlNodeBinding {
 			//Multimap<Integer, Integer> exprToOrigin = HashMultimap.create();
 			
 			for (int index : entry.getValue()) {
-				SqlNode sqlNode = sqlNodes.get(index);
+				SqlNodeOld sqlNode = sqlNodes.get(index);
 
 				Collection<VarDef> exprsForVar = sqlNode.getSparqlVarToExprs().get(var);
 				
@@ -2093,7 +2093,7 @@ public class SqlNodeBinding {
 		// Build the final result from the information we gathered
 		
 		for (int i = 0; i < projections.size(); ++i) {
-			SqlNode tmp = sqlNodes.get(i);
+			SqlNodeOld tmp = sqlNodes.get(i);
 			Multimap<Var, VarDef> projection = projections.get(i);
 
 			// Projection.Var becomes the new column alias
@@ -2132,7 +2132,7 @@ public class SqlNodeBinding {
 		}
 
 
-		for(SqlNode sqlNode : sqlNodes) {
+		for(SqlNodeOld sqlNode : sqlNodes) {
 			Set<String> unboundColumns = Sets.difference(allColumnsToDatatype.keySet(), sqlNode.getAliasToColumn().keySet());
 		
 			for(String columnName : unboundColumns) {
@@ -2144,7 +2144,7 @@ public class SqlNodeBinding {
 		}
 
 		String unionAlias = generator.nextRelation();
-		SqlNode result = new SqlUnionN(unionAlias, sqlNodes);
+		SqlNodeOld result = new SqlUnionN(unionAlias, sqlNodes);
 
 		result.getSparqlVarToExprs().putAll(commons);
 		
@@ -2162,7 +2162,7 @@ public class SqlNodeBinding {
 	}
 
 	
-	public static SqlNode union(ColRelGenerator generator, List<SqlNode> sqlNodes) {
+	public static SqlNodeOld union(ColRelGenerator generator, List<SqlNodeOld> sqlNodes) {
 
 		
 		if(sqlNodes.isEmpty()) {
@@ -2190,7 +2190,7 @@ public class SqlNodeBinding {
 
 		// Push constants into columns
 		for (int i = 0; i < sqlNodes.size(); ++i) {
-			SqlNode sqlNode = sqlNodes.get(i);
+			SqlNodeOld sqlNode = sqlNodes.get(i);
 			Set<Var> vars = new HashSet<Var>(sqlNode.getSparqlVarsMentioned()); // FIXME possible redundant hashset
 			for (Var var : vars) {
 				
@@ -2233,7 +2233,7 @@ public class SqlNodeBinding {
 		
 		// Map each variable to the set of corresponding nodes
 		for (int i = 0; i < sqlNodes.size(); ++i) {
-			SqlNode sqlNode = sqlNodes.get(i);
+			SqlNodeOld sqlNode = sqlNodes.get(i);
 			for (Node var : sqlNode.getSparqlVarsMentioned()) {
 				varToSqlNode.put((Var)var, i);
 			}
@@ -2327,7 +2327,7 @@ public class SqlNodeBinding {
 			
 			RestrictionSet restrictionsForVar = new RestrictionSet(false);
 			for (int index : entry.getValue()) {
-				SqlNode sqlNode = sqlNodes.get(index);
+				SqlNodeOld sqlNode = sqlNodes.get(index);
 
 				Collection<VarDef> exprsForVar = sqlNode.getSparqlVarToExprs().get(var);
 				
@@ -2408,7 +2408,7 @@ public class SqlNodeBinding {
 		// Build the final result from the information we gathered
 		
 		for (int i = 0; i < projections.size(); ++i) {
-			SqlNode tmp = sqlNodes.get(i);
+			SqlNodeOld tmp = sqlNodes.get(i);
 			Multimap<Var, VarDef> projection = projections.get(i);
 
 			// Projection.Var becomes the new column alias
@@ -2447,7 +2447,7 @@ public class SqlNodeBinding {
 		}
 
 
-		for(SqlNode sqlNode : sqlNodes) {
+		for(SqlNodeOld sqlNode : sqlNodes) {
 			Set<String> unboundColumns = Sets.difference(allColumnsToDatatype.keySet(), sqlNode.getAliasToColumn().keySet());
 		
 			for(String columnName : unboundColumns) {
@@ -2459,7 +2459,7 @@ public class SqlNodeBinding {
 		}
 
 		String unionAlias = generator.nextRelation();
-		SqlNode result = new SqlUnionN(unionAlias, sqlNodes);
+		SqlNodeOld result = new SqlUnionN(unionAlias, sqlNodes);
 
 		result.getSparqlVarToExprs().putAll(commons);
 		

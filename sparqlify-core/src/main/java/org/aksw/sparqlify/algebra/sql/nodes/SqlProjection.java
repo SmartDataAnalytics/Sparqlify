@@ -28,11 +28,11 @@ public class SqlProjection
 	private List<Var> order = new ArrayList<Var>(); 
 	private Map<Var, Expr> projection = new HashMap<Var, Expr>();
 
-	public SqlProjection(String aliasName, SqlNode sqlNode) {
+	public SqlProjection(String aliasName, SqlNodeOld sqlNode) {
 		super(aliasName, sqlNode);
 	}
 
-	public SqlProjection(String aliasName, SqlNode sqlNode, List<Var> order, Map<Var, Expr> aliasToExpr) {
+	public SqlProjection(String aliasName, SqlNodeOld sqlNode, List<Var> order, Map<Var, Expr> aliasToExpr) {
 		super(aliasName, sqlNode);
 		this.order = order;
 		this.projection = aliasToExpr;
@@ -49,7 +49,7 @@ public class SqlProjection
 
 
     @Override
-    SqlNode copy1(SqlNode subNode)
+    SqlNodeOld copy1(SqlNodeOld subNode)
     {
         // TODO May need to do a deeper copy.
     	SqlProjection s = new SqlProjection(this.getAliasName(), subNode, this.order, this.projection) ;

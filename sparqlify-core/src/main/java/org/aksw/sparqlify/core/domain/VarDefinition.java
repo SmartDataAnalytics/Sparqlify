@@ -1,11 +1,17 @@
 package org.aksw.sparqlify.core.domain;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.expr.ExprVar;
 
 /**
  * A variable definition binds a set of SPARQL variables to a
@@ -25,71 +31,96 @@ import com.hp.hpl.jena.sparql.expr.Expr;
  *
  */
 public class VarDefinition {
-	private Multimap<Var, RestrictedExpr<Expr>> varToExprs;
+	private Multimap<Var, RestrictedExpr> varToExprs;
 	
 	
 	public VarDefinition() {
 		this.varToExprs = HashMultimap.create();
 	}
+
+	public VarDefinition(Multimap<Var, RestrictedExpr> varToExprs) {
+		this.varToExprs = varToExprs;
+	}
+
 	
-	public Multimap<Var, RestrictedExpr<Expr>> getMap() {
+	public Multimap<Var, RestrictedExpr> getMap() {
 		return varToExprs;
 	}
 	
+	
 	//public Collection<RestrictedExpr<Expr>> get(Var q)
 	
-	public Collection<RestrictedExpr<Expr>> getDefinitions(Var viewVar) {
+	public Collection<RestrictedExpr> getDefinitions(Var viewVar) {
 		return varToExprs.get(viewVar);
 	}
 	
+	// Some Ideas for compact syntax:
+	// Construct {?s rdfs:label ?name} With ?s = uri(@rdf, id) From table
+	// Omitting the With clause alltogether: Construct { uri(@rdf, id) rdfs:label ?name } From table --- name will become a typed literal of type string.
 	
-	/**
-	 * Traverses a SPARQL expressions, and moves into any
-	 * the SqlExpr-arguments of any E_RdfTerm it encounters.
-	 * 
-	 * The column references are then replaced inside the SqlExprs.
-	 *  
-	 * 
-	 * @param expr
-	 * @return
-	 */
-	/*
-	public static Expr renameColumnReferences(Expr expr) {
-	}
-	
-	public static SqlExpr renameColumnReferences(SqlExpr sqlExpr, Map<String, String> oldToNew) {
+	public static VarDefinition copyRename(VarDefinition varDef, Map<String, String> oldToNew) {
+		Map<Var, Expr> map = new HashMap<Var, Expr>();
 		
-		
-		
-		ColumnSubstitutor columnRenamer = new ColumnSubstitutor(map)
-		SqlExpr result = columnRenamer._transform(map);
-		
-		return result;
-	}
-	
-	
-		
-	
-	public createWithRenamedColumnReferences(Map<String, String> map) {
-		
-		
-		// Substitute the column references in b
-		NodeExprSubstitutor substitutor = new NodeExprSubstitutor(exprMap);
-
-		Multimap<Var, VarDef> newSparqlMap = HashMultimap.create();
-		for(Entry<Var, VarDef> entry : right.getSparqlVarToExprs().entries()) {
-			VarDef before = entry.getValue();
-			VarDef after = new VarDef(substitutor.transformMM(before.getExpr()), before.getRestrictions());
-			
-			newSparqlMap.put(entry.getKey(), after);
+		for(Entry<String, String> entry : oldToNew.entrySet()) {
+			map.put(Var.alloc(entry.getKey()), new ExprVar(Var.alloc(entry.getValue())));
 		}
-		//b.getSparqlVarToExprs().clear();
-		//b.getSparqlVarToExprs().putAll(newSparqlMap);
-		result.getSparqlVarToExprs().putAll(newSparqlMap);
+		
+		VarDefinition result = copySubstitute(varDef, map);
 		
 		return result;
 	}
-	*/
+	
+	public static VarDefinition copySubstitute(VarDefinition varDef, Map<Var, Expr> map) {
+		
+		NodeExprSubstitutor substitutor = new NodeExprSubstitutor(map);
+
+		
+		Multimap<Var, RestrictedExpr> newVarToExpr = HashMultimap.create();
+		for(Entry<Var, RestrictedExpr> entry : varDef.getMap().entries()) {
+			RestrictedExpr before = entry.getValue();
+			
+			Expr newExpr = substitutor.transformMM(before.getExpr());
+			
+			RestrictedExpr after = new RestrictedExpr(newExpr, before.getRestrictions());
+			
+			newVarToExpr.put(entry.getKey(), after);
+		}
+		
+		VarDefinition result = new VarDefinition(newVarToExpr);
+		
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "VarDefinition [varToExprs=" + varToExprs + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((varToExprs == null) ? 0 : varToExprs.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VarDefinition other = (VarDefinition) obj;
+		if (varToExprs == null) {
+			if (other.varToExprs != null)
+				return false;
+		} else if (!varToExprs.equals(other.varToExprs))
+			return false;
+		return true;
+	}
 	
 	
 	/*
@@ -101,4 +132,7 @@ public class VarDefinition {
 		
 		
 	}*/
+	
+	
+	
 }

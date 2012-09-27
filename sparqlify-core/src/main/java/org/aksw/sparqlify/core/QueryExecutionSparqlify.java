@@ -18,7 +18,7 @@ import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.views.transform.EmptyRewriteException;
@@ -270,7 +270,7 @@ class QueryExecutionSelect
 		//
 		ViewRewriter sqlRewriter = new ViewRewriter();
 		
-		SqlNode sqlNode;
+		SqlNodeOld sqlNode;
 		
 		try {
 			sqlNode = sqlRewriter.rewriteMM(view);

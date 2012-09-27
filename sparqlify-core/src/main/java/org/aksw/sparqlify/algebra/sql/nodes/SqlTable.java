@@ -33,7 +33,7 @@ public class SqlTable
     }*/
 
 	@Override
-	SqlNode copy0() {
+	SqlNodeOld copy0() {
 		return new SqlTable(tableName);
 	}
 }

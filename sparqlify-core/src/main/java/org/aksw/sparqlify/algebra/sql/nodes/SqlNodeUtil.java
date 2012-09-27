@@ -8,7 +8,7 @@ import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 
 public class SqlNodeUtil {
-	public static Map<String, SqlDatatype> getColumnToDatatype(SqlNode sqlNode) {
+	public static Map<String, SqlDatatype> getColumnToDatatype(SqlNodeOld sqlNode) {
 		Map<String, SqlDatatype> result = new HashMap<String, SqlDatatype>();
 		
 		for(Entry<String, SqlExpr> entry : sqlNode.getAliasToColumn().entrySet()) {

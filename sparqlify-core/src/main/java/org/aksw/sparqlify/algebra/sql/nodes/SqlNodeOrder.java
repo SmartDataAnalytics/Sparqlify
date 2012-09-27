@@ -9,13 +9,13 @@ public class SqlNodeOrder
 {
 	private List<SqlSortCondition> conditions;
 
-	public SqlNodeOrder(SqlNode subNode, List<SqlSortCondition> conditions)
+	public SqlNodeOrder(SqlNodeOld subNode, List<SqlSortCondition> conditions)
 	{
 	    super(null, subNode);
 	    this.conditions = conditions;
 	}
 
-	public SqlNodeOrder(String aliasName, SqlNode subNode, List<SqlSortCondition> conditions)
+	public SqlNodeOrder(String aliasName, SqlNodeOld subNode, List<SqlSortCondition> conditions)
 	{
 	    super(aliasName, subNode);
 	    this.conditions = conditions;
@@ -29,7 +29,7 @@ public class SqlNodeOrder
 
 
 	@Override
-	SqlNode copy1(SqlNode subNode) {
+	SqlNodeOld copy1(SqlNodeOld subNode) {
 		return new SqlNodeOrder(this.getSubNode(), conditions);
 	}
 }

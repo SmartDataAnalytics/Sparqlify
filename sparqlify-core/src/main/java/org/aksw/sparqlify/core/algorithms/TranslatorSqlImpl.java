@@ -1,11 +1,9 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.core.interfaces.OptimizerSparqlExpr;
 import org.aksw.sparqlify.core.interfaces.TranslatorSql;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 public class TranslatorSqlImpl
@@ -16,7 +14,7 @@ public class TranslatorSqlImpl
 	
 	
 	@Override
-	public SqlExpr translateSql(Expr sparqlExpr) {
+	public Expr translateSql(Expr sparqlExpr) {
 		// Optimize the expression
 		
 		

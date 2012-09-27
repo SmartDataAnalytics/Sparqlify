@@ -6,7 +6,7 @@ public class SqlSlice
     private long start ;
     private long length ;
 
-    public SqlSlice(String aliasName, SqlNode subNode, long start, long length)
+    public SqlSlice(String aliasName, SqlNodeOld subNode, long start, long length)
     {
 		// XXX WAS NULL
         super(aliasName, subNode);
@@ -14,7 +14,7 @@ public class SqlSlice
         this.length = length ;
     }
 
-    public SqlSlice(SqlNode subNode, long start, long length)
+    public SqlSlice(SqlNodeOld subNode, long start, long length)
     {
 		// XXX WAS NULL
         super(subNode.getAliasName(), subNode);
@@ -26,7 +26,7 @@ public class SqlSlice
     public long getStart()          { return start ; }
 
 	@Override
-	SqlNode copy1(SqlNode subNode) {
+	SqlNodeOld copy1(SqlNodeOld subNode) {
 		return new SqlSlice(this.getSubNode(), start, length);
 	}
 }

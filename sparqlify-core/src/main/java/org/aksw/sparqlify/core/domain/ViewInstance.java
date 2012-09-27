@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
 
 
 /**
@@ -55,10 +54,10 @@ public class ViewInstance {
 	 * @param viewVar
 	 * @return
 	 */
-	public Set<RestrictedExpr<Expr>> getDefinitionsForViewVariable(Var viewVar) {		
-		Collection<RestrictedExpr<Expr>> defs = viewDefinition.getMapping().getVarDefinition().getDefinitions(viewVar);
+	public Set<RestrictedExpr> getDefinitionsForViewVariable(Var viewVar) {		
+		Collection<RestrictedExpr> defs = viewDefinition.getMapping().getVarDefinition().getDefinitions(viewVar);
 		
-		Set<RestrictedExpr<Expr>> result = new HashSet<RestrictedExpr<Expr>>(defs);
+		Set<RestrictedExpr> result = new HashSet<RestrictedExpr>(defs);
 		return result;
 	}
 	

@@ -14,6 +14,7 @@ import mapping.ExprCommonFactor;
 import mapping.ExprCopy;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.commons.jena.util.ExprUtils;
 import org.aksw.commons.util.Pair;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.ExprSqlBridge;
@@ -35,10 +36,15 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlGroup;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlMyRestrict;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeUtil;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlProjection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSlice;
@@ -98,6 +104,22 @@ class RewriteContext {
 }
 
 
+
+// Helper class
+class VarDefKey {		
+	Set<Expr> constraintExpr = new HashSet<Expr>();
+	Set<RestrictedExpr> definitionExprs = new HashSet<RestrictedExpr>();
+	
+	VarDefKey() { }
+
+	
+	/*
+	VarDefKey(Set<Expr> constraintExpr, Set<RestrictedExpr> definitionExprs) {
+		this.constraintExpr = constraintExpr;
+		this.definitionExprs = definitionExprs;
+	}*/
+}
+
 /*
  * Some thoughts:
  * 
@@ -126,23 +148,105 @@ public class MappingOpsImpl
 	private TranslatorSql sqlTranslator = new TranslatorSqlImpl();
 
 	
-	public Mapping rename(Mapping a, Map<String, String> rename) { return null; }
-	public Mapping join(Mapping a, Mapping b) { return null; }
-	public Mapping leftJoin(Mapping a, Mapping b) { return null; }
-	public Mapping union(Mapping a, Mapping b) { return null; }
-
+	public Mapping rename(Mapping a, Map<String, String> rename)
+	{ 
+		//SqlNode
+		// Return the original mapping if there is nothing to rename
+		//a.getSqlNode().get
+		if(rename.isEmpty()) {
+			return a;
+		}
+		
+		VarDefinition renamedVarDef = VarDefinition.copyRename(a.getVarDefinition(), rename);
 	
+		SqlOpRename sqlOpRename = SqlOpRename.create(a.getSqlOp(), rename);
+		
+		Mapping result = new Mapping(renamedVarDef, sqlOpRename);
+		
+		return result;
+	}
+		
 	
-	public static SqlExpr translateSql(RestrictedExpr<Expr> restExpr, TranslatorSql sqlTranslator) {
+	public static Expr translateSql(RestrictedExpr restExpr, TranslatorSql sqlTranslator) {
 		if(restExpr.getRestrictions().isUnsatisfiable()) {
-			return SqlExprValue.FALSE;
+			//return SqlExprValue.FALSE;
+			return NodeValue.FALSE;
 		}
 
-		SqlExpr result = sqlTranslator.translateSql(restExpr.getExpr());
+		Expr result = sqlTranslator.translateSql(restExpr.getExpr());
 		
 		return result;
 	}
 	
+
+	
+	/**
+	 * Joins two var definitions on the given queryVar.
+	 * 
+	 * @param queryVar
+	 * @param a
+	 * @param b
+	 * @param sqlTranslator
+	 * @return
+	 */
+	public static VarDefKey joinDefinitionsOnEquals(
+			Collection<RestrictedExpr> a,
+			Collection<RestrictedExpr> b,
+			TranslatorSql sqlTranslator
+			)
+	{
+		VarDefKey result = new VarDefKey();
+		
+		result.definitionExprs.addAll(a);
+				
+		//boolean isPickDefSatisfiable = defs.isEmpty();
+		for(RestrictedExpr rexprA : result.definitionExprs) {
+			Set<RestrictedExpr> newRexprsA = new HashSet<RestrictedExpr>();
+
+			// The restrictions that apply to the picked variable.
+			// initialized only if there are no defs (init means true, i.e. no restriction)
+			RestrictionSet varRestrictions = b.isEmpty() ? new RestrictionSet() : null;
+
+			
+			for(RestrictedExpr rexprB : b) {
+				
+				
+				RestrictedExpr vdEquals = VariableDefinitionOps.equals(rexprA, rexprB);
+				
+				Expr sqlExpr = translateSql(vdEquals, sqlTranslator);
+				
+				if(sqlExpr.equals(SqlExprValue.FALSE)) {
+					continue;
+				}
+
+				if(varRestrictions == null) {
+					varRestrictions = new RestrictionSet(); 
+				}
+				
+				varRestrictions.addAlternatives(vdEquals.getRestrictions());
+
+				
+				result.constraintExpr.add(sqlExpr);
+			}
+
+			// Only if there is a non-unsatisfiable restriction...
+			if(varRestrictions != null) {
+				RestrictedExpr newRestrictedExpr = new RestrictedExpr(rexprA.getExpr(), varRestrictions);
+				newRexprsA.add(newRestrictedExpr);
+			}
+			
+			result.definitionExprs = newRexprsA;
+		}
+		
+		if(result.definitionExprs.isEmpty()) {
+			// All defining expressions resulted in unsatisfiable joins - return null to indicate this
+			return null;
+			//result.constraintExpr = null;
+		} else {		
+			return result;
+		}
+	}
+
 	
 	/**
 	 * Returns a set of equals expressions,
@@ -157,66 +261,73 @@ public class MappingOpsImpl
 	 * @param viewInstance
 	 * @return
 	 */
-	public static Set<RestrictedExpr<Expr>> joinDefinitionsOnEquals(
+	public static VarDefKey joinDefinitionsOnEquals(
 			Var queryVar,
 			ViewInstance viewInstance,
 			TranslatorSql sqlTranslator
 			)
-			/*
-			Var pickViewVar,
-			Collection<RestrictedExpr<Expr>> pickDefs,
-			Set<Var> viewVars,
-			VarDefinition varDefinition)
-			*/
 	{
-		Set<RestrictedExpr<Expr>> result = new HashSet<RestrictedExpr<Expr>>();
-	
+		//Set<Expr> result = new HashSet<Expr>();
+		VarDefKey result = new VarDefKey();
+			
 		Set<Var> viewVars = viewInstance.getBinding().get(queryVar);
+		
+		// If the variable is unconstrained, then logically there is nothing todo
+		if(viewVars.isEmpty()) {
+			return result;
+		}
+		
+		
 		VarDefinition varDefinition = viewInstance.getVarDefinition();
 		
 		// Pick one of the view variables
 		Var pickViewVar = viewVars.iterator().next();
 		
-		Collection<RestrictedExpr<Expr>> pickDefs = viewInstance.getDefinitionsForViewVariable(pickViewVar);
-
+				
+		//Collection<RestrictedExpr> pickDefs = viewInstance.getDefinitionsForViewVariable(pickViewVar);
 		
-		boolean gotFalse = false;
+		
+		// The pick-Restrictions may get further constrained with each additional variable
+		//Collection<RestrictedExpr> nextPickDefs = new HashSet<RestrictedExpr>();
+		result.definitionExprs.addAll(viewInstance.getDefinitionsForViewVariable(pickViewVar));
+		
+		
 		for(Var viewVar : viewVars) {
 			if(viewVar.equals(pickViewVar)) {
 				continue;
 			}
 			
-			Collection<RestrictedExpr<Expr>> defs = varDefinition.getDefinitions(viewVar);
+			Collection<RestrictedExpr> defs = varDefinition.getDefinitions(viewVar);
 
 			
-			for(RestrictedExpr<Expr> pickDef : pickDefs) {
-				for(RestrictedExpr<Expr> def : defs) {
-					
-					
-					RestrictedExpr<Expr> vdEquals = VariableDefinitionOps.equals(pickDef, def);
-					
-					
-					SqlExpr sqlExpr = translateSql(vdEquals, sqlTranslator);
-					
-					if(sqlExpr.equals(SqlExprValue.FALSE)) {
-						gotFalse = true;
-						continue;
-					}
-					
-					//result.add(sqlExpr);
-					result.add(null);
-				}
-				
+			// Intermediate result
+			VarDefKey tmp = joinDefinitionsOnEquals(result.definitionExprs, defs, sqlTranslator);
+			
+
+			if(tmp == null) {
+				return null;
 			}
 			
+			result.definitionExprs = tmp.definitionExprs;
+			result.constraintExpr.addAll(tmp.constraintExpr);
 		}
 		
+		if(result.definitionExprs.isEmpty()) {
+			// All defining expressions resulted in unsatisfiable joins - return null to indicate this
+			return null;
+			//result.constraintExpr = null;
+		} else {		
+			return result;
+		}
+
+/*		
 		if(result.isEmpty() && gotFalse) {
 			// If we got no non-false expression, return null
 			return null; 
 		} else {
 			return result;
 		}
+*/
 	}
 	
 
@@ -227,6 +338,11 @@ public class MappingOpsImpl
 	}
 	*/
 	
+	public static Mapping createEmptyMapping(ViewInstance viewInstance) {
+		SqlOp empty = SqlOpEmpty.create(viewInstance.getViewDefinition().getMapping().getSqlOp().getSchema());
+		Mapping result = new Mapping(empty);
+		return result;
+	}
 	
 	/**
 	 * Creates a mapping from a view instance:
@@ -263,135 +379,222 @@ public class MappingOpsImpl
 
 		Set<Var> queryVars = viewInstance.getBinding().getQueryVars();
 		
+		
+		Multimap<Var, RestrictedExpr> newVarDefMap = HashMultimap.create();
+		
 		//Set<Set<Expr>> cnf = new HashSet<Set<Expr>>();
-		Set<Set<RestrictedExpr<Expr>>> ands = new HashSet<Set<RestrictedExpr<Expr>>>();
+		//Set<Set<Expr>> ands = new HashSet<Set<Expr>>();
+		//Set<Expr> ands = new HashSet<Expr>();
+		ExprList ands = null; 
 		for(Var queryVar : queryVars) {
 			
-			Set<RestrictedExpr<Expr>> ors = joinDefinitionsOnEquals(queryVar, viewInstance, sqlTranslator);
-			
-			ands.add(ors);
-		}
+			VarDefKey ors = joinDefinitionsOnEquals(queryVar, viewInstance, sqlTranslator);
 		
-		
-		/*
-		
-		if(!selfConditions.isEmpty()) {
-			SqlMyRestrict sqlRestrict;
-			sqlRestrict = new SqlMyRestrict(result
-					.getAliasName(), result);
+			if(ors == null) {
 
-			sqlRestrict.getConditions().addAll(selfConditions);
-			sqlRestrict.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
-			sqlRestrict.getAliasToColumn().putAll(result.getAliasToColumn());
-		
-			result = sqlRestrict;
-		}
-		*/
-		
-		
-		
-		
-		
-		
-		
-		
-		/*
-		List<SqlExpr> selfConditions = new ArrayList<SqlExpr>();
-		for (Entry<Var, Collection<VariableDefinition>> entry : sqlBinding.asMap()
-				.entrySet()) {
-
-			// In case that multiple view variables are bound to the same query
-			// variable, we need to create equality conditions:
-			// Example:
-			// ?o = {Uri(colX), Uri(colY)} then we infer the condition colX =
-			// colY
-			// and pick just one of the expressions for ?o, since they are all
-			// equal.
-			// Currently we pick the first expression
-			// TODO Investigate whether a clever picking/equating strategy
-			// could improve query execution performance
-
-			/*
-			 * 			RdfTermPattern pattern = null;
-					// Check if the constraints are still satisfiable,
-					// given the equality of a and b.
-					pattern = RdfTermPattern.merge(pattern, viewInstance.getParent().getConstraints().getPattern(a));
-					
-					if(!pattern.isSatisfiable()) {
-						// Indicate empty rewrite
-					}
-
-			 */
-			
-			/*
-			NodeExprSubstitutor substitutor = createSubstitutor(result.getAliasToColumn());
-
-			
-			// Create a restriction that equates all the different variables
-			Expr a = null;
-			Expr b = null;
-			
-			for (VariableDefinition def : entry.getValue()) {
-
-				b = def.getExpr();
-				
-				if (a != null) {
-					// Optimize the expression
-					Expr tmp = SqlExprOptimizer.optimizeMM(new E_Equals(a, b));
-					
-					
-					if (tmp.equals(NodeValue.FALSE)) {
-						// TODO Somehow indicate an empty relation
-					}
-
-					// For the translation to sql we need the sparql expression
-					// and the mapping of sparql variables to sql columns
-					//SqlExpr sqlExpr = SqlExprOptimizer.translateMM(tmp);
-
-					SqlExpr sqlExpr = forcePushDown(tmp, substitutor);
-
-					//if(true) { throw new RuntimeException("Add support for discriminator column"); }
-					/*
-					Expr substituted = substitutor.transformMM(tmp);
-
-					
-					Expr x = PushDown.pushDownMM(substituted);
-					if(!(x instanceof ExprSqlBridge)) {
-						throw new RuntimeException("Failed to push down '" + tmp + "'");
-					}
-					SqlExpr sqlExpr = ((ExprSqlBridge)x).getSqlExpr();
-					* /
-					
-					selfConditions.add(sqlExpr);
-				}
-				a = b;
+				return createEmptyMapping(viewInstance);
 			}
 			
-			// Pick the first expr
-			result.getSparqlVarToExprs().put(entry.getKey(),
-					entry.getValue().iterator().next());
+			
+			newVarDefMap.putAll(queryVar, ors.definitionExprs);
+			
+			Expr or = ExprUtils.orifyBalanced(ors.constraintExpr);
+			if(or.equals(NodeValue.TRUE)) {
+				continue;
+			} 
+
+			// If ands is not null, it already indicates that it is not unconstrained
+			if(ands == null) {
+				 ands = new ExprList();
+			}
+
+			if(or.equals(NodeValue.FALSE)) {
+				continue;
+			} else {
+				ands.add(or);
+			}
+		}
+
+		VarDefinition varDefinition = new VarDefinition(newVarDefMap);
+
+		Mapping result = null;
+		SqlOp op = viewInstance.getViewDefinition().getMapping().getSqlOp();
+		if(ands == null) { // Unconstrained
+			 result = new Mapping(varDefinition, op);
+		} else if(ands.isEmpty()) { // Unsatisfiable
+			result = createEmptyMapping(viewInstance);
+		} else { // Constrained.
+			SqlOp filterOp = SqlOpFilter.create(op, ands);
+			
+			result = new Mapping(varDefinition, filterOp);
 		}
 		
+		return result;
+	}
+	
 
-		if(!selfConditions.isEmpty()) {
-			SqlMyRestrict sqlRestrict;
-			sqlRestrict = new SqlMyRestrict(result
-					.getAliasName(), result);
-
-			sqlRestrict.getConditions().addAll(selfConditions);
-			sqlRestrict.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
-			sqlRestrict.getAliasToColumn().putAll(result.getAliasToColumn());
+	
+	/**
+	 * Returns a new mapping for b:
+	 * 
+	 * All column names that a and b have in commons are renamed in b.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public Mapping doJoinRename(Mapping a, Mapping b, Generator gen) {
+		List<String> namesA = a.getSqlOp().getSchema().getColumnNames();
+		List<String> namesB = b.getSqlOp().getSchema().getColumnNames();
 		
-			result = sqlRestrict;
+		List<String> commonNames = new ArrayList<String>(namesB);
+		commonNames.retainAll(namesA);
+		
+		if(commonNames.isEmpty()) {
+			return b;
 		}
 		
-		// TODO Add the constant restrictions
+		Map<String, String> rename = new HashMap<String, String>();
+		for(String oldName : commonNames) {
+			
+			String newName = null;
+			for(;;) {
+				newName = gen.next();
+				if(namesA.contains(newName)) {
 
+					System.err.println("FIXME Have to generate another column name - should be prevented");
+					continue;
+				}
+				
+				break;
+			}
+			
+			rename.put(oldName, newName);
+		}
+		
+		VarDefinition renamedVarDef = VarDefinition.copyRename(b.getVarDefinition(), rename);
+		SqlOpRename renamedOp = SqlOpRename.create(b.getSqlOp(), rename);
+		
+		Mapping result = new Mapping(renamedVarDef, renamedOp);
+		
+		return result;
+	}
+	
+	public Mapping join(Mapping a, Mapping b) {
+		Mapping result = joinCommon(a, b, false);
+		return result;
+	}
+	
+	public Mapping leftJoin(Mapping a, Mapping b) {
+		Mapping result = joinCommon(a, b, true);
+		return result;		
+	}
+
+	
+	// TODO Handle left join
+	public Mapping joinCommon(Mapping a, Mapping initB, boolean isLeftJoin) {
+
+		Generator genSym = Gensym.create("h_");
+		
+		Mapping b = doJoinRename(a, initB, genSym);
+		
+		
+		SqlOpJoin opJoin = SqlOpJoin.create(a.getSqlOp(), b.getSqlOp()); 
+		SqlOp opResult = opJoin;
+
+		
+		if(opJoin.getLeft().isEmpty() || opJoin.getRight().isEmpty()) {
+			opResult = SqlOpEmpty.create(opJoin.getSchema());
+		}
+		
+		VarDefinition vdA = a.getVarDefinition();
+		VarDefinition vdB = b.getVarDefinition();
+		
+		Set<Var> varsA = vdA.getMap().keySet();
+		Set<Var> varsB = vdB.getMap().keySet();
+		
+		// Create the join condidition for all common variables.
+		// This is the reason calling this operation the "natural join"
+		Set<Var> commonVars = new HashSet<Var>(varsA);
+		commonVars.retainAll(varsB);
+		
+		Set<Var> varsAOnly = Sets.difference(varsA, commonVars);
+		Set<Var> varsBOnly = Sets.difference(varsB, commonVars);
+		
+		Multimap<Var, RestrictedExpr> newVarDef = HashMultimap.create();
+		
+		// Add definitions of A only
+		for(Var varA : varsAOnly) {
+			Collection<RestrictedExpr> exprs = vdA.getMap().get(varA);
+			newVarDef.putAll(varA, exprs);
+		}
+
+		// Add definitions of B only
+		for(Var varB : varsBOnly) {
+			Collection<RestrictedExpr> exprs = vdB.getMap().get(varB);
+			newVarDef.putAll(varB, exprs);
+		}
+
+		// Add common definitions
+		Set<Expr> joinCondition = new HashSet<Expr>();
+		
+		for(Var commonVar : commonVars) {
+			Collection<RestrictedExpr> defsA = a.getVarDefinition().getDefinitions(commonVar);
+			Collection<RestrictedExpr> defsB = b.getVarDefinition().getDefinitions(commonVar);
+			
+			VarDefKey tmp = joinDefinitionsOnEquals(defsA, defsB, sqlTranslator);
+
+			if(tmp == null) {
+				opResult = SqlOpEmpty.create(opJoin.getSchema());
+				break;
+			}
+			
+			
+			newVarDef.putAll(commonVar, tmp.definitionExprs);
+			joinCondition.addAll(tmp.constraintExpr);
+		}
+
+		
+		
+		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
+		Mapping result = new Mapping(newVarDefinition, opResult);
 
 		return result;
-		*/
-		return null;
 	}
+
+	
+
+	public Mapping union(List<Mapping> members) {
+		
+		return null;
+		
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	// Pushes down an Expr object that should be interpreted as an SQL expression
@@ -408,7 +611,7 @@ public class MappingOpsImpl
 		return result;
 	}
 	
-	public static SqlExprList forcePushDown(ExprList exprs, SqlNode node) {
+	public static SqlExprList forcePushDown(ExprList exprs, SqlNodeOld node) {
 		SqlExprList result = new SqlExprList();
 		for(Expr expr : exprs) {
 			SqlExpr sqlExpr = forcePushDown(expr, node.getAliasToColumn());
@@ -482,9 +685,9 @@ public class MappingOpsImpl
 	 * @param right
 	 * @return
 	 */
-	public static SqlNode doJoinRename(ColRelGenerator generator, SqlNode left, String leftAlias, SqlNode right, String rightAlias)
+	public static SqlNodeOld doJoinRename(ColRelGenerator generator, SqlNodeOld left, String leftAlias, SqlNodeOld right, String rightAlias)
 	{
-		SqlNode result = new SqlNodeEmpty();
+		SqlNodeOld result = new SqlNodeEmpty();
 
 		if(leftAlias != null && leftAlias.equals(rightAlias)) {
 			throw new RuntimeException("Two aliases equal - should not happen");
@@ -596,12 +799,12 @@ public class MappingOpsImpl
 	
 	
 	
-	public static NodeExprSubstitutor createSubstitutor(SqlNode node) {
+	public static NodeExprSubstitutor createSubstitutor(SqlNodeOld node) {
 		return createSubstitutor(node.getAliasToColumn());
 	}
 
 
-	public static Pair<SqlNode, SqlNode> createJoinAlias(SqlNode node, ColRelGenerator generator) {
+	public static Pair<SqlNodeOld, SqlNodeOld> createJoinAlias(SqlNodeOld node, ColRelGenerator generator) {
 		if(node instanceof SqlJoin || node.getAliasName() != null) {
 			// If the node is a join, then all the components already
 			// have aliases
@@ -624,7 +827,7 @@ public class MappingOpsImpl
 			result.getSparqlVarToExprs().putAll(node.getSparqlVarToExprs());
 			*/
 			
-			SqlNode proj = createNewAlias(newAlias, node, generator);
+			SqlNodeOld proj = createNewAlias(newAlias, node, generator);
 			
 			return Pair.create(node, proj);
 			
@@ -643,7 +846,7 @@ public class MappingOpsImpl
 		
 	}*/
 	
-	public static SqlNode join(ColRelGenerator generator, SqlNode _a, SqlNode _b,
+	public static SqlNodeOld join(ColRelGenerator generator, SqlNodeOld _a, SqlNodeOld _b,
 			JoinType joinType) {
 
 		/*
@@ -671,8 +874,8 @@ public class MappingOpsImpl
 		String rightAlias = b.getAliasName();
 		*/
 		
-		SqlNode a = _a;
-		SqlNode b = _b;
+		SqlNodeOld a = _a;
+		SqlNodeOld b = _b;
 		
 
 		//if(a.getAliasName() == null && !(a instanceof SqlJoin) || a instanceof SqlUnionN) {
@@ -703,7 +906,7 @@ public class MappingOpsImpl
 		
 		//
 		
-		SqlNode c = doJoinRename(generator, a, a.getAliasName(), b, b.getAliasName());
+		SqlNodeOld c = doJoinRename(generator, a, a.getAliasName(), b, b.getAliasName());
 
 		/*
 		if(a instanceof SqlUnionN || b instanceof SqlUnionN) {
@@ -895,7 +1098,7 @@ public class MappingOpsImpl
 			// For the given variable there is no satisfiable join
 			// so the join is empty
 			if(!foundSatisfiableJoinCondition) {
-				SqlNode x = new SqlNodeEmpty();
+				SqlNodeOld x = new SqlNodeEmpty();
 				x.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
 				x.getAliasToColumn().putAll(result.getAliasToColumn());
 				return x;
@@ -917,7 +1120,7 @@ public class MappingOpsImpl
 		// Treating the filter and the join condition separately causes us
 		// to miss the unsatisfiability in this case
 		if(!isSatisfiable(result.getConditions())) {
-			SqlNode x = new SqlNodeEmpty();
+			SqlNodeOld x = new SqlNodeEmpty();
 			x.getSparqlVarToExprs().putAll(result.getSparqlVarToExprs());
 			x.getAliasToColumn().putAll(result.getAliasToColumn());
 			return x;
@@ -929,7 +1132,7 @@ public class MappingOpsImpl
 		return result;
 	}
 
-	public static SqlNode distinct(SqlNode a) {
+	public static SqlNodeOld distinct(SqlNodeOld a) {
 		SqlDistinct result = new SqlDistinct(a.getAliasName(), a);
 
 		result.getAliasToColumn().putAll(a.getAliasToColumn());
@@ -938,7 +1141,7 @@ public class MappingOpsImpl
 		return result;
 	}
 	
-	public static SqlNode slice(SqlNode a, ColRelGenerator generator, long start, long length) {
+	public static SqlNodeOld slice(SqlNodeOld a, ColRelGenerator generator, long start, long length) {
 
 		SqlSlice result = new SqlSlice(a, start, length);
 		result.getAliasToColumn().putAll(a.getAliasToColumn());
@@ -984,7 +1187,7 @@ public class MappingOpsImpl
 	 * @param target
 	 * @param source
 	 */
-	public static void createNewAlias(String alias, SqlNode target, SqlNode source) {
+	public static void createNewAlias(String alias, SqlNodeOld target, SqlNodeOld source) {
 		
 		target.getSparqlVarToExprs().putAll(source.getSparqlVarToExprs());
 
@@ -996,8 +1199,8 @@ public class MappingOpsImpl
 	
 
 	
-	public static void replaceAlias(String alias, SqlNode node, ColRelGenerator columnNameColRelGenerator) {
-		SqlNode tmp = createNewAlias(alias, node, columnNameColRelGenerator);
+	public static void replaceAlias(String alias, SqlNodeOld node, ColRelGenerator columnNameColRelGenerator) {
+		SqlNodeOld tmp = createNewAlias(alias, node, columnNameColRelGenerator);
 		
 		node.getAliasToColumn().clear();
 		node.getSparqlVarToExprs().clear();
@@ -1007,7 +1210,7 @@ public class MappingOpsImpl
 	}
 
 
-	public static SqlAlias createNewAlias(String alias, SqlNode node, ColRelGenerator generator) {
+	public static SqlAlias createNewAlias(String alias, SqlNodeOld node, ColRelGenerator generator) {
 		SqlAlias result = new SqlAlias(alias, node);
 		
 		Map<Var, Expr> varRename = new HashMap<Var, Expr>();
@@ -1031,7 +1234,7 @@ public class MappingOpsImpl
 	}
 
 
-	public static SqlProjection wrapWithProjection(String newAlias, SqlNode tmp, ColRelGenerator generator) {
+	public static SqlProjection wrapWithProjection(String newAlias, SqlNodeOld tmp, ColRelGenerator generator) {
 		
 		SqlProjection node = new SqlProjection(newAlias, tmp);
 		node.getAliasToColumn().putAll(tmp.getAliasToColumn());
@@ -1067,7 +1270,7 @@ public class MappingOpsImpl
 	}
 
 	
-	public static SqlNode extend(SqlNode node, VarExprList varExprList) {
+	public static SqlNodeOld extend(SqlNodeOld node, VarExprList varExprList) {
 
 
 		for(Entry<Var, Expr> entry : varExprList.getExprs().entrySet()) {
@@ -1159,7 +1362,7 @@ public class MappingOpsImpl
 	 * @param generator
 	 * @return
 	 */
-	public static SqlNode order(SqlNode a, List<SortCondition> conditions, ColRelGenerator generator) {
+	public static SqlNodeOld order(SqlNodeOld a, List<SortCondition> conditions, ColRelGenerator generator) {
 		List<SqlSortCondition> sqlConditions = new ArrayList<SqlSortCondition>();
 
 
@@ -1180,7 +1383,7 @@ public class MappingOpsImpl
 		//}
 		
 			
-		SqlNode subSelect = createNewAlias(generator.nextRelation(), a, generator);
+		SqlNodeOld subSelect = createNewAlias(generator.nextRelation(), a, generator);
 
 		// Wrap whatever we have with a new projection (-> sub select)
 		// This new projection is the basis for the group by
@@ -1188,11 +1391,11 @@ public class MappingOpsImpl
 		SqlProjection groupByNode = new SqlProjection(generator.nextRelation(), projection);
     	SqlSelectBlockCollector.copyProjection(groupByNode, tmp);
     	*/
-		SqlNode groupByNode = subSelect;
+		SqlNodeOld groupByNode = subSelect;
 
 		//SqlNode projection = subSelect;
 
-    	SqlNode tmp = createNewAlias(groupByNode.getAliasName(), subSelect, generator);
+    	SqlNodeOld tmp = createNewAlias(groupByNode.getAliasName(), subSelect, generator);
 
 		
 		// Transform the conditions
@@ -1220,7 +1423,7 @@ public class MappingOpsImpl
     	// Now we have created the "group by projection"
     	// However, now we need to wrap it with another projection, in which we can add any expressions appearing in the order by
 		SqlProjection orderByNode = new SqlProjection(generator.nextRelation(), groupByNode);
-    	SqlNode tmp2 = createNewAlias(orderByNode.getAliasName(), groupByNode, generator);
+    	SqlNodeOld tmp2 = createNewAlias(orderByNode.getAliasName(), groupByNode, generator);
     	SqlSelectBlockCollector.copyProjection(orderByNode, tmp2);
     	
     	
@@ -1242,7 +1445,7 @@ public class MappingOpsImpl
     	//SqlNode orderNode = wrapWithProjection(projection, generator); //new SqlProjection(projection.getAliasName(), projection);
     	
 
-    	SqlNode result = new SqlNodeOrder(orderByNode.getAliasName(), orderByNode, sqlConditions);
+    	SqlNodeOld result = new SqlNodeOrder(orderByNode.getAliasName(), orderByNode, sqlConditions);
 	
 
 		Generator gen = Gensym.create("o");
@@ -1375,7 +1578,7 @@ public class MappingOpsImpl
 	}
 	
 	
-	public static SqlExpr fullPush(Expr expr, SqlNode node) {
+	public static SqlExpr fullPush(Expr expr, SqlNodeOld node) {
 		// Could be a bit more efficient...
 		SqlExprList tmp = fullPush(new ExprList(expr), node);
 		if(tmp.isEmpty()) {
@@ -1385,7 +1588,7 @@ public class MappingOpsImpl
 		return tmp.get(0);
 	}
 	
-	public static SqlExprList fullPush(ExprList exprs, SqlNode node) {
+	public static SqlExprList fullPush(ExprList exprs, SqlNodeOld node) {
 		return fullPush(exprs, node.getAliasToColumn(), node.getSparqlVarToExprs());
 	}
 	
@@ -1527,7 +1730,7 @@ public class MappingOpsImpl
 		return true;
 	}
 
-	public static SqlNode group(SqlNode a, VarExprList groupVars, List<ExprAggregator> exprAggregator, Generator colGenerator) {
+	public static SqlNodeOld group(SqlNodeOld a, VarExprList groupVars, List<ExprAggregator> exprAggregator, Generator colGenerator) {
 		
 		NodeExprSubstitutor substitutor = createSubstitutor(a.getAliasToColumn());
 
@@ -1571,8 +1774,8 @@ public class MappingOpsImpl
 	 * @param newAlias
 	 * @param generator
 	 */
-	public static void updateProjection(SqlNode a, String newAlias, ColRelGenerator generator) {
-		SqlNode newProj = createNewAlias(newAlias, a, generator);
+	public static void updateProjection(SqlNodeOld a, String newAlias, ColRelGenerator generator) {
+		SqlNodeOld newProj = createNewAlias(newAlias, a, generator);
 		a = new SqlProjection(newAlias, a);
 		a.getAliasToColumn().putAll(newProj.getAliasToColumn());
 		a.getSparqlVarToExprs().putAll(newProj.getSparqlVarToExprs());
@@ -1581,12 +1784,12 @@ public class MappingOpsImpl
 	// NOTE Does in place transformation!
 
 	
-	public static SqlNode project(SqlNode a, List<Var> vars, ColRelGenerator generator) {
+	public static SqlNodeOld project(SqlNodeOld a, List<Var> vars, ColRelGenerator generator) {
 		//return projectInPlace(a, vars, generator);
 		return projectWrap(a, vars, generator);
 	}
 	
-	public static SqlNode projectInPlace(SqlNode result, List<Var> vars, ColRelGenerator generator) {
+	public static SqlNodeOld projectInPlace(SqlNodeOld result, List<Var> vars, ColRelGenerator generator) {
 		
 		Set<String> referencedColumns = new HashSet<String>();
 		
@@ -1610,7 +1813,7 @@ public class MappingOpsImpl
 	}
 	
 	
-	public static SqlNode projectWrap(SqlNode a, List<Var> vars, ColRelGenerator generator) {
+	public static SqlNodeOld projectWrap(SqlNodeOld a, List<Var> vars, ColRelGenerator generator) {
 
 		/*
 		if(a.getAliasName() == null) {
@@ -1639,7 +1842,7 @@ public class MappingOpsImpl
 		String newAlias = generator.nextRelation();
 
 		
-		SqlNode newProj = createNewAlias(newAlias, a, generator);
+		SqlNodeOld newProj = createNewAlias(newAlias, a, generator);
 		SqlProjection result = new SqlProjection(newAlias, a);
 		result.getAliasToColumn().putAll(newProj.getAliasToColumn());
 		result.getSparqlVarToExprs().putAll(newProj.getSparqlVarToExprs());
@@ -1673,11 +1876,11 @@ public class MappingOpsImpl
 	}
 	
 	
-	public static SqlNode filter(SqlNode a, ExprList exprs, ColRelGenerator generator) {
+	public static SqlNodeOld filter(SqlNodeOld a, ExprList exprs, ColRelGenerator generator) {
 
 		SqlExprList sqlExprs = fullPush(exprs, a);
 
-		SqlNode result;
+		SqlNodeOld result;
 
 		/*
 		if(a.getAliasName() == null) {
@@ -1921,7 +2124,7 @@ public class MappingOpsImpl
 	 * @param b
 	 * @return
 	 */
-	public static SqlNode unionNew(ColRelGenerator generator, List<SqlNode> sqlNodes) {
+	public static SqlNodeOld unionNew(ColRelGenerator generator, List<SqlNodeOld> sqlNodes) {
 
 		// Prepare the data structures from which the
 		// result node will be created
@@ -1939,7 +2142,7 @@ public class MappingOpsImpl
 
 		// Map each variable to the set of corresponding nodes
 		for (int i = 0; i < sqlNodes.size(); ++i) {
-			SqlNode sqlNode = sqlNodes.get(i);
+			SqlNodeOld sqlNode = sqlNodes.get(i);
 			for (Node var : sqlNode.getSparqlVarsMentioned()) {
 				varToSqlNode.put((Var)var, i);
 			}
@@ -1970,7 +2173,7 @@ public class MappingOpsImpl
 			//Multimap<Integer, Integer> exprToOrigin = HashMultimap.create();
 			
 			for (int index : entry.getValue()) {
-				SqlNode sqlNode = sqlNodes.get(index);
+				SqlNodeOld sqlNode = sqlNodes.get(index);
 
 				Collection<VarDef> exprsForVar = sqlNode.getSparqlVarToExprs().get(var);
 				
@@ -2032,7 +2235,7 @@ public class MappingOpsImpl
 		// Build the final result from the information we gathered
 		
 		for (int i = 0; i < projections.size(); ++i) {
-			SqlNode tmp = sqlNodes.get(i);
+			SqlNodeOld tmp = sqlNodes.get(i);
 			Multimap<Var, VarDef> projection = projections.get(i);
 
 			// Projection.Var becomes the new column alias
@@ -2071,7 +2274,7 @@ public class MappingOpsImpl
 		}
 
 
-		for(SqlNode sqlNode : sqlNodes) {
+		for(SqlNodeOld sqlNode : sqlNodes) {
 			Set<String> unboundColumns = Sets.difference(allColumnsToDatatype.keySet(), sqlNode.getAliasToColumn().keySet());
 		
 			for(String columnName : unboundColumns) {
@@ -2083,7 +2286,7 @@ public class MappingOpsImpl
 		}
 
 		String unionAlias = generator.nextRelation();
-		SqlNode result = new SqlUnionN(unionAlias, sqlNodes);
+		SqlNodeOld result = new SqlUnionN(unionAlias, sqlNodes);
 
 		result.getSparqlVarToExprs().putAll(commons);
 		
@@ -2101,7 +2304,7 @@ public class MappingOpsImpl
 	}
 
 	
-	public static SqlNode union(ColRelGenerator generator, List<SqlNode> sqlNodes) {
+	public static SqlNodeOld union(ColRelGenerator generator, List<SqlNodeOld> sqlNodes) {
 
 		
 		if(sqlNodes.isEmpty()) {
@@ -2129,7 +2332,7 @@ public class MappingOpsImpl
 
 		// Push constants into columns
 		for (int i = 0; i < sqlNodes.size(); ++i) {
-			SqlNode sqlNode = sqlNodes.get(i);
+			SqlNodeOld sqlNode = sqlNodes.get(i);
 			Set<Var> vars = new HashSet<Var>(sqlNode.getSparqlVarsMentioned()); // FIXME possible redundant hashset
 			for (Var var : vars) {
 				
@@ -2172,7 +2375,7 @@ public class MappingOpsImpl
 		
 		// Map each variable to the set of corresponding nodes
 		for (int i = 0; i < sqlNodes.size(); ++i) {
-			SqlNode sqlNode = sqlNodes.get(i);
+			SqlNodeOld sqlNode = sqlNodes.get(i);
 			for (Node var : sqlNode.getSparqlVarsMentioned()) {
 				varToSqlNode.put((Var)var, i);
 			}
@@ -2266,7 +2469,7 @@ public class MappingOpsImpl
 			
 			RestrictionSet restrictionsForVar = new RestrictionSet(false);
 			for (int index : entry.getValue()) {
-				SqlNode sqlNode = sqlNodes.get(index);
+				SqlNodeOld sqlNode = sqlNodes.get(index);
 
 				Collection<VarDef> exprsForVar = sqlNode.getSparqlVarToExprs().get(var);
 				
@@ -2347,7 +2550,7 @@ public class MappingOpsImpl
 		// Build the final result from the information we gathered
 		
 		for (int i = 0; i < projections.size(); ++i) {
-			SqlNode tmp = sqlNodes.get(i);
+			SqlNodeOld tmp = sqlNodes.get(i);
 			Multimap<Var, VarDef> projection = projections.get(i);
 
 			// Projection.Var becomes the new column alias
@@ -2386,7 +2589,7 @@ public class MappingOpsImpl
 		}
 
 
-		for(SqlNode sqlNode : sqlNodes) {
+		for(SqlNodeOld sqlNode : sqlNodes) {
 			Set<String> unboundColumns = Sets.difference(allColumnsToDatatype.keySet(), sqlNode.getAliasToColumn().keySet());
 		
 			for(String columnName : unboundColumns) {
@@ -2398,7 +2601,7 @@ public class MappingOpsImpl
 		}
 
 		String unionAlias = generator.nextRelation();
-		SqlNode result = new SqlUnionN(unionAlias, sqlNodes);
+		SqlNodeOld result = new SqlUnionN(unionAlias, sqlNodes);
 
 		result.getSparqlVarToExprs().putAll(commons);
 		
@@ -2583,3 +2786,48 @@ public class MappingOpsImpl
 		// TODO implement
 	}
 }
+
+
+
+/*
+
+
+//boolean isPickDefSatisfiable = defs.isEmpty();
+for(RestrictedExpr pickDef : result.definitionExprs) {
+	Set<RestrictedExpr> newPickDefs = new HashSet<RestrictedExpr>();
+
+	// The restrictions that apply to the picked variable.
+	// initialized only if there are no defs (init means true, i.e. no restriction)
+	RestrictionSet pickVarRestrictions = defs.isEmpty() ? new RestrictionSet() : null;
+
+
+	for(RestrictedExpr def : defs) {
+		
+		
+		RestrictedExpr vdEquals = VariableDefinitionOps.equals(pickDef, def);
+		
+		Expr sqlExpr = translateSql(vdEquals, sqlTranslator);
+		
+		if(sqlExpr.equals(SqlExprValue.FALSE)) {
+			continue;
+		}
+
+		if(pickVarRestrictions == null) {
+			pickVarRestrictions = new RestrictionSet(); 
+		}
+		
+		pickVarRestrictions.addAlternatives(vdEquals.getRestrictions());
+
+		
+		result.constraintExpr.add(sqlExpr);
+	}
+
+	// Only if there is a non-unsatisfiable restriction...
+	if(pickVarRestrictions != null) {
+		RestrictedExpr newRestrictedExpr = new RestrictedExpr(pickDef.getExpr(), pickVarRestrictions);
+		newPickDefs.add(newRestrictedExpr);
+	}
+	
+	result.definitionExprs = newPickDefs;
+}
+*/

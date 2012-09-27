@@ -5,25 +5,24 @@ import org.aksw.sparqlify.restriction.RestrictionSet;
 
 import com.hp.hpl.jena.sparql.expr.E_Add;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
 
 public class VariableDefinitionOps {
 
-	public static RestrictedExpr<Expr> plus(RestrictedExpr<Expr> a, RestrictedExpr<Expr> b) {
-		RestrictedExpr<Expr> result =
-				RestrictedExpr.create((Expr)new E_Add(a.getExpr(), b.getExpr()));
+	public static RestrictedExpr plus(RestrictedExpr a, RestrictedExpr b) {
+		RestrictedExpr result =
+				RestrictedExpr.create(new E_Add(a.getExpr(), b.getExpr()));
 		
 		return result;
 	}
 	
-	public static RestrictedExpr<Expr> equals(RestrictedExpr<Expr> a, RestrictedExpr<Expr>  b) {
+	public static RestrictedExpr equals(RestrictedExpr a, RestrictedExpr  b) {
 		RestrictionSet ar = a.getRestrictions().clone();
 		
 		ar.stateRestriction(b.getRestrictions());
 		
 		E_Equals equals = new E_Equals(a.getExpr(), b.getExpr());
 		
-		RestrictedExpr<Expr> result = RestrictedExpr.create((Expr)equals, ar);
+		RestrictedExpr result = RestrictedExpr.create(equals, ar);
 		
 		return result;
 	}

@@ -13,7 +13,7 @@ import mapping.RenamerNodes;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.config.lang.Constraint;
@@ -112,7 +112,7 @@ public class RdfView
 	
 	
 	//private Map<Node, Expr> binding;
-	private SqlNode sqlNode;	
+	private SqlNodeOld sqlNode;	
 
 	private Map<String, SqlDatatype> columnToDatatype = new HashMap<String, SqlDatatype>();
 
@@ -283,7 +283,7 @@ public class RdfView
 
 		
 		// TODO Make this extensible
-		SqlNode sqlNode;
+		SqlNodeOld sqlNode;
 		if(relation == null) { 
 			logger.warn("No relation given for view '" + name + "', using Select 1");
 			sqlNode = new SqlQuery(null, "SELECT 1"); //;null;
@@ -356,7 +356,7 @@ public class RdfView
 		
 		//System.out.println("Binding = " + binding);
 
-		SqlNode sqlExpr;
+		SqlNodeOld sqlExpr;
 		if(sqlStr.startsWith("select")) {
 			sqlExpr = new SqlQuery(null, sqlStr);
 		} else {
@@ -368,7 +368,7 @@ public class RdfView
 	}
 
 
-	public RdfView(String name, RdfViewTemplate template, ExprList filter, ConstraintContainer constraints, SqlNode sqlExpr)
+	public RdfView(String name, RdfViewTemplate template, ExprList filter, ConstraintContainer constraints, SqlNodeOld sqlExpr)
 	{
 		super();
 		this.name = name;
@@ -379,7 +379,7 @@ public class RdfView
 	}
 
 	public RdfView(String name, QuadPattern quadPattern, ExprList filter, Map<Node, Expr> binding,
-			ConstraintContainer constraints, SqlNode sqlExpr)
+			ConstraintContainer constraints, SqlNodeOld sqlExpr)
 	{
 		super();
 		this.name = name;
@@ -409,7 +409,7 @@ public class RdfView
 	}
 	
 	
-	public SqlNode getSqlNode()
+	public SqlNodeOld getSqlNode()
 	{
 		return sqlNode;
 	}

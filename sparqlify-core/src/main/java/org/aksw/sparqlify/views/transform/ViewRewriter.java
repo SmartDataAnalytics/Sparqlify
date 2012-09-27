@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.core.ColRelGenerator;
 import org.aksw.sparqlify.core.RdfViewInstance;
@@ -128,7 +128,7 @@ public class ViewRewriter {
 	}
 	*/
 
-	public SqlNode rewrite(ColRelGenerator generator, OpLeftJoin op) {
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpLeftJoin op) {
 
 		
 		// Pull filters up: Join(Filter(x)) = Filter(Join(x))
@@ -138,12 +138,12 @@ public class ViewRewriter {
 		// Given x LEFT JOIN y, we must ensure that x and y have aliases
 		// (so x as a LEFT JOIN y as b)
 		
-		SqlNode a = rewriteMM(generator, op.getLeft());
+		SqlNodeOld a = rewriteMM(generator, op.getLeft());
 		if(a instanceof SqlNodeEmpty) {
 			return a;
 		}
 		
-		SqlNode b = rewriteMM(generator, op.getRight());
+		SqlNodeOld b = rewriteMM(generator, op.getRight());
 		if(b instanceof SqlNodeEmpty) {
 			return a;
 		}
@@ -203,25 +203,25 @@ public class ViewRewriter {
 	 * } }
 	 */
 
-	public SqlNode rewrite(ColRelGenerator generator, OpDisjunction op) {
-		List<SqlNode> bindings = new ArrayList<SqlNode>();
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpDisjunction op) {
+		List<SqlNodeOld> bindings = new ArrayList<SqlNodeOld>();
 		for (Op item : op.getElements()) {
-			SqlNode binding = rewriteMM(generator, item);
+			SqlNodeOld binding = rewriteMM(generator, item);
 			
 			if(!(binding instanceof SqlNodeEmpty)) {
 				bindings.add(binding);	
 			}			
 		}
 		
-		SqlNode result = SqlNodeBinding.union(generator, bindings);
+		SqlNodeOld result = SqlNodeBinding.union(generator, bindings);
 		return result;
 	}
 
-	public SqlNode rewrite(ColRelGenerator generator, OpRdfViewPattern op) {
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpRdfViewPattern op) {
 		
-		SqlNode a = null;
+		SqlNodeOld a = null;
 		for (RdfViewInstance inst : op.getConjunction().getViewBindings()) {
-			SqlNode b = SqlNodeBinding.create(generator, inst);
+			SqlNodeOld b = SqlNodeBinding.create(generator, inst);
 
 			if(b instanceof SqlNodeEmpty) {
 				return new SqlNodeEmpty();
@@ -256,9 +256,9 @@ public class ViewRewriter {
 		return a;
 	}
 
-	public SqlNode rewrite(ColRelGenerator generator, OpJoin op) {
-		SqlNode a = rewriteMM(generator, op.getLeft());
-		SqlNode b = rewriteMM(generator, op.getRight());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpJoin op) {
+		SqlNodeOld a = rewriteMM(generator, op.getLeft());
+		SqlNodeOld b = rewriteMM(generator, op.getRight());
 		
 		/*
 		if(b.getAliasName() == null) {
@@ -268,33 +268,33 @@ public class ViewRewriter {
 			//b = SqlSelectBlockCollector.makeSqlBlock(generator, b);
 		}*/
 		
-		SqlNode result = SqlNodeBinding.join(generator, a, b, JoinType.INNER);		
+		SqlNodeOld result = SqlNodeBinding.join(generator, a, b, JoinType.INNER);		
 		return result;
 	}
 
-	public SqlNode rewrite(ColRelGenerator generator, OpDistinct op) {
-		SqlNode subNode = rewriteMM(generator, op.getSubOp());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpDistinct op) {
+		SqlNodeOld subNode = rewriteMM(generator, op.getSubOp());
 		if(subNode instanceof SqlNodeEmpty) {
 			return subNode;
 		}
 		
-		SqlNode result =  SqlNodeBinding.distinct(subNode);
+		SqlNodeOld result =  SqlNodeBinding.distinct(subNode);
 		return result;
 	}
 	
-	public SqlNode rewrite(ColRelGenerator generator, OpSlice op) {
-		SqlNode subNode = rewriteMM(generator, op.getSubOp());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpSlice op) {
+		SqlNodeOld subNode = rewriteMM(generator, op.getSubOp());
 		if(subNode instanceof SqlNodeEmpty) {
 			return subNode;
 		}
 
-		SqlNode result = SqlNodeBinding.slice(subNode, generator, op.getStart(), op.getLength());
+		SqlNodeOld result = SqlNodeBinding.slice(subNode, generator, op.getStart(), op.getLength());
 		return result;
 	}
 
 	
-	public SqlNode rewrite(ColRelGenerator generator, OpFilterIndexed filter) {
-		SqlNode subNode = rewriteMM(generator, filter.getSubOp());		
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpFilterIndexed filter) {
+		SqlNodeOld subNode = rewriteMM(generator, filter.getSubOp());		
 		if(subNode instanceof SqlNodeEmpty) {
 			return subNode;
 		}
@@ -304,47 +304,47 @@ public class ViewRewriter {
 			exprs.add(ExprUtils.orifyBalanced(clause.getExprs()));
 		}
 		
-		SqlNode result = SqlNodeBinding.filter(subNode, exprs, generator);
+		SqlNodeOld result = SqlNodeBinding.filter(subNode, exprs, generator);
 		return result;
 	}
 	
-	public SqlNode rewrite(ColRelGenerator generator, OpFilter filter) {
-		SqlNode subNode = rewriteMM(generator, filter.getSubOp());
-		SqlNode result = SqlNodeBinding.filter(subNode, filter.getExprs(), generator);
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpFilter filter) {
+		SqlNodeOld subNode = rewriteMM(generator, filter.getSubOp());
+		SqlNodeOld result = SqlNodeBinding.filter(subNode, filter.getExprs(), generator);
 		return result;
 	}
 
-	public SqlNode rewrite(ColRelGenerator generator, OpProject op) {
-		SqlNode subNode = rewriteMM(generator, op.getSubOp());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpProject op) {
+		SqlNodeOld subNode = rewriteMM(generator, op.getSubOp());
 		if(subNode instanceof SqlNodeEmpty) {
 			return subNode;
 		}
 
 
-		SqlNode result = SqlNodeBinding.project(subNode, op.getVars(), generator);
+		SqlNodeOld result = SqlNodeBinding.project(subNode, op.getVars(), generator);
 		
 		return result;
 	}
 	
-	public SqlNode rewrite(ColRelGenerator generator, OpGroup op) {
-		SqlNode subNode = rewriteMM(generator, op.getSubOp());
-		SqlNode result = SqlNodeBinding.group(subNode, op.getGroupVars(), op.getAggregators(), generator.forColumn());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpGroup op) {
+		SqlNodeOld subNode = rewriteMM(generator, op.getSubOp());
+		SqlNodeOld result = SqlNodeBinding.group(subNode, op.getGroupVars(), op.getAggregators(), generator.forColumn());
 		
 		return result;
 	}
 	
-	public SqlNode rewrite(ColRelGenerator generator, OpOrder order) {
-		SqlNode subNode = rewriteMM(generator, order.getSubOp());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpOrder order) {
+		SqlNodeOld subNode = rewriteMM(generator, order.getSubOp());
 		if(subNode instanceof SqlNodeEmpty) {
 			return subNode;
 		}
 
-		SqlNode result = SqlNodeBinding.order(subNode, order.getConditions(), generator);
+		SqlNodeOld result = SqlNodeBinding.order(subNode, order.getConditions(), generator);
 		return result;
 	}
 	
 	
-	public SqlNode rewriteMM(Op op)
+	public SqlNodeOld rewriteMM(Op op)
 		throws EmptyRewriteException
 	{
 		if(op instanceof OpNull) {
@@ -358,20 +358,20 @@ public class ViewRewriter {
 	}
 	
 	
-	public SqlNode rewrite(ColRelGenerator generator, OpExtend op) {		
-		SqlNode subNode = rewriteMM(generator, op.getSubOp());
+	public SqlNodeOld rewrite(ColRelGenerator generator, OpExtend op) {		
+		SqlNodeOld subNode = rewriteMM(generator, op.getSubOp());
 		if(subNode instanceof SqlNodeEmpty) {
 			return subNode;
 		}
 
-		SqlNode result = SqlNodeBinding.extend(subNode, op.getVarExprList());
+		SqlNodeOld result = SqlNodeBinding.extend(subNode, op.getVarExprList());
 		return result;
 		
 	}
 	
-	public SqlNode rewriteMM(ColRelGenerator generator, Op op) {
+	public SqlNodeOld rewriteMM(ColRelGenerator generator, Op op) {
 
-		SqlNode result = (SqlNode) MultiMethod.invoke(this, "rewrite", generator, op);
+		SqlNodeOld result = (SqlNodeOld) MultiMethod.invoke(this, "rewrite", generator, op);
 		/*
 		if(result instanceof SqlNodeEmpty) {
 			throw new RuntimeException("empty rewrite");

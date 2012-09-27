@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.domain;
 
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.OpVisitor;
@@ -11,13 +11,13 @@ import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 public class OpSqlBridge
 	extends Op0
 {
-	private SqlNode sqlNode;
+	private SqlNodeOld sqlNode;
 	
-	public OpSqlBridge(SqlNode sqlNode) {
+	public OpSqlBridge(SqlNodeOld sqlNode) {
 		this.sqlNode = sqlNode;
 	}
 	
-	public SqlNode getSqlNode()
+	public SqlNodeOld getSqlNode()
 	{
 		return sqlNode;
 	}

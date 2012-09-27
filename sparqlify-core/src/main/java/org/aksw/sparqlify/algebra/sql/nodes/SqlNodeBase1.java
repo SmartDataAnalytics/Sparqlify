@@ -8,34 +8,34 @@ import java.util.List;
 public abstract class SqlNodeBase1
 	extends SqlNodeBase
 {
-	protected SqlNode subNode;
+	protected SqlNodeOld subNode;
 
-	public SqlNodeBase1(String aliasName, SqlNode subNode) {
+	public SqlNodeBase1(String aliasName, SqlNodeOld subNode) {
 		super(aliasName);
 		this.subNode = subNode;
 	}
 
-	public SqlNode getSubNode()
+	public SqlNodeOld getSubNode()
 	{
 		return subNode;
 	}
 	
 	@Override
-	public SqlNode copy(SqlNode... nodes) {
+	public SqlNodeOld copy(SqlNodeOld... nodes) {
 		checkValidArgsForCopy(nodes);
 		return copy1(nodes[0]);
 	}
 
-	void checkValidArgsForCopy(SqlNode[] args) {
+	void checkValidArgsForCopy(SqlNodeOld[] args) {
 		if(args.length != 0) {
 			throw new RuntimeException("Invalid number of arguments");
 		}
 	}
 	
-	abstract SqlNode copy1(SqlNode subNode);
+	abstract SqlNodeOld copy1(SqlNodeOld subNode);
 	
 	@Override
-	public List<SqlNode> getArgs() {
+	public List<SqlNodeOld> getArgs() {
 		return Arrays.asList(subNode);
 	}
 }

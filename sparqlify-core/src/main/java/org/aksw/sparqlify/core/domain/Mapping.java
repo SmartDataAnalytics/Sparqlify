@@ -1,6 +1,11 @@
 package org.aksw.sparqlify.core.domain;
 
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+
+import com.hp.hpl.jena.sparql.core.Var;
 
 
 /**
@@ -17,12 +22,13 @@ public class Mapping
 //	TODO: A mapping is an algebraic entity extends Op
 {
 	private VarDefinition varDefinition;
-	private SqlNode sqlNode;
+	
+	private SqlOp sqlOp;
 
 
-	public Mapping(SqlNode sqlNode) {
+	public Mapping(SqlOp sqlOp) {
 		this.varDefinition = new VarDefinition();
-		this.sqlNode = sqlNode;
+		this.sqlOp = sqlOp;
 	}
 
 
@@ -31,9 +37,9 @@ public class Mapping
 	 * 
 	 * @param other
 	 */
-	public Mapping(VarDefinition varDefinition, SqlNode sqlNode) {
+	public Mapping(VarDefinition varDefinition, SqlOp sqlOp) {
 		this.varDefinition = varDefinition;
-		this.sqlNode = sqlNode;
+		this.sqlOp = sqlOp;
 	}
 
 
@@ -42,8 +48,8 @@ public class Mapping
 	}
 
 
-	public SqlNode getSqlNode() {
-		return sqlNode;
+	public SqlOp getSqlOp() {
+		return sqlOp;
 	}
 	
 	
@@ -57,7 +63,7 @@ public class Mapping
 	@Override
 	public String toString() {
 		return "Mapping [varDefinition=" + varDefinition
-				+ ", sqlNode=" + sqlNode + "]";
+				+ ", sqlOp=" + sqlOp + "]";
 	}
 
 
@@ -65,7 +71,7 @@ public class Mapping
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((sqlNode == null) ? 0 : sqlNode.hashCode());
+		result = prime * result + ((sqlOp == null) ? 0 : sqlOp.hashCode());
 		result = prime
 				* result
 				+ ((varDefinition == null) ? 0 : varDefinition
@@ -83,10 +89,10 @@ public class Mapping
 		if (getClass() != obj.getClass())
 			return false;
 		Mapping other = (Mapping) obj;
-		if (sqlNode == null) {
-			if (other.sqlNode != null)
+		if (sqlOp == null) {
+			if (other.sqlOp != null)
 				return false;
-		} else if (!sqlNode.equals(other.sqlNode))
+		} else if (!sqlOp.equals(other.sqlOp))
 			return false;
 		if (varDefinition == null) {
 			if (other.varDefinition != null)

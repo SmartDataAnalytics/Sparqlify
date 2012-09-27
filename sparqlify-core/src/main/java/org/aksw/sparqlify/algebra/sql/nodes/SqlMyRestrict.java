@@ -38,7 +38,7 @@ public class SqlMyRestrict
 {
 	private SqlExprList conditions = new SqlExprList();
 
-	public SqlMyRestrict(String aliasName, SqlNode subNode) {
+	public SqlMyRestrict(String aliasName, SqlNodeOld subNode) {
 		super(aliasName, subNode);
 	}
 	
@@ -48,7 +48,7 @@ public class SqlMyRestrict
 	}
 
 	@Override
-	SqlNode copy1(SqlNode subNode) {
+	SqlNodeOld copy1(SqlNodeOld subNode) {
 		return new SqlMyRestrict(getAliasName(), subNode);
 	}	
 }

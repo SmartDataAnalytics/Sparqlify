@@ -1,7 +1,11 @@
 package org.aksw.sparqlify.core.domain;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.hp.hpl.jena.sparql.core.QuadPattern;
+import com.hp.hpl.jena.sparql.core.Var;
 
 
 /**
@@ -9,6 +13,7 @@ import com.hp.hpl.jena.sparql.core.QuadPattern;
  * - A name
  * - A template (a set of quad patterns)
  * - A mapping
+ * - A set of references to variables declared in other view definitions.
  * 
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
@@ -16,11 +21,17 @@ import com.hp.hpl.jena.sparql.core.QuadPattern;
 public class ViewDefinition {
 	private String name;
 	
-	// Note: all quads in the template must be composed of variables only
+	// Note: all quads in the template must (should?) be composed of variables only
 	// Constants and expressions are associated to a variable in the mapping
 	// object.
 	private QuadPattern template;
 	private Mapping mapping;
+	
+	// References to variables declaced in other views. Useful for efficient
+	// mapping table handling, as self join elimination can be applied.
+	// Corresponds to R2RML's rr:join.
+	private Map<Var, VarReference> varReferences = new HashMap<Var, VarReference>();
+
 	
 	// The source can point to an arbitrary object from
 	// which this view definition was derived.
@@ -33,11 +44,12 @@ public class ViewDefinition {
 	// definition).
 	private Object source;
 
-	private ViewDefinition(String name, QuadPattern template, Mapping mapping, Object source)
+	private ViewDefinition(String name, QuadPattern template, Map<Var, VarReference> varReferences, Mapping mapping, Object source)
 	{
 		this.name = name;
 		this.template = template;
 		this.mapping = mapping;
+		this.varReferences = varReferences;
 		this.source = source;
 	}
 
@@ -56,6 +68,10 @@ public class ViewDefinition {
 		return mapping;
 	}
 
+	
+	public Map<Var, VarReference> getVarReferences() {
+		return varReferences;
+	}
 
 	public Object getSource() {
 		return source;

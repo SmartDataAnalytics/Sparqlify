@@ -2,6 +2,8 @@ package org.aksw.sparqlify.core.domain;
 
 import org.aksw.sparqlify.restriction.RestrictionSet;
 
+import com.hp.hpl.jena.sparql.expr.Expr;
+
 /**
  * [SPARQL level]
  * 
@@ -18,30 +20,30 @@ import org.aksw.sparqlify.restriction.RestrictionSet;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class RestrictedExpr<T> {
-	private T expr;
+public class RestrictedExpr {
+	private Expr expr;
 	private RestrictionSet restrictions;
 
-	public RestrictedExpr(T expr) {
+	public RestrictedExpr(Expr expr) {
 		this(expr, new RestrictionSet());
 	}
 
-	public RestrictedExpr(T expr, RestrictionSet restrictions) {
+	public RestrictedExpr(Expr expr, RestrictionSet restrictions) {
 		super();
 		this.expr = expr;
 		this.restrictions = restrictions;
 	}
 
-	public static <T> RestrictedExpr<T> create(T expr) {
-		return new RestrictedExpr<T>(expr);
+	public static RestrictedExpr create(Expr expr) {
+		return new RestrictedExpr(expr);
 	}
 
-	public static <T> RestrictedExpr<T> create(T expr, RestrictionSet restrictions) {
-		return new RestrictedExpr<T>(expr, restrictions);
+	public static RestrictedExpr create(Expr expr, RestrictionSet restrictions) {
+		return new RestrictedExpr(expr, restrictions);
 	}
 
 	
-	public T getExpr() {
+	public Expr getExpr() {
 		return expr;
 	}
 	
@@ -74,7 +76,7 @@ public class RestrictedExpr<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RestrictedExpr<?> other = (RestrictedExpr<?>) obj;
+		RestrictedExpr other = (RestrictedExpr) obj;
 		if (expr == null) {
 			if (other.expr != null)
 				return false;

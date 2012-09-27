@@ -32,7 +32,7 @@ public class SqlNodeEmpty
 	}
 
 	@Override
-	public SqlNode copy0() {
+	public SqlNodeOld copy0() {
 		return new SqlNodeEmpty("not set");
 	}
 }

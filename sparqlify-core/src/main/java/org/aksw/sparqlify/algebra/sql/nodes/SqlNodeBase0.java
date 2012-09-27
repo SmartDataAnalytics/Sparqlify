@@ -12,21 +12,21 @@ public abstract class SqlNodeBase0
 	}
 
 	@Override
-	public SqlNode copy(SqlNode... nodes) {
+	public SqlNodeOld copy(SqlNodeOld... nodes) {
 		checkValidArgsForCopy(nodes);
 		return copy0();
 	}
 
-	void checkValidArgsForCopy(SqlNode[] args) {
+	void checkValidArgsForCopy(SqlNodeOld[] args) {
 		if(args.length != 0) {
 			throw new RuntimeException("Invalid number of arguments");
 		}
 	}
 	
-	abstract SqlNode copy0();
+	abstract SqlNodeOld copy0();
 	
 	@Override
-	public List<SqlNode> getArgs() {
+	public List<SqlNodeOld> getArgs() {
 		return Collections.emptyList();
 	}
 }

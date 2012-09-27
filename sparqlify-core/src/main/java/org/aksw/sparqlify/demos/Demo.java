@@ -5,7 +5,7 @@ import java.sql.Statement;
 import java.util.TreeSet;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
@@ -74,7 +74,7 @@ public class Demo {
 	
 		//
 		ViewRewriter sqlRewriter = new ViewRewriter();
-		SqlNode sqlNode = sqlRewriter.rewriteMM(view);
+		SqlNodeOld sqlNode = sqlRewriter.rewriteMM(view);
 		
 		System.out.println("Final sparql var mapping = " + sqlNode.getSparqlVarToExprs());
 		

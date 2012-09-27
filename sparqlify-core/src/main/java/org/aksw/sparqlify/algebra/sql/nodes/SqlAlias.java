@@ -9,12 +9,12 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 public class SqlAlias
 	extends SqlNodeBase1
 {
-	public SqlAlias(String aliasName, SqlNode subNode) {
+	public SqlAlias(String aliasName, SqlNodeOld subNode) {
 		super(aliasName, subNode);
 	}
 
 	@Override
-	public SqlNode copy1(SqlNode subNode) {
+	public SqlNodeOld copy1(SqlNodeOld subNode) {
 		return new SqlAlias(this.getAliasName(), subNode);
 	}
 }

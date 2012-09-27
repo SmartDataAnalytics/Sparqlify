@@ -6,39 +6,39 @@ import java.util.List;
 public abstract class SqlNodeBase2
 	extends SqlNodeBase
 {
-	private SqlNode left;
-	private SqlNode right;
+	private SqlNodeOld left;
+	private SqlNodeOld right;
 	
-	public SqlNodeBase2(String aliasName, SqlNode left, SqlNode right) {
+	public SqlNodeBase2(String aliasName, SqlNodeOld left, SqlNodeOld right) {
 		super(aliasName);
 		this.left = left;
 		this.right = right;
 	}
 
-	public SqlNode getLeft() {
+	public SqlNodeOld getLeft() {
 		return left;
 	}
 
-	public SqlNode getRight() {
+	public SqlNodeOld getRight() {
 		return right;
 	}
 
 	@Override
-	public SqlNode copy(SqlNode... nodes) {
+	public SqlNodeOld copy(SqlNodeOld... nodes) {
 		checkValidArgsForCopy(nodes);
 		return copy2(nodes[0], nodes[1]);
 	}
 
-	void checkValidArgsForCopy(SqlNode[] args) {
+	void checkValidArgsForCopy(SqlNodeOld[] args) {
 		if(args.length != 0) {
 			throw new RuntimeException("Invalid number of arguments");
 		}
 	}
 
-	abstract SqlNode copy2(SqlNode left, SqlNode right);
+	abstract SqlNodeOld copy2(SqlNodeOld left, SqlNodeOld right);
 	
 	@Override
-	public List<SqlNode> getArgs() {
+	public List<SqlNodeOld> getArgs() {
 		return Arrays.asList(left, right);
 	}
 }

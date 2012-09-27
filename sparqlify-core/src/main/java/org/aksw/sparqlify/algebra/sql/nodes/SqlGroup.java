@@ -9,13 +9,13 @@ public class SqlGroup
 {
 	private List<SqlExprAggregator> aggregators;
 	
-	public SqlGroup(SqlNode subNode, List<SqlExprAggregator> aggregators) {
+	public SqlGroup(SqlNodeOld subNode, List<SqlExprAggregator> aggregators) {
 		super("group", subNode);
 		this.aggregators = aggregators;
 	}
 
 	@Override
-	SqlNode copy1(SqlNode subNode) {
+	SqlNodeOld copy1(SqlNodeOld subNode) {
 		return new SqlGroup(subNode, aggregators);
 	}
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 import mapping.RenamerNodes;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.config.lang.Constraint;
@@ -315,7 +315,7 @@ public class SparqlView
 		
 		//System.out.println("Binding = " + binding);
 
-		SqlNode sqlExpr;
+		SqlNodeOld sqlExpr;
 		if(sqlStr.startsWith("select")) {
 			sqlExpr = new SqlQuery(null, sqlStr);
 		} else {

@@ -3,16 +3,16 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 public class SqlDistinct
 	extends SqlNodeBase1
 {
-	public SqlDistinct(SqlNode subNode) {
+	public SqlDistinct(SqlNodeOld subNode) {
 		super(null, subNode);
 	}
 
-	public SqlDistinct(String aliasName, SqlNode subNode) {
+	public SqlDistinct(String aliasName, SqlNodeOld subNode) {
 		super(aliasName, subNode);
 	}
 
 	@Override
-	SqlNode copy1(SqlNode subNode) {
+	SqlNodeOld copy1(SqlNodeOld subNode) {
 		return new SqlDistinct(getAliasName(), subNode);
 	}
 }

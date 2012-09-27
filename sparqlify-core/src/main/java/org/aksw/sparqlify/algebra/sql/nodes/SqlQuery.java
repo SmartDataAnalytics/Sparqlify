@@ -32,7 +32,7 @@ public class SqlQuery
 	}
 
 	@Override
-	SqlNode copy0() {
+	SqlNodeOld copy0() {
 		return null;
 	}	
 }

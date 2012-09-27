@@ -18,7 +18,7 @@ import com.hp.hpl.jena.sparql.core.Var;
  * @author raven
  *
  */
-public interface SqlNode {
+public interface SqlNodeOld {
 
 	ConstraintContainer getConstraints();
 	
@@ -64,9 +64,9 @@ public interface SqlNode {
 	
 	String getAliasName();
 
-	List<SqlNode> getArgs();
+	List<SqlNodeOld> getArgs();
 	
-	abstract SqlNode copy(SqlNode ...nodes);
+	abstract SqlNodeOld copy(SqlNodeOld ...nodes);
 	
 	
 	void write(IndentedWriter writer);

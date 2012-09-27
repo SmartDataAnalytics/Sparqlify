@@ -20,7 +20,7 @@ import com.hp.hpl.jena.sparql.core.Var;
  public void()
  }*/
 
-public abstract class SqlNodeBase implements SqlNode {
+public abstract class SqlNodeBase implements SqlNodeOld {
 	protected String aliasName;
 	private Multimap<Var, VarDef> sparqlVarToExpr = HashMultimap.create();
 
@@ -117,7 +117,7 @@ public abstract class SqlNodeBase implements SqlNode {
 	{
 		writer.println( "(" + this.getClass().getSimpleName());
 		writer.incIndent();
-		for(SqlNode arg : this.getArgs()) {
+		for(SqlNodeOld arg : this.getArgs()) {
 			arg.write(writer);
 		}
 		writer.decIndent();

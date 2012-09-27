@@ -6,7 +6,7 @@ import java.util.List;
 public class SqlUnionN
 	extends SqlNodeBaseN
 {
-	public SqlUnionN(String aliasName, List<SqlNode> args) {
+	public SqlUnionN(String aliasName, List<SqlNodeOld> args) {
 		super(aliasName, args);
 	}
 
@@ -15,7 +15,7 @@ public class SqlUnionN
 	}
 
 	@Override
-	public SqlNode copy(SqlNode... nodes) {
+	public SqlNodeOld copy(SqlNodeOld... nodes) {
 		// XXX WAS NULL
 		return new SqlUnionN(this.getAliasName(), Arrays.asList(nodes));
 	}	

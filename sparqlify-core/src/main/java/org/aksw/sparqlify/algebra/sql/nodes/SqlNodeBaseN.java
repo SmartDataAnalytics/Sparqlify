@@ -6,19 +6,19 @@ import java.util.List;
 public abstract class SqlNodeBaseN
 	extends SqlNodeBase
 {
-	private List<SqlNode> args;
+	private List<SqlNodeOld> args;
 	
 	public SqlNodeBaseN(String aliasName) {
 		super(aliasName);
-		args = new ArrayList<SqlNode>();
+		args = new ArrayList<SqlNodeOld>();
 	}
 
-	public SqlNodeBaseN(String aliasName, List<SqlNode> args) {
+	public SqlNodeBaseN(String aliasName, List<SqlNodeOld> args) {
 		super(aliasName);
 		this.args = args;
 	}
 	
-	public List<SqlNode> getArgs() {
+	public List<SqlNodeOld> getArgs() {
 		return args;
 	}
 

@@ -26,7 +26,7 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfUnionViewPattern;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
@@ -302,7 +302,7 @@ public class RdfViewSystemOld
 	}
 
 	
-	public static SqlQuery getTableOrQueryAsQuery(SqlNode node) {
+	public static SqlQuery getTableOrQueryAsQuery(SqlNodeOld node) {
 		if(node instanceof SqlQuery) {
 			return (SqlQuery)node;
 		} else if(node instanceof SqlTable) {
@@ -1053,7 +1053,7 @@ public class RdfViewSystemOld
 			
 			//Gensym generator = Gensym.create("a");
 			ColRelGenerator generator = new ColRelGenerator();
-			SqlNode sqlNode = rewriter.rewriteMM(generator, testEmptyOp);
+			SqlNodeOld sqlNode = rewriter.rewriteMM(generator, testEmptyOp);
 			
 			
 			// Check if rewriting makes it unsatisfiable

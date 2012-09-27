@@ -9,7 +9,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlGroup;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlMyRestrict;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlProjection;
@@ -35,7 +35,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlUnionN;
  */
 public class SqlSelectBlockCollector {
 
-	public static void copyProjection(SqlNode target, SqlNode source) {
+	public static void copyProjection(SqlNodeOld target, SqlNodeOld source) {
 		target.getSparqlVarToExprs().clear();
 		target.getAliasToColumn().clear();
 		
@@ -44,7 +44,7 @@ public class SqlSelectBlockCollector {
 		target.getAliasToColumn().putAll(source.getAliasToColumn());		
 	}
 	
-	public static SqlSelectBlock _makeSelect(SqlNode node) {
+	public static SqlSelectBlock _makeSelect(SqlNodeOld node) {
 		SqlSelectBlock result = MultiMethod.invokeStatic(SqlSelectBlockCollector.class, "makeSelect", node);
 		
 		copyProjection(result, node);
@@ -122,7 +122,7 @@ public class SqlSelectBlockCollector {
 		//throw new RuntimeException("Should not come here");
 		
 
-    	SqlNode result = _makeSelectOrTable(node.getSubNode());    	
+    	SqlNodeOld result = _makeSelectOrTable(node.getSubNode());    	
     	
 
 		SqlSelectBlock wrap = new SqlSelectBlock(node.getAliasName(), result);
@@ -169,15 +169,15 @@ public class SqlSelectBlockCollector {
 	}
 	
 	public static SqlSelectBlock makeSelect(SqlJoin node) {
-		SqlNode join = makeSelectOrTable(node);
+		SqlNodeOld join = makeSelectOrTable(node);
 		
 		return new SqlSelectBlock(join);
 	}
 	
 	public static SqlSelectBlock makeSelect(SqlUnionN node) {
     	// Wrap all elements of the union
-    	List<SqlNode> wrapped = new ArrayList<SqlNode>();
-    	for(SqlNode arg : node.getArgs()) {
+    	List<SqlNodeOld> wrapped = new ArrayList<SqlNodeOld>();
+    	for(SqlNodeOld arg : node.getArgs()) {
     		SqlSelectBlock argSelect = _makeSelect(arg);
     		
     		/*
@@ -204,29 +204,29 @@ public class SqlSelectBlockCollector {
     	return result;
 	}
 		
-	public static SqlNode _makeSelectOrTable(SqlNode node) {
+	public static SqlNodeOld _makeSelectOrTable(SqlNodeOld node) {
 		return MultiMethod.invokeStatic(SqlSelectBlockCollector.class, "makeSelectOrTable", node);		
 	}
 
-	public static SqlNode makeSelectOrTable(SqlNodeEmpty node) {
+	public static SqlNodeOld makeSelectOrTable(SqlNodeEmpty node) {
 		// Should never come here
 		return node;
 	}
 
-	public static SqlNode makeSelectOrTable(SqlProjection node) {
+	public static SqlNodeOld makeSelectOrTable(SqlProjection node) {
 		return _makeSelect(node);
 	}
 
-	public static SqlNode makeSelectOrTable(SqlTable node) {
+	public static SqlNodeOld makeSelectOrTable(SqlTable node) {
 		return node;
 	}
 	
-	public static SqlNode makeSelectOrTable(SqlQuery node) {
+	public static SqlNodeOld makeSelectOrTable(SqlQuery node) {
 		return node;
 	}
 	
-	public static SqlNode makeSelectOrTable(SqlAlias node) {
-    	SqlNode tmp = _makeSelectOrTable(node.getSubNode());    	
+	public static SqlNodeOld makeSelectOrTable(SqlAlias node) {
+    	SqlNodeOld tmp = _makeSelectOrTable(node.getSubNode());    	
 		
     	SqlAlias result = new SqlAlias(node.getAliasName(), tmp);
     	copyProjection(result, node);
@@ -234,22 +234,22 @@ public class SqlSelectBlockCollector {
     	return result;
 	}
 	
-	public static SqlNode makeSelectOrTable(SqlMyRestrict node) {
+	public static SqlNodeOld makeSelectOrTable(SqlMyRestrict node) {
 		return _makeSelect(node);		
 	}
 
-	public static SqlNode makeSelectOrTable(SqlSlice node) {		
+	public static SqlNodeOld makeSelectOrTable(SqlSlice node) {		
 		return _makeSelect(node);
 	}
 
-	public static SqlNode makeSelectOrTable(SqlDistinct node) {		
+	public static SqlNodeOld makeSelectOrTable(SqlDistinct node) {		
 		return _makeSelect(node);
 	}
 
 	
-	public static SqlNode makeSelectOrTable(SqlJoin node) {
-		SqlNode left = _makeSelectOrTable(node.getLeft());
-		SqlNode right = _makeSelectOrTable(node.getRight());
+	public static SqlNodeOld makeSelectOrTable(SqlJoin node) {
+		SqlNodeOld left = _makeSelectOrTable(node.getLeft());
+		SqlNodeOld right = _makeSelectOrTable(node.getRight());
 		
 		SqlJoin join = SqlJoin.create(node.getJoinType(), left, right);
 		join.getConditions().addAll(node.getConditions());
@@ -258,7 +258,7 @@ public class SqlSelectBlockCollector {
 		return join;
 	}
 	
-	public static SqlNode makeSelectOrTable(SqlUnionN node) {
+	public static SqlNodeOld makeSelectOrTable(SqlUnionN node) {
 		return makeSelect(node);
 	}
 	

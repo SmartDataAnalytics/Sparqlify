@@ -22,7 +22,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlSortCondition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlAlias;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSelectBlock;
@@ -50,7 +50,7 @@ public class SqlAlgebraToString
 	
 	private static DatatypeToStringPostgres castFactory = new DatatypeToStringPostgres();
 	
-	public static String makeString(SqlNode node) {
+	public static String makeString(SqlNodeOld node) {
 		
 		SqlAlgebraToString transformer = new SqlAlgebraToString();
 		
@@ -63,7 +63,7 @@ public class SqlAlgebraToString
 		//return (String)MultiMethod.invokeStatic(SqlAlgebraToString.class, "_asString", node);
 	}
 	
-	public void asString(SqlNode node, IndentedWriter writer) {
+	public void asString(SqlNodeOld node, IndentedWriter writer) {
 		
 		SqlAlgebraToString transformer = new SqlAlgebraToString();
 		
@@ -202,7 +202,7 @@ public class SqlAlgebraToString
 	 * 
 	 * @param node
 	 */
-	public static void groupBy(Var var, SqlNode target, SqlNode node, Generator generator) {
+	public static void groupBy(Var var, SqlNodeOld target, SqlNodeOld node, Generator generator) {
 		Collection<VarDef> tmp = node.getSparqlVarToExprs().get(var);
 		
 		// We need to group even if there is just a single expression for the var
@@ -367,7 +367,7 @@ public class SqlAlgebraToString
 	}
 	
 	
-	public static String getAliasName(SqlNode node) {
+	public static String getAliasName(SqlNodeOld node) {
 		if(node.getAliasName() == null || node.getAliasName().isEmpty()) {
 			return "";
 		} else {
@@ -559,7 +559,7 @@ public class SqlAlgebraToString
     	List<String> parts = new ArrayList<String>();
     	
     	for(int i = 0; i < node.getArgs().size(); ++i) {
-    		SqlNode arg = node.getArgs().get(i);
+    		SqlNodeOld arg = node.getArgs().get(i);
     	//for(SqlNode arg : node.getArgs()) {
     		
     		//String part = "SELECT " + projection(arg.getColumnToSqlExpr()) + " FROM " + asString(arg) + " " + arg.getAliasName() + "";
@@ -603,7 +603,7 @@ public class SqlAlgebraToString
     }*/
     
     
-    public void asStringJoinU(SqlNode node, String aliasName, IndentedWriter writer) {
+    public void asStringJoinU(SqlNodeOld node, String aliasName, IndentedWriter writer) {
     	asString(node, writer);
 
 

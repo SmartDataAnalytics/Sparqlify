@@ -40,7 +40,7 @@ public class SqlSelectBlock
     	return isLocked;
     }
     
-    public SqlSelectBlock(SqlNode node) {
+    public SqlSelectBlock(SqlNodeOld node) {
     	this(node.getAliasName(), node);
     	
     	/*
@@ -49,7 +49,7 @@ public class SqlSelectBlock
     	*/
     }
     
-	public SqlSelectBlock(String aliasName, SqlNode sqlNode) {
+	public SqlSelectBlock(String aliasName, SqlNodeOld sqlNode) {
 		super(aliasName, sqlNode);
 	}
 
@@ -65,7 +65,7 @@ public class SqlSelectBlock
 		return subNode.getAliasName();
 	}*/
 	
-	public void setSubNode(SqlNode subNode) {
+	public void setSubNode(SqlNodeOld subNode) {
 		if(this.subNode != null) {
 			throw new RuntimeException("Child already set");
 		}
@@ -146,7 +146,7 @@ public class SqlSelectBlock
 	}
 	
 	@Override
-	public SqlSelectBlock copy1(SqlNode subNode) {
+	public SqlSelectBlock copy1(SqlNodeOld subNode) {
 		return new SqlSelectBlock(this.getAliasName(), subNode);
 	}
 
@@ -186,7 +186,7 @@ public class SqlSelectBlock
 
     //public static final Long NOT_SET = SqlBlock.NOT_SET;
 
-    static public SqlNode distinct(Generator generator, SqlNode sqlNode)
+    static public SqlNodeOld distinct(Generator generator, SqlNodeOld sqlNode)
     { 
         SqlSelectBlock block = blockWithView(generator, sqlNode) ;
         block.setDistinct(true) ;
@@ -229,7 +229,7 @@ public class SqlSelectBlock
     }*/
 
 
-    public static SqlNode restrict(Generator generator, SqlNode sqlNode, SqlExprList exprs)
+    public static SqlNodeOld restrict(Generator generator, SqlNodeOld sqlNode, SqlExprList exprs)
     {
         if ( exprs.size() == 0 )
             return sqlNode ;
@@ -241,7 +241,7 @@ public class SqlSelectBlock
     }
   
         
-    private static SqlSelectBlock _create(SqlNode sqlNode, Generator generator)
+    private static SqlSelectBlock _create(SqlNodeOld sqlNode, Generator generator)
     {
         String alias = sqlNode.getAliasName() ;
         //if ( ! sqlNode.isTable() )
@@ -289,7 +289,7 @@ public class SqlSelectBlock
         //return block ;
     }
 
-    private static SqlSelectBlock blockPlain(Generator generator,SqlNode sqlNode)
+    private static SqlSelectBlock blockPlain(Generator generator,SqlNodeOld sqlNode)
     {
         if ( sqlNode instanceof SqlSelectBlock )
             return (SqlSelectBlock)sqlNode ;
@@ -299,7 +299,7 @@ public class SqlSelectBlock
         return block ;
     }
 
-    private static SqlSelectBlock blockWithView(Generator generator, SqlNode sqlNode)
+    private static SqlSelectBlock blockWithView(Generator generator, SqlNodeOld sqlNode)
     {
         if (sqlNode instanceof SqlSelectBlock )
         {
@@ -321,7 +321,7 @@ public class SqlSelectBlock
         return block ;
     }
     
-    private static SqlSelectBlock blockNoView(Generator generator, SqlNode sqlNode)
+    private static SqlSelectBlock blockNoView(Generator generator, SqlNodeOld sqlNode)
     {
         if ( sqlNode instanceof SqlSelectBlock ) {
             return (SqlSelectBlock)sqlNode ;
@@ -332,7 +332,7 @@ public class SqlSelectBlock
 
     static private void calcView(SqlSelectBlock block)
     {
-        SqlNode sqlNode = block.getSubNode() ;
+        SqlNodeOld sqlNode = block.getSubNode() ;
         ScopeBase idScopeRename = new ScopeBase() ;
         ScopeBase nodeScopeRename = new ScopeBase() ;
         Generator gen = Gensym.create("X") ;    // Column names.  Not global.

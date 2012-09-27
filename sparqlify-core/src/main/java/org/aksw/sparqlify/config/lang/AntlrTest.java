@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -275,7 +275,7 @@ public class AntlrTest {
 		
 		System.out.println("Binding = " + binding);
 
-		SqlNode sqlExpr;
+		SqlNodeOld sqlExpr;
 		if(sqlStr.startsWith("select")) {
 			sqlExpr = new SqlQuery(null, sqlStr);
 		} else {

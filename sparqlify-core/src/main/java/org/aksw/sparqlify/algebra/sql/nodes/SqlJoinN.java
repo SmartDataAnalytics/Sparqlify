@@ -7,7 +7,7 @@ public class SqlJoinN
 	extends SqlNodeBaseN
 {
 
-	public SqlJoinN(String aliasName, List<SqlNode> args) {
+	public SqlJoinN(String aliasName, List<SqlNodeOld> args) {
 		super(aliasName, args);
 	}
 
@@ -16,7 +16,7 @@ public class SqlJoinN
 	}
 
 	@Override
-	public SqlNode copy(SqlNode... nodes) {
+	public SqlNodeOld copy(SqlNodeOld... nodes) {
 		return new SqlUnionN(null, Arrays.asList(nodes));
 	}
 

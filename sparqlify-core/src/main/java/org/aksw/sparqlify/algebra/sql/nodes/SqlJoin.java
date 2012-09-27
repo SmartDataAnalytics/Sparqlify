@@ -41,11 +41,11 @@ public class SqlJoin
 
 
 
-	public static SqlJoin create(JoinType joinType, SqlNode left, SqlNode right) {
+	public static SqlJoin create(JoinType joinType, SqlNodeOld left, SqlNodeOld right) {
 		return new SqlJoin(null, joinType, left, right);
 	}
 	
-	public SqlJoin(String aliasName, JoinType joinType, SqlNode left, SqlNode right) {
+	public SqlJoin(String aliasName, JoinType joinType, SqlNodeOld left, SqlNodeOld right) {
 		super(aliasName, left, right);
 		this.joinType = joinType;
 	}
@@ -73,7 +73,7 @@ public class SqlJoin
 	}
 
 	@Override
-	SqlJoin copy2(SqlNode left, SqlNode right) {
+	SqlJoin copy2(SqlNodeOld left, SqlNodeOld right) {
 		// TODO Auto-generated method stub
 		return null;
 	}

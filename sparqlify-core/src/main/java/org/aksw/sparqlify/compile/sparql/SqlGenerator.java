@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.compile.sparql;
 
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNode;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 
 public class SqlGenerator
 {
@@ -73,7 +73,7 @@ public class SqlGenerator
 	 * @param nodeBinding
 	 * @return
 	 */
-	public String generateMM(SqlNode node)
+	public String generateMM(SqlNodeOld node)
 	{
 		/*
 		if(node instanceof SqlNodeEmpty) {
@@ -97,7 +97,7 @@ public class SqlGenerator
 		//SqlSelectBlock block = new SqlSelectBlock("root", node);
 		
 		//Generator generator = Gensym.create("a");
-		SqlNode block = SqlSelectBlockCollector._makeSelect(node);
+		SqlNodeOld block = SqlSelectBlockCollector._makeSelect(node);
 		
 		
 		block.getSparqlVarToExprs().putAll(node.getSparqlVarToExprs());
