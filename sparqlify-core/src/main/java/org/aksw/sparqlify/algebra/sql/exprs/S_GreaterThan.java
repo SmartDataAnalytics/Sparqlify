@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystem;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 public class S_GreaterThan
 	extends SqlExpr2

@@ -16,8 +16,6 @@ import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystem;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
@@ -26,6 +24,9 @@ import org.aksw.sparqlify.algebra.sql.exprs.S_Regex;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
+import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,48 +49,7 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprFunction2;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
-
-
-/**
- * 
- * The following optimizations are currently implemented:
- * 
- * - f(argsA) = f(argsB) -> argA_0 = argB_0 && ... && argA_n = argB_n
- *   Currently this rule is always applied, however it is only true for
- *   deterministic, side-effect free functions.
- *   It will cause pitfalls if anyone every tried something like rand() = rand():
- *   This will return always true (i think - but maybe not)
- *    
- * 
- * The following optimizations are about to be implemented:
- * 
- * - Inverse function on variables
- *  op(f(expr_with_vars), const) -> op(expr_with_var, f^-1(const)) (if f^-1 exists) 
- * 
- *    op can be =, <, > ... (not sure right now whether the shift in semantics is acceptable)
- *    Also note, that this optization currently does not take function indexes into account.
- *    So if there was in index f(x) our optimization would be wrong in thinking that using x alone is better.
- *    
- * 
- * 
- * 
- * @author Claus Stadler
- *
- */
-
-class Alignment
-extends Pair<List<Expr>, List<Expr>>
-{
-public Alignment(List<Expr> key, List<Expr> value) {
-	super(key, value);
-}		
-
-	public boolean isSameSize() {
-		return this.getKey().size() == this.getValue().size();
-	}
-}
 
 
 /**
@@ -406,16 +366,16 @@ public class SqlExprOptimizer {
 		//Expr result = expr;
 
 		// Optimize Equals(RdfTerm(.), RdfTerm(.))
-		Expr expr2 = optimizeRdfTerm((E_Equals) expr);
+		Expr expr2 = SqlTranslationUtils.optimizeRdfTerm((E_Equals) expr);
 		if(expr2 != expr) {
 			return optimizeMM(expr2);
 		}
 		
-		Expr result = optimizeEqualsConcat(expr);
+		Expr result = SqlTranslationUtils.optimizeEqualsConcat(expr);
 
 
 		if (result instanceof E_Equals) {
-			result = optimizeRdfTerm((E_Equals) result);
+			result = SqlTranslationUtils.optimizeRdfTerm((E_Equals) result);
 		}
 		
 		if (!result.equals(expr)) {
@@ -425,92 +385,7 @@ public class SqlExprOptimizer {
 		return result;
 	}
 
-	/**
-	 * Converts op(f(argsA), f(argsB)) -> op1(op2(argsA[1], argsB[2]), ...,
-	 * op2(...)) This is mainly used for translating Equals(rdfTerm(argsA),
-	 * rdfTerm(argsB)) to And(Equals(argsA[0], argsB[0]), Equals(...), ...)
-	 * 
-	 * Example: f(argsA) = f(argsB) -> argsA = argsB -> argsA.1 = argsB.1 &&
-	 * argsA.2 = argsB.2 && ...
-	 * 
-	 * TODO: How to account for extra information that might be available on the
-	 * constraints on the variables, such as argX.y is a constant?
-	 * 
-	 * Note: This does not work it many cases for e.g. concat : concat("ab",
-	 * "c") = concat("a", "bc")
-	 * 
-	 * 
-	 * 
-	 * @param expr
-	 * @return
-	 */
-	public static Expr optimizeRdfTerm(E_Equals expr) {
-		Expr result = expr;
-
-		// TODO Check if the arguments are simple or functions
-		// An expression such as f(vector1) = f(vector2) can be translated into
-		// vector1 = vector2 iff
-		// . f is stateless/deterministic.
-		// . f is not overloaded (we do not take that case into account)
-
-		Expr a = expr.getArg1();
-		Expr b = expr.getArg2();
-
-		if (a.isFunction() && b.isFunction()) {
-			ExprFunction fa = a.getFunction();
-			ExprFunction fb = b.getFunction();
-
-			FunctionLabel la = fa.getFunctionSymbol();
-			FunctionLabel lb = fb.getFunctionSymbol();
-
-			// TODO Vector label
-			if (fa.getArgs().size() == fb.getArgs().size() && la.equals(lb)) {
-
-				List<Expr> exprs = new ArrayList<Expr>();
-				for (int i = 0; i < fa.getArgs().size(); ++i) {
-					Expr ea = fa.getArgs().get(i);
-					Expr eb = fb.getArgs().get(i);
-
-					exprs.add(new E_Equals(ea, eb));
-				}
-
-				result = ExprUtils.andifyBalanced(exprs);
-			}
-		}
-
-		return result;
-	}
-
-	/**
-	 * Merges arguments that are constants together
-	 * Used for concat: concat("a", "b", "c") becomes concat("abc");
-	 * 
-	 * @param concat
-	 * @return
-	 */
-	public static ExprList mergeConsecutiveConstants(Iterable<Expr> exprs) {
-		String prev = null;
-		ExprList newExprs = new ExprList();
-
-		for (Expr expr : exprs) {
-			if (expr.isConstant()) {
-				prev = (prev == null ? "" : prev)
-						+ expr.getConstant().asString();
-			} else {
-				if (prev != null) {
-					newExprs.add(NodeValue.makeString(prev));
-					prev = null;
-				}
-				newExprs.add(expr);
-			}
-		}
-
-		if (prev != null) {
-			newExprs.add(NodeValue.makeString(prev));
-		}
-
-		return newExprs;
-	}
+	
 
 	/*
 	 * public static String getPrefix(Iterable<Expr> exprs) { String result =
@@ -518,11 +393,6 @@ public class SqlExprOptimizer {
 	 * expr.getConstant().asString(); } return result; }
 	 */
 
-	public static boolean isConcatExpr(Expr expr) {
-		return expr instanceof E_StrConcat || expr instanceof E_StrConcatPermissive; 
-	}
-
-	
 	public static List<Alignment> toAlignment(List<Expr> a, List<List<Expr>> bs) {
 		List<Alignment> result = new ArrayList<Alignment>();
 		
@@ -693,99 +563,6 @@ public class SqlExprOptimizer {
 		}		
 	}
 	
-	
-	/**
-	 * Optimizes Equals(Concat(argsA), Concat(argsB)) FIXME: An combinations,
-	 * where there are constants - Equals(Concat(args), const)
-	 * 
-	 * //Assumes optimized form (the whole prefix in a single arg)
-	 * 
-	 * The following cases are being handled: concat(prefixA, restA) =
-	 * concat(prefixB, restB) If none of the prefixes is a substring of the
-	 * other, the whole expression evaluated to false. otherwise, if the
-	 * prefixes are equal, they will be removed. if only one further argument
-	 * remains, the concat will be removed.
-	 * 
-	 * Also, if one of the arguments is a constant, then it is treated as
-	 * Concat(const), and theabove rules are applied
-	 * 
-	 * @param expr
-	 * @return
-	 */
-	public static Expr optimizeEqualsConcat(E_Equals expr) {
-		Expr ta = expr.getArg1();
-		Expr tb = expr.getArg2();
-
-		// None of the arguments is a concat-expression.
-		if (!isConcatExpr(ta) && !isConcatExpr(tb)) {
-			return expr;
-		}
-
-		// Create a list of concat-arguments (if not a concat, treat the expression
-		// as an argument
-		List<Expr> la = isConcatExpr(ta) ? ta.getFunction().getArgs()
-				: Collections.singletonList(ta);
-		List<Expr> lb = isConcatExpr(tb) ? tb.getFunction().getArgs()
-				: Collections.singletonList(tb);
-
-		// FIXME For efficiency, this could be done once in a separate step
-		la = mergeConsecutiveConstants(la).getList();
-		lb = mergeConsecutiveConstants(lb).getList();
-
-		Expr result = optimizeEqualsConcatAlign(la, lb);
-
-		return result;
-	}
-	
-	public static Expr optimizeEqualsConcatAlign(List<Expr> la, List<Expr> lb)
-	{
-		List<Alignment> cs = align(la, lb);
-		
-		List<Expr> ors = new ArrayList<Expr>();
-		for(Alignment c : cs) {
-			
-			List<Expr> ands = new ArrayList<Expr>();
-
-			if(c.isSameSize()) {
-			
-				for(int i = 0; i < c.getKey().size(); ++i) {
-					Expr ea = c.getKey().get(i);
-					
-					/*
-					if(i >= c.getValue().size()) {
-						System.out.println("OOpps");
-					}
-					*/
-					
-					Expr eb = c.getValue().get(i);
-					
-					if(ea.isConstant() && ea.equals(eb)) {
-						continue;
-					}
-					
-					E_Equals eq = new E_Equals(ea, eb);
-					ands.add(eq);
-				}
-			} else {
-				ands.add(
-					new E_Equals(
-						new E_StrConcatPermissive(new ExprList(c.getKey())),
-						new E_StrConcatPermissive(new ExprList(c.getValue()))
-					));
-			}
-			
-			Expr and = ExprUtils.andifyBalanced(ands);
-			ors.add(and);
-		}
-		
-		if(ors.size() == 0) {
-			return NodeValue.FALSE;
-		}
-		
-		Expr result = ExprUtils.orifyBalanced(ors);
-		
-		return result;
-	}
 	
 	public static Expr optimizeEqualsConcat2(List<Expr> la, List<Expr> lb)
 	{

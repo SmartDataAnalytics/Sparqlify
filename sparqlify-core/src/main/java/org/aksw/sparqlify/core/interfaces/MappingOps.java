@@ -6,6 +6,9 @@ import java.util.Map;
 import org.aksw.sparqlify.core.domain.Mapping;
 import org.aksw.sparqlify.core.domain.ViewInstance;
 
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.expr.ExprList;
+
 /**
  * Interface for the mapping algebra operations. 
  * 
@@ -28,4 +31,19 @@ public interface MappingOps {
 	// A binary union would be sucky to compute (permanently moving projections around)
 	// Therfore we use one that deals with lists.
 	Mapping union(List<Mapping> members);
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param a
+	 * @param limit The limit. Null for no limit
+	 * @param offset The offset. Null for no offset
+	 * @return
+	 */
+	Mapping slice(Mapping a, Long limit, Long offset);
+	
+	Mapping project(Mapping a, List<Var> vars);
+	
+	Mapping select(Mapping a, ExprList exprs);
 }

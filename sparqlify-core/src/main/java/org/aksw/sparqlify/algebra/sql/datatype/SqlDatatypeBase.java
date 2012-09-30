@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.datatype;
 
+import org.aksw.sparqlify.core.SqlDatatype;
+
 import com.hp.hpl.jena.graph.Node;
 
 

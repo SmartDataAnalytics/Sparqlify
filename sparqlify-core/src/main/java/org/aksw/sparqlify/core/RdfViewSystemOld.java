@@ -25,7 +25,6 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfUnionViewPattern;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;

@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.apache.commons.collections15.BidiMap;
 import org.apache.commons.collections15.bidimap.DualHashBidiMap;
+import org.openjena.atlas.io.IndentedWriter;
 
 
 /**
@@ -80,4 +81,17 @@ public class SqlOpRename
 		
 		//return new SqlOpProject();
 	}
+	
+	
+	@Override
+	public void write(IndentedWriter writer) {
+		writer.println("SqlOpRename" + rename + "(");
+		
+		writer.incIndent();
+		subOp.write(writer);
+		writer.println();
+		writer.decIndent();
+		writer.print(")");
+	}
+
 }

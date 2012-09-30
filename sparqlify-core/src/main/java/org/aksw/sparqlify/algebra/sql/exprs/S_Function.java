@@ -2,7 +2,7 @@ package org.aksw.sparqlify.algebra.sql.exprs;
 
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 
 public class S_Function extends SqlExprN {

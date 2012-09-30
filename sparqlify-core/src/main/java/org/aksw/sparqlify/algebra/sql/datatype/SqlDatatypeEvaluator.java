@@ -9,6 +9,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

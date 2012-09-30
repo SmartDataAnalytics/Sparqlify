@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
 
 public class S_LogicalOr
 	extends SqlExpr2

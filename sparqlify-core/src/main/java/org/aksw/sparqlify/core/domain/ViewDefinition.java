@@ -1,11 +1,9 @@
 package org.aksw.sparqlify.core.domain;
 
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
 
 
 /**
@@ -14,6 +12,47 @@ import com.hp.hpl.jena.sparql.core.Var;
  * - A template (a set of quad patterns)
  * - A mapping
  * - A set of references to variables declared in other view definitions.
+ * 
+ * 
+ * Here are some notes on the references:
+ * 
+ * Create View person {
+ *     ?s a Person
+ * }
+ * With
+ *     ?s = uri(name) [prefixes = {ns1, ns2}]
+ * From
+ *     people_table;
+ * 
+ * 
+ * Create View employee_to_dept As Construct {
+ *    ?p :worksIn ?d
+ * }
+ * References
+ *     ppl: person On this.person_id = that.id
+ *     depts: ... // Reference to the dept view on some join condition
+ * With
+ *    ?p  = ref(ppl, ?s) // Syntactic sugar for the following line:
+ *    ?p_resolved = uri(ppl.name) [prefixes=...] // We now have a qualified column reference and the constraints carry over
+ *    ?d  = ref(depts, ?s)
+ * From
+ *      p2d_table;
+ * 
+ * Issue: (Q = Question, T = thought, R = resolution)
+ * - Q: Nested refs: How to treat cases where a view V hase a ref(refName, ?var) which refers to another ref, e.g. ?x = ref(someRef.someNestedRef, ?x)
+ *   T: Essentielly it should work somehow like this: for any view instance of V, we would keep track of a (list of) unresolved references; the nested ones would be
+ *      simply added.
+ *       
+ * 
+ * When creating view instances, we now have to keep track of which refereences have been resolved.
+ * If a variable is not bound in a varbinding, then its references do not need to be resolved.
+ * Conversely: Each bound view variable's references are added to the view instance's list of unresolved references.
+ * Also, for each view instance variable we need to deal with the qualified column names.
+ * Not sure where to deal with them best. 
+ *   
+ * Initially unresolved refs for the employee_to_dept view are ppl and depts.
+ * 
+ * 
  * 
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
@@ -27,10 +66,18 @@ public class ViewDefinition {
 	private QuadPattern template;
 	private Mapping mapping;
 	
+	/**
+	 * Mapping from reference names to other's views logical table on a given join condition
+	 * Usually used for mapping foreign-key relations.
+	 * 
+	 * Note: ColumnReferences can be qualified with the name of the reference.
+	 */
+	private Map<String, ViewReference> viewReferences;
+	
 	// References to variables declaced in other views. Useful for efficient
 	// mapping table handling, as self join elimination can be applied.
 	// Corresponds to R2RML's rr:join.
-	private Map<Var, VarReference> varReferences = new HashMap<Var, VarReference>();
+	//private Map<Var, VarReference> viewReferences = new HashMap<Var, VarReference>();
 
 	
 	// The source can point to an arbitrary object from
@@ -44,12 +91,12 @@ public class ViewDefinition {
 	// definition).
 	private Object source;
 
-	private ViewDefinition(String name, QuadPattern template, Map<Var, VarReference> varReferences, Mapping mapping, Object source)
+	public ViewDefinition(String name, QuadPattern template, Map<String, ViewReference> viewReferences, Mapping mapping, Object source)
 	{
 		this.name = name;
 		this.template = template;
 		this.mapping = mapping;
-		this.varReferences = varReferences;
+		this.viewReferences = viewReferences;
 		this.source = source;
 	}
 
@@ -69,11 +116,13 @@ public class ViewDefinition {
 	}
 
 	
-	public Map<Var, VarReference> getVarReferences() {
-		return varReferences;
+	public Map<String, ViewReference> getViewReferences() {
+		return viewReferences;
 	}
+
 
 	public Object getSource() {
 		return source;
 	}
 }
+

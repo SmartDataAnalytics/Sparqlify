@@ -29,6 +29,11 @@ public class ViewInstance {
 	private VarBinding binding;
 	
 	
+	public ViewInstance(ViewDefinition viewDefinition, VarBinding binding) {
+		this.binding = binding;
+	}
+	
+	
 	public ViewDefinition getViewDefinition() {
 		return viewDefinition;
 	}

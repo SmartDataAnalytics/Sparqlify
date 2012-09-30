@@ -5,12 +5,16 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import com.hp.hpl.jena.sparql.core.Var;
 
 
+/**
+ * TODO This is a syntactic construct that gets translated into something different (i think)
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ */
 public class VarReference {
 	private String targetViewName;
 	private Var targetVar;
 	
-	private SqlExpr joinCondition;
-
 	/**
 	 * 
 	 * 
@@ -23,7 +27,6 @@ public class VarReference {
 		super();
 		this.targetViewName = targetViewName;
 		this.targetVar = targetVar;
-		this.joinCondition = joinCondition;
 	}
 
 	public String getTargetViewName() {
@@ -32,9 +35,5 @@ public class VarReference {
 
 	public Var getTargetVar() {
 		return targetVar;
-	}
-
-	public SqlExpr getJoinCondition() {
-		return joinCondition;
 	}
 }

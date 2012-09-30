@@ -14,8 +14,6 @@ import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.S_String;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
@@ -30,6 +28,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnionN;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.SqlNodeBinding;
 import org.openjena.atlas.io.IndentedWriter;
 

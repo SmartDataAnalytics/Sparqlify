@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.config.lang;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -11,11 +12,32 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class ConfigParser {
-	private static final Logger fallbackLogger = LoggerFactory.getLogger(ConfigParser.class);
+	//private static final Logger fallbackLogger = LoggerFactory.getLogger(ConfigParser.class);
+	
+	public Config parse(String str, Logger logger) throws RecognitionException {
+		ByteArrayInputStream bais = new ByteArrayInputStream(str.getBytes());
+		
+		Config result;
+		try {
+			result = parse(bais, logger);
+		} catch (IOException e) {
+			// Should not happen - we are reading from a string
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				bais.close();
+			} catch (IOException e) {
+				// Should still not happen
+				throw new RuntimeException(e);
+			}
+		}
+		
+		return result;		
+	}
+
 	
 	public Config parse(InputStream in, Logger logger)
 			throws IOException, RecognitionException

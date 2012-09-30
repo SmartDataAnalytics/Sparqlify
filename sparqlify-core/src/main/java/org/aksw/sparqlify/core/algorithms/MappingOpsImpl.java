@@ -23,7 +23,6 @@ import org.aksw.sparqlify.algebra.sparql.transform.ExprDatatypeHash;
 import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sparql.transform.SqlExprUtils;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprBase;
@@ -45,6 +44,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlProjection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSlice;
@@ -57,6 +57,7 @@ import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.ColRelGenerator;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.domain.Mapping;
 import org.aksw.sparqlify.core.domain.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.VarDefinition;
@@ -87,6 +88,8 @@ import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+
+
 
 
 /**
@@ -270,7 +273,7 @@ public class MappingOpsImpl
 		//Set<Expr> result = new HashSet<Expr>();
 		VarDefKey result = new VarDefKey();
 			
-		Set<Var> viewVars = viewInstance.getBinding().get(queryVar);
+		Set<Var> viewVars = viewInstance.getBinding().getViewVars(queryVar);
 		
 		// If the variable is unconstrained, then logically there is nothing todo
 		if(viewVars.isEmpty()) {
@@ -330,7 +333,23 @@ public class MappingOpsImpl
 */
 	}
 	
+	/*
+	public static SqlExpr pushDown(ExprList exprs) {
+		SqlExprList result = new SqlExprList();
+		
+		for()
+	}
 
+	public static SqlExpr pushDown(Expr expr) {
+		Expr pushed = PushDown.pushDownMM(expr);
+		if(!(pushed instanceof ExprSqlBridge)) {
+			throw new RuntimeException("Failed to push down '" + expr + "'");
+		}
+		SqlExpr result = ((ExprSqlBridge)pushed).getSqlExpr();
+
+		return result;
+	}
+	*/
 
 	/*
 	public static SqlExpr translateSqlCnf(Set<Set<RestrictedExpr<Expr>>> cnf) {
@@ -378,7 +397,6 @@ public class MappingOpsImpl
 	public Mapping createMapping(ViewInstance viewInstance) {
 
 		Set<Var> queryVars = viewInstance.getBinding().getQueryVars();
-		
 		
 		Multimap<Var, RestrictedExpr> newVarDefMap = HashMultimap.create();
 		
@@ -498,8 +516,9 @@ public class MappingOpsImpl
 		
 		Mapping b = doJoinRename(a, initB, genSym);
 		
+		JoinType joinType = isLeftJoin ? JoinType.LEFT : JoinType.INNER;
 		
-		SqlOpJoin opJoin = SqlOpJoin.create(a.getSqlOp(), b.getSqlOp()); 
+		SqlOpJoin opJoin = SqlOpJoin.create(joinType, a.getSqlOp(), b.getSqlOp()); 
 		SqlOp opResult = opJoin;
 
 		
@@ -555,21 +574,244 @@ public class MappingOpsImpl
 		}
 
 		
+		ExprList jc = new ExprList(new ArrayList<Expr>(joinCondition));
+		SqlOpFilter opFilter = SqlOpFilter.create(opResult, jc);
+		
 		
 		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
-		Mapping result = new Mapping(newVarDefinition, opResult);
+		Mapping result = new Mapping(newVarDefinition, opFilter);
 
 		return result;
 	}
 
 	
+	
+	@Override
+	public Mapping slice(Mapping a, Long limit, Long offset) {
+		
+		SqlOpSlice opSlice = SqlOpSlice.create(a.getSqlOp(), limit, offset);
+		
+		Mapping result = new Mapping(a.getVarDefinition(), opSlice);
 
-	public Mapping union(List<Mapping> members) {
-		
-		return null;
-		
+		return result;
 	}
 
+
+	/**
+	 * Removes variables from the definitions.
+	 * Also projects away unreferenced columns in the sqlOp.
+	 * 
+	 */
+	@Override
+	public Mapping project(Mapping a, List<Var> vars) {		
+
+		
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Mapping select(Mapping a, ExprList exprs) {
+		// TODO Translate the 
+
+		
+		
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	
+	public Mapping union(List<Mapping> members) {
+		return null;
+	}	
+/*
+	public Mapping union(List<Mapping> members) {
+		// Prepare the data structures from which the
+		// result node will be created
+		Multimap<Var, RestrictedExpr> commons = HashMultimap.create();
+		
+		// For each union member, prepare a datastructe for its new projection
+		List<Multimap<Var, RestrictedExpr>> projections = new ArrayList<Multimap<Var, RestrictedExpr>>();
+		for (int i = 0; i < members.size(); ++i) {
+			Multimap<Var, RestrictedExpr> tmp = HashMultimap.create();
+			projections.add(tmp);
+		}
+
+		// Now we can start with the actual work				
+		Multimap<Var, Integer> varToMembers = HashMultimap.create();
+
+		// Map each variable to the set of corresponding members
+		for (int i = 0; i < members.size(); ++i) {
+			Mapping mapping = members.get(i);
+			for (Var var : mapping.getVarDefinition().getMap().keySet()) {
+				varToMembers.put(var, i);
+			}
+		}
+
+		
+		// If a variable maps to a constant, than the mapping does not apply to any union member
+		// that does not define the constant.
+		// This means we have to introduce a column for discrimination, which contains NULL for
+		// all union members where to constaint is not applicable 		
+		Generator aliasGen = Gensym.create("c");
+		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
+
+		
+		Map<String, SqlDatatype> allColumnsToDatatype = new HashMap<String, SqlDatatype>();
+		
+		
+		// For each variable, cluster the corresponding expressions
+		for(Entry<Var, Collection<Integer>> entry : varToMembers.asMap().entrySet()) {
+			Var var = entry.getKey();
+			
+			
+			// TODO Just clustering by hash may result in clashes!!!
+			// For each hash we have to keep a list and explicitly compare for structural equivalence
+			Multimap<Expr, ArgExpr> cluster = HashMultimap.create();
+			
+			
+
+			//IBiSetMultimap<Integer, Integer> exprToOrigin = new BiHashMultimap<Integer, Integer>();
+			//Multimap<Integer, Integer> exprToOrigin = HashMultimap.create();
+			
+			for (int index : entry.getValue()) {
+				Mapping member = members.get(index);
+
+				Collection<RestrictedExpr> exprsForVar = member.getVarDefinition().getDefinitions(var);
+				
+				for(RestrictedExpr def : exprsForVar) {
+				
+					Map<String, SqlDatatype> columnToDatatype = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
+					//Integer hash = ExprStructuralHash.hash(def.getExpr(), columnToDatatype);
+					
+					Expr datatypeNorm = ExprDatatypeNorm.normalize(def.getExpr(), columnToDatatype);
+													
+					cluster.put(datatypeNorm, new ArgExpr(def.getExpr(), index));
+				}				
+			}
+			
+		
+			// Process the clusters we just created
+
+			
+			// First, we build a list of exprs of the cluster and
+			// a map for mapping the clustered exprs back to their nodes
+			for(Entry<Expr, Collection<ArgExpr>> clusterEntry : cluster.asMap().entrySet()) {
+				Collection<ArgExpr> argExprs = clusterEntry.getValue();
+					
+				List<Expr> exprs = new ArrayList<Expr>();
+				Map<Integer, Integer> exprToNode = new HashMap<Integer, Integer>();
+
+				int i = 0;
+				for(ArgExpr argExpr : argExprs) {
+					exprs.add(argExpr.getExpr());
+					exprToNode.put(i, argExpr.getIndex());
+					
+					++i;
+				}
+				
+
+				// Now we can finally factor the cluster
+				List<Map<Var, Expr>> partialProjections = new ArrayList<Map<Var, Expr>>();
+				Expr common = factorizer.transform(exprs, partialProjections);
+
+				
+				// For our current variable, we can set up the projection of the result...
+				// TODO: We do not want to lose any restrictions!
+				commons.put(var, new RestrictedExpr(common));
+
+				// ... and now we adjust the projections of the children accordingly
+				for (int j = 0; j < partialProjections.size(); ++j) {
+					int originalIndex = exprToNode.get(j);
+
+					//SqlNode tmp = sqlNodes.get(originalIndex);
+					Multimap<Var, VarDef> projection = projections.get(originalIndex);
+					
+					Map<Var, Expr> partialProjection = partialProjections.get(j);
+					
+					for(Entry<Var, Expr> ppEntry : partialProjection.entrySet()) {
+						projection.put(ppEntry.getKey(), new VarDef(ppEntry.getValue()));
+					}					
+				}
+			}			
+		}
+
+		// Build the final result from the information we gathered
+		
+		for (int i = 0; i < projections.size(); ++i) {
+			Mapping tmp = members.get(i);
+			Multimap<Var, VarDef> projection = projections.get(i);
+
+			// Projection.Var becomes the new column alias
+			// Projection.Expr is pushed down to an sqlExpr
+			// Projection.Expr's vars are replaced with the original column defs
+			
+			NodeExprSubstitutor substitutor = createSubstitutor(tmp);
+			Map<String, SqlExpr> subbedProj = new HashMap<String, SqlExpr>();
+			for(Entry<Var, VarDef> entry : projection.entries()) {
+				Expr subbed = substitutor.transformMM(entry.getValue().getExpr());
+				Expr pushed = PushDown.pushDownMM(subbed);
+				
+				if(!(pushed instanceof ExprSqlBridge)) {
+					throw new RuntimeException("Could not push down common sub expression");
+				}
+ 
+				SqlExpr sqlExpr = ((ExprSqlBridge)pushed).getSqlExpr();
+				
+				subbedProj.put(entry.getKey().getName(), sqlExpr);
+				
+				allColumnsToDatatype.put(entry.getKey().getName(), sqlExpr.getDatatype());
+			}
+
+			// Update the projection
+			tmp.getAliasToColumn().clear();
+			tmp.getAliasToColumn().putAll(subbedProj);
+
+			// Fill up missing columns with null
+			//Set<Var> referencedColumns = new HashSet<Var>();
+			
+			//Set<Var> unreferenedColumns = Sets.difference(allColumnsToDatatype.keySet(), expr.getVarsMentioned());
+
+			
+			tmp.getSparqlVarToExprs().clear();
+			tmp.getSparqlVarToExprs().putAll(commons);
+		}
+
+
+		for(Mapping member : members) {
+			Set<String> names = new HashSet<String>(member.getSqlOp().getSchema().getColumnNames());
+			Set<String> unboundColumns = Sets.difference(allColumnsToDatatype.keySet(), names);
+		
+			for(String columnName : unboundColumns) {
+				
+				SqlDatatype datatype = allColumnsToDatatype.get(columnName);
+				
+				sqlNode.getAliasToColumn().put(columnName, SqlExprValue.createNull(datatype));
+				//TODO projections.
+			}
+		}
+
+		SqlNodeOld result = new SqlUnionN(, sqlNodes);
+
+		result.getSparqlVarToExprs().putAll(commons);
+		
+		
+		for(Entry<String, SqlDatatype> entry : allColumnsToDatatype.entrySet()) {
+			String columnName = entry.getKey();
+			SqlDatatype datatype = entry.getValue();
+			
+			//XXX WAS NULL
+			result.getAliasToColumn().put(columnName, new SqlExprColumn(unionAlias, columnName, datatype));
+		}
+		
+
+		return result;
+		
+	}
+*/
 
 	
 	

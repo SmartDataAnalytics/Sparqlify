@@ -13,7 +13,7 @@ public class ConfiguratorRdfViewSystem {
 	public static void configure(Config config, RdfViewSystem system, Logger logger) {
 
 		//List<RdfView> virtualGraphs = new ArrayList<RdfView>();
-		for(ViewDefinition item :config.getViewDefinitions()) {
+		for(ViewDefinition item : config.getViewDefinitions()) {
 			RdfView virtualGraph = RdfView.create(item);
 			
 			if(logger != null) {

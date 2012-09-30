@@ -2,6 +2,7 @@ package org.aksw.sparqlify.algebra.sql.datatype;
 
 import org.aksw.commons.factory.Factory1;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.core.DatatypeSystem;
 
 
 public class FactoryCastSqlExpr

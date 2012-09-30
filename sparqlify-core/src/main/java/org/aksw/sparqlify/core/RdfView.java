@@ -12,7 +12,6 @@ import java.util.Set;
 import mapping.RenamerNodes;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
@@ -34,6 +33,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.postgis.PGgeometry;
 
 import com.google.common.base.Joiner;

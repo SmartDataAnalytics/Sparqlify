@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.config.lang;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,6 +17,27 @@ import org.slf4j.LoggerFactory;
 public class ConstructConfigParser {
 	private static final Logger logger = LoggerFactory.getLogger("Parser");
 
+	public ConstructConfig parse(String str) throws RecognitionException {
+		ByteArrayInputStream bais = new ByteArrayInputStream(str.getBytes());
+		
+		ConstructConfig result;
+		try {
+			result = this.parse(bais);
+		} catch (IOException e) {
+			// Should not happen - we are reading from a string
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				bais.close();
+			} catch (IOException e) {
+				// Should still not happen
+				throw new RuntimeException(e);
+			}
+		}
+		
+		return result;		
+	}
+	
 	public ConstructConfig parse(InputStream in)
 			throws IOException, RecognitionException
 	{

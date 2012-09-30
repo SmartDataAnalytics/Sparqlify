@@ -1,7 +1,8 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.SqlDatatype;
+import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sdb.core.sqlexpr.SqlColumn;
 import com.hp.hpl.jena.sdb.core.sqlexpr.SqlExprVisitor;
@@ -106,8 +107,17 @@ public class SqlExprColumn
 	}
 
 	@Override
+	public void asString(IndentedWriter writer) 
+	{
+		writer.print((tableName == null ? "" : tableName + ".") + columnName);
+		//asString(writer, this.getClass().getSimpleName(), getArgs());
+	}
+
+	
+	@Override
 	public String toString() 
 	{
-		return asString();
+		return tableName + "." + columnName;
+		//return asString();
 	}
 }

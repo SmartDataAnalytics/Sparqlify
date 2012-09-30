@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.core.SqlNodeBinding;
+import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.apache.commons.lang.NotImplementedException;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
@@ -48,7 +48,7 @@ public class ConstantExpander {
 
 	public static Expr _transform(NodeValue nv)
 	{
-		return SqlNodeBinding.expandConstant(nv.asNode());
+		return SqlTranslationUtils.expandConstant(nv.asNode());
 	}
 
 	public static Expr _transform(ExprAggregator eAgg) {

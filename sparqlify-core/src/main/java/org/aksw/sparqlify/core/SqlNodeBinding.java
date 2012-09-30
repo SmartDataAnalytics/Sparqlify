@@ -22,7 +22,6 @@ import org.aksw.sparqlify.algebra.sparql.transform.ExprDatatypeHash;
 import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sparql.transform.SqlExprUtils;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprBase;
@@ -49,6 +48,7 @@ import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.compile.sparql.SqlAlgebraToString;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
+import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.Restriction;
 import org.aksw.sparqlify.restriction.RestrictionSet;
@@ -171,50 +171,6 @@ public class SqlNodeBinding {
 	public SqlNodeBinding() {
 	}
 
-	public static E_RdfTerm expandConstant(Node node) {
-		int type;
-		Object lex = "";
-		String lang = "";
-		String dt = "";
-		
-		if(node.isBlank()) {
-			type = 0;
-			lex = node.getBlankNodeId().getLabelString();
-		} else if(node.isURI()) {
-			type = 1;
-			lex = node.getURI();
-		} else if(node.isLiteral()) {
-			
-			lex = node.getLiteral().getValue();
-			
-			//lex = node.getLiteralLexicalForm();
-
-			String datatype = node.getLiteralDatatypeURI();
-			if(datatype == null || datatype.isEmpty()) {
-				type = 2;
-				lang = node.getLiteralLanguage();
-			} else {
-				type = 3;
-				dt = node.getLiteralDatatypeURI();
-			}
-		} else {
-			throw new RuntimeException("Should not happen");
-		}
-
-		return new E_RdfTerm(
-				NodeValue.makeDecimal(type), NodeValue.makeNode(lex.toString(), lang, dt),
-				NodeValue.makeString(lang), NodeValue.makeString(dt));
-		
-		/*
-		return new E_Function(SparqlifyConstants.rdfTermLabel, SparqlSubstitute.makeExprList(
-				NodeValue.makeDecimal(type), NodeValue.makeNode(lex.toString(), lang, dt),
-				NodeValue.makeString(lang), NodeValue.makeString(dt)));
-		*/
-
-	}
-	
-	
-	
 	/**
 	 * Creates an sql node from a view instance
 	 * 
@@ -281,7 +237,7 @@ public class SqlNodeBinding {
 				Expr definingExpr = viewInstance.getDefiningExpr(var);
 				Restriction r = viewInstance.getParent().getRestrictions().getRestriction(var);
 				
-				Expr expand = expandConstant(entry.getValue());
+				Expr expand = SqlTranslationUtils.expandConstant(entry.getValue());
 				//sqlBinding.put(entry.getKey(), expand);
 
 				if(definingExpr == null) {

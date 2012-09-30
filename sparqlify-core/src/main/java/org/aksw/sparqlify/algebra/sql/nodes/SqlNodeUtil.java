@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 public class SqlNodeUtil {
 	public static Map<String, SqlDatatype> getColumnToDatatype(SqlNodeOld sqlNode) {

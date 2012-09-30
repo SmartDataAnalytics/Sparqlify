@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 public interface Schema {
 	int getColumnCount();

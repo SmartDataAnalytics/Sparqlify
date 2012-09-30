@@ -5,6 +5,8 @@ import org.aksw.sparqlify.core.interfaces.OptimizerSparqlExpr;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 
+// TODO I think we do not need any special optimizer anymore
+// It can be built directly into the SQL translation
 public class OptimizerSparqlExprImpl
 	implements OptimizerSparqlExpr
 {

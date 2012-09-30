@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 
 /**
@@ -127,7 +127,7 @@ public class RdfViewDatabase {
 	}
 
 	public static SqlDatatype asDatatype(String id) {
-		SqlDatatype result = rawTypeToSql.get(id);
+		SqlDatatype result = rawTypeToSql.get(id.toLowerCase());
 		if(result == null) {
 			throw new RuntimeException("Raw SQL datatype '" + id + "' not mapped");			
 		}

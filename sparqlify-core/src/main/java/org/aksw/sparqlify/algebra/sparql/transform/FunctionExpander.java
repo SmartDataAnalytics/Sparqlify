@@ -14,14 +14,14 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_GenericSqlExpr;
 import org.aksw.sparqlify.algebra.sparql.expr.E_GeographyFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.E_GeomFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.E_Intersects;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystem;
-import org.aksw.sparqlify.algebra.sql.datatype.DatatypeSystemDefault;
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
+import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

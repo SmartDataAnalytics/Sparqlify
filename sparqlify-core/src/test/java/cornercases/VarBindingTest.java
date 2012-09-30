@@ -28,7 +28,9 @@ public class VarBindingTest {
 		binding.put(o, y);
 		binding.put(o, z);
 
-		VarBinding closure = binding.computeClosure();
+		System.out.println(binding);
+		
+		//VarBinding closure = binding.computeClosure();
 
 		VarBinding expected = new VarBinding();
 		expected.put(s, x);
@@ -42,7 +44,7 @@ public class VarBindingTest {
 		expected.put(o, z);
 		
 		System.out.println(binding);
-		System.out.println(closure);
+		//System.out.println(closure);
 
 		// TODO my bi-map does not implement equals yet... grrr
 		//Assert.assertEquals(expected, closure);

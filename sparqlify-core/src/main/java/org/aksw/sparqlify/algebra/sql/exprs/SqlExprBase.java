@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.SqlDatatype;
 import org.openjena.atlas.io.IndentedWriter;
 
 public abstract class SqlExprBase

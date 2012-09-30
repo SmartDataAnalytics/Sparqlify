@@ -2,7 +2,7 @@ package org.aksw.sparqlify.algebra.sql.exprs;
 
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.datatype.SqlDatatype;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 /**
  * A piece of SQL code. Ideally this class should be avoided in favor
