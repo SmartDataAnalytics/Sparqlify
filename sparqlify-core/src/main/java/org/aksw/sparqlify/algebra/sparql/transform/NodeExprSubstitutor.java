@@ -1,6 +1,8 @@
 package org.aksw.sparqlify.algebra.sparql.transform;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import mapping.ExprCopy;
 
@@ -9,6 +11,7 @@ import org.apache.commons.lang.NotImplementedException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.algebra.Op;
+import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
@@ -29,6 +32,24 @@ public class NodeExprSubstitutor {
 
 	private Map<? extends Node, ? extends Expr> map;
     
+	/*
+	public static ExprList apply(NodeExprSubstitutor substitutor, ExprList exprs) {
+		ExprList result = new ExprList();
+		for(Expr expr : exprs) {
+			Expr tmp = substitutor.transformList(exprs)
+		}
+	}*/
+	
+	public static NodeExprSubstitutor create(Map<String, Expr> varNameToExpr) {
+		Map<Var, Expr> tmp = new HashMap<Var, Expr>();
+		for(Entry<String, Expr> entry : varNameToExpr.entrySet()) {
+			tmp.put(Var.alloc(entry.getKey()), entry.getValue());
+		}
+		
+		NodeExprSubstitutor result = new NodeExprSubstitutor(tmp);
+		return result;
+	}
+	
     public NodeExprSubstitutor(Map<? extends Node, ? extends Expr> map)
     {
     	this.map = map;
@@ -48,7 +69,7 @@ public class NodeExprSubstitutor {
     	return result;
     }
     
-    protected ExprList transformList(Iterable<Expr> exprs) {
+    public ExprList transformList(Iterable<Expr> exprs) {
     	ExprList result = new ExprList();
 
     	for(Expr expr : exprs) {
