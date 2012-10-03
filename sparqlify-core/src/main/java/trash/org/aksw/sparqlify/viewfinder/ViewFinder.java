@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.viewfinder;
+package trash.org.aksw.sparqlify.viewfinder;
 
 import org.aksw.commons.sparql.api.cache.core.QueryString;
 import org.aksw.commons.sparql.api.cache.extra.SqlDaoBase;
