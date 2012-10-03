@@ -50,7 +50,7 @@ import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
-import org.aksw.sparqlify.restriction.Restriction;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
 import org.apache.commons.lang.NotImplementedException;
@@ -235,13 +235,13 @@ public class SqlNodeBinding {
 
 				
 				Expr definingExpr = viewInstance.getDefiningExpr(var);
-				Restriction r = viewInstance.getParent().getRestrictions().getRestriction(var);
+				RestrictionImpl r = viewInstance.getParent().getRestrictions().getRestriction(var);
 				
 				Expr expand = SqlTranslationUtils.expandConstant(entry.getValue());
 				//sqlBinding.put(entry.getKey(), expand);
 
 				if(definingExpr == null) {
-					sqlBinding.put(var, new VarDef(expand, new Restriction(entry.getValue())));
+					sqlBinding.put(var, new VarDef(expand, new RestrictionImpl(entry.getValue())));
 				} else {
 					sqlBinding.put(var, new VarDef(definingExpr, r));
 				}

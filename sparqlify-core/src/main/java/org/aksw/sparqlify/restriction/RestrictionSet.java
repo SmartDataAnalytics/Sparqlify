@@ -24,11 +24,11 @@ import com.karneim.util.collection.regex.PatternPro;
  */
 public class RestrictionSet
 {
-	private List<Restriction> restrictions;// = new ArrayList<? extends IRestriction>();
+	private List<RestrictionImpl> restrictions;// = new ArrayList<? extends IRestriction>();
 	
 	public Type getType() {
 		Type t = null;
-		for(Restriction r : restrictions) {
+		for(RestrictionImpl r : restrictions) {
 			if(t == null) {
 				t = r.getType();
 			} else if(r.getType() != t) {
@@ -42,18 +42,18 @@ public class RestrictionSet
 		return t;
 	}
 	
-	public Collection<Restriction> getRestrictions() {
+	public Collection<RestrictionImpl> getRestrictions() {
 		return restrictions;
 	}
 	
 	
 	public boolean addAlternatives(RestrictionSet rs) {
 		if(rs.restrictions == null) {
-			return rs.addAlternative(new Restriction());
+			return rs.addAlternative(new RestrictionImpl());
 		}
 			
 		boolean result = false;
-		for(Restriction r : rs.restrictions) {
+		for(RestrictionImpl r : rs.restrictions) {
 			boolean change = addAlternative(r);
 			result = result || change;
 		}
@@ -62,7 +62,7 @@ public class RestrictionSet
 	}
 	
 	
-	public boolean addAlternative(Restriction r) {
+	public boolean addAlternative(RestrictionImpl r) {
 		if(r.getSatisfiability() == Boolean.TRUE) {
 			return false;
 		}
@@ -71,13 +71,13 @@ public class RestrictionSet
 		// For now just append the new element
 		if(!r.isUnsatisfiable()) {
 			if(restrictions == null) {
-				restrictions = new ArrayList<Restriction>();
+				restrictions = new ArrayList<RestrictionImpl>();
 			}
 		
 			// Remove all subsumed items
-			Iterator<Restriction> it = restrictions.iterator();
+			Iterator<RestrictionImpl> it = restrictions.iterator();
 			while(it.hasNext()) {
-				Restriction x = it.next();
+				RestrictionImpl x = it.next();
 
 				if(x.subsumesOrIsEqual(r)) {
 					// since subsumesOrIsEqual is transitive, it means
@@ -111,21 +111,21 @@ public class RestrictionSet
 	
 	public RestrictionSet(boolean value) {
 		restrictions = (value == false)
-				? new ArrayList<Restriction>()
+				? new ArrayList<RestrictionImpl>()
 				: null;
 	}
 	
-	public RestrictionSet(Restriction restriction) {
+	public RestrictionSet(RestrictionImpl restriction) {
 		if(restriction.isUnsatisfiable()) {
 			restrictions = Collections.emptyList();
 		} else {
-			restrictions = new ArrayList<Restriction>();
+			restrictions = new ArrayList<RestrictionImpl>();
 			restrictions.add(restriction);
 		}
 	}
 	
-	public RestrictionSet(List<Restriction> restrictions) {
-		Iterator<Restriction> it = restrictions.iterator();
+	public RestrictionSet(List<RestrictionImpl> restrictions) {
+		Iterator<RestrictionImpl> it = restrictions.iterator();
 		while(it.hasNext()) {
 			if(it.next().isUnsatisfiable()) {
 				it.remove();
@@ -136,22 +136,22 @@ public class RestrictionSet
 	}
 	
 	public RestrictionSet(RestrictionSet other) {
-		this.restrictions = new ArrayList<Restriction>(other.restrictions);
+		this.restrictions = new ArrayList<RestrictionImpl>(other.restrictions);
 	}
 	
 
-	public boolean stateRestriction(Restriction other) {
+	public boolean stateRestriction(RestrictionImpl other) {
 		if(restrictions == null) {
-			restrictions = new ArrayList<Restriction>();
+			restrictions = new ArrayList<RestrictionImpl>();
 			restrictions.add(other.clone());
 			
 			return true;
 		}
 		
 		boolean result = false;
-		Iterator<Restriction> it = restrictions.iterator();
+		Iterator<RestrictionImpl> it = restrictions.iterator();
 		while(it.hasNext()) {
-			Restriction r = it.next();
+			RestrictionImpl r = it.next();
 			
 			boolean change = r.stateRestriction(other);
 			result = result || change;
@@ -169,22 +169,22 @@ public class RestrictionSet
 			return false;
 		}
 		else if(this.restrictions == null) {
-			restrictions = new ArrayList<Restriction>();
+			restrictions = new ArrayList<RestrictionImpl>();
 						
-			for(Restriction _a : other.restrictions) {
+			for(RestrictionImpl _a : other.restrictions) {
 				restrictions.add(_a.clone());
 			}
 
 			return true;
 		} else {
 				
-			List<Restriction> joined = new ArrayList<Restriction>();
+			List<RestrictionImpl> joined = new ArrayList<RestrictionImpl>();
 			boolean result = false;
 			
-			for(Restriction _a : this.restrictions) {
+			for(RestrictionImpl _a : this.restrictions) {
 				
-				for(Restriction b : other.restrictions) {
-					Restriction a  = _a.clone();
+				for(RestrictionImpl b : other.restrictions) {
+					RestrictionImpl a  = _a.clone();
 					boolean change = a.stateRestriction(b);
 					result = result || change;
 					
@@ -210,9 +210,9 @@ public class RestrictionSet
 			return new RestrictionSet();
 		}
 		
-		List<Restriction> copy = new ArrayList<Restriction>();
+		List<RestrictionImpl> copy = new ArrayList<RestrictionImpl>();
 				
-		for(Restriction r : restrictions) {
+		for(RestrictionImpl r : restrictions) {
 			copy.add(r.clone());
 		}
 		
@@ -224,7 +224,7 @@ public class RestrictionSet
 
 	public boolean stateType(Type newType) {
 		if(restrictions == null) {
-			return stateRestriction(new Restriction(newType));
+			return stateRestriction(new RestrictionImpl(newType));
 		}
 		
 		
@@ -246,7 +246,7 @@ public class RestrictionSet
 
 	public boolean stateNode(Node newNode) {
 		if(restrictions == null) {
-			return stateRestriction(new Restriction(newNode));
+			return stateRestriction(new RestrictionImpl(newNode));
 		}
 
 		Iterator<? extends IRestriction> it = restrictions.iterator();
@@ -269,7 +269,7 @@ public class RestrictionSet
 	
 	public boolean stateUriPrefixes(PrefixSet prefixes) {
 		if(restrictions == null) {
-			return stateRestriction(new Restriction(prefixes));
+			return stateRestriction(new RestrictionImpl(prefixes));
 		}
 		
 		Iterator<? extends IRestriction> it = restrictions.iterator();

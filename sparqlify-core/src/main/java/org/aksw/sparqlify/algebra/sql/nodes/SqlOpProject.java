@@ -22,6 +22,10 @@ public class SqlOpProject
 		super(schema, subOp);
 		this.columnNames = columnNames;
 	}
+	
+	public List<String> getColumnNames() {
+		return columnNames;
+	}
 
 	
 	public static SqlOpProject create(SqlOp subOp, List<String> columnNames) {		

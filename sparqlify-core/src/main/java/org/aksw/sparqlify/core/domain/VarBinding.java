@@ -1,16 +1,15 @@
 package org.aksw.sparqlify.core.domain;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.commons.collections.multimaps.BiHashMultimap;
-import org.aksw.commons.collections.multimaps.IBiSetMultimap;
+import org.aksw.commons.jena.util.QuadUtils;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
 
 
@@ -125,6 +124,11 @@ public class VarBinding {
 	}
 	*/
 
+	/*
+	public boolean putAll(VarBinding other) {
+		for(other.ge)
+	}
+	*/
 		
 	public boolean put(Var queryVar, Var viewVar) {
 		Integer keyToken = keyToToken.get(queryVar);
@@ -195,6 +199,8 @@ public class VarBinding {
 	public boolean put(Var queryVar, Node node) {
 		if(node == null) {
 			return true;
+		} else if(node.isVariable()) {
+			put(queryVar, (Var)node);
 		}
 
 		Integer token = keyToToken.get(queryVar);
@@ -222,6 +228,26 @@ public class VarBinding {
 				return false;
 			}
 		}
+	}
+
+	
+	public static VarBinding create(Quad a, Quad b)
+	{
+		VarBinding result = new VarBinding();
+
+		List<Node> nAs = QuadUtils.quadToList(a);
+		List<Node> nBs = QuadUtils.quadToList(b);
+		
+		for(int i = 0; i < 4; ++i) {
+			Var nA = (Var)nAs.get(i);
+			Node nB = nBs.get(i);
+			
+			if(!result.put(nA, nB)) {
+				return null;
+			}
+		}
+		
+		return result;
 	}
 
 

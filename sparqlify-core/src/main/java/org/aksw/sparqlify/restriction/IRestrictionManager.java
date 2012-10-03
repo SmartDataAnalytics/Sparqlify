@@ -11,13 +11,13 @@ public interface IRestrictionManager {
 	
 	Boolean determineSatisfiability(Expr expr);
 
-	Restriction getRestriction(Expr expr);
+	RestrictionImpl getRestriction(Expr expr);
 
 	//void stateEqual(Var a, Var b);
 
-	Restriction getRestriction(Var a);
+	RestrictionImpl getRestriction(Var a);
 
-	Restriction getOrCreateLocalRestriction(Var a);
+	RestrictionImpl getOrCreateLocalRestriction(Var a);
 
 	void stateType(Var a, Type type);
 

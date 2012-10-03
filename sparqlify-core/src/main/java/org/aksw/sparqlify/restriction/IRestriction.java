@@ -9,7 +9,7 @@ public interface IRestriction
 	extends Cloneable
 {
 
-	boolean stateRestriction(Restriction other);
+	boolean stateRestriction(RestrictionImpl other);
 
 	/**
 	 * State whether the resource is a URI or a Literal

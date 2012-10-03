@@ -185,4 +185,11 @@ public class SchemaProviderImpl
 		Map<String, SqlDatatype> result = transformRawMap(map, datatypeSystem, aliasMap);
 		return result;
 	}
+
+
+
+	@Override
+	public DatatypeSystem getDatatypeSystem() {
+		return datatypeSystem;
+	}
 }

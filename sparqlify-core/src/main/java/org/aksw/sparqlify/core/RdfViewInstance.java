@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
-import org.aksw.sparqlify.restriction.Restriction;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
 
 import sparql.TwoWayBinding;
 
@@ -219,7 +219,7 @@ public class RdfViewInstance {
 		for(Entry<Node, Expr> entry : parentBinding.entrySet()) {
 			Var node = (Var)renamer.get(entry.getKey());
 
-			Restriction r = parent.getRestrictions().getRestriction((Var)entry.getKey());
+			RestrictionImpl r = parent.getRestrictions().getRestriction((Var)entry.getKey());
 
 			IBiSetMultimap<Var, Var> reverse = binding.getEquiMap().getEquivalences().getInverse();
 			Set<Var> queryVars = reverse.get(node);

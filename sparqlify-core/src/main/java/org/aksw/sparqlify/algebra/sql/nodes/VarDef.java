@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.restriction.Restriction;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -20,7 +20,7 @@ public class VarDef {
 	
 
 
-	public VarDef(Expr expr, Restriction restriction) {
+	public VarDef(Expr expr, RestrictionImpl restriction) {
 		this.expr = expr;
 		
 		if(restriction != null) {

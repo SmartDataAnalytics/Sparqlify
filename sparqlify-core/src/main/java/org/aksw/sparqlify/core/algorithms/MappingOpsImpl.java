@@ -809,6 +809,10 @@ public class MappingOpsImpl
 				
 				Expr sqlExpr = sqlTranslator.translateSql(entry.getValue());
 				SqlDatatype datatype = datatypeAssigner.assign(sqlExpr, member.getSqlOp().getSchema().getTypeMap());
+
+				if(datatype == null) {
+					throw new RuntimeException("Could not determine datatype for expression: " + sqlExpr);
+				}
 				
 				projection.put(entry.getKey(), sqlExpr);
 				unionTypeMap.put(entry.getKey(), datatype);
@@ -828,7 +832,7 @@ public class MappingOpsImpl
 			Mapping member = members.get(i);
 			Map<String, Expr> unionMemberProjection = unionMemberProjections.get(i);
 			
-			Set<String> names = new HashSet<String>(member.getSqlOp().getSchema().getColumnNames());
+			Set<String> names = new HashSet<String>(unionMemberProjection.keySet());//member.getSqlOp().getSchema().getColumnNames());
 			Set<String> unboundColumns = Sets.difference(unionTypeMap.keySet(), names);
 		
 			for(String columnName : unboundColumns) {

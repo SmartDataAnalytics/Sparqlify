@@ -9,7 +9,7 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 
 
-public interface ViewSystem {
+public interface CandidateViewSelector {
 	void addView(ViewDefinition viewDefinition);
 	
 	Op getApplicableViews(Query query);

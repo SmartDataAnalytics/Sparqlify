@@ -37,7 +37,7 @@ import org.aksw.sparqlify.database.TableBuilder;
 import org.aksw.sparqlify.database.TreeIndex;
 import org.aksw.sparqlify.database.VariableConstraint;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
-import org.aksw.sparqlify.restriction.Restriction;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.restriction.Type;
 import org.apache.commons.collections15.Transformer;
@@ -403,7 +403,7 @@ public class SparqlViewSystem
 
 	public static Type getType(Node node, RestrictionManager restrictions) {
 		if(node.isVariable()) {
-			Restriction r = restrictions.getRestriction((Var)node);
+			RestrictionImpl r = restrictions.getRestriction((Var)node);
 			if(r != null) {
 				return r.getType();
 			}
@@ -686,7 +686,7 @@ public class SparqlViewSystem
 		Set<Clause> dnf = restrictions.getEffectiveDnf(quadVars);
 		
 		// TODO Get clauses by var
-		Restriction[] termRestriction = new Restriction[4];
+		RestrictionImpl[] termRestriction = new RestrictionImpl[4];
 		for(Clause clause : dnf) {
 			Map<String, Constraint> columnConstraints = new HashMap<String, Constraint>();
 			
@@ -700,7 +700,7 @@ public class SparqlViewSystem
 				
 				Var var = (Var)QuadUtils.getNode(quad, i);
 				
-				Restriction r = clause.getRestriction(var);
+				RestrictionImpl r = clause.getRestriction(var);
 				termRestriction[i] = r;
 				
 				if(r == null) {
@@ -715,7 +715,7 @@ public class SparqlViewSystem
 			}
 
 			// Object type constraint
-			Restriction r = termRestriction[3];
+			RestrictionImpl r = termRestriction[3];
 			if(r != null) {
 				switch(r.getType()) {
 				case URI:
@@ -872,7 +872,7 @@ public class SparqlViewSystem
 				if(viewNode.isVariable()) {
 					Var viewVar = (Var)viewNode;
 					
-					Restriction viewRs = viewRestrictions.getRestriction(viewVar);
+					RestrictionImpl viewRs = viewRestrictions.getRestriction(viewVar);
 					if(viewRs != null) {
 						subRestrictions.stateRestriction(queryVar, viewRs);
 					}

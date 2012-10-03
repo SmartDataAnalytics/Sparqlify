@@ -166,11 +166,11 @@ public class RestrictionManager2 {
 		return satisfiability;
 	}
 	
-	public static Restriction deriveRestriction(Expr expr) {
+	public static RestrictionImpl deriveRestriction(Expr expr) {
 		if(expr instanceof E_StrConcat || expr instanceof E_StrConcatPermissive) {
 			return deriveRestriction(expr);
 		} else if(expr.isConstant()) {
-			Restriction result = new Restriction();
+			RestrictionImpl result = new RestrictionImpl();
 			result.stateNode(expr.getConstant().asNode());
 			return result;
 		}
@@ -178,15 +178,15 @@ public class RestrictionManager2 {
 		return null;
 	}
 	
-	public static Restriction deriveRestriction(E_StrConcat expr) {
+	public static RestrictionImpl deriveRestriction(E_StrConcat expr) {
 		return deriveRestrictionConcat(expr);
 	}
 	
-	public static Restriction deriveRestriction(E_StrConcatPermissive expr) {
+	public static RestrictionImpl deriveRestriction(E_StrConcatPermissive expr) {
 		return deriveRestrictionConcat(expr);
 	}
 
-	public static Restriction deriveRestrictionConcat(ExprFunction concat) {
+	public static RestrictionImpl deriveRestrictionConcat(ExprFunction concat) {
 	
 		// TODO If all arguments are constant, we could infer a constant constraint
 		String prefix = "";
@@ -198,7 +198,7 @@ public class RestrictionManager2 {
 			}
 		}
 		
-		Restriction result = new Restriction();
+		RestrictionImpl result = new RestrictionImpl();
 
 		result.stateUriPrefixes(new PrefixSet(prefix));
 		
@@ -212,7 +212,7 @@ public class RestrictionManager2 {
 
 		for(Clause clause : cnf) {
 			if(clause.getExprs().size() == 1) {
-				for(Entry<Var, Restriction> entry : clause.getRestrictions().entrySet()) {
+				for(Entry<Var, RestrictionImpl> entry : clause.getRestrictions().entrySet()) {
 					stateRestriction(entry.getKey(), entry.getValue());
 				}
 				//deriveRestriction(clause.getExprs().iterator().next());
@@ -234,7 +234,7 @@ public class RestrictionManager2 {
 	*/	
 	
 	
-	public boolean stateRestriction(Var var, Restriction restriction) {
+	public boolean stateRestriction(Var var, RestrictionImpl restriction) {
 		return stateRestriction(var, new RestrictionSet(restriction));
 	}
 	
@@ -389,12 +389,12 @@ public class RestrictionManager2 {
 	 * @param r
 	 * @param c
 	 */
-	public static Boolean determineSatisfiabilityEquals(Restriction a, Restriction b) {
+	public static Boolean determineSatisfiabilityEquals(RestrictionImpl a, RestrictionImpl b) {
 		if(a == null || b == null) {
 			return null;
 		}
 
-		Restriction tmp = new Restriction(a);
+		RestrictionImpl tmp = new RestrictionImpl(a);
 		tmp.stateRestriction(b);
 		
 		if(!tmp.isConsistent()) {
@@ -721,7 +721,7 @@ public class RestrictionManager2 {
 					continue;
 				}
 				
-				for(Restriction r : rs.getRestrictions()) {
+				for(RestrictionImpl r : rs.getRestrictions()) {
 					newRs.addAlternative(r);
 				}
 			}

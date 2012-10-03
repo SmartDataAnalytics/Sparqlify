@@ -49,6 +49,10 @@ public class SyntaxBridge {
 		this.schemaProvider = schemaProvider;
 	}
 	
+	public SchemaProvider getSchemaProvider() {
+		return schemaProvider;
+	}
+	
 	public org.aksw.sparqlify.core.domain.ViewDefinition create(ViewDefinition viewDefinition) {
 		
 		String name = viewDefinition.getName();		

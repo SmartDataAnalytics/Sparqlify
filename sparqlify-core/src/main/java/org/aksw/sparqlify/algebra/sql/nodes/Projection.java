@@ -23,7 +23,7 @@ public class Projection {
 	}
 	
 	public Projection(List<String> names, Map<String, Expr> nameToExpr) {
-		this.names = names = names;
+		this.names = names;
 		this.nameToExpr = nameToExpr;
 	}
 	
@@ -33,6 +33,40 @@ public class Projection {
 		nameToExpr.putAll(other.getNameToExpr());
 	}
 	
+	/**
+	 * In place projection
+	 * 
+	 * @param columnNames
+	 */
+	public void project(List<String> columnNames) {
+		this.names.retainAll(columnNames);
+		this.nameToExpr.keySet().retainAll(columnNames);
+	}	
+
+	public void extend(Projection other) {
+		// TODO assert that there is no overlap in the column names
+		
+		this.names.addAll(other.getNames());
+		this.nameToExpr.putAll(other.getNameToExpr());
+	}
+	
+	/**
+	 * Create a new projection with only the given column names retained
+	 * @param columnNames
+	 */
+	/*
+	public Projection project(List<String> columnNames) {
+		Map<String, Expr> newNameToExpr = new HashMap<String, Expr>();
+		for(String name : columnNames) {
+			Expr expr = nameToExpr.get(name);
+			newNameToExpr.put(name, expr);
+		}
+		
+		Projection result = new Projection(columnNames, newNameToExpr);
+		
+		
+		return result;
+	}*/
 	
 	public void rename(String oldName, String newName) {
 		Collections.replaceAll(names, oldName, newName);
@@ -42,6 +76,11 @@ public class Projection {
 		nameToExpr.put(newName, val);
 	}
 	
+	/**
+	 * In place rename
+	 * 
+	 * @param oldToNew
+	 */
 	public void renameAll(Map<String, String> oldToNew) {
 		for(Entry<String, String> entry : oldToNew.entrySet()) {
 			rename(entry.getKey(), entry.getValue());

@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.database;
+package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,26 +8,36 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-import mapping.SparqlifyConstants;
-
-import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
-import org.aksw.sparqlify.config.lang.PrefixSet;
-import org.aksw.sparqlify.core.RdfView;
-import org.aksw.sparqlify.core.RdfViewConjunction;
-import org.aksw.sparqlify.core.RdfViewInstance;
-import org.aksw.sparqlify.core.RdfViewSystem;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ReplaceConstants;
+import org.aksw.sparqlify.core.domain.VarBinding;
+import org.aksw.sparqlify.core.domain.ViewDefinition;
+import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.database.Clause;
+import org.aksw.sparqlify.database.Constraint;
+import org.aksw.sparqlify.database.EqualsConstraint;
+import org.aksw.sparqlify.database.FilterPlacementOptimizer2;
+import org.aksw.sparqlify.database.IndexMetaNode;
+import org.aksw.sparqlify.database.IsPrefixOfConstraint;
+import org.aksw.sparqlify.database.MetaIndexFactory;
+import org.aksw.sparqlify.database.NestedNormalForm;
+import org.aksw.sparqlify.database.OpFilterIndexed;
+import org.aksw.sparqlify.database.PrefixIndex;
+import org.aksw.sparqlify.database.PrefixIndexMetaFactory;
+import org.aksw.sparqlify.database.StartsWithConstraint;
+import org.aksw.sparqlify.database.Table;
+import org.aksw.sparqlify.database.TableBuilder;
+import org.aksw.sparqlify.database.TreeIndex;
+import org.aksw.sparqlify.database.VariableConstraint;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManager;
@@ -35,8 +45,6 @@ import org.aksw.sparqlify.restriction.Type;
 import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sparql.TwoWayBinding;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
@@ -74,17 +82,17 @@ class ConstraintContext
 
 
 class ViewQuad {
-	private RdfView view;
+	private ViewDefinition view;
 	private Quad quad;
 	
 	// TODO Maybe another field for some constraints
 	
-	public ViewQuad(RdfView view, Quad quad) {
+	public ViewQuad(ViewDefinition view, Quad quad) {
 		this.view = view;
 		this.quad = quad;
 	}
 
-	public RdfView getView() {
+	public ViewDefinition getView() {
 		return view;
 	}
 
@@ -173,20 +181,20 @@ class NestedStack<T>
 
 
 
-public class RdfViewSystem2
-	implements RdfViewSystem
+public class CandidateViewSelectorImpl
+	implements CandidateViewSelector
 {
 
 	
-	private Logger logger = LoggerFactory.getLogger(RdfViewSystem2.class);
+	private Logger logger = LoggerFactory.getLogger(CandidateViewSelectorImpl.class);
 	
 	private int viewId = 1;
 	private Table<Object> table;
 	
 	PrefixIndex<Object> idxTest;
-	private Set<RdfView> views = new HashSet<RdfView>();
+	private Set<ViewDefinition> views = new HashSet<ViewDefinition>();
 	
-	public RdfViewSystem2() {
+	public CandidateViewSelectorImpl() {
 		TableBuilder<Object> builder = new TableBuilder<Object>();
 		builder.addColumn("g_prefix", String.class);
 		builder.addColumn("s_prefix", String.class);
@@ -230,21 +238,28 @@ public class RdfViewSystem2
 
 	}
 	
+	
+	
+	public void addView(ViewDefinition view) {
+		this.views.add(view);
+	}
+	
 		
-	@Override
-	public void addView(RdfView view) {
+	//@Override
+	/*
+	public void addView(ViewDefinition view) {
 
 		//Validation.validateView(view);
 		
 		++viewId;
 
-		Set<Var> vars = view.getVarsMentioned();
+		Set<Var> vars = QuadUtils.getVarsMentioned(view.getTemplate());
 		Map<Node, Node> rename = new HashMap<Node, Node>();
 		for(Var var : vars) {
 			rename.put(var, Var.alloc("view" + viewId + "_" + var.getName()));
 		}
 		
-		RdfView copy = view.copySubstitute(rename);
+		ViewDefinition copy = view.copySubstitute(rename);
 		
 		// Rename the variables in the view to make them globally unique
 		//logger.trace("Renamed variables of view: " + copy);
@@ -253,6 +268,7 @@ public class RdfViewSystem2
 		
 		index(copy);
 	}
+	*/
 	
 	
 	public static Constraint deriveConstraint(Expr expr) {
@@ -287,9 +303,12 @@ public class RdfViewSystem2
 		return new StartsWithConstraint(prefix);			
 	}
 	
-	
-
-	public Map<Var, Type> deriveTypeConstraints(RdfView view) {
+	// TODO FIX THIS
+	public Map<Var, Type> deriveTypeConstraints(ViewDefinition view) {
+		return null;
+	}	
+/*
+	public Map<Var, Type> deriveTypeConstraints(ViewDefinition view) {
 		Map<Var, Type> result = new HashMap<Var, Type>();		
 		
 		for(Entry<Node, Expr> entry : view.getBinding().entrySet()) {
@@ -327,6 +346,7 @@ public class RdfViewSystem2
 		return result;
 		
 	}
+	*/
 
 	
 	/**
@@ -337,23 +357,29 @@ public class RdfViewSystem2
 	 * 
 	 * TODO: Actually we should not add these constraints to the view, but just return them
 	 * 
+	 * TODO FIX THIS
 	 */
-	public void deriveRestrictions(RdfView view) {
+	public void deriveRestrictions(ViewDefinition view) {
+
+	}
+	/*
+	public void deriveRestrictions(ViewDefinition view) {
 		RestrictionManager restrictions = view.getRestrictions();
 		
 		for(Entry<Var, PrefixSet> entry : view.getConstraints().getVarPrefixConstraints().entrySet()) {
 			restrictions.stateUriPrefixes(entry.getKey(), entry.getValue());
 		}
 		
-		for(Entry<Node, Expr> entry : view.getBinding().entrySet()) {
+		for(Entry<Var, RestrictedExpr> entry : view.getMapping().getVarDefinition().getMap().entrySet()) {
 			Var var = (Var)entry.getKey();
 			
-			ExprFunction termCtor = (ExprFunction)entry.getValue();
+			RestrictedExpr restExpr = entry.getValue();
+			ExprFunction termCtor = (ExprFunction)restExpr.getExpr();
 
 			/*
 			if(!(expr instanceof RdfTerm)) {
 				throw new RuntimeException("RdfTerm expected");
-			}*/
+			}* /
 
 			// TODO We assume RdfTerm here for now, but should check
 			Expr expr = termCtor.getArgs().get(1);
@@ -373,6 +399,7 @@ public class RdfViewSystem2
 			}			
 		}
 	}
+	*/
 	
 
 	public static Type getType(Node node, RestrictionManager restrictions) {
@@ -390,13 +417,24 @@ public class RdfViewSystem2
 		return Type.UNKNOWN;
 	}
 	
-	private void index(RdfView view) {
+	
+	private void index(ViewDefinition view) {
+	}
+	
+	
+	/**
+	 * 
+	 * TODO FIX THIS
+	 * @param view
+	 */
+	/*
+	private void index(ViewDefinition view) {
 		
 		/*
 		if(view.getName().equals("lgd_node_tags_string")) {
 			System.out.println("Debug");
 		}
-		*/
+		* /
 		
 		RestrictionManager restrictions = new RestrictionManager();
 		view.setRestrictions(restrictions);
@@ -421,7 +459,7 @@ public class RdfViewSystem2
 				
 		
 		
-		for(Quad quad : view.getQuadPattern()) {
+		for(Quad quad : view.getTemplate()) {
 
 			List<Collection<?>> collections = new ArrayList<Collection<?>>();
 
@@ -459,7 +497,7 @@ public class RdfViewSystem2
 					collections.add(Collections.singleton(node.getURI()));
 				/* } else if(node.isLiteral()) {
 					collections.add(Collections.singleton(node.getLiteralLexicalForm()));
-					*/
+					* /
 				} else {
 					throw new RuntimeException("Should not happen");
 				}
@@ -473,7 +511,7 @@ public class RdfViewSystem2
 				table.add(row);
 			}
 		}
-		
+		*/
 		
 		
 		/*
@@ -493,8 +531,9 @@ public class RdfViewSystem2
 			
 			
 			//graphs.add(new FilteredGraph(quad, filter));
-		}*/
+		}
 	}
+	*/
 	
 	
 	public Op getApplicableViews(Query query)
@@ -621,9 +660,9 @@ public class RdfViewSystem2
 	 * such as 'aaaa' = prefix
 	 * 'aaaaa$' = constant
 	 */
-	public List<RdfViewConjunction> getApplicableViewsBase(OpQuadPattern op, RestrictionManager restrictions)
+	public List<ViewInstanceJoin> getApplicableViewsBase(OpQuadPattern op, RestrictionManager restrictions)
 	{
-		List<RdfViewConjunction> result = new ArrayList<RdfViewConjunction>();
+		List<ViewInstanceJoin> result = new ArrayList<ViewInstanceJoin>();
 		
 		QuadPattern queryQuads = op.getPattern(); //PatternUtils.collectQuads(op);
 		//RestrictionManager restrictions = new RestrictionManager(exprs);
@@ -771,11 +810,11 @@ public class RdfViewSystem2
 	}
 
 
-	public static List<String> getCandidateNames(NestedStack<RdfViewInstance> instances) {
+	public static List<String> getCandidateNames(NestedStack<ViewInstance> instances) {
 		List<String> viewNames = new ArrayList<String>();		
 		if(instances != null) {
-			for(RdfViewInstance instance : instances.asList()) {
-				viewNames.add(instance.getParent().getName());
+			for(ViewInstance instance : instances.asList()) {
+				viewNames.add(instance.getViewDefinition().getName());
 			}
 		}
 		
@@ -792,13 +831,13 @@ public class RdfViewSystem2
 	 * @param restrictions
 	 * @param result
 	 */
-	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManager restrictions, NestedStack<RdfViewInstance> instances, List<RdfViewConjunction> result)
+	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManager restrictions, NestedStack<ViewInstance> instances, List<ViewInstanceJoin> result)
 	{
 		List<String> debug = Arrays.asList("view_nodes", "node_tags_resource_kv"); // "view_lgd_relation_specific_resources");
 		List<String> viewNames = new ArrayList<String>();		
 		if(instances != null) {
-			for(RdfViewInstance instance : instances.asList()) {
-				viewNames.add(instance.getParent().getName());
+			for(ViewInstance instance : instances.asList()) {
+				viewNames.add(instance.getViewDefinition().getName());
 			}
 		}
 		
@@ -847,8 +886,10 @@ public class RdfViewSystem2
 
 
 			RestrictionManager subRestrictions = new RestrictionManager(restrictions);
-			RestrictionManager viewRestrictions = viewQuad.getView().getRestrictions();
-
+			// TODO Fix This
+			//RestrictionManager viewRestrictions = viewQuad.getView().getRestrictions();
+			RestrictionManager viewRestrictions = new RestrictionManager(); 
+			
 
 			for(int i = 0; i < 4; ++i) {
 				Var queryVar = (Var)QuadUtils.getNode(queryQuad, i);
@@ -888,11 +929,13 @@ public class RdfViewSystem2
 			
 			// TODO The restriction manager supersedes the two way binding
 			// But changing that is a bit of work
-			TwoWayBinding binding = TwoWayBinding.getVarMappingTwoWay(queryQuad, viewQuad.getQuad());
+			VarBinding binding = VarBinding.create(queryQuad, viewQuad.getQuad());//VarBinding.getVarMappingTwoWay(queryQuad, viewQuad.getQuad());
 
+					
 			// Try to join this instance with the candidates of the other quads 
 			int instanceId = index;
-			RdfViewInstance instance = new RdfViewInstance(queryQuad, viewQuad.getQuad(), instanceId, subId, viewQuad.getView(), binding);
+			//ViewInstance instance = new ViewInstance(queryQuad, viewQuad.getQuad(), instanceId, subId, viewQuad.getView(), binding);
+			ViewInstance instance = new ViewInstance(viewQuad.getView(), binding);
 
 
 			// Try adding the restrictions of the view to the subRestriction
@@ -940,22 +983,22 @@ public class RdfViewSystem2
 			}
 			*/
 			
-			NestedStack<RdfViewInstance> nextInstances = new NestedStack<RdfViewInstance>(instances, instance);
+			NestedStack<ViewInstance> nextInstances = new NestedStack<ViewInstance>(instances, instance);
 
 			if(isRecursionEnd) {
 				//System.out.println("QuadPattern candidate: " + getCandidateNames(nextInstances));
 				/*
-				TwoWayBinding completeBinding = new TwoWayBinding();
-				List<RdfViewInstance> list = instances.asList();
+				VarBinding completeBinding = new VarBinding();
+				List<ViewInstance> list = instances.asList();
 				
-				for(RdfViewInstance item : list) {
+				for(ViewInstance item : list) {
 					completeBinding.addAll(item.getBinding());
 				}*/
 				
-				RdfViewConjunction viewConjunction = new RdfViewConjunction(nextInstances.asList(), subRestrictions);
+				ViewInstanceJoin viewConjunction = new ViewInstanceJoin(nextInstances.asList(), subRestrictions);
 
 				// remove self joins
-				RdfViewSystemOld.merge(viewConjunction);
+				SelfJoinEliminator.merge(viewConjunction);
 
 				
 				
@@ -989,12 +1032,12 @@ public class RdfViewSystem2
 		
 	public Op getApplicableViews(OpQuadPattern op, RestrictionManager restrictions)
 	{
-		List<RdfViewConjunction> conjunctions = getApplicableViewsBase(op, restrictions);
+		List<ViewInstanceJoin> conjunctions = getApplicableViewsBase(op, restrictions);
 		
 		OpDisjunction result = OpDisjunction.create();
 		
-		for(RdfViewConjunction item : conjunctions) {
-			Op tmp = new OpRdfViewPattern(item);
+		for(ViewInstanceJoin item : conjunctions) {
+			Op tmp = new OpViewInstanceJoin(item);
 			result.add(tmp);
 		}
 		
@@ -1004,11 +1047,22 @@ public class RdfViewSystem2
 	}
 
 	
-	public static boolean isSatisfiable(List<RdfViewInstance> list)
+	/**
+	 * 
+	 * TODO FIX THIS
+	 * @param list
+	 * @return
+	 */
+	public static boolean isSatisfiable(List<ViewInstance> list)
 	{
-		TwoWayBinding completeBinding = new TwoWayBinding();
+		return true;
+	}
+	/*
+	public static boolean isSatisfiable(List<ViewInstance> list)
+	{
+		VarBinding completeBinding = new VarBinding();
 		boolean isOk = true;
-		for(RdfViewInstance item : list) {
+		for(ViewInstance item : list) {
 			if(!completeBinding.isCompatible(item.getBinding())) {
 				isOk = false;
 				break;
@@ -1019,6 +1073,7 @@ public class RdfViewSystem2
 
 		return isOk;
 	}
+	*/
 	
 	
 	
@@ -1291,8 +1346,8 @@ public class RdfViewSystem2
 
 
 
-	@Override
-	public Collection<RdfView> getViews() {
+	//@Override
+	public Collection<ViewDefinition> getViews() {
 		return views;
 	}
 	

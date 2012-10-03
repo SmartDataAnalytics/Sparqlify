@@ -72,7 +72,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	
 	private RestrictionManagerBeforeChangingToMap parent;
 	
-	private IndirectEquiMap<Var, Restriction> restrictions = new IndirectEquiMap<Var, Restriction>();
+	private IndirectEquiMap<Var, RestrictionImpl> restrictions = new IndirectEquiMap<Var, RestrictionImpl>();
 
 	
 	// TODO I want to get rid of this ExprIndex instance
@@ -97,7 +97,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	
 	
 	// Mapping of constraints derived from the expressions in expr
-	private Map<Expr, Restriction> exprToRestriction = new HashMap<Expr, Restriction>();
+	private Map<Expr, RestrictionImpl> exprToRestriction = new HashMap<Expr, RestrictionImpl>();
 	
 	
 	// Mapping of variables to constants - derived from the restrictions
@@ -135,11 +135,11 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 		return satisfiability;
 	}
 	
-	public static Restriction deriveRestriction(Expr expr) {
+	public static RestrictionImpl deriveRestriction(Expr expr) {
 		if(expr instanceof E_StrConcat || expr instanceof E_StrConcatPermissive) {
 			return deriveRestriction(expr);
 		} else if(expr.isConstant()) {
-			Restriction result = new Restriction();
+			RestrictionImpl result = new RestrictionImpl();
 			result.stateNode(expr.getConstant().asNode());
 			return result;
 		}
@@ -147,15 +147,15 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 		return null;
 	}
 	
-	public static Restriction deriveRestriction(E_StrConcat expr) {
+	public static RestrictionImpl deriveRestriction(E_StrConcat expr) {
 		return deriveRestrictionConcat(expr);
 	}
 	
-	public static Restriction deriveRestriction(E_StrConcatPermissive expr) {
+	public static RestrictionImpl deriveRestriction(E_StrConcatPermissive expr) {
 		return deriveRestrictionConcat(expr);
 	}
 
-	public static Restriction deriveRestrictionConcat(ExprFunction concat) {
+	public static RestrictionImpl deriveRestrictionConcat(ExprFunction concat) {
 	
 		// TODO If all arguments are constant, we could infer a constant constraint
 		String prefix = "";
@@ -167,7 +167,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 			}
 		}
 		
-		Restriction result = new Restriction();
+		RestrictionImpl result = new RestrictionImpl();
 
 		result.stateUriPrefixes(new PrefixSet(prefix));
 		
@@ -181,7 +181,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 
 		for(Clause clause : cnf) {
 			if(clause.getExprs().size() == 1) {
-				for(Entry<Var, Restriction> entry : clause.getRestrictions().entrySet()) {
+				for(Entry<Var, RestrictionImpl> entry : clause.getRestrictions().entrySet()) {
 					stateRestriction(entry.getKey(), entry.getValue());
 				}
 				//deriveRestriction(clause.getExprs().iterator().next());
@@ -205,8 +205,8 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	
 	
 	
-	public boolean stateRestriction(Var var, Restriction restriction) {
-		Restriction r = getOrCreateLocalRestriction(var);
+	public boolean stateRestriction(Var var, RestrictionImpl restriction) {
+		RestrictionImpl r = getOrCreateLocalRestriction(var);
 		if(r.stateRestriction(restriction)) {
 			if(r.isUnsatisfiable()) {
 				satisfiability = Boolean.FALSE;
@@ -330,8 +330,8 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 		else if(expr instanceof E_Equals) {
 			E_Equals e = (E_Equals)expr;
 
-			Restriction a = getRestriction(e.getArg1());
-			Restriction b = getRestriction(e.getArg2());
+			RestrictionImpl a = getRestriction(e.getArg1());
+			RestrictionImpl b = getRestriction(e.getArg2());
 
 			return determineSatisfiabilityEquals(a, b);
 		} else {
@@ -344,7 +344,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#getRestriction(com.hp.hpl.jena.sparql.expr.Expr)
 	 */
 	@Override
-	public Restriction getRestriction(Expr expr) {
+	public RestrictionImpl getRestriction(Expr expr) {
 		if(expr.isVariable()) {
 			return restrictions.get(expr.asVar());
 		} else {
@@ -359,12 +359,12 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 * @param r
 	 * @param c
 	 */
-	public static Boolean determineSatisfiabilityEquals(Restriction a, Restriction b) {
+	public static Boolean determineSatisfiabilityEquals(RestrictionImpl a, RestrictionImpl b) {
 		if(a == null || b == null) {
 			return null;
 		}
 
-		Restriction tmp = new Restriction(a);
+		RestrictionImpl tmp = new RestrictionImpl(a);
 		tmp.stateRestriction(b);
 		
 		if(!tmp.isConsistent()) {
@@ -409,10 +409,10 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 			} else {
 				// Copy the equivalences from the parent
 				Collection<Var> ae = getEquivalences(a);
-				Restriction ar = getRestriction(a);
+				RestrictionImpl ar = getRestriction(a);
 				
 				Collection<Var> be = getEquivalences(b);
-				Restriction br = getRestriction(b);
+				RestrictionImpl br = getRestriction(b);
 				
 				// TODO We copy the equivalences in order to avoid ConcurrentModificationException
 				restrictions.stateEqual(new HashSet<Var>(ae), ar);
@@ -422,11 +422,11 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 			}
 		}
 		
-		Pair<Restriction, Restriction> conflict = restrictions.stateEqual(a, b);
+		Pair<RestrictionImpl, RestrictionImpl> conflict = restrictions.stateEqual(a, b);
 		//Restriction r;
 		if(conflict != null) {
 			
-			Restriction r = conflict.getKey();
+			RestrictionImpl r = conflict.getKey();
 			if(didCopy) {
 				r = r.clone();
 			}
@@ -447,8 +447,8 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#getRestriction(com.hp.hpl.jena.sparql.core.Var)
 	 */
 	@Override
-	public Restriction getRestriction(Var a) {
-		Restriction result = restrictions.get(a);
+	public RestrictionImpl getRestriction(Var a) {
+		RestrictionImpl result = restrictions.get(a);
 		if(result == null && parent != null) {
 			return parent.getRestriction(a);
 		}
@@ -460,18 +460,18 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#getOrCreateRestriction(com.hp.hpl.jena.sparql.core.Var)
 	 */
 	@Override
-	public Restriction getOrCreateLocalRestriction(Var a) {
-		Restriction result = restrictions.get(a);
+	public RestrictionImpl getOrCreateLocalRestriction(Var a) {
+		RestrictionImpl result = restrictions.get(a);
 		
 		if(result == null && parent != null) {
-			Restriction toCopy = parent.getRestriction(a);
+			RestrictionImpl toCopy = parent.getRestriction(a);
 			if(toCopy != null) {
 				result = toCopy.clone();
 			}			
 		}
 		
 		if(result == null) {
-			result = new Restriction();
+			result = new RestrictionImpl();
 			restrictions.put(a, result);
 		}
 		
@@ -483,7 +483,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 */
 	@Override
 	public void stateType(Var a, Type type) {
-		Restriction r = getOrCreateLocalRestriction(a);
+		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateType(type)) {
 			if(r.isUnsatisfiable()) {
 				this.satisfiability = false;				
@@ -498,7 +498,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 */
 	@Override
 	public void stateNode(Var a, Node b) {
-		Restriction r = getOrCreateLocalRestriction(a);
+		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateNode(b)) {
 			if(r.isConsistent() == false) {
 				satisfiability = Boolean.FALSE;
@@ -538,7 +538,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 */
 	@Override
 	public void stateLexicalValuePrefixes(Var a, PrefixSet prefixes) {
-		Restriction r = getOrCreateLocalRestriction(a);		
+		RestrictionImpl r = getOrCreateLocalRestriction(a);		
 		if(r.stateUriPrefixes(prefixes)) {
 			check(a);
 		}
@@ -673,7 +673,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	}
 
 	public void stateUriPrefixes(Var a, PrefixSet prefixes) {
-		Restriction r = getOrCreateLocalRestriction(a);
+		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateUriPrefixes(prefixes)) {
 			if(!r.isConsistent()) {
 				satisfiability = Boolean.FALSE;

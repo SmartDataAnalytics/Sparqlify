@@ -5,22 +5,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
-import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
-import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.DatatypeSystem;
-import org.aksw.sparqlify.core.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssigner;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssignerMap;
-import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.SqlExprSerializerPostgres;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollector;
@@ -34,78 +28,40 @@ import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.util.MapReader;
 import org.antlr.runtime.RecognitionException;
-import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 public class MappingOpsImplTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MappingOpsImplTest.class);
 
-	public DatatypeSystem createDefaultDatatypeSystem() throws IOException {
-		
-		Map<String, String> typeNameToClass = MapReader.readFile(new File("src/main/resources/type-class.tsv"));
-		Map<String, String> typeNameToUri = MapReader.readFile(new File("src/main/resources/type-uri.tsv"));
-		Map<String, String> typeHierarchy = MapReader.readFile(new File("src/main/resources/type-hierarchy.default.tsv"));
-		
-		DatatypeSystem result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, logger);
-
-		return result;
-	}
-	
 	@Test
 	public void creationTest() throws RecognitionException, SQLException, IOException {
 
-		/*
-		 * Database setup
-		 * 
-		 */		
-		JdbcDataSource ds = new JdbcDataSource();
-		ds.setURL("jdbc:h2:mem:test_mem");
-		ds.setUser("sa");
-		ds.setPassword("sa");
-		 
-		Connection conn = ds.getConnection();
-		
-		String testTable = "CREATE TABLE person (id INT, name VARCHAR)";
-		
-		conn.createStatement().executeUpdate(testTable);
-		
-		
-		/*
-		 * Parsing
-		 * 
-		 */
-		String testView = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) From person";
-		
-		ConfigParser parser = new ConfigParser();
-		Config config = parser.parse(testView, null);
-		
-		List<org.aksw.sparqlify.config.syntax.ViewDefinition> vds = config.getViewDefinitions();
+		DataSource dataSource = TestUtils.createTestDatabase(); 
+		Connection conn = dataSource.getConnection();
 
-		org.aksw.sparqlify.config.syntax.ViewDefinition vd = vds.get(0);
-
-		/*
-		 * Bridge from syntax to core domain objects
-		 * 
-		 */
+		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
-		DatatypeSystem datatypeSystem = createDefaultDatatypeSystem();
-
-		//System.out.println(typeAlign);
 		
-		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias);
-		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 		
-		ViewDefinition coreVd = syntaxBridge.create(vd);
+		ViewDefinitionFactory vdFactory = TestUtils.createViewDefinitionFactory(conn, typeAlias);
+		
+		String testView = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) From person";
+		ViewDefinition coreVd = vdFactory.create(testView);
+		
+		
+		
 		Mapping m1 = coreVd.getMapping();
 		
 		
 		VarBinding binding = new VarBinding();
 		ViewInstance vi = new ViewInstance(coreVd, binding);
 
-		DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(datatypeSystem);
+		DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(vdFactory.getDatatypeSystem());
 		//ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm(da);
 		
 		MappingOps ops = new MappingOpsImpl(da);

@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.restrictions;
 
-import org.aksw.sparqlify.restriction.Restriction;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.restriction.RestrictionManager2;
 import org.aksw.sparqlify.restriction.Type;
@@ -21,10 +21,10 @@ public class RestrictionTest {
 	
 	@Test
 	public void testRestriction2() {
-		Restriction r = new Restriction();		
+		RestrictionImpl r = new RestrictionImpl();		
 		Assert.assertTrue(r.getSatisfiability());
 		
-		Restriction a = new Restriction();
+		RestrictionImpl a = new RestrictionImpl();
 		a.stateRestriction(r);
 		Assert.assertTrue(r.getSatisfiability());
 
@@ -41,7 +41,7 @@ public class RestrictionTest {
 	@Test
 	public void testRestriction() {
 		
-		Restriction r = new Restriction();
+		RestrictionImpl r = new RestrictionImpl();
 		Assert.assertTrue(r.isConsistent());
 		
 		r.stateNode(Node.createURI("http://example.org"));

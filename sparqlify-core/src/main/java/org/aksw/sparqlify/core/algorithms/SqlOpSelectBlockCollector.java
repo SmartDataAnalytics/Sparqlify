@@ -3,6 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_SqlColumnRef;
@@ -10,8 +11,10 @@ import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
@@ -136,6 +139,14 @@ public class SqlOpSelectBlockCollector {
 	}
 
 	
+	public static Expr transformToAliasedReferences(Expr expr, Projection projection) {
+		Map<String, Expr> map = projection.getNameToExpr();
+		NodeExprSubstitutor substitutor = NodeExprSubstitutor.create(map);
+		Expr result = substitutor.transformMM(expr);
+
+		return result;
+	}
+	
 	public static ExprList adjustConditions(ExprList exprs, Projection projection) {
 		Map<String, Expr> map = projection.getNameToExpr();
 		NodeExprSubstitutor substitutor = NodeExprSubstitutor.create(map);
@@ -157,8 +168,47 @@ public class SqlOpSelectBlockCollector {
 		return result;
 	}
 	
-	
+	public static SqlOp makeSelect(SqlOpExtend op) {
+		
+		SqlOp subOp = _makeSelect(op.getSubOp());
+		
+		SqlOpSelectBlock result = requireSelectBlock(subOp);
+		result.setSchema(op.getSchema());
 
+		Projection extendedProj = new Projection();
+		for(Entry<String, Expr> entry : op.getProjection().getNameToExpr().entrySet()) {
+			String columnName = entry.getKey();
+			Expr originalExpr = entry.getValue();
+			Expr aliasedExpr = transformToAliasedReferences(originalExpr, result.getProjection());
+			
+			extendedProj.getNames().add(columnName);
+			extendedProj.getNameToExpr().put(columnName, aliasedExpr);
+		}
+		
+		result.getProjection().extend(extendedProj);
+		
+		
+		return result;
+	}
+	
+	public static SqlOp makeSelect(SqlOpProject op) {
+		
+		SqlOp subOp = _makeSelect(op.getSubOp());
+		
+		SqlOpSelectBlock result = requireSelectBlock(subOp);
+		result.setSchema(op.getSchema());
+		
+		result.getProjection().project(op.getColumnNames());
+		
+		//result.getProjection().project(op.get$)
+		
+		//ExprList transformed = adjustConditions(op.getExprs(), result.getProjection());		
+		//result.getConditions().addAll(transformed);
+		
+		return result;
+	}
+
+	
 	
 	public static SqlOp makeSelect(SqlOpJoin op) {
 
