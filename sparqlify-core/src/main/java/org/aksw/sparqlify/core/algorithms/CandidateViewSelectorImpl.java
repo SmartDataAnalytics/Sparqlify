@@ -287,66 +287,13 @@ public class CandidateViewSelectorImpl
 		return deriveConstraint(expr);
 	}
 
-	public static StartsWithConstraint deriveConstraintConcat(ExprFunction concat) {
-	
-		// TODO If all arguments are constant, we could infer a constant constraint
-		String prefix = "";
-		for(Expr arg : concat.getArgs()) {
-			if(arg.isConstant()) {
-				prefix += arg.getConstant().asUnquotedString();
-			} else {
-				break;
-			}
-		}
-		
-		
-		return new StartsWithConstraint(prefix);			
-	}
+
 	
 	// TODO FIX THIS
 	public Map<Var, Type> deriveTypeConstraints(ViewDefinition view) {
 		return null;
 	}	
-/*
-	public Map<Var, Type> deriveTypeConstraints(ViewDefinition view) {
-		Map<Var, Type> result = new HashMap<Var, Type>();		
-		
-		for(Entry<Node, Expr> entry : view.getBinding().entrySet()) {
-			Var var = 
-					(Var)entry.getKey();
-			
-			ExprFunction termCtor = (ExprFunction)entry.getValue();
-			// TODO Use the type field of RdfTerm
-			//String functionIri = termCtor.getFunctionSymbol().toString();
-			String functionIri = termCtor.getFunctionSymbol().getSymbol();
-			if(functionIri.equals(SparqlifyConstants.rdfTermLabel)) {
-				
-				Expr arg = termCtor.getArg(1);
-				if(arg.isConstant()) {
-					Object o = NodeValueUtils.getValue(arg.getConstant());
-					
-					Number number = (Number)o;
-					switch(number.intValue()) {
-					case 1:
-						result.put(var, Type.URI);
-						break;
-					case 2:
-					case 3:
-						result.put(var, Type.LITERAL);
-						break;
-					}
-				}
-			} else if(functionIri.equals(SparqlifyConstants.uriLabel)) {
-				result.put(var, Type.URI);
-			} else if(functionIri.equals(SparqlifyConstants.plainLiteralLabel) || functionIri.equals(SparqlifyConstants.typedLiteralLabel)) {
-				result.put(var, Type.LITERAL);
-			}
-		}
 
-		return result;
-		
-	}
-	*/
 
 	
 	/**
@@ -362,45 +309,7 @@ public class CandidateViewSelectorImpl
 	public void deriveRestrictions(ViewDefinition view) {
 
 	}
-	/*
-	public void deriveRestrictions(ViewDefinition view) {
-		RestrictionManager restrictions = view.getRestrictions();
-		
-		for(Entry<Var, PrefixSet> entry : view.getConstraints().getVarPrefixConstraints().entrySet()) {
-			restrictions.stateUriPrefixes(entry.getKey(), entry.getValue());
-		}
-		
-		for(Entry<Var, RestrictedExpr> entry : view.getMapping().getVarDefinition().getMap().entrySet()) {
-			Var var = (Var)entry.getKey();
-			
-			RestrictedExpr restExpr = entry.getValue();
-			ExprFunction termCtor = (ExprFunction)restExpr.getExpr();
 
-			/*
-			if(!(expr instanceof RdfTerm)) {
-				throw new RuntimeException("RdfTerm expected");
-			}* /
-
-			// TODO We assume RdfTerm here for now, but should check
-			Expr expr = termCtor.getArgs().get(1);
-			
-			
-			
-			if(expr instanceof E_StrConcat || expr instanceof E_StrConcatPermissive) {
-
-				StartsWithConstraint constraint = deriveConstraintConcat((ExprFunction)expr);
-				
-				restrictions.stateUriPrefixes(var, new PrefixSet(constraint.getPrefix()));
-				
-				//RdfTerm<Constraint> constraint = new RdfTerm<Constraint>(null, new StartsWithConstraint(prefix), null, null);
-				
-				//view.getConstraints().add(var, constraint);
-				
-			}			
-		}
-	}
-	*/
-	
 
 	public static Type getType(Node node, RestrictionManager restrictions) {
 		if(node.isVariable()) {

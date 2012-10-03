@@ -54,10 +54,29 @@ public class VarDefinition {
 		return varToExprs.get(viewVar);
 	}
 	
+	
+	
+	public VarDefinition copyRenameVars(Map<Var, Var> oldToNew) {
+		Multimap<Var, RestrictedExpr> resultMap = HashMultimap.create();
+		
+		for(Entry<Var, Collection<RestrictedExpr>> entry : varToExprs.asMap().entrySet()) {
+			Var var = entry.getKey();
+			Var renamedVar = oldToNew.get(var);
+			
+			Var newVar = renamedVar == null ? var : renamedVar;
+			
+			resultMap.putAll(newVar, entry.getValue());
+		}
+		
+		VarDefinition result = new VarDefinition(resultMap);
+		return result;
+	}
+	
 	// Some Ideas for compact syntax:
 	// Construct {?s rdfs:label ?name} With ?s = uri(@rdf, id) From table
 	// Omitting the With clause alltogether: Construct { uri(@rdf, id) rdfs:label ?name } From table --- name will become a typed literal of type string.
 	
+	// FIXME This method should not be static but a real member
 	public static VarDefinition copyRename(VarDefinition varDef, Map<String, String> oldToNew) {
 		Map<Var, Expr> map = new HashMap<Var, Expr>();
 		

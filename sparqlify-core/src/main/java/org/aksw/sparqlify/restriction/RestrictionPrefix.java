@@ -37,29 +37,6 @@ public class RestrictionPrefix
 	
 	
 	
-	/**
-	 * How to deal with exceptions:
-	 * - This is not owl, except for owl:Class
-	 * - This is rdf, except for rdf:type
-	 * 
-	 * 
-	 * case: positive - positive
-	 *     Create the intersection:
-	 *        {owl} and {rdf} -> {}
-	 *        {owl} and {owla} -> {owla} (owla is more specific)  
-	 * 
-	 * case: positive - negative
-	 *        {owl} and not{rdf} -> {owl} (positive prevails)
-	 *        {owl} and not{owla} -> {owl[except owla]} (exception)}
-	 *        not{owl} and {owla} -> {} (owl namespace was excluded)
-	 *        not{owla} and {owl} -> 
-	 * 
-	 * case: negative - negative
-	 *     Create the union:
-	 *         not{owl} and not{rdf} -> not{rdf, owl}
-	 *         not(owl} and not{owla} -> not{owl} (owla subsumed by the shorter prefix)
-	 * 
-	 */
 	@Override
 	public Restriction and(Restriction other) {
 		RestrictionPrefix o = (RestrictionPrefix)other;
