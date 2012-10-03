@@ -26,6 +26,21 @@ public class RestrictionSet
 {
 	private List<RestrictionImpl> restrictions;// = new ArrayList<? extends IRestriction>();
 	
+	
+	public PrefixSet getUriPrefixes() {
+		PrefixSet result = null;
+		for(RestrictionImpl r : restrictions) {
+			if(result == null) {
+				result = r.getUriPrefixes();
+			} else {
+				PrefixSet tmp = r.getUriPrefixes();
+				result.addAll(tmp);
+			}
+		}
+
+		return result;		
+	}
+	
 	public Type getType() {
 		Type t = null;
 		for(RestrictionImpl r : restrictions) {

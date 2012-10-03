@@ -30,6 +30,7 @@ public class ViewInstance {
 	
 	
 	public ViewInstance(ViewDefinition viewDefinition, VarBinding binding) {
+		this.viewDefinition = viewDefinition;
 		this.binding = binding;
 	}
 	

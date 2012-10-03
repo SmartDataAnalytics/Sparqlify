@@ -18,6 +18,7 @@ import org.junit.Test;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.sparql.algebra.Op;
 
 public class CandidateViewSelectionTests {
 
@@ -45,9 +46,9 @@ public class CandidateViewSelectionTests {
 		
 		Query query = new Query();
 		QueryFactory.parse(query, queryString, "http://ex.org/", Syntax.syntaxSPARQL_11);
-		system.getApplicableViews(query);
+		Op op = system.getApplicableViews(query);
 		
-		
+		System.out.println(op);
 		
 	}
 }

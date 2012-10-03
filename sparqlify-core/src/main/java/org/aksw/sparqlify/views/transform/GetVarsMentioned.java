@@ -7,6 +7,8 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.core.RdfViewInstance;
+import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
+import org.aksw.sparqlify.core.domain.ViewInstance;
 import org.aksw.sparqlify.database.OpExtFilterIndexed;
 import org.aksw.sparqlify.sparqlview.OpSparqlViewPattern;
 
@@ -27,8 +29,18 @@ public class GetVarsMentioned {
 		return (Set<Var>)MultiMethod.invokeStatic(GetVarsMentioned.class, "_getVarsMentioned", op);
 	}
 	
+	@Deprecated
 	public static Set<Var> _getVarsMentioned(RdfViewInstance op) {
 		return new HashSet<Var>(op.getQueryToParentBinding().keySet());
+	}
+
+	public static Set<Var> _getVarsMentioned(OpViewInstanceJoin op) {
+		Set<Var> result = new HashSet<Var>();
+		for(ViewInstance vi : op.getJoin().getViewInstances()) {
+			result.addAll(vi.getBinding().getQueryVars());
+		}
+
+		return result;
 	}
 
 	public static Set<Var> _getVarsMentioned(OpQuadPattern op) {

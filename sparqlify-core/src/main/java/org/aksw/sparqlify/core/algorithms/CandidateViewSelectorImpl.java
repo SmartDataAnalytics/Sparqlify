@@ -12,13 +12,18 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
+import org.aksw.sparqlify.core.domain.Mapping;
+import org.aksw.sparqlify.core.domain.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.VarBinding;
+import org.aksw.sparqlify.core.domain.VarDefinition;
 import org.aksw.sparqlify.core.domain.ViewDefinition;
 import org.aksw.sparqlify.core.domain.ViewInstance;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -69,7 +74,6 @@ import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 
@@ -241,7 +245,26 @@ public class CandidateViewSelectorImpl
 	
 	
 	public void addView(ViewDefinition view) {
-		this.views.add(view);
+		//Validation.validateView(view);
+		
+		++viewId;
+
+		Set<Var> vars = QuadUtils.getVarsMentioned(view.getTemplate());
+		Map<Var, Var> oldToNew = new HashMap<Var, Var>();
+		for(Var var : vars) {
+			oldToNew.put(var, Var.alloc("view" + viewId + "_" + var.getName()));
+		}
+		
+		VarDefinition varDef = view.getMapping().getVarDefinition().copyRenameVars(oldToNew);
+		
+		Mapping m = new Mapping(varDef, view.getMapping().getSqlOp());
+		ViewDefinition copy = new ViewDefinition(view.getName(), view.getTemplate(), view.getViewReferences(), m, view);
+		
+		// Rename the variables in the view to make them globally unique
+		//logger.trace("Renamed variables of view: " + copy);
+
+		
+		index(copy);
 	}
 	
 		
@@ -288,29 +311,6 @@ public class CandidateViewSelectorImpl
 	}
 
 
-	
-	// TODO FIX THIS
-	public Map<Var, Type> deriveTypeConstraints(ViewDefinition view) {
-		return null;
-	}	
-
-
-	
-	/**
-	 * Derive prefix constraints for variables based on
-	 * variable definitions:
-	 * 
-	 * concat('constant', var, rest) -> prefix = 'constant'
-	 * 
-	 * TODO: Actually we should not add these constraints to the view, but just return them
-	 * 
-	 * TODO FIX THIS
-	 */
-	public void deriveRestrictions(ViewDefinition view) {
-
-	}
-
-
 	public static Type getType(Node node, RestrictionManager restrictions) {
 		if(node.isVariable()) {
 			RestrictionImpl r = restrictions.getRestriction((Var)node);
@@ -327,35 +327,27 @@ public class CandidateViewSelectorImpl
 	}
 	
 	
-	private void index(ViewDefinition view) {
-	}
 	
+	private ViewDefinitionNormalizer viewDefinitionNormalizer = new ViewDefinitionNormalizer();
 	
 	/**
 	 * 
-	 * TODO FIX THIS
 	 * @param view
 	 */
-	/*
 	private void index(ViewDefinition view) {
 		
-		/*
-		if(view.getName().equals("lgd_node_tags_string")) {
-			System.out.println("Debug");
-		}
-		* /
-		
 		RestrictionManager restrictions = new RestrictionManager();
-		view.setRestrictions(restrictions);
+		//view.setRestrictions(restrictions);
 
+		ViewDefinition normalized = viewDefinitionNormalizer.normalize(view);		
 		
-		deriveRestrictions(view);
-		
-		
+		this.views.add(normalized);
+
 
 		//derivePrefixConstraints(view);
 		
 		// Index the pattern constraints
+		/*
 		Map<Var, PrefixSet> prefixConstraints = view.getConstraints().getVarPrefixConstraints();
 		for(Entry<Var, PrefixSet> entry : prefixConstraints.entrySet()) {
 			restrictions.stateUriPrefixes(entry.getKey(), entry.getValue());
@@ -365,7 +357,10 @@ public class CandidateViewSelectorImpl
 		for(Entry<Var, Type> entry : typeConstraints.entrySet()) {
 			restrictions.stateType(entry.getKey(), entry.getValue());
 		}
-				
+		*/
+
+		//RestrictedExpr expr;
+		//expr.getRestrictions().getType()
 		
 		
 		for(Quad quad : view.getTemplate()) {
@@ -395,18 +390,30 @@ public class CandidateViewSelectorImpl
 				
 				if(node.isVariable()) {
 					
-					PrefixSet p = prefixConstraints.get(node);
+					Var var = (Var)node;
+					Collection<RestrictedExpr> restExprs = normalized.getMapping().getVarDefinition().getDefinitions(var);
+					
+					PrefixSet p = null;
+					for(RestrictedExpr restExpr : restExprs) {
+						PrefixSet tmp = restExpr.getRestrictions().getUriPrefixes();
+						if(p == null) {
+							p = tmp;
+						} else {
+							p.addAll(tmp);
+						}
+					}
+					
 					if(p != null) {
 						collections.add(p.getSet());
 					} else {
 						collections.add(Collections.singleton(""));
 					}
-					
+		
 				} else if (node.isURI()) {
 					collections.add(Collections.singleton(node.getURI()));
 				/* } else if(node.isLiteral()) {
 					collections.add(Collections.singleton(node.getLiteralLexicalForm()));
-					* /
+					*/
 				} else {
 					throw new RuntimeException("Should not happen");
 				}
@@ -418,9 +425,10 @@ public class CandidateViewSelectorImpl
 				List<Object> row = new ArrayList<Object>(item);
 				row.add(viewQuad);
 				table.add(row);
-			}
+			}		
 		}
-		*/
+	}
+
 		
 		
 		/*
