@@ -36,7 +36,7 @@ public class ExprCommonFactor {
 	private Map<Var, Expr> mapA = new HashMap<Var, Expr>();
 	private Map<Var, Expr> mapB = new HashMap<Var, Expr>();
 
-	private Map<SqlDatatype, Map<Integer, Var>> datatypeToColumn = new HashMap<SqlDatatype, Map<Integer, Var>>();
+	//private Map<SqlDatatype, Map<Integer, Var>> datatypeToColumn = new HashMap<SqlDatatype, Map<Integer, Var>>();
 	
 
 	public Expr transformMM(Expr a, Expr b)

@@ -16,7 +16,7 @@ import mapping.ExprCopy;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.algebra.sparql.expr.ExprSqlBridge;
+import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.ExprDatatypeHash;
 import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;

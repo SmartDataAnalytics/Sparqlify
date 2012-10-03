@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;
+import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.apache.commons.lang.NotImplementedException;
 import org.postgis.PGgeometry;
 import org.postgresql.util.PGobject;

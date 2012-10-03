@@ -2,7 +2,7 @@ package org.aksw.sparqlify.expr.util;
 
 import java.math.BigDecimal;
 
-import org.aksw.sparqlify.algebra.sparql.expr.NodeValueGeom;
+import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,9 @@ public class NodeValueUtils {
 	private static final Logger logger = LoggerFactory.getLogger(NodeValueUtils.class);
 	
 	public static Object getValue(NodeValue expr) {
-		if(expr.isIRI()){
+		if(expr == null) {
+			return NodeValue.nvNothing;
+		} else if(expr.isIRI()){
 			logger.debug("HACK - Uri constants should be converted to RdfTerms first");
 			return expr.asNode().getURI();
 		} else if(expr.isBoolean()) {

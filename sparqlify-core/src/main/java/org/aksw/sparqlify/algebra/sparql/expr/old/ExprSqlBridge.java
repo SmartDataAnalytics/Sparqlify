@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.algebra.sparql.expr;
+package org.aksw.sparqlify.algebra.sparql.expr.old;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 

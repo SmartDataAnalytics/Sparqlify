@@ -10,10 +10,10 @@ import mapping.ExprCopy;
 
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_GenericSqlExpr;
-import org.aksw.sparqlify.algebra.sparql.expr.E_GeographyFromText;
-import org.aksw.sparqlify.algebra.sparql.expr.E_GeomFromText;
-import org.aksw.sparqlify.algebra.sparql.expr.E_Intersects;
+import org.aksw.sparqlify.algebra.sparql.expr.old.E_GenericSqlExpr;
+import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeographyFromText;
+import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeomFromText;
+import org.aksw.sparqlify.algebra.sparql.expr.old.E_Intersects;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;

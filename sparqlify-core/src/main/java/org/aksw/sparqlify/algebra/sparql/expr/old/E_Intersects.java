@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.algebra.sparql.expr;
+package org.aksw.sparqlify.algebra.sparql.expr.old;
 
 import org.apache.commons.lang.NotImplementedException;
 

@@ -5,7 +5,7 @@ import java.util.Map;
 import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.ExprSqlBridge;
+import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 
 import com.hp.hpl.jena.sdb.core.Generator;
