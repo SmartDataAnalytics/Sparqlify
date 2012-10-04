@@ -20,6 +20,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
+import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
@@ -66,13 +67,16 @@ class JoinContext {
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class SqlOpSelectBlockCollector {
+public class SqlOpSelectBlockCollectorImpl
+	implements SqlOpSelectBlockCollector
+
+{
 
 	private static Generator aliasGenerator = Gensym.create("a");
 	
 	
 	public static SqlOp _makeSelect(SqlOp sqlOp) {
-		SqlOp result = MultiMethod.invokeStatic(SqlOpSelectBlockCollector.class, "makeSelect", sqlOp);
+		SqlOp result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp);
 		
 		return result;
 	}
@@ -243,7 +247,7 @@ public class SqlOpSelectBlockCollector {
 
 
 	public static JoinContext _collectJoins(SqlOp sqlOp) {
-		JoinContext result = MultiMethod.invokeStatic(SqlOpSelectBlockCollector.class, "collectJoins", sqlOp);
+		JoinContext result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "collectJoins", sqlOp);
 		
 		return result;
 	}
@@ -380,6 +384,14 @@ public class SqlOpSelectBlockCollector {
 		SqlOpQuery result = new SqlOpQuery(node.getSchema(), node.getQueryString(), alias);
 
 		return result;
+	}
+
+
+	@Override
+	public SqlOp transform(SqlOp op) {
+		
+		return SqlOpSelectBlockCollectorImpl._makeSelect(op);
+		
 	}
 
 

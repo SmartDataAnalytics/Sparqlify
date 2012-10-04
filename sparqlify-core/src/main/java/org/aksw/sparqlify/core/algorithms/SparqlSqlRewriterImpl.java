@@ -2,11 +2,13 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.List;
 
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.core.domain.Mapping;
 import org.aksw.sparqlify.core.domain.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +24,18 @@ public class SparqlSqlRewriterImpl
 	
 	private CandidateViewSelector candidateViewSelector;
 	private OpMappingRewriter opMappingRewriter;
+	private SqlOpSelectBlockCollector sqlOpSelectBlockCollector;
 	private SqlOpSerializer sqlOpSerializer;
 	
 	public SparqlSqlRewriterImpl(
 			CandidateViewSelector candidateViewSelector,
 			OpMappingRewriter opMappingRewriter,
+			SqlOpSelectBlockCollector sqlOpSelectBlockCollector,
 			SqlOpSerializer sqlOpSerializer)
 	{
 		this.candidateViewSelector = candidateViewSelector;
 		this.opMappingRewriter = opMappingRewriter;
+		this.sqlOpSelectBlockCollector = sqlOpSelectBlockCollector;
 		this.sqlOpSerializer = sqlOpSerializer;
 	}
 	
@@ -44,8 +49,10 @@ public class SparqlSqlRewriterImpl
 		}
 		*/
 		
-		Op view = candidateViewSelector.getApplicableViews(query);
+		Op opViewInstance = candidateViewSelector.getApplicableViews(query);
 
+		logger.debug("View Instance Op: " + opViewInstance);
+		
 
 		// Get the projection order right in the result set
 		List<Var> projectionOrder = null;
@@ -81,9 +88,15 @@ public class SparqlSqlRewriterImpl
 			return createEmptyResultSet();
 		}*/
 
-		Mapping mapping = opMappingRewriter.rewrite(view);
+		Mapping mapping = opMappingRewriter.rewrite(opViewInstance);
+		logger.debug("Mapping: " + mapping);
 		
-		String sqlQueryString = sqlOpSerializer.serialize(mapping.getSqlOp());
+		// FIXME Make the collector configurable
+		//SqlOp block = SqlOpSelectBlockCollector._makeSelect(mapping.getSqlOp());
+		SqlOp block = sqlOpSelectBlockCollector.transform(mapping.getSqlOp());
+
+		
+		String sqlQueryString = sqlOpSerializer.serialize(block);
 		logger.info(sqlQueryString);
 
 

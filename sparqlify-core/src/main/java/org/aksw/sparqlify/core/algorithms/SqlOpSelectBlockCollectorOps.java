@@ -201,7 +201,7 @@ public class SqlOpSelectBlockCollectorOps {
 	}
 		
 	public static SqlOp _makeSelectOrTable(SqlOp sqlOp) {
-		return MultiMethod.invokeStatic(SqlOpSelectBlockCollector.class, "makeSelectOrTable", sqlOp);		
+		return MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelectOrTable", sqlOp);		
 	}
 
 	public static SqlOp makeSelectOrTable(SqlOpEmpty sqlOp) {

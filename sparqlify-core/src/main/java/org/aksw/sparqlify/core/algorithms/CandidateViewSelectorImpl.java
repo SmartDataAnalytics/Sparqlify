@@ -244,21 +244,25 @@ public class CandidateViewSelectorImpl
 	
 	
 	
-	public void addView(ViewDefinition view) {
+	public void addView(ViewDefinition viewDef) {
 		//Validation.validateView(view);
 		
 		++viewId;
 
-		Set<Var> vars = QuadUtils.getVarsMentioned(view.getTemplate());
+		Set<Var> vars = QuadUtils.getVarsMentioned(viewDef.getTemplate());
 		Map<Var, Var> oldToNew = new HashMap<Var, Var>();
 		for(Var var : vars) {
 			oldToNew.put(var, Var.alloc("view" + viewId + "_" + var.getName()));
 		}
 		
+		ViewDefinition copy = viewDef.copyRenameVars(oldToNew);
+		
+		/*
 		VarDefinition varDef = view.getMapping().getVarDefinition().copyRenameVars(oldToNew);
 		
 		Mapping m = new Mapping(varDef, view.getMapping().getSqlOp());
 		ViewDefinition copy = new ViewDefinition(view.getName(), view.getTemplate(), view.getViewReferences(), m, view);
+		*/
 		
 		// Rename the variables in the view to make them globally unique
 		//logger.trace("Renamed variables of view: " + copy);

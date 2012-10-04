@@ -3,7 +3,10 @@ package org.aksw.sparqlify.core.domain;
 
 import java.util.Map;
 
+import org.aksw.commons.jena.util.QuadUtils;
+
 import com.hp.hpl.jena.sparql.core.QuadPattern;
+import com.hp.hpl.jena.sparql.core.Var;
 
 
 /**
@@ -123,6 +126,27 @@ public class ViewDefinition {
 
 	public Object getSource() {
 		return source;
+	}
+	
+	
+	public ViewDefinition copyRenameVars(Map<Var, Var> oldToNew) {
+		QuadPattern newTemplate = QuadUtils.copySubstitute(this.template, oldToNew);
+		
+		VarDefinition varDef = mapping.getVarDefinition().copyRenameVars(oldToNew);
+		
+		Mapping m = new Mapping(varDef, mapping.getSqlOp());
+		ViewDefinition result = new ViewDefinition(name, newTemplate, viewReferences, m, this);
+
+		
+		return result;
+	}
+
+
+	@Override
+	public String toString() {
+		return "ViewDefinition [name=" + name + ", template=" + template
+				+ ", mapping=" + mapping + ", viewReferences=" + viewReferences
+				+ ", source=" + source + "]";
 	}
 }
 

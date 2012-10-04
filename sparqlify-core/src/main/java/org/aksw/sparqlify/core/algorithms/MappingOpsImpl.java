@@ -121,6 +121,12 @@ class VarDefKey {
 	
 	VarDefKey() { }
 
+	@Override
+	public String toString() {
+		return "VarDefKey [constraintExpr=" + constraintExpr
+				+ ", definitionExprs=" + definitionExprs + "]";
+	}
+	
 	
 	/*
 	VarDefKey(Set<Expr> constraintExpr, Set<RestrictedExpr> definitionExprs) {
@@ -436,7 +442,7 @@ public class MappingOpsImpl
 			newVarDefMap.putAll(queryVar, ors.definitionExprs);
 			
 			Expr or = ExprUtils.orifyBalanced(ors.constraintExpr);
-			if(or.equals(NodeValue.TRUE)) {
+			if(or == null || or.equals(NodeValue.TRUE)) {
 				continue;
 			} 
 
@@ -624,20 +630,29 @@ public class MappingOpsImpl
 	@Override
 	public Mapping project(Mapping a, List<Var> vars) {		
 
+		System.err.println("Projection of mappings not implemented yet");
+		
+		return a;
 		
 		// TODO Auto-generated method stub
-		return null;
+		//return null;
 	}
 
 
 	@Override
 	public Mapping select(Mapping a, ExprList exprs) {
-		// TODO Translate the 
+		ExprList sqlExprs = new ExprList();
+		for(Expr expr : exprs) {
+			Expr sqlExpr = sqlTranslator.translateSql(expr);
 
+			sqlExprs.add(sqlExpr);
+		}
+
+		SqlOp op = SqlOpFilter.create(a.getSqlOp(), sqlExprs);
 		
-		
-		// TODO Auto-generated method stub
-		return null;
+		Mapping result = new Mapping(a.getVarDefinition(), op);
+
+		return result;
 	}
 
 	

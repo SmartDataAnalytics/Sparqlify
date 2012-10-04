@@ -17,7 +17,7 @@ import org.aksw.sparqlify.core.algorithms.DatatypeAssigner;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssignerMap;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.SqlExprSerializerPostgres;
-import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollector;
+import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.domain.Mapping;
 import org.aksw.sparqlify.core.domain.VarBinding;
@@ -84,7 +84,7 @@ public class MappingOpsImplTest {
 
 		System.out.println(coreVd.getMapping().getSqlOp().getSchema());
 		
-		SqlOp block = SqlOpSelectBlockCollector._makeSelect(mTest.getSqlOp());
+		SqlOp block = SqlOpSelectBlockCollectorImpl._makeSelect(mTest.getSqlOp());
 		System.out.println(block);
 		
 		

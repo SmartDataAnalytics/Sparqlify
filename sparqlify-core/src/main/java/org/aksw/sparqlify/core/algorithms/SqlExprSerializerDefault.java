@@ -3,7 +3,6 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_SqlColumnRef;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
@@ -29,6 +28,7 @@ import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.E_Subtract;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 public abstract class SqlExprSerializerDefault
 	implements SqlExprSerializer
@@ -44,6 +44,14 @@ public abstract class SqlExprSerializerDefault
 		this.datatypeSerializer = datatypeSerializer;
 	}
 	
+		
+	public String _serialize(NodeValue nodeValue) {
+		
+		// TODO Handle this correctly
+		String result = nodeValue.asUnquotedString();
+		
+		return result;
+	}
 	
 	
 	

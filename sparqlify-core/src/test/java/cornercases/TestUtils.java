@@ -14,6 +14,21 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.DatatypeSystem;
 import org.aksw.sparqlify.core.DatatypeSystemCustom;
+import org.aksw.sparqlify.core.algorithms.DatatypeAssigner;
+import org.aksw.sparqlify.core.algorithms.DatatypeAssignerMap;
+import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
+import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SparqlSqlRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SqlExprSerializerPostgres;
+import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
+import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
+import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.MappingOps;
+import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
+import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
+import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.util.MapReader;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
@@ -77,6 +92,34 @@ public class TestUtils {
 		return result;
 	}
 	
+	
+	/**
+	 * Creates a full blown SPARQL SQL rewriter object, comprised of:
+	 * - a candidate view selector (TODO rename: actually this object actually returnes a transformed algebra expression; rather than just selecting candidates. 
+	 * - a op 
+	 * 
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, DatatypeSystem datatypeSystem) throws SQLException, IOException {		
+		
+
+		DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(datatypeSystem);
+
+		MappingOps mappingOps = new MappingOpsImpl(da);
+		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+		
+		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres(da);		
+		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(exprSerializer);
+		
+		SqlOpSelectBlockCollector collector = new SqlOpSelectBlockCollectorImpl();
+		
+		SparqlSqlRewriter result = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, collector, sqlOpSerializer);
+
+		return result;
+	}
+
 	/*
 	public static org.aksw.sparqlify.config.syntax.ViewDefinition parse(String str) throws RecognitionException {
 		
