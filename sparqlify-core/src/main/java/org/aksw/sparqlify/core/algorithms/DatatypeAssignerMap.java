@@ -7,6 +7,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.core.DatatypeSystem;
 import org.aksw.sparqlify.core.SqlDatatype;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.E_Add;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.E_Divide;
@@ -27,6 +28,7 @@ import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.E_Subtract;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 class DatatypeAssignerConstant
 	implements DatatypeAssigner
@@ -47,6 +49,45 @@ class DatatypeAssignerConstant
 		return new DatatypeAssignerConstant(datatype);
 	}
 }
+
+
+class DatatypeAssignerNodeValue
+	implements DatatypeAssigner
+{
+	private DatatypeSystem datatypeSystem;
+	
+
+	public DatatypeAssignerNodeValue(DatatypeSystem datatypeSystem) {
+		this.datatypeSystem = datatypeSystem;
+	}
+	
+	@Override
+	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
+		NodeValue nv = expr.getConstant();
+		Node node = nv.getNode();
+		
+		SqlDatatype result = null;
+		if(node != null) {
+			
+			if(node.isURI()) {
+				
+				result =  datatypeSystem.getByName("string");
+				
+			}
+			
+			
+		} 
+		
+		
+		if(result == null) {
+			throw new RuntimeException("case not handled not implemented " + expr);
+		}
+		
+		return result;
+	}	
+}
+
+
 
 class DatatypeAssignerExpr
 	implements DatatypeAssigner
@@ -83,7 +124,16 @@ public class DatatypeAssignerMap
 	
 	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
 		
-		DatatypeAssigner assigner = map.get(expr.getClass());
+		
+		DatatypeAssigner assigner;
+		
+		if(expr.isConstant() && !expr.isVariable()) {
+			assigner = map.get(NodeValue.class);
+		} else {
+		
+			assigner = map.get(expr.getClass());
+		}
+		
 		if(assigner == null) {
 			
 			if(expr.isVariable() && typeMap != null) {
@@ -145,6 +195,10 @@ public class DatatypeAssignerMap
 		map.put(E_Function.class, aString);
 		map.put(ExprFunction.class, aString);
 		
+
+		map.put(NodeValue.class, new DatatypeAssignerNodeValue(datatypeSystem));
+
+
 		DatatypeAssignerMap result = new DatatypeAssignerMap(map);
 
 		return result;

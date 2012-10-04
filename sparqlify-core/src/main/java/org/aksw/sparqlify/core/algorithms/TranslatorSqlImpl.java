@@ -1,7 +1,10 @@
 package org.aksw.sparqlify.core.algorithms;
 
+import java.util.Map;
+
 import org.aksw.sparqlify.core.interfaces.TranslatorSql;
 
+import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 
 
@@ -54,9 +57,9 @@ public class TranslatorSqlImpl
 	}
 	
 	@Override
-	public Expr translateSql(Expr expr) {
+	public Expr translateSql(Expr expr, Map<Var, Expr> binding) {
 
-		Expr result = evaluator.eval(expr, null);
+		Expr result = evaluator.eval(expr, binding);
 		
 		/*
 		Expr pushed = PushDown.pushDownMM(tmp);

@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import mapping.ExprCopy;
 
@@ -9,6 +10,7 @@ import org.aksw.sparqlify.core.domain.VarBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
@@ -45,7 +47,7 @@ public class ExprEvaluatorPartial
 		return true;
 	}
 	
-	public Expr eval(ExprFunction fn, VarBinding binding) {
+	public Expr eval(ExprFunction fn, Map<Var, Expr> binding) {
 		List<Expr> evaledArgs = new ArrayList<Expr>();
 		
 		for(Expr arg : fn.getArgs()) {				
@@ -106,11 +108,11 @@ public class ExprEvaluatorPartial
 	 * 
 	 * -> After makes more sense: Then we have constant folder arguments 
 	 */
-	public Expr eval(Expr expr, VarBinding binding) {
+	public Expr eval(Expr expr, Map<Var, Expr> binding) {
 		
 		System.out.println(expr);
 		
-		Expr result;
+		Expr result = null;
 		if(expr.isConstant()) {
 			result = expr;
 		} else if(expr.isFunction()) {
@@ -118,7 +120,13 @@ public class ExprEvaluatorPartial
 			
 			result = eval(fn, binding);
 		} else if(expr.isVariable()) {
-			result = expr;
+			
+			if(binding != null) {
+				Expr boundExpr = binding.get(expr.asVar());
+				if(boundExpr != null) {
+					result = eval(boundExpr, null); // Do not forward the binding
+				}
+			}
 		} else {
 			throw new RuntimeException("Unknown expression type encountered: " + expr);
 		}

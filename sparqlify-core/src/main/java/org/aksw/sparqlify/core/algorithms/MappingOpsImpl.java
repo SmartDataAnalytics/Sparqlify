@@ -2,6 +2,8 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -201,12 +203,81 @@ public class MappingOpsImpl
 			return NodeValue.FALSE;
 		}
 
-		Expr result = sqlTranslator.translateSql(restExpr.getExpr());
+		Expr result = sqlTranslator.translateSql(restExpr.getExpr(), null);
 		
 		return result;
 	}
 	
 
+	/*
+	public static Expr createSqlCondidion(Expr sparqlCondition, VarDefinition defExpr) {
+	}*/	
+	
+	
+	/**
+	 * Creates an SQL condidion given a (SPARQL query filter) condition and a set of variable definitions.
+	 * 
+	 * The resulting expression takes alternatives into account:
+	 * 
+	 * Given for example:
+	 * ?s -> {sa1, ..., san}
+	 * ?o -> {so1}
+	 * 
+	 * ?o must hold independently of ?s
+	 * 
+	 * 
+	 */
+	public static Expr createSqlCondition(Expr condition, VarDefinition varDef, TranslatorSql sqlTranslator) {
+		
+		
+		Set<Var> conditionVars = condition.getVarsMentioned();
+		
+		// Common variables of the condition and the varDef
+		Set<Var> cVars = conditionVars;
+		cVars.retainAll(varDef.getMap().keySet());
+		List<Var> commonVars = new ArrayList<Var>();
+		
+		
+		// Sort the variable definitions by number of alternatives
+		final Map<Var, Collection<RestrictedExpr>> map = varDef.getMap().asMap();
+		Collections.sort(commonVars, new Comparator<Var>() {
+			@Override
+			public int compare(Var a, Var b) {
+				return map.get(a).size() - map.get(b).size();
+			}
+		});
+
+
+		// Evaluate the expression for all possible combinations of variable assignments
+		
+		List<Collection<RestrictedExpr>> assignments = new ArrayList<Collection<RestrictedExpr>>(commonVars.size());
+		for(Var var : commonVars) {
+			assignments.add(map.get(var));
+		}
+
+		CartesianProduct<RestrictedExpr> cart = CartesianProduct.create(assignments);
+		
+		List<Expr> ors = new ArrayList<Expr>();
+
+		Map<Var, Expr> assignment = new HashMap<Var, Expr>(commonVars.size());
+		for(List<RestrictedExpr> item : cart) {
+			for(int i = 0; i < commonVars.size(); ++i) {
+				Var var = commonVars.get(i);
+				Expr expr = item.get(i).getExpr();
+				
+				assignment.put(var, expr);
+			}
+			
+			Expr expr = sqlTranslator.translateSql(condition, assignment);
+			ors.add(expr);
+		}
+
+		
+		Expr result = ExprUtils.orifyBalanced(ors);
+		return result;
+	}
+	
+	
 	
 	/**
 	 * Joins two var definitions on the given queryVar.
@@ -425,11 +496,17 @@ public class MappingOpsImpl
 		
 		Multimap<Var, RestrictedExpr> newVarDefMap = HashMultimap.create();
 		
-		//Set<Set<Expr>> cnf = new HashSet<Set<Expr>>();
-		//Set<Set<Expr>> ands = new HashSet<Set<Expr>>();
-		//Set<Expr> ands = new HashSet<Expr>();
 		ExprList ands = null; 
 		for(Var queryVar : queryVars) {
+
+			Node constant = viewInstance.getBinding().getConstant(queryVar);
+			if(constant != null) {
+				NodeValue nv = NodeValue.makeNode(constant);
+				newVarDefMap.put(queryVar, new RestrictedExpr(nv));
+				
+				continue;
+			}
+
 			
 			VarDefKey ors = joinDefinitionsOnEquals(queryVar, viewInstance, sqlTranslator);
 		
@@ -437,6 +514,7 @@ public class MappingOpsImpl
 
 				return createEmptyMapping(viewInstance);
 			}
+			
 			
 			
 			newVarDefMap.putAll(queryVar, ors.definitionExprs);
@@ -630,20 +708,24 @@ public class MappingOpsImpl
 	@Override
 	public Mapping project(Mapping a, List<Var> vars) {		
 
+		// TODO Implement
 		System.err.println("Projection of mappings not implemented yet");
 		
 		return a;
-		
-		// TODO Auto-generated method stub
-		//return null;
 	}
 
 
 	@Override
 	public Mapping select(Mapping a, ExprList exprs) {
+		
+		
 		ExprList sqlExprs = new ExprList();
 		for(Expr expr : exprs) {
-			Expr sqlExpr = sqlTranslator.translateSql(expr);
+			
+			// Replace any variables in the expression with the variable definitions
+			
+			
+			Expr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), sqlTranslator);
 
 			sqlExprs.add(sqlExpr);
 		}
@@ -822,7 +904,7 @@ public class MappingOpsImpl
 
 			for(Entry<String, Expr> entry : projection.entrySet()) {
 				
-				Expr sqlExpr = sqlTranslator.translateSql(entry.getValue());
+				Expr sqlExpr = sqlTranslator.translateSql(entry.getValue(), null);
 				SqlDatatype datatype = datatypeAssigner.assign(sqlExpr, member.getSqlOp().getSchema().getTypeMap());
 
 				if(datatype == null) {

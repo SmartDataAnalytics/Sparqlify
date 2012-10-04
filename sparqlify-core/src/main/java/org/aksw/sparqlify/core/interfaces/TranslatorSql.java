@@ -1,5 +1,8 @@
 package org.aksw.sparqlify.core.interfaces;
 
+import java.util.Map;
+
+import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 
 
@@ -11,7 +14,8 @@ public interface TranslatorSql {
 	 * This means, that the expr object has to be evaluated with different semantics.
 	 * 
 	 * @param sparqlExpr
+	 * @param binding A set of variable-expr mappings. May be null.
 	 * @return
 	 */
-	Expr translateSql(Expr sparqlExpr);
+	Expr translateSql(Expr sparqlExpr, Map<Var, Expr> binding);
 }

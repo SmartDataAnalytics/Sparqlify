@@ -77,8 +77,8 @@ public class EvalTest {
 		
 		//exprTransformer.put(SparqlifyConstants.rdfTermLabel, new ExprTransformer());
 		
-		VarBinding binding = new VarBinding();
-		Expr result = evaluator.eval(expr, binding);
+		//VarBinding binding = new VarBinding();
+		Expr result = evaluator.eval(expr, null); //binding);
 		
 		System.out.println("Result: "+ result);
 		
