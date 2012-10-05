@@ -11,12 +11,28 @@ public class SqlOpFilter
 
 	public SqlOpFilter(Schema schema, SqlOp subOp, ExprList exprs) {
 		super(schema, subOp);
+
+		assert exprs != null : "Null pointer exception";
+		
 		this.exprs = exprs;
 	}
 
 	public ExprList getExprs() {
 		return exprs;
 	}
+	
+	public static SqlOp createIfNeeded(SqlOp op, ExprList exprs) {
+		SqlOp result;
+		
+		if(exprs.isEmpty()) {
+			result = op;
+		} else {
+			result = create(op, exprs);
+		}
+		
+		return result;
+	}
+	
 	
 	public static SqlOpFilter create(SqlOp op, ExprList exprs) {
 		return new SqlOpFilter(op.getSchema(), op, exprs);

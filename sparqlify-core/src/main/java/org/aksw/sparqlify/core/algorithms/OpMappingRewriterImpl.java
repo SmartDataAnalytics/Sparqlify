@@ -13,6 +13,7 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
+import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 
@@ -47,7 +48,7 @@ public class OpMappingRewriterImpl
 		for(ViewInstance vi : vis) {
 
 			Mapping tmp = ops.createMapping(vi);
-
+			System.out.println(vi + "\n    --> " + tmp);
 			
 			if(result == null) {				
 				result = tmp;				
@@ -84,6 +85,15 @@ public class OpMappingRewriterImpl
 		return result;
 	}
 
+	public Mapping rewrite(OpLeftJoin op) {
+		Mapping a = rewrite(op.getLeft());
+		Mapping b = rewrite(op.getRight());
+		
+		Mapping result = ops.leftJoin(a, b);
+		return result;
+	}
+
+	
 	public Mapping rewrite(OpFilterIndexed op) {
 		Mapping a = rewrite(op.getSubOp());
 		
@@ -123,6 +133,8 @@ public class OpMappingRewriterImpl
 			result = rewrite((OpProject)op);
 		} else if (op instanceof OpJoin) {
 			result = rewrite((OpJoin)op);
+		} else if (op instanceof OpLeftJoin) {
+			result = rewrite((OpLeftJoin)op);
 		} else if (op instanceof OpSlice) {
 			result = rewrite((OpSlice)op);
 		} else {

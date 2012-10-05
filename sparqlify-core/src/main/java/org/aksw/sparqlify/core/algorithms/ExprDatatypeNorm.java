@@ -44,12 +44,12 @@ public class ExprDatatypeNorm {
 		Expr result;
 		if(expr == null) {
 			result = NodeValue.nvNothing;
+		} else if(expr.isVariable()) {
+			result = normalize(expr.getExprVar(), typeMap);
 		} else if(expr.isConstant()) {
 			result = normalize(expr.getConstant(), typeMap);
 		} else if(expr.isFunction()) {
 			result = normalize(expr.getFunction(), typeMap);
-		} else if(expr.isVariable()) {
-			result = normalize(expr.getExprVar(), typeMap);
 		} else {
 			throw new RuntimeException("Unknown expression type: " + expr);
 		}
@@ -86,6 +86,10 @@ public class ExprDatatypeNorm {
 
 	public Expr normalize(NodeValue expr, Map<String, SqlDatatype> typeMap) {
 	
+//		if(expr.isConstant()) {
+//			System.out.println(expr);
+//		}
+		
 		SqlDatatype datatype = datatypeAssigner.assign(expr, typeMap);
 		if(datatype == null) {
 			throw new RuntimeException("Could not assign datatype to constant: " + expr);

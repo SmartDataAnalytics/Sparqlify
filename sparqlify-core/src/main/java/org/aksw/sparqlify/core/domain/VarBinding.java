@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.jena.util.QuadUtils;
@@ -43,7 +44,7 @@ class VarConst<K, V> {
 
 	@Override
 	public String toString() {
-		return "VarConst [keys=" + keys + ", value=" + value + "]";
+		return "[keys=" + keys + ", value=" + value + "]";
 	}
 }
 
@@ -200,7 +201,7 @@ public class VarBinding {
 		if(node == null) {
 			return true;
 		} else if(node.isVariable()) {
-			put(queryVar, (Var)node);
+			return put(queryVar, (Var)node);
 		}
 
 		Integer token = keyToToken.get(queryVar);
@@ -253,7 +254,25 @@ public class VarBinding {
 
 	@Override
 	public String toString() {
-		return "keyToToken: " + keyToToken + ", tokenToSet:" + tokenToSet;
+		String result = "{";
+		boolean isFirst = true;
+		for(Entry<Var, Integer> entry : keyToToken.entrySet()) {
+			Var key = entry.getKey();
+			Integer token = entry.getValue();
+			BindingVal val = tokenToSet.get(token);
+			
+			if(isFirst) {
+				isFirst = false;
+			} else {
+				result += ", ";
+			}
+			
+			result += key + ": (" + token + ")" + val;
+		}
+		result += "}";
+		return result;
+		
+		//return "keyToToken: " + keyToToken + ", tokenToSet:" + tokenToSet;
 	}
 
 	

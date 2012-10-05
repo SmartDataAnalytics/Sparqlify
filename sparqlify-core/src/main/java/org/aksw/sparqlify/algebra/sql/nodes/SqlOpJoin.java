@@ -62,14 +62,14 @@ public class SqlOpJoin
 		
 		Schema newSchema = createJoinSchema(a.getSchema(), b.getSchema());
 		
-		SqlOpJoin result = new SqlOpJoin(newSchema, JoinType.INNER, a, b, conditions);
+		SqlOpJoin result = new SqlOpJoin(newSchema, joinType, a, b, conditions);
 		
 		return result;
 	}
 	
 	@Override
 	public void write(IndentedWriter writer) {
-		writer.println("SqlOpJoin(");
+		writer.println("SqlOpJoin " + joinType + "(");
 		
 		writer.incIndent();
 		left.write(writer);

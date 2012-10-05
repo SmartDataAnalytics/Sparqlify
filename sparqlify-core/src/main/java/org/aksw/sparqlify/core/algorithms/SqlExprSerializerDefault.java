@@ -47,6 +47,10 @@ public abstract class SqlExprSerializerDefault
 		
 	public String _serialize(NodeValue nodeValue) {
 		
+		if(nodeValue.equals(NodeValue.nvNothing)) {
+			return "NULL ";
+		}
+		
 		// TODO Handle this correctly
 		String result = nodeValue.asUnquotedString();
 		

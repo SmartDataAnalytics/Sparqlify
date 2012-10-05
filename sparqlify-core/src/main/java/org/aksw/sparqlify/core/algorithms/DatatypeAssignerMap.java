@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.DatatypeSystem;
 import org.aksw.sparqlify.core.SqlDatatype;
 
@@ -63,6 +64,12 @@ class DatatypeAssignerNodeValue
 	
 	@Override
 	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
+		
+		if(expr instanceof ExprSql) {
+			return ((ExprSql) expr).getDatatype();
+		}
+		
+		
 		NodeValue nv = expr.getConstant();
 		Node node = nv.getNode();
 		
@@ -127,7 +134,7 @@ public class DatatypeAssignerMap
 		
 		DatatypeAssigner assigner;
 		
-		if(expr.isConstant() && !expr.isVariable()) {
+		if(expr.isConstant()) {
 			assigner = map.get(NodeValue.class);
 		} else {
 		

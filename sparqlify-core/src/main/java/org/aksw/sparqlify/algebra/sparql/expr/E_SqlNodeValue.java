@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
+import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 
@@ -9,6 +10,7 @@ import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueVisitor;
 
 public class E_SqlNodeValue
 	extends NodeValue
+	implements ExprSql 
 {
 	private NodeValue nodeValue;
 	private SqlDatatype datatype;

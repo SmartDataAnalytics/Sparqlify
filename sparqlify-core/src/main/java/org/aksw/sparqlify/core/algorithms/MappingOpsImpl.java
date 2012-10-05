@@ -99,7 +99,6 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 
-
 /**
  * Maybe at some point we want to externalize some state of the rewriting,
  * such as column names generators.
@@ -235,8 +234,11 @@ public class MappingOpsImpl
 		// Common variables of the condition and the varDef
 		Set<Var> cVars = conditionVars;
 		cVars.retainAll(varDef.getMap().keySet());
-		List<Var> commonVars = new ArrayList<Var>();
+		List<Var> commonVars = new ArrayList<Var>(cVars);
 		
+		if(commonVars.isEmpty()) {
+			return NodeValue.TRUE;
+		}
 		
 		// Sort the variable definitions by number of alternatives
 		final Map<Var, Collection<RestrictedExpr>> map = varDef.getMap().asMap();
@@ -269,16 +271,39 @@ public class MappingOpsImpl
 			}
 			
 			Expr expr = sqlTranslator.translateSql(condition, assignment);
+			
+			if(expr.equals(NodeValue.TRUE)) {
+				return NodeValue.TRUE;
+			}
+			
+			if(expr.equals(NodeValue.FALSE)) {
+				continue;
+			}
+
 			ors.add(expr);
 		}
 
+		/*
+		if(ors.isEmpty()) {
+			
+		}*/
+		
 		
 		Expr result = ExprUtils.orifyBalanced(ors);
+
+
+		if(result == null) {
+			throw new NullPointerException();
+		}
+
+		
+		assert result != null : "Null Pointer Exception";
+		
 		return result;
 	}
 	
 	
-	
+
 	/**
 	 * Joins two var definitions on the given queryVar.
 	 * 
@@ -402,6 +427,7 @@ public class MappingOpsImpl
 			// Intermediate result
 			VarDefKey tmp = joinDefinitionsOnEquals(result.definitionExprs, defs, sqlTranslator);
 			
+			//if(ExprEval.Type.FALSE == ExprEval.getDisjunctionType(tmp))
 
 			if(tmp == null) {
 				return null;
@@ -620,6 +646,9 @@ public class MappingOpsImpl
 		Mapping b = doJoinRename(a, initB, genSym);
 		
 		JoinType joinType = isLeftJoin ? JoinType.LEFT : JoinType.INNER;
+//		if(joinType == JoinType.LEFT) {
+//			System.out.println("Left Join encountered");
+//		}
 		
 		SqlOpJoin opJoin = SqlOpJoin.create(joinType, a.getSqlOp(), b.getSqlOp()); 
 		SqlOp opResult = opJoin;
@@ -714,6 +743,30 @@ public class MappingOpsImpl
 		return a;
 	}
 
+	
+	public ExprList compactConjuction(ExprList exprs) {
+		ExprList result = new ExprList();
+		
+		for(Expr expr : exprs) {
+			if(expr.isConstant()) {
+				NodeValue nv = expr.getConstant();
+				
+				if(NodeValue.FALSE.equals(nv)) {
+					// FIXME Optimize away the creation of a new list
+					result = new ExprList();
+					result.add(NodeValue.FALSE);
+					return result;
+				} else if(NodeValue.TRUE.equals(nv)) {
+					continue;
+				}
+				
+				result.add(expr);
+			}
+		}
+		
+		
+		return result;
+	}
 
 	@Override
 	public Mapping select(Mapping a, ExprList exprs) {
@@ -726,14 +779,17 @@ public class MappingOpsImpl
 			
 			
 			Expr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), sqlTranslator);
+			if(sqlExpr.equals(NodeValue.TRUE)) {
+				continue;
+			}
 
 			sqlExprs.add(sqlExpr);
 		}
 
-		SqlOp op = SqlOpFilter.create(a.getSqlOp(), sqlExprs);
+		SqlOp op = SqlOpFilter.createIfNeeded(a.getSqlOp(), sqlExprs);
 		
 		Mapping result = new Mapping(a.getVarDefinition(), op);
-
+		
 		return result;
 	}
 
@@ -754,6 +810,16 @@ public class MappingOpsImpl
 	 */
 	public Mapping union(List<Mapping> members) {
 
+		if(members.size() == 1) {
+			logger.warn("Single member union - should be avoided");
+			Mapping result = members.get(0);
+			//return result;
+			
+		}
+	
+		
+		
+		
 		/*
 		 * Two helper functions used for grouping: one assign blocking keys,
 		 * the other 

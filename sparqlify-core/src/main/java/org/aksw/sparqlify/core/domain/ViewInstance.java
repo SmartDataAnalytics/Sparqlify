@@ -114,8 +114,10 @@ public class ViewInstance {
 
 	@Override
 	public String toString() {
-		return "ViewInstance [viewDefinition=" + viewDefinition + ", binding="
-				+ binding + "]";
+		return "ViewInstance for " + viewDefinition.getName() + ", binding: " + binding;
+		
+		//return "ViewInstance [viewDefinition=" + viewDefinition + ", binding="
+		//		+ binding + "]";
 	}
 
 

@@ -28,15 +28,50 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 
+interface JoinContext {
+	SqlOp getOp();
+	ExprList getConditions();
+	Projection getProjection();
+}
 
-class JoinContext {
+/*
+class JoinContextBlock
+	implements JoinContext
+{
+	private SqlOpSelectBlock block;
+	//private ExprList conditions;
+	
+	public JoinContextBlock(SqlOpSelectBlock block) {
+		this.block = block;
+	}
+	
+	@Override
+	public SqlOpSelectBlock getOp() {
+		return block;
+	}
+
+	@Override
+	public ExprList getConditions() {
+		return block.getConditions();
+	}
+
+	@Override
+	public Projection getProjection() {
+		return block.getProjection();
+	}
+}
+*/
+
+class JoinContextJoin
+	implements JoinContext
+{
 	// The effective op, i.e. table, query, join or union.
 	private SqlOp op;
 	private ExprList conditions = new ExprList();
 	private Projection projection = new Projection();
 
 	
-	public JoinContext(SqlOp op) {
+	public JoinContextJoin(SqlOp op) {
 		this.op = op;
 	}
 
@@ -82,7 +117,7 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 	
-	public static SqlOp makeSelect(SqlOpUnionN op) {
+	public static SqlOpUnionN makeSelect(SqlOpUnionN op) {
 		
 		List<SqlOp> newMembers = new ArrayList<SqlOp>();
 		for(SqlOp member : op.getSubOps()) {
@@ -93,6 +128,7 @@ public class SqlOpSelectBlockCollectorImpl
 		String aliasName = aliasGenerator.next();
 		SqlOpUnionN result = new SqlOpUnionN(op.getSchema(), newMembers, aliasName); // makeSelectOrTable(op);
 		
+
 		//SqlOpSelectBlock result = SqlOpSelectBlock.create(opTable);
 
 		/*
@@ -141,6 +177,13 @@ public class SqlOpSelectBlockCollectorImpl
 		
 		return result;
 	}
+
+	/*
+	public static SqlOpSelectBlock requireSelectBlock(SqlOp op, String aliasName) {
+		SqlOpSelectBlock result = (op instanceof SqlOpSelectBlock) ? (SqlOpSelectBlock) op : SqlOpSelectBlock.create(op, aliasName);
+		
+		return result;
+	}*/
 
 	
 	public static Expr transformToAliasedReferences(Expr expr, Projection projection) {
@@ -261,7 +304,7 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOpJoin join = SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
 		join.getConditions().addAll(op.getConditions());
 
-		JoinContext context = new JoinContext(join);
+		JoinContextJoin context = new JoinContextJoin(join);
 
 		context.getProjection().add(left.getProjection());
 		context.getProjection().add(right.getProjection());
@@ -274,6 +317,20 @@ public class SqlOpSelectBlockCollectorImpl
 		return context;		
 	}
 
+
+	public static JoinContext collectJoins(SqlOpUnionN op) {
+		SqlOpUnionN newOp = makeSelect(op);
+		
+		SqlOpSelectBlock resultOp = SqlOpSelectBlock.create(newOp, newOp.getAliasName());
+		initProjection(resultOp.getProjection(), op.getSchema(), resultOp.getAliasName());
+
+		//SqlOp resultOp = requireSelectBlock(newOp);
+	
+		JoinContext result = new JoinContextJoin(resultOp);
+		initProjection(result.getProjection(), op.getSchema(),resultOp.getAliasName());
+		return result;
+	}
+	
 	public static JoinContext collectJoins(SqlOpFilter op) {
 
 		JoinContext result = _collectJoins(op.getSubOp());
@@ -309,9 +366,24 @@ public class SqlOpSelectBlockCollectorImpl
 	 */
 	public static JoinContext collectJoins(SqlOpRename op) {
 
-		JoinContext result = _collectJoins(op.getSubOp());
-		
+//		JoinContext result;
+//		
+//		if(op.getSubOp() instanceof SqlOpUnionN) {
+//			SqlOp tmpOp = _makeSelect(op);
+//			tmpOp = requireSelectBlock(tmpOp);
+//			
+//			result = new JoinContext(tmpOp);
+//
+//		} else {
+//		
+//			result = _collectJoins(op.getSubOp());
+//			
+//		}
+//		result.getProjection().renameAll(op.getRename());
+
+		JoinContext result = _collectJoins(op.getSubOp());		
 		result.getProjection().renameAll(op.getRename());
+
 		
 		return result;
 	}
@@ -336,20 +408,20 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 	
 	
-	public static JoinContext collectJoins(SqlOpTable op) {
+	public static JoinContextJoin collectJoins(SqlOpTable op) {
 		SqlOpTable table = makeSelectOrTable(op);
 		
-		JoinContext result = new JoinContext(table);
+		JoinContextJoin result = new JoinContextJoin(table);
 		
 		initProjection(result.getProjection(), op.getSchema(), table.getAliasName());
 		
 		return result;
 	}
 
-	public static JoinContext collectJoins(SqlOpQuery op) {
+	public static JoinContextJoin collectJoins(SqlOpQuery op) {
 		SqlOpQuery query = makeSelectOrTable(op);
 		
-		JoinContext result = new JoinContext(query);
+		JoinContextJoin result = new JoinContextJoin(query);
 		initProjection(result.getProjection(), op.getSchema(), query.getAliasName());
 		
 		return result;

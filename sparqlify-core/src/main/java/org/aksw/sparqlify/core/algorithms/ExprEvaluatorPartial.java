@@ -110,7 +110,7 @@ public class ExprEvaluatorPartial
 	 */
 	public Expr eval(Expr expr, Map<Var, Expr> binding) {
 		
-		System.out.println(expr);
+		//System.out.println(expr);
 		
 		Expr result = null;
 		if(expr.isConstant()) {
@@ -120,6 +120,8 @@ public class ExprEvaluatorPartial
 			
 			result = eval(fn, binding);
 		} else if(expr.isVariable()) {
+			
+			result = expr;
 			
 			if(binding != null) {
 				Expr boundExpr = binding.get(expr.asVar());

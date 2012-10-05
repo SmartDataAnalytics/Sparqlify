@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,10 +21,8 @@ import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
-import org.aksw.sparqlify.core.domain.Mapping;
 import org.aksw.sparqlify.core.domain.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.VarBinding;
-import org.aksw.sparqlify.core.domain.VarDefinition;
 import org.aksw.sparqlify.core.domain.ViewDefinition;
 import org.aksw.sparqlify.core.domain.ViewInstance;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -255,7 +254,15 @@ public class CandidateViewSelectorImpl
 			oldToNew.put(var, Var.alloc("view" + viewId + "_" + var.getName()));
 		}
 		
+
 		ViewDefinition copy = viewDef.copyRenameVars(oldToNew);
+
+		
+		/*
+		for(Entry<Var, Collection<RestrictedExpr>> entry : copy.getMapping().getVarDefinition().getMap().asMap().entrySet()) {
+			System.out.println(entry.getKey().getClass());
+		}
+		*/
 		
 		/*
 		VarDefinition varDef = view.getMapping().getVarDefinition().copyRenameVars(oldToNew);

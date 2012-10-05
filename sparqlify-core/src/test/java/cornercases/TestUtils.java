@@ -63,9 +63,14 @@ public class TestUtils {
 		 
 		Connection conn = ds.getConnection();
 		
-		String testTable = "CREATE TABLE person (id INT, name VARCHAR)";
+		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person_to_dept;");
+		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS dept;");
+		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person;");
 		
-		conn.createStatement().executeUpdate(testTable);
+		
+		conn.createStatement().executeUpdate("CREATE TABLE person (id INT, name VARCHAR)");
+		conn.createStatement().executeUpdate("CREATE TABLE dept (id INT, name VARCHAR)");
+		conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT)");
 		
 		return ds;
 	}

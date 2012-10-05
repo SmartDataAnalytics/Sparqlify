@@ -19,6 +19,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.openjena.atlas.io.IndentedWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.hp.hpl.jena.query.Query;
@@ -30,6 +32,8 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 public class SqlOpSerializerImpl
 	implements SqlOpSerializer
 {
+	private static final Logger logger = LoggerFactory.getLogger(SqlOpSerializerImpl.class);
+	
 	private static SqlExprSerializer exprSerializer; //new SqlExprSerializerMySql();
 	//private static SqlExprSerializer sqlExprSerializer = new SqlExprSerializerPostgres();
 	
@@ -213,9 +217,12 @@ public class SqlOpSerializerImpl
     		writer.print(") " + getAliasName(op));
     	}
     	
+    	
     	if(!writer.atLineStart()) {
-    		writer.println();
+    	//	writer.println();
     	}
+    	
+    	
     	
     	/*
     	if(!joinStr.isEmpty()) {
@@ -234,6 +241,11 @@ public class SqlOpSerializerImpl
     	{
 	    	List<String> strs = new ArrayList<String>();
 	    	for(Expr expr : op.getConditions()) {
+	    		if(expr == null) {
+	    			logger.error("Null expression in: " + op);
+	    			continue;
+	    		}
+	    		
 	    		String str = exprSerializer.serialize(expr);
 	    		//String str = expr.asSQL();
 	    		
