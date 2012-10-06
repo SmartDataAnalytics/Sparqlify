@@ -294,8 +294,9 @@ public class SqlOpSelectBlock
     public static void distinct(Generator generator, SqlOpSelectBlock block) {
     	block.setDistinct(true);
     }
+
     
-    public static void slice(Generator generator, SqlOpSelectBlock block, Long start, Long length)
+    public static void slice(SqlOpSelectBlock block, Long start, Long length)
     {
         //SqlSelectBlock block = blockWithView(generator, sqlOp) ;
         

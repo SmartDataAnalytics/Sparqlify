@@ -44,6 +44,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeUtil;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
@@ -725,6 +726,14 @@ public class MappingOpsImpl
 		
 		Mapping result = new Mapping(a.getVarDefinition(), opSlice);
 
+		return result;
+	}
+
+
+	public Mapping distinct(Mapping a) {
+		SqlOp newOp = SqlOpDistinct.create(a.getSqlOp());
+		Mapping result = new Mapping(a.getVarDefinition(), newOp);
+		
 		return result;
 	}
 

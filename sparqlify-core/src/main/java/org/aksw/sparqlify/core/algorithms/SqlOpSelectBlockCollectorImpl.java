@@ -11,6 +11,7 @@ import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
@@ -18,6 +19,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
@@ -116,6 +118,23 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+	public static SqlOp makeSelect(SqlOpSlice op) {
+		SqlOp newOp = _makeSelect(op.getSubOp());
+		SqlOpSelectBlock result = requireSelectBlock(newOp);
+		
+		
+		SqlOpSelectBlock.slice(result, op.getOffset(), op.getLimit());
+		
+		return result;
+	}
+	
+	public static SqlOp makeSelect(SqlOpDistinct op) {
+		SqlOp newOp = _makeSelect(op.getSubOp());
+		SqlOpSelectBlock result = requireSelectBlock(newOp);
+		result.setDistinct(true);
+		
+		return result;
+	}
 	
 	public static SqlOpUnionN makeSelect(SqlOpUnionN op) {
 		

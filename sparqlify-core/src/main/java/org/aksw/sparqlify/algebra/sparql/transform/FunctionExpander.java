@@ -70,6 +70,7 @@ class MethodSignature<T>
 }
 
 
+
 interface SqlFunctionRenderer
 {
 	String render(S_Function function);
@@ -234,6 +235,18 @@ public class FunctionExpander {
 		
 		// geography
 		{
+
+			/*
+			 * The best thing would be to have a function declaration syntax, e.g:
+			 * Function ogc:geomFromText(geometry ?a, geometry ?b) maps to [[ST_DWithin(?a, ?b)]] 
+			 * 
+			 * But even better if we could re-use the macro expansion system:
+			 * 
+			 * Define Macro ogc:geomFromText(geometry ?a, geometry ?b) As fn:sqlFn('ST_DWithin', ?a ?b) 
+			 * 
+			 * 
+			 */
+			
 			
 			// The datatypeSystem architecture is somewhat broken - or at least it needs cleanup:
 			// Not sure if the function definitions should have a dependency on the datatypeSystem.

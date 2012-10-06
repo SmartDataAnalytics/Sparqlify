@@ -85,6 +85,12 @@ UNARY_PLUS;
 UNARY_MINUS;
 UNARY;
 
+FUNCTION_DECLARATION;
+FUNCTION_SIGNATURE;
+PARAM_TYPE;
+PARAM_TYPE_LIST;
+FUNCTION_TEMPLATE;
+
 
 TODO;
 }
@@ -168,8 +174,44 @@ sparqlifyConfigStmt
     : viewDefStmt
     | prefixDefStmt
     | macroStmt
+    | functionDeclarationStmt
 //    | importStmt
     ;
+
+
+/*
+ * Function declaration extension
+ *
+ *
+ * Example:
+ *     DECLARE FUNCTION ogc:intersects(geometry ?a, geometry ?b) AS ST_INTERSECTS(?a, ?b)
+ */
+functionDeclarationStmt
+    : DECLARE FUNCTION functionSignature AS functionTemplate ';'?
+        -> ^(FUNCTION_DECLARATION functionSignature functionTemplate)
+    ;
+
+functionSignature
+    : iriRef '(' parameterTypeList? ')'
+        -> ^(FUNCTION_SIGNATURE iriRef parameterTypeList?)
+    ;
+
+parameterTypeList
+    : parameterType (COMMA parameterType)*
+        -> ^(PARAM_TYPE_LIST parameterType+)
+    ;
+
+parameterType
+    : NAME var
+        -> ^(PARAM_TYPE NAME var)
+    ;
+ 
+functionTemplate
+    : NAME expressionList
+        -> ^(FUNCTION_TEMPLATE NAME expressionList)
+    ;
+
+
 
 
 templateConfig
@@ -929,6 +971,14 @@ TYPED_LITERAL : ('T'|'t')('Y'|'y')('P'|'p')('E'|'e')('D'|'d')('L'|'l')('I'|'i')(
 
 
 /* CONSTRAINTS 	: ('C'|'c')('O'|'o')('N'|'n')('S'|'s')('T'|'t')('R'|'r')('A'|'a')('I'|'i')('N'|'n')('T'|'t')('S'|'s'); */
+
+
+/*
+ * Function declaration extension
+ */
+DECLARE : ('D'|'d')('E'|'e')('C'|'c')('L'|'l')('A'|'a')('R'|'r')('E'|'e');
+FUNCTION : ('F'|'f')('U'|'u')('N'|'n')('C'|'c')('T'|'t')('I'|'i')('O'|'o')('N'|'n');
+
 
 
 

@@ -80,7 +80,7 @@ public class SqlOpSelectBlockCollectorOps {
 	
 	public static SqlOpSelectBlock makeSelect(SqlOpSlice sqlOp) {
 		SqlOpSelectBlock result = _makeSelect(sqlOp.getSubOp());
-    	SqlOpSelectBlock.slice(null, result, sqlOp.getOffset(), sqlOp.getLimit());
+    	SqlOpSelectBlock.slice(result, sqlOp.getOffset(), sqlOp.getLimit());
 		
 		return result;
 	}

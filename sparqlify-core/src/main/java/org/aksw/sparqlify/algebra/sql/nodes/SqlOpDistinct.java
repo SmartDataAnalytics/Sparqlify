@@ -10,7 +10,7 @@ public class SqlOpDistinct
 	}
 
 	
-	public SqlOpDistinct create(SqlOp subOp) {
+	public static SqlOpDistinct create(SqlOp subOp) {
 		SqlOpDistinct result = new SqlOpDistinct(subOp.getSchema(), subOp);		
 		return result;
 	}

@@ -178,9 +178,38 @@ sparqlifyConfig returns[Config config]
 	;
 	
 sparqlifyConfigItem[Config config]
-	: x=viewDefinition { config.getViewDefinitions().add($x.value); }
-	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
+	: x=viewDefinition      {$config.getViewDefinitions().add($x.value);}
+	| a=prefixDecl          {registerPrefix($a.prefix, $a.uri);}
+	| b=functionDeclaration {$config.getFunctionDeclarations().add($b.value);}
 	;
+
+
+
+functionDeclaration returns [FunctionDeclaration value]
+    : ^(FUNCTION_DECLARATION a=functionSignature b=functionTemplate) {$value = new FunctionDeclaration($a.value, $b.value);}
+    ;
+
+functionSignature returns [FunctionSignature value]
+    : ^(FUNCTION_SIGNATURE a=NAME b=paramTypeList) {$value = new FunctionSignature($a.text, $b.value);}
+    ;
+
+paramTypeList returns [ParamTypeList value]
+	@init { value = new ParamTypeList(); }
+    : ^(PARAM_TYPE_LIST (a=paramType {$value.add($a.value);})+)
+    ;
+
+
+paramType returns [ParamType value]
+    : ^(PARAM_TYPE a=NAME b=var) {$value = new ParamType($a.text, $b.value);}
+    ;
+
+
+functionTemplate returns [FunctionTemplate value]
+    : ^(FUNCTION_TEMPLATE a=NAME b=expressionList) {$value = new FunctionTemplate($a.text, $b.value);}
+    ;
+
+
+
 
 namedViewTemplateDefinition returns [NamedViewTemplateDefinition value]
 	: ^(NAMED_VIEW_TEMPLATE_DEFINITION a=NAME b=viewTemplateDefinition) {$value = new NamedViewTemplateDefinition($a.text, $b.value);}
@@ -512,7 +541,7 @@ functionCall returns [Expr value]
 argList returns [ExprList value]
 	@init { value = new ExprList(); }
     : nil
-    | DISTINCT? (a=expression { value.add($a.value); })*
+    | DISTINCT? (a=expression {$value.add($a.value);})*
     ;
 
 expressionList returns [ExprList value]
@@ -632,18 +661,18 @@ graphNode[List<Triple> triples] returns [Node value]
     | triplesNode[triples]
     ;
 
-varOrTerm returns [ Node value ]
-    : a=var       { $value = $a.value; }
-    | a=graphTerm { $value = $a.value; }
+varOrTerm returns [Node value]
+    : a=var       {$value = $a.value;}
+    | a=graphTerm {$value = $a.value;}
     ;
 
-varOrIRIref returns [ Node value ]
+varOrIRIref returns [Node value]
     : a=var    {$value = $a.value;}
     | a=iriRef {$value = $a.value;}
     ;
 
-var returns [ Var value ]
-    : a=VAR { $value = Var.alloc($a.text); } 
+var returns [Var value]
+    : a=VAR {$value = Var.alloc($a.text);} 
     ;
 
 graphTerm returns [Node value]

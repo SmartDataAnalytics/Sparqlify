@@ -54,7 +54,7 @@ public class SparqlSqlRewriterTests {
 		
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn . Filter(?dn = ?pn) } } }");
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn } } }");
-		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d } }");
+		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select Distinct * { ?s ex:name ?pn . Optional { ?s ex:dept ?d } } Limit 10 Offset 20	");
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn }");
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ?p ?pn }");
 

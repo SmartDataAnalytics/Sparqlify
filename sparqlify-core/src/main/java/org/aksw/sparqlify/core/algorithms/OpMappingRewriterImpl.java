@@ -12,6 +12,7 @@ import org.aksw.sparqlify.database.OpFilterIndexed;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
+import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
@@ -118,6 +119,15 @@ public class OpMappingRewriterImpl
 		
 		return result;
 	}
+
+	public Mapping rewrite(OpDistinct op) {
+		Mapping a = rewrite(op.getSubOp());
+		
+		Mapping result = ops.distinct(a);
+		
+		return result;
+	}
+
 	
 	@Override
 	public Mapping rewrite(Op op) {
@@ -137,6 +147,8 @@ public class OpMappingRewriterImpl
 			result = rewrite((OpLeftJoin)op);
 		} else if (op instanceof OpSlice) {
 			result = rewrite((OpSlice)op);
+		} else if (op instanceof OpDistinct) {
+			result = rewrite((OpDistinct)op);
 		} else {
 			throw new RuntimeException("Unhandled op type: " + op.getClass() + "; " + op);
 		}

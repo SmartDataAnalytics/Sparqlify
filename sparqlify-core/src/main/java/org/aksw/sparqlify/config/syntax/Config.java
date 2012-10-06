@@ -16,7 +16,8 @@ import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 public class Config {
 	private PrefixMapping prefixMapping = new PrefixMappingImpl();
 	private List<ViewDefinition> viewDefinitions = new ArrayList<ViewDefinition>();
-
+	private List<FunctionDeclaration> functionDeclarations = new ArrayList<FunctionDeclaration>(); 
+	
 	public List<ViewDefinition> getViewDefinitions() {
 		return viewDefinitions;
 	}
@@ -29,4 +30,9 @@ public class Config {
 	public void setViewDefinitions(List<ViewDefinition> viewDefinitions) {
 		this.viewDefinitions = viewDefinitions;
 	}
+
+	public List<FunctionDeclaration> getFunctionDeclarations() {
+		return functionDeclarations;
+	}
+	
 }
