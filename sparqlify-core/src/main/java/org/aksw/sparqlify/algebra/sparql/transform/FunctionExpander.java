@@ -40,37 +40,6 @@ interface IFactoryN<T>
 }
 
 
-class MethodSignature<T>
-{
-	private T returnType;
-	private List<T> parameterTypes;
-
-	// FIXME Better store are vararg-type (such as in Java: String ...varargs)
-	private boolean isVararg;
-	
-	public MethodSignature(T returnType,
-			boolean isVararg, List<T> parameterTypes) {
-		super();
-		this.returnType = returnType;
-		this.parameterTypes = parameterTypes;
-		this.isVararg = isVararg;
-	}
-
-	public T getReturnType() {
-		return returnType;
-	}
-
-	public List<T> getParameterTypes() {
-		return parameterTypes;
-	}
- 
-	public boolean isVararg() {
-		return isVararg;
-	}
-}
-
-
-
 interface SqlFunctionRenderer
 {
 	String render(S_Function function);

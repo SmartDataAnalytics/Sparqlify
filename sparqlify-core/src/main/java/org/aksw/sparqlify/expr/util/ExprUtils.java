@@ -180,6 +180,29 @@ public class ExprUtils {
 		}
 		
 	}
+
+	public static String getFunctionId(ExprFunction fn) {
+		
+		String result = null;
+	
+		result = fn.getOpName();
+		if(result != null) {
+			return result;
+		}
+	
+		result = fn.getFunctionSymbol() == null ? null : fn.getFunctionSymbol().getSymbol();
+		if(result != null) {
+			return result;
+		}
+	
+		result = fn.getFunctionIRI();
+		/*
+		if(result != null) {
+			return result;
+		}*/
+		
+		return result;
+	}
 	
 	/*
 	public static boolean extractConstantConstraintsDirected(Expr a, Expr b, EquiMap<Var, NodeValue> equiMap) {

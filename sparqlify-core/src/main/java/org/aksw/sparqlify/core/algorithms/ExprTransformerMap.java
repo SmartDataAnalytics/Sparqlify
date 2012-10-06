@@ -3,6 +3,8 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.aksw.sparqlify.expr.util.ExprUtils;
+
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 
@@ -32,32 +34,9 @@ public class ExprTransformerMap
 	}
 	
 	
-	public static String getFunctionId(ExprFunction fn) {
-		
-		String result = null;
-
-		result = fn.getOpName();
-		if(result != null) {
-			return result;
-		}
-
-		result = fn.getFunctionSymbol() == null ? null : fn.getFunctionSymbol().getSymbol();
-		if(result != null) {
-			return result;
-		}
-
-		result = fn.getFunctionIRI();
-		/*
-		if(result != null) {
-			return result;
-		}*/
-		
-		return result;
-	}
-
 	public ExprTransformer lookup(ExprFunction fn) {
 
-		String id = ExprTransformerMap.getFunctionId(fn);
+		String id = ExprUtils.getFunctionId(fn);
 		ExprTransformer result = idToTransformer.get(id);
 
 		return result;

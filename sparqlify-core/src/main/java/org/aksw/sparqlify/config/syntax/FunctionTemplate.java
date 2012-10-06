@@ -3,6 +3,9 @@ package org.aksw.sparqlify.config.syntax;
 import com.google.common.base.Joiner;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
+
+
+
 public class FunctionTemplate {
 	private String name;
 	private ExprList exprList;
