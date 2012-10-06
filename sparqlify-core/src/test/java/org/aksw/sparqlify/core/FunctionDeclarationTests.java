@@ -15,7 +15,7 @@ public class FunctionDeclarationTests {
 	public void test() throws RecognitionException {
 		ConfigParser parser = new ConfigParser();
 
-		Config config = parser.parse("PREFIX ex:<http://ex.org> DECLARE FUNCTION ex:intersects(geometry ?a, geometry ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
+		Config config = parser.parse("PREFIX ex:<http://ex.org/> DECLARE FUNCTION boolean ex:intersects(geometry ?a, geometry ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
 		
 		System.out.println(config.getFunctionDeclarations());
 	}

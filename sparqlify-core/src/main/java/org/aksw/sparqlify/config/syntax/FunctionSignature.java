@@ -2,37 +2,47 @@ package org.aksw.sparqlify.config.syntax;
 
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
 public class FunctionSignature {
-	private String name;
+	private String functionName;
+	private String returnTypeName;
 	private List<ParamType> paramTypeList;
 	
-	public FunctionSignature(String name, List<ParamType> paramTypeList) {
+	public FunctionSignature(String functionName, String returnTypeName, List<ParamType> paramTypeList) {
 		super();
-		this.name = name;
+		this.functionName = functionName;
+		this.returnTypeName = returnTypeName;
 		this.paramTypeList = paramTypeList;
 	}
 
-	public String getName() {
-		return name;
+	public String getFunctionName() {
+		return functionName;
 	}
 
+	public String getReturnTypeName() {
+		return returnTypeName;
+	}
+	
 	public List<ParamType> getParamTypeList() {
 		return paramTypeList;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "FunctionSignature [name=" + name + ", paramTypeList="
-				+ paramTypeList + "]";
+		return returnTypeName + " " + functionName + "(" + Joiner.on(", ").join(paramTypeList) + ")";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((functionName == null) ? 0 : functionName.hashCode());
 		result = prime * result
 				+ ((paramTypeList == null) ? 0 : paramTypeList.hashCode());
+		result = prime * result
+				+ ((returnTypeName == null) ? 0 : returnTypeName.hashCode());
 		return result;
 	}
 
@@ -45,17 +55,24 @@ public class FunctionSignature {
 		if (getClass() != obj.getClass())
 			return false;
 		FunctionSignature other = (FunctionSignature) obj;
-		if (name == null) {
-			if (other.name != null)
+		if (functionName == null) {
+			if (other.functionName != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!functionName.equals(other.functionName))
 			return false;
 		if (paramTypeList == null) {
 			if (other.paramTypeList != null)
 				return false;
 		} else if (!paramTypeList.equals(other.paramTypeList))
 			return false;
+		if (returnTypeName == null) {
+			if (other.returnTypeName != null)
+				return false;
+		} else if (!returnTypeName.equals(other.returnTypeName))
+			return false;
 		return true;
 	}
+
+	
 }
 

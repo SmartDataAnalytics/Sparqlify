@@ -192,8 +192,8 @@ functionDeclarationStmt
     ;
 
 functionSignature
-    : iriRef parameterTypeList
-        -> ^(FUNCTION_SIGNATURE iriRef parameterTypeList?)
+    : NAME iriRef parameterTypeList
+        -> ^(FUNCTION_SIGNATURE NAME iriRef parameterTypeList?)
     ;
 
 parameterTypeList

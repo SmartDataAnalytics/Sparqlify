@@ -23,7 +23,7 @@ public class ParamType {
 	
 	@Override
 	public String toString() {
-		return "ParamType [datatypeName=" + datatypeName + ", var=" + var + "]";
+		return datatypeName + " " + var;
 	}
 
 	@Override

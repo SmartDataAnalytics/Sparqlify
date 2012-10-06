@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.config.syntax;
 
+import com.google.common.base.Joiner;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
 public class FunctionTemplate {
@@ -23,8 +24,7 @@ public class FunctionTemplate {
 	
 	@Override
 	public String toString() {
-		return "FunctionTemplate [name=" + name + ", exprList=" + exprList
-				+ "]";
+		return name + "(" +  Joiner.on(", ").join(exprList) + ")";
 	}
 
 	@Override

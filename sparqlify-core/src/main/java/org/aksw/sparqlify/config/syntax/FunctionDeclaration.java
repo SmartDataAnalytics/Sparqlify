@@ -21,8 +21,7 @@ public class FunctionDeclaration {
 
 	@Override
 	public String toString() {
-		return "FunctionDeclaration [signature=" + signature + ", template="
-				+ template + "]";
+		return "Declare Function " + signature + " AS " +  template;
 	}
 
 	@Override

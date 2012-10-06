@@ -190,7 +190,7 @@ functionDeclaration returns [FunctionDeclaration value]
     ;
 
 functionSignature returns [FunctionSignature value]
-    : ^(FUNCTION_SIGNATURE a=iriRef b=paramTypeList) {$value = new FunctionSignature($a.value.toString(), $b.value);}
+    : ^(FUNCTION_SIGNATURE a=NAME b=iriRef c=paramTypeList) {$value = new FunctionSignature($b.value.toString(), $a.text, $c.value);}
     ;
 
 paramTypeList returns [ParamTypeList value]
