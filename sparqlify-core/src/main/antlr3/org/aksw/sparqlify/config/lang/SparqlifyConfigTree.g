@@ -190,12 +190,13 @@ functionDeclaration returns [FunctionDeclaration value]
     ;
 
 functionSignature returns [FunctionSignature value]
-    : ^(FUNCTION_SIGNATURE a=NAME b=paramTypeList) {$value = new FunctionSignature($a.text, $b.value);}
+    : ^(FUNCTION_SIGNATURE a=iriRef b=paramTypeList) {$value = new FunctionSignature($a.value.toString(), $b.value);}
     ;
 
 paramTypeList returns [ParamTypeList value]
 	@init { value = new ParamTypeList(); }
     : ^(PARAM_TYPE_LIST (a=paramType {$value.add($a.value);})+)
+    | ^(PARAM_TYPE_LIST nil)	
     ;
 
 

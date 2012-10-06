@@ -192,12 +192,14 @@ functionDeclarationStmt
     ;
 
 functionSignature
-    : iriRef '(' parameterTypeList? ')'
+    : iriRef parameterTypeList
         -> ^(FUNCTION_SIGNATURE iriRef parameterTypeList?)
     ;
 
 parameterTypeList
-    : parameterType (COMMA parameterType)*
+	: nil
+	    -> ^(PARAM_TYPE_LIST nil) 
+    | OPEN_BRACE parameterType (COMMA parameterType)* CLOSE_BRACE
         -> ^(PARAM_TYPE_LIST parameterType+)
     ;
 
@@ -211,8 +213,12 @@ functionTemplate
         -> ^(FUNCTION_TEMPLATE NAME expressionList)
     ;
 
-
-
+/*
+name
+	: NAME
+	| string
+	;
+*/
 
 templateConfig
 	: templateConfigStmt+ EOF!
