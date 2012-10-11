@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_UserFunc;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.config.syntax.FunctionDeclaration;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
@@ -149,7 +149,7 @@ class Ops {
 	
 	
 	public static String myTestFunc(String str, Integer i) {
-		return "yay: " + str + ", " + i;
+		return "XXX " + str + ", " + i + " XXX";
 	}
 }
 
@@ -188,10 +188,15 @@ public class DatatypeSystemTests {
 		
 		// Define a random custom function
 		Method m = Ops.class.getMethod("myTestFunc", String.class, Integer.class);
-		XMethod x = XMethodImpl.createFromMethod("testFunc", ds, null, m);
+		XMethod x = XMethodImpl.createFromMethod("myTestFunc", ds, null, m);
 
 		ds.register(x);
 
+		
+		ExprEvaluatorSql evaluater = new ExprEvaluatorSql(ds, null); //sqlFunctionRegistry);
+		//ds.
+		SqlExpr result = evaluater.eval(c, null);
+		System.out.println("Result: " + result);
 		
 		
 		//S_UserFunc d = S_UserFunc.create("");
