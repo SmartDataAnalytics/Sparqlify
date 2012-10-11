@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.XClass;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -20,9 +20,9 @@ public class E_SqlConstant
 	implements ExprSql
 {
 	private Object value;
-	private SqlDatatype datatype;
+	private XClass datatype;
 
-	public E_SqlConstant(Object value, SqlDatatype datatype) {
+	public E_SqlConstant(Object value, XClass datatype) {
 		this.value = value;
 		this.datatype = datatype;
 	}
@@ -32,7 +32,7 @@ public class E_SqlConstant
 	}
 
 	@Override
-	public SqlDatatype getDatatype() {
+	public XClass getDatatype() {
 		return datatype;
 	}
 

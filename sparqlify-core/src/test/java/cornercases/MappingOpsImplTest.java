@@ -12,17 +12,17 @@ import javax.sql.DataSource;
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssigner;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssignerMap;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.SqlExprSerializerPostgres;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
-import org.aksw.sparqlify.core.domain.Mapping;
-import org.aksw.sparqlify.core.domain.VarBinding;
-import org.aksw.sparqlify.core.domain.ViewDefinition;
-import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.algorithms.VarBinding;
+import org.aksw.sparqlify.core.algorithms.ViewInstance;
+import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
@@ -61,10 +61,10 @@ public class MappingOpsImplTest {
 		VarBinding binding = new VarBinding();
 		ViewInstance vi = new ViewInstance(coreVd, binding);
 
-		DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(vdFactory.getDatatypeSystem());
+		//DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(vdFactory.getDatatypeSystem());
 		//ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm(da);
-		
-		MappingOps ops = new MappingOpsImpl(da);
+
+		MappingOps ops = new MappingOpsImpl(null);
 		
 		Mapping m2 = ops.join(m1, m1);
 		Mapping m3 = ops.join(m2, m1);
@@ -88,7 +88,7 @@ public class MappingOpsImplTest {
 		System.out.println(block);
 		
 		
-		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres(da);
+		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres(null /*da*/);
 		
 		SqlOpSerializer serializer = new SqlOpSerializerImpl(exprSerializer);
 		

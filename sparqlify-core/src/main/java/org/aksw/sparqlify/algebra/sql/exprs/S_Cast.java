@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 
 public class S_Cast
@@ -11,7 +11,7 @@ public class S_Cast
 		super(expr, datatype);
 	}
 
-	public static S_Cast create(SqlExpr value, String datatypeId, DatatypeSystem system) {
+	public static S_Cast create(SqlExpr value, String datatypeId, DatatypeSystemOld system) {
 		//system.getByName(name)
 		SqlDatatype datatype = system.getByName(datatypeId);
 		if(datatype == null) {

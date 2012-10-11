@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-import org.aksw.sparqlify.core.domain.Mapping;
-import org.aksw.sparqlify.core.domain.SparqlSqlRewrite;
+import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;

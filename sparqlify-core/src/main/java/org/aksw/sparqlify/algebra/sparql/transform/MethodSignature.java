@@ -2,10 +2,19 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 
 import java.util.List;
 
+/**
+ * TODO Rename to MethodTypeSignature
+ * 
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ * @param <T>
+ */
 public class MethodSignature<T>
 {
 	private T returnType;
 	private List<T> parameterTypes;
+	private T varargType; 
 
 	// FIXME Better store are vararg-type (such as in Java: String ...varargs)
 	private boolean isVararg;
@@ -27,7 +36,8 @@ public class MethodSignature<T>
 	}
  
 	public boolean isVararg() {
-		return isVararg;
+		//return isVararg;
+		return varargType != null;
 	}
 	
 	public static <T> MethodSignature<T> create(T returnType, List<T> parameterTypes) {

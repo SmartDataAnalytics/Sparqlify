@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 
 public class S_Add
@@ -12,9 +12,9 @@ public class S_Add
 		// TODO Auto-generated constructor stub
 	}
 
-	public static SqlExpr create(SqlExpr left, SqlExpr right, DatatypeSystem system) {
+	public static SqlExpr create(SqlExpr left, SqlExpr right, DatatypeSystemOld system) {
 		// TODO: Datatype must also be numeric
-		SqlDatatype common = S_Equal.getCommonDataype(left, right, system);
+		SqlDatatype common = S_Equals.getCommonDataype(left, right, system);
 		if(common == null) {
 			return SqlExprValue.FALSE;	
 		}

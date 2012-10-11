@@ -11,7 +11,7 @@ import java.util.Set;
 import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.aksw.sparqlify.core.MakeExprPermissive;
 import org.aksw.sparqlify.core.MakeNodeValue;
-import org.aksw.sparqlify.core.domain.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

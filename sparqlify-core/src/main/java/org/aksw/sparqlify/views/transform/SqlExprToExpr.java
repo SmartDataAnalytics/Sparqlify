@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
-import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalOr;
@@ -119,7 +119,7 @@ public class SqlExprToExpr {
 	}
 	
 	
-	public static Expr _convert(S_Equal expr) {
+	public static Expr _convert(S_Equals expr) {
 		return new E_Equals(convert(expr.getLeft()), convert(expr.getRight()));
 	}
 	

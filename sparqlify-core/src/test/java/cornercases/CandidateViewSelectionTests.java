@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.domain.ViewDefinition;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.util.MapReader;
 import org.antlr.runtime.RecognitionException;
@@ -36,7 +36,9 @@ public class CandidateViewSelectionTests {
 		
 		String testView = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) From person";
 		ViewDefinition coreVd = vdFactory.create(testView);
-	
+
+		System.out.println("VD: " + coreVd);
+		
 		
 		CandidateViewSelector system = new CandidateViewSelectorImpl();		
 		system.addView(coreVd);

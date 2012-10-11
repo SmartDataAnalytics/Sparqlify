@@ -22,6 +22,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 
 import com.hp.hpl.jena.sdb.core.Generator;
@@ -153,7 +154,7 @@ public class SqlOpSelectBlockCollectorImpl
 		/*
 		for(String columnName : op.getSchema().getColumnNames())  {
 
-			//SqlDatatype datatype = result.getSchema().getColumnType(columnName);			
+			//XClass datatype = result.getSchema().getColumnType(columnName);			
 			//result.getProjection().put(columnName, new SqlExprColumn(opTable.getAliasName(), columnName, datatype)); //ExprVar(aliasName + "." + columnName));
 
 			result.getProjection().put(columnName, new ExprVar(opTable.getAliasName() + "." + columnName));
@@ -173,7 +174,7 @@ public class SqlOpSelectBlockCollectorImpl
 
 		for(String columnName : opTable.getSchema().getColumnNames())  {
 
-			//SqlDatatype datatype = result.getSchema().getColumnType(columnName);			
+			//XClass datatype = result.getSchema().getColumnType(columnName);			
 			//result.getProjection().put(columnName, new SqlExprColumn(opTable.getAliasName(), columnName, datatype)); //ExprVar(aliasName + "." + columnName));
 
 			result.getProjection().put(columnName, new ExprVar(opTable.getAliasName() + "." + columnName));
@@ -420,9 +421,13 @@ public class SqlOpSelectBlockCollectorImpl
 				}
 			}*/
 			
-			//SqlDatatype datatype = schema.getColumnType(columnName);			
+			//XClass datatype = schema.getColumnType(columnName);			
 			//context.getProjection().put(columnName, new SqlExprColumn(aliasName, columnName, datatype)); //ExprVar(aliasName + "." + columnName));
-			projection.put(newName, new E_SqlColumnRef(oldName, aliasName));
+			XClass datatype = schema.getColumnType(newName);
+			
+			assert datatype != null : "Datatype must not be null at this point";
+			
+			projection.put(newName, new E_SqlColumnRef(oldName, aliasName, datatype));
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.domain;
+package org.aksw.sparqlify.core.algorithms;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -19,7 +19,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.slf4j.Logger;
@@ -51,18 +51,18 @@ class GenericSqlFunctionDefinition
 {
 	private static final Logger logger = LoggerFactory.getLogger(GenericSqlFunctionDefinition.class);
 	
-	private DatatypeSystem datatypeSystem;
+	private DatatypeSystemOld datatypeSystem;
 	public String sqlFunctionName;
 	
 	private List<Pair<MethodSignature<SqlDatatype>, SqlStringTransformer>> signatures = new ArrayList<Pair<MethodSignature<SqlDatatype>, SqlStringTransformer>>();
 	
 	
-	public GenericSqlFunctionDefinition(String sqlFunctionName, DatatypeSystem datatypeSystem) {
+	public GenericSqlFunctionDefinition(String sqlFunctionName, DatatypeSystemOld datatypeSystem) {
 		this.sqlFunctionName = sqlFunctionName;
 		this.datatypeSystem = datatypeSystem;
 	}
 	
-	public static MethodSignature<SqlDatatype> resolve(MethodSignature<String> signature, DatatypeSystem datatypeSystem)
+	public static MethodSignature<SqlDatatype> resolve(MethodSignature<String> signature, DatatypeSystemOld datatypeSystem)
 	{
 		SqlDatatype returnType = datatypeSystem.requireByName(signature.getReturnType());
 		
@@ -200,7 +200,7 @@ public class FunctionExpander {
 							return new E_StrDatatype(args.get(0), NodeValue.makeNode(XSD.xdouble.asNode()));
 						}});
 		
-		DatatypeSystem datatypeSystem = new DatatypeSystemDefault();
+		DatatypeSystemOld datatypeSystem = new DatatypeSystemDefault();
 		
 		// geography
 		{
@@ -376,7 +376,7 @@ public class FunctionExpander {
 	}
 
 	
-	public static void registerFunction(DatatypeSystem datatypeSystem, final String funcName, final String sparqlFuncName, SqlStringTransformer transformer, String returnType, boolean isVararg, String ...paramTypes) {
+	public static void registerFunction(DatatypeSystemOld datatypeSystem, final String funcName, final String sparqlFuncName, SqlStringTransformer transformer, String returnType, boolean isVararg, String ...paramTypes) {
 
 		final GenericSqlFunctionDefinition funcDef = new GenericSqlFunctionDefinition(funcName, datatypeSystem);
 		funcDef.add(transformer, returnType, isVararg, paramTypes);

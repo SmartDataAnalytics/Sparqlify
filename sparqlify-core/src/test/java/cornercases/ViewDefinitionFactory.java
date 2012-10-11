@@ -5,8 +5,8 @@ import java.util.List;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
-import org.aksw.sparqlify.core.DatatypeSystem;
-import org.aksw.sparqlify.core.domain.ViewDefinition;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.antlr.runtime.RecognitionException;
 
 public class ViewDefinitionFactory {

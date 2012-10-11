@@ -8,8 +8,8 @@ import org.aksw.sparqlify.core.SqlDatatype;
 public abstract class SqlExpr2
 	extends SqlExprBase
 {
-	private SqlExpr left;
-	private SqlExpr right;
+	protected final SqlExpr left;
+	protected final SqlExpr right;
 
 	public SqlExpr2(SqlExpr left, SqlExpr right, SqlDatatype datatype) {
 		super(datatype);

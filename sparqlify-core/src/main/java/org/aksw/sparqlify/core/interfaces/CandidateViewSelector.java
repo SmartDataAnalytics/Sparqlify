@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core.interfaces;
 import java.util.Collection;
 
 import org.aksw.sparqlify.core.RdfView;
-import org.aksw.sparqlify.core.domain.ViewDefinition;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;

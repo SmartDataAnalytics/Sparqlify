@@ -22,7 +22,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
-import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GeographyFromText;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GeometryFromText;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GreaterThan;
@@ -42,7 +42,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.Vocab;
 import org.postgis.PGgeometry;
@@ -102,7 +102,7 @@ class ExprPusherConcat
 class SqlPusher
 {	
 	private static final Logger logger = LoggerFactory.getLogger(SqlPusher.class);
-	private static DatatypeSystem datatypeSystem = new DatatypeSystemDefault();
+	private static DatatypeSystemOld datatypeSystem = new DatatypeSystemDefault();
 	
 	public static SqlExpr push(Expr expr, SqlExprList args) {
 
@@ -140,7 +140,7 @@ class SqlPusher
 	}
 	
 	public static SqlExpr push(E_Equals expr, SqlExprList args) {
-		return S_Equal.create(args.get(0), args.get(1), datatypeSystem);
+		return S_Equals.create(args.get(0), args.get(1), datatypeSystem);
 	}
 
 	/*
@@ -149,7 +149,7 @@ class SqlPusher
 	}*/
 
 	public static SqlExpr push(E_LangMatches expr, SqlExprList args) {
-		return S_Equal.create(args.get(0), args.get(1), datatypeSystem);
+		return S_Equals.create(args.get(0), args.get(1), datatypeSystem);
 	}
 
 	public static SqlExpr push(E_Add expr, SqlExprList args) {
@@ -196,7 +196,7 @@ class SqlPusher
 		for(int i = 1; i < args.size(); ++i) {
 			SqlExpr second = args.get(i);
 			
-			equals.add(S_Equal.create(first, second, datatypeSystem));
+			equals.add(S_Equals.create(first, second, datatypeSystem));
 		}
 		
 		if(equals.size() == 1) {

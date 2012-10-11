@@ -5,8 +5,8 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.aksw.sparqlify.core.domain.RestrictedExpr;
-import org.aksw.sparqlify.core.domain.VarDefinition;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.junit.Test;
 
 import com.google.common.collect.HashMultimap;

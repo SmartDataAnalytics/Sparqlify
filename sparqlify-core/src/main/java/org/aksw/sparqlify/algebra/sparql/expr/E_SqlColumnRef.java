@@ -1,6 +1,10 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
+import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
+import org.aksw.sparqlify.core.datatypes.XClass;
+
 import com.hp.hpl.jena.sparql.expr.ExprVar;
+
 
 /**
  * A reference to a column of a table (alias).
@@ -12,20 +16,23 @@ import com.hp.hpl.jena.sparql.expr.ExprVar;
  */
 public class E_SqlColumnRef
 	extends ExprVar
+	implements ExprSql
 {
 	private String aliasName;
-	private String columnName;	
+	private String columnName;
+	private XClass datatype; 
 	
 
 	public static String createCombinedName(String columnName, String aliasName) {
 		return aliasName == null ? columnName : aliasName + "." + columnName;
 	}
 	
-	public E_SqlColumnRef(String columnName, String aliasName) {
+	public E_SqlColumnRef(String columnName, String aliasName, XClass datatype) {
 		super(createCombinedName(columnName, aliasName));
 
 		this.aliasName = aliasName;
 		this.columnName = columnName;
+		this.datatype = datatype;
 	}
 	
 	public String getAliasName() {
@@ -34,5 +41,9 @@ public class E_SqlColumnRef
 	
 	public String getColumnName() {
 		return columnName;
+	}
+	
+	public XClass getDatatype() {
+		return datatype;
 	}
 }

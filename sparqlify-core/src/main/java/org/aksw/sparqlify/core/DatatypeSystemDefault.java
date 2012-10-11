@@ -101,7 +101,7 @@ class SqlDatatypeImpl
 
 
 public class DatatypeSystemDefault
-	implements DatatypeSystem
+	implements DatatypeSystemOld
 {
 	public static final Logger logger = LoggerFactory.getLogger(DatatypeSystemDefault.class);
 
@@ -298,11 +298,17 @@ public class DatatypeSystemDefault
 
 	
 	public static void main(String[] args) {
-		DatatypeSystem system = new DatatypeSystemDefault();
+		DatatypeSystemOld system = new DatatypeSystemDefault();
 		
 		//System.out.println(system.supremumDatatypes(_UNSIGNED_SHORT, _BYTE));
 		//System.out.println(system.supremumDatatypes(_INTEGER, _DOUBLE));
 		//System.out.println(system.supremumDatatypes(_DOUBLE, _INTEGER));
+	}
+
+	@Override
+	public SqlDatatype getByClass(Class<?> clazz) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/*

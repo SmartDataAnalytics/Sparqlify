@@ -1,27 +1,27 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
-import org.aksw.sparqlify.config.syntax.FunctionDeclaration;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
+import org.aksw.sparqlify.core.datatypes.XClass;
 
 public class RegisteredFunction
 {
-	private FunctionDeclaration declaration;
-	private MethodSignature<SqlDatatype> typeSignature;
+	private FunctionDeclarationTemplate declaration;
+	private MethodSignature<XClass> typeSignature;
 	
 	
 	
-	public RegisteredFunction(FunctionDeclaration declaration,
-			MethodSignature<SqlDatatype> typeSignature) {
+	public RegisteredFunction(FunctionDeclarationTemplate declaration,
+			MethodSignature<XClass> typeSignature) {
 		super();
 		this.declaration = declaration;
 		this.typeSignature = typeSignature;
 	}
 	
-	public FunctionDeclaration getDeclaration() {
+	public FunctionDeclarationTemplate getDeclaration() {
 		return declaration;
 	}
-	public MethodSignature<SqlDatatype> getTypeSignature() {
+	public MethodSignature<XClass> getTypeSignature() {
 		return typeSignature;
 	}
 

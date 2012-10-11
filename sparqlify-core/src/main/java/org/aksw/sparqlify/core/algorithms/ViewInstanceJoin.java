@@ -4,7 +4,6 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.core.domain.ViewInstance;
 import org.aksw.sparqlify.restriction.RestrictionManager;
 
 /***

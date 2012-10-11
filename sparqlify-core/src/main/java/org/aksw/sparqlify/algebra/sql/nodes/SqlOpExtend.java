@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssigner;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -25,12 +25,12 @@ public class SqlOpExtend
 	}
 	
 	
-	public static Map<String, SqlDatatype> extractExtendedTypeMap(Map<String, Expr> nameToExpr, DatatypeAssigner datatypeAssigner, Map<String, SqlDatatype> baseTypeMap) {
-		Map<String, SqlDatatype> result = new HashMap<String, SqlDatatype>();
+	public static Map<String, XClass> extractExtendedTypeMap(Map<String, Expr> nameToExpr, DatatypeAssigner datatypeAssigner, Map<String, XClass> baseTypeMap) {
+		Map<String, XClass> result = new HashMap<String, XClass>();
 		for(Entry<String, Expr> entry : nameToExpr.entrySet()) {
 			
 			Expr expr = entry.getValue();
-			SqlDatatype datatype = datatypeAssigner.assign(expr, baseTypeMap);
+			XClass datatype = datatypeAssigner.assign(expr, baseTypeMap);
 			
 			if(datatype == null) {
 				System.err.println("Could not determine datatype for: " + expr);
@@ -49,7 +49,7 @@ public class SqlOpExtend
 		schema.getColumnNames().addAll(op.getSchema().getColumnNames());
 		schema.getColumnNames().addAll(projection.getNames());
 		
-		Map<String, SqlDatatype> typeMap = extractExtendedTypeMap(projection.getNameToExpr(), datatypeAssigner, op.getSchema().getTypeMap());
+		Map<String, XClass> typeMap = extractExtendedTypeMap(projection.getNameToExpr(), datatypeAssigner, op.getSchema().getTypeMap());
 		
 		//projection.getNameToExpr(typeMap)
 		

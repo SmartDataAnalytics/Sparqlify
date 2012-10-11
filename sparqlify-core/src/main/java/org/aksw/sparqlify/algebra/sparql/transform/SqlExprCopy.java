@@ -6,7 +6,7 @@ import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
-import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 
@@ -49,8 +49,8 @@ public class SqlExprCopy {
     	return result;
     }*/
 
-    public S_Equal copy(S_Equal sqlExpr, List<SqlExpr> args) {
-    	return new S_Equal(args.get(0), args.get(1));
+    public S_Equals copy(S_Equals sqlExpr, List<SqlExpr> args) {
+    	return new S_Equals(args.get(0), args.get(1));
     }
 
     public S_Concat copy(S_Concat sqlExpr, List<SqlExpr> args) {

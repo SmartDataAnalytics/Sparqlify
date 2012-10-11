@@ -19,10 +19,11 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
  * @author raven
  *
  */
-public interface DatatypeSystem {
+public interface DatatypeSystemOld {
 	
 	
     SqlDatatype getByName(String name);
+	SqlDatatype getByClass(Class<?> clazz);
     
     // Same as getByName, but throws exception if none found
     SqlDatatype requireByName(String name);

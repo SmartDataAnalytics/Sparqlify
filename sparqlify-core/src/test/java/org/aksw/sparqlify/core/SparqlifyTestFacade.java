@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.domain.SparqlSqlRewrite;
-import org.aksw.sparqlify.core.domain.ViewDefinition;
+import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.util.MapReader;

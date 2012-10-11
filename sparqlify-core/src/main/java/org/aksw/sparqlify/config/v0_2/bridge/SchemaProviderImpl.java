@@ -11,8 +11,8 @@ import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
-import org.aksw.sparqlify.core.DatatypeSystem;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class SchemaProviderImpl
 			queryString += " LIMIT 1";
 		}
 
-		Map<String, SqlDatatype> typeMap = null;
+		Map<String, XClass> typeMap = null;
 		
 		try {
 			typeMap = SchemaProviderImpl.getTypes(conn, queryString, datatypeSystem, aliasMap);
@@ -69,7 +69,7 @@ public class SchemaProviderImpl
 			throw new RuntimeException(e);
 		}
 		
-		for(Entry<String, SqlDatatype> entry : typeMap.entrySet()) {
+		for(Entry<String, XClass> entry : typeMap.entrySet()) {
 			logger.info(entry.getKey() + " -> " + entry.getValue());
 		}
 		
@@ -151,38 +151,38 @@ public class SchemaProviderImpl
 		return result;
 	}
 
-	public static SqlDatatype lookupDatatype(String typeName, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
+	public static XClass lookupDatatype(String typeName, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
 		String lookupName = aliasMap.get(typeName.toLowerCase());
 		
 		if(lookupName == null) {
 			lookupName = typeName;
 		}
 		
-		SqlDatatype result = datatypeSystem.requireByName(lookupName);
+		XClass result = datatypeSystem.requireByName(lookupName);
 		if(result == null) {
 			throw new RuntimeException("Raw SQL datatype '" + typeName + "' not mapped");			
 		}
 		
 		return result;
 	}
+
 		
-		
-	public static Map<String, SqlDatatype> transformRawMap(Map<String, String> map, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
-		Map<String, SqlDatatype> result = new HashMap<String, SqlDatatype>();
+	public static Map<String, XClass> transformRawMap(Map<String, String> map, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
+		Map<String, XClass> result = new HashMap<String, XClass>();
 
 		for(Map.Entry<String, String> entry : map.entrySet()) {
-			SqlDatatype value = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
+			XClass value = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
 			
 			result.put(entry.getKey(), value);
 		}
 		return result;
 	}
 	
-	public static Map<String, SqlDatatype> getTypes(Connection conn, String queryStr, DatatypeSystem datatypeSystem, Map<String, String> aliasMap)
+	public static Map<String, XClass> getTypes(Connection conn, String queryStr, DatatypeSystem datatypeSystem, Map<String, String> aliasMap)
 		throws Exception
 	{
 		Map<String, String> map = getRawTypes(conn, queryStr);
-		Map<String, SqlDatatype> result = transformRawMap(map, datatypeSystem, aliasMap);
+		Map<String, XClass> result = transformRawMap(map, datatypeSystem, aliasMap);
 		return result;
 	}
 

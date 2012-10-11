@@ -1,60 +1,20 @@
 package org.aksw.sparqlify.config.syntax;
 
-public class FunctionDeclaration {
-	private FunctionSignature signature;
-	private FunctionTemplate template;
+public interface FunctionDeclaration {
+	FunctionSignature getSignature();
 
-	public FunctionDeclaration(FunctionSignature signature,
-			FunctionTemplate template) {
-		super();
-		this.signature = signature;
-		this.template = template;
-	}
-
-	public FunctionSignature getSignature() {
-		return signature;
-	}
-
-	public FunctionTemplate getTemplate() {
-		return template;
-	}
-
-	@Override
-	public String toString() {
-		return "Declare Function " + signature + " AS " +  template;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((signature == null) ? 0 : signature.hashCode());
-		result = prime * result
-				+ ((template == null) ? 0 : template.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FunctionDeclaration other = (FunctionDeclaration) obj;
-		if (signature == null) {
-			if (other.signature != null)
-				return false;
-		} else if (!signature.equals(other.signature))
-			return false;
-		if (template == null) {
-			if (other.template != null)
-				return false;
-		} else if (!template.equals(other.template))
-			return false;
-		return true;
-	}
-
+	/**
+	 * TODO What do we want here? Either:
+	 * -) A method that returns a factory for creating function expressions, such as create(a, b) -> S_And.create(a, b)
+	 * -) A method that can actually evaluate functions.
+	 * 
+	 * Actually, the former case is more general, as it enables the construction of expressions.
+	 * The expression object itself could have a method for the evaluation.
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @return The definition (which can actually evaluate the function), null if not set.
+	 */
+	//FunctionDefinition getDefinition();
 }

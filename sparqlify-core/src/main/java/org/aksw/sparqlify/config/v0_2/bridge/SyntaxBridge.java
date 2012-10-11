@@ -12,9 +12,9 @@ import org.aksw.sparqlify.config.syntax.QueryString;
 import org.aksw.sparqlify.config.syntax.Relation;
 import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
-import org.aksw.sparqlify.core.domain.Mapping;
-import org.aksw.sparqlify.core.domain.RestrictedExpr;
-import org.aksw.sparqlify.core.domain.VarDefinition;
+import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class SyntaxBridge {
 		return schemaProvider;
 	}
 	
-	public org.aksw.sparqlify.core.domain.ViewDefinition create(ViewDefinition viewDefinition) {
+	public org.aksw.sparqlify.core.domain.input.ViewDefinition create(ViewDefinition viewDefinition) {
 		
 		String name = viewDefinition.getName();		
 		
@@ -122,7 +122,7 @@ public class SyntaxBridge {
 		Mapping mapping = new Mapping(varDefinition, sqlOp);
 		
 			
-		org.aksw.sparqlify.core.domain.ViewDefinition result = new org.aksw.sparqlify.core.domain.ViewDefinition(name, template, null, mapping, viewDefinition);
+		org.aksw.sparqlify.core.domain.input.ViewDefinition result = new org.aksw.sparqlify.core.domain.input.ViewDefinition(name, template, null, mapping, viewDefinition);
 		
 		return result;
 	}

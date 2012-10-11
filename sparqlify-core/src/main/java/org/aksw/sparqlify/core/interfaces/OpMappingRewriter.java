@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.interfaces;
 
-import org.aksw.sparqlify.core.domain.Mapping;
+import org.aksw.sparqlify.core.domain.input.Mapping;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 

@@ -17,14 +17,14 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
-import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Regex;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
@@ -120,7 +120,7 @@ public class SqlExprOptimizer {
 	
 	public static Map<Class, Class> functionToInverse;
 	
-	private static DatatypeSystem datatypeSystem = new DatatypeSystemDefault();
+	private static DatatypeSystemOld datatypeSystem = new DatatypeSystemDefault();
 	
 	public static Expr optimizeMM(Expr expr) {
 		Expr result = (Expr) MultiMethod.invokeStatic(SqlExprOptimizer.class,
@@ -815,7 +815,7 @@ public class SqlExprOptimizer {
 		SqlExpr a = translateMM(expr.getArg1());
 		SqlExpr b = translateMM(expr.getArg2());
 
-		return S_Equal.create(a, b, datatypeSystem);
+		return S_Equals.create(a, b, datatypeSystem);
 	}
 
 	/*

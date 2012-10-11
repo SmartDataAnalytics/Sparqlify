@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.core.domain.ViewInstance;
 
 
 public class SelfJoinEliminator {
@@ -17,7 +16,7 @@ public class SelfJoinEliminator {
 	{
 		return null;
 	}
-	/*
+	/* TODO FIX THIS
 	static RdfViewInstance merge(ViewInstance a, ViewInstance b)
 	{
 		if(a.getViewDefinition() != b.getViewDefinition()) {

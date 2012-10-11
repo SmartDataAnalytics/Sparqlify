@@ -1,10 +1,17 @@
-package org.aksw.sparqlify.core.domain;
+package org.aksw.sparqlify.core.domain.input;
 
 
+import java.io.ByteArrayOutputStream;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.aksw.commons.jena.util.QuadUtils;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
+import org.openjena.atlas.io.IndentedWriter;
 
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 
@@ -141,12 +148,66 @@ public class ViewDefinition {
 		return result;
 	}
 
+	public void write(IndentedWriter writer) {
+		//Head
+		writer.println("Create View " + name + " As");
+		writer.incIndent();
+		writer.println("Construct {");
+		writer.incIndent();
+		
+		// Template
+		for(Quad quad : template) {
+			writer.println(quad);
+		}
+		writer.decIndent();		
+		writer.println("}");
+		
+		// With
+		if(!mapping.getVarDefinition().isEmpty()) {
+			writer.println("With");
+			
+			writer.incIndent();
+			for(Entry<Var, RestrictedExpr> entry : mapping.getVarDefinition().getMap().entries()) {
+				Var var = entry.getKey();
+				RestrictedExpr rexpr = entry.getValue();
+				
+				writer.println(var + " = " + rexpr.getExpr() + "; Constraints " + rexpr.getRestrictions());
+			}
+			writer.decIndent();
+		}
+
+		// From
+		SqlOp op = mapping.getSqlOp();
+		if(op != null) {
+			writer.println("From");
+			writer.incIndent();
+			
+			if(op instanceof SqlOpTable) {
+				SqlOpTable tmp = (SqlOpTable)op; 
+				writer.println(tmp.getTableName());
+			} else if (op instanceof SqlOpQuery) {
+				SqlOpQuery tmp = (SqlOpQuery)op;
+				writer.println("[[" + tmp + "]]");
+			} else {
+				writer.println(op);
+			}
+			writer.decIndent();
+		}
+		
+	}
+	
 
 	@Override
 	public String toString() {
-		return "ViewDefinition [name=" + name + ", template=" + template
-				+ ", mapping=" + mapping + ", viewReferences=" + viewReferences
-				+ ", source=" + source + "]";
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		IndentedWriter writer = new IndentedWriter(out);
+		
+		write(writer);
+		writer.flush();
+		writer.close();
+
+		String result = out.toString();
+		return result;
 	}
 }
 

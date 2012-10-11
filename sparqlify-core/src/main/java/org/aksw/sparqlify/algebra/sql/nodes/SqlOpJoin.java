@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sdb.core.JoinType;
@@ -41,7 +41,7 @@ public class SqlOpJoin
 		names.addAll(a.getColumnNames());
 		names.addAll(b.getColumnNames());
 		
-		Map<String, SqlDatatype> typeMap = new HashMap<String, SqlDatatype>();
+		Map<String, XClass> typeMap = new HashMap<String, XClass>();
 		typeMap.putAll(a.getTypeMap());
 		typeMap.putAll(b.getTypeMap());
 		

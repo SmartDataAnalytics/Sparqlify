@@ -1,6 +1,6 @@
 package cornercases;
 
-import org.aksw.sparqlify.core.domain.VarBinding;
+import org.aksw.sparqlify.core.algorithms.VarBinding;
 import org.junit.Test;
 
 import com.hp.hpl.jena.sparql.core.Var;

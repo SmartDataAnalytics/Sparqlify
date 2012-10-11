@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.openjena.atlas.io.IndentedWriter;
 
 /**
@@ -30,7 +30,7 @@ public class SqlOpProject
 	
 	public static SqlOpProject create(SqlOp subOp, List<String> columnNames) {		
 		
-		Map<String, SqlDatatype> typeMap = subOp.getSchema().getTypeMap();
+		Map<String, XClass> typeMap = subOp.getSchema().getTypeMap();
 		
 		Schema newSchema = new SchemaImpl();
 
@@ -43,7 +43,7 @@ public class SqlOpProject
 			
 			newSchema.getColumnNames().add(name);
 			
-			SqlDatatype type = typeMap.get(name);
+			XClass type = typeMap.get(name);
 			newSchema.getTypeMap().put(name, type);
 		}
 		

@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.interfaces;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.domain.Mapping;
-import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.algorithms.ViewInstance;
+import org.aksw.sparqlify.core.domain.input.Mapping;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.ExprList;

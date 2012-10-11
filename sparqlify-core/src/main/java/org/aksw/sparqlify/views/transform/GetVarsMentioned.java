@@ -8,7 +8,7 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
-import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.algorithms.ViewInstance;
 import org.aksw.sparqlify.database.OpExtFilterIndexed;
 import org.aksw.sparqlify.sparqlview.OpSparqlViewPattern;
 

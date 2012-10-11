@@ -12,9 +12,10 @@ public class SqlExprValue
 	}
 	
 
-	//public static final SqlExprValue TYPE_ERROR = new SqlExprValue(SpecialTypes.TYPE_ERROR);
+	public static final SqlExprValue TYPE_ERROR = new SqlExprValue(SpecialTypes.TYPE_ERROR);
 	public static final SqlExprValue FALSE = new SqlExprValue(false);
 	public static final SqlExprValue TRUE = new SqlExprValue(true);
+	//public static final SqlExprValue
 
 	
 	private Object object;

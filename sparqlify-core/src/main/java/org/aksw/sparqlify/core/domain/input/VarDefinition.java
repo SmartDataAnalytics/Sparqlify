@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.domain;
+package org.aksw.sparqlify.core.domain.input;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.openjena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -42,6 +43,10 @@ public class VarDefinition {
 		this.varToExprs = varToExprs;
 	}
 
+	
+	boolean isEmpty() {
+		return varToExprs.isEmpty();
+	}
 	
 	public Multimap<Var, RestrictedExpr> getMap() {
 		return varToExprs;

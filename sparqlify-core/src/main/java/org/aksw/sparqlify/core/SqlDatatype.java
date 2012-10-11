@@ -2,6 +2,16 @@ package org.aksw.sparqlify.core;
 
 import com.hp.hpl.jena.graph.Node;
 
+/**
+ * This class describes what a certain datatype corresponds to in xsd, java and sql.
+ * 
+ * TODO Rename to something like Type-Info.
+ * A DatatypeSystem provides this information for TypeTokens.
+ * 
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ */
 public interface SqlDatatype {
 
 	/**

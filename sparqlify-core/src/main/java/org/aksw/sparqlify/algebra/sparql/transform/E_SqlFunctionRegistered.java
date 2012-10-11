@@ -3,8 +3,8 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
-import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.algorithms.RegisteredFunction;
+import org.aksw.sparqlify.core.datatypes.XClass;
 
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -58,7 +58,15 @@ public class E_SqlFunctionRegistered
 	}
 
 	@Override
-	public SqlDatatype getDatatype() {
+	public XClass getDatatype() {
 		return regFn.getTypeSignature().getReturnType();
+	}
+	
+	/**
+	 * Whether the function can be evaluated
+	 * @return
+	 */
+	public boolean canEvaluate() {
+		return false;
 	}
 }

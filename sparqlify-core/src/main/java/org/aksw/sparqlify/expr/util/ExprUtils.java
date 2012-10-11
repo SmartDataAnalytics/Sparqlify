@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.expr.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +11,8 @@ import java.util.Set;
 import org.aksw.commons.collections.IterableCollection;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.Pair;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
+import org.aksw.sparqlify.core.SqlDatatype;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -209,4 +212,104 @@ public class ExprUtils {
 		return extractConstantConstraintsDirected(a, b, equiMap.getKeyToValue());
 	}*/
 	
+	public static Object getJavaObject(NodeValue expr) {
+
+		Object result;
+
+		if(expr.isIRI()){
+			result = expr.asNode().getURI();
+			//logger.debug("HACK - Uri constants should be converted to RdfTerms first");
+		} else if(expr.isBoolean()) {
+			result = expr.getBoolean() ? true : false;
+		} else if(expr.isNumber()) {
+			if(expr.isDecimal()) {
+				BigDecimal d = expr.getDecimal();
+				if(d.scale() > 0) {
+					result = d.doubleValue();
+				} else {
+					result = d.intValue();
+				}
+			}
+			else if(expr.isDouble()) {
+				result = expr.getDouble();	
+			} else if(expr.isFloat()) {
+				result = expr.getFloat();
+			} else {
+				result = expr.getDecimal().longValue();
+			}
+		} else if(expr.isString()) {
+			result = expr.getString();
+		} else if(expr.isDate()) {
+			result = expr.getDateTime().asCalendar();
+		} else if(expr.isDateTime()) {
+			result = expr.getDateTime().asCalendar();			
+		}
+		/*
+		else if(expr instanceof NodeValueGeom){
+			result = new SqlExprValue(((NodeValueGeom) expr).getGeometry());
+		} else if (expr.isLiteral()) {
+			Node node = expr.asNode(); 
+			if(node.getLiteralDatatypeURI().equals(Vocab.wktLiteral)) {
+				result = new SqlExprValue(new PGgeometry(node.getLiteralLexicalForm()), DatatypeSystemDefault._GEOMETRY);
+			}
+		}*/
+		else {
+			throw new RuntimeException("Unknow datatype of constant: " + expr.getClass() + " ," + expr);
+		}
+
+		return result;
+		//return new ExprSqlBridge(result);
+	}
+
+	
+	
+	/*
+	public static SqlDatatype getDatatype(NodeValue expr, DatatypeSystem system) {
+
+		SqlDatatype result;
+
+		if(expr.isIRI()){
+			result = system.getByName("string")
+			//logger.debug("HACK - Uri constants should be converted to RdfTerms first");
+		} else if(expr.isBoolean()) {
+			result = expr.getBoolean() ? true : false;
+		} else if(expr.isNumber()) {
+			if(expr.isDecimal()) {
+				BigDecimal d = expr.getDecimal();
+				if(d.scale() > 0) {
+					result = d.doubleValue();
+				} else {
+					result = d.intValue();
+				}
+			}
+			else if(expr.isDouble()) {
+				result = expr.getDouble();	
+			} else if(expr.isFloat()) {
+				result = expr.getFloat();
+			} else {
+				result = expr.getDecimal().longValue();
+			}
+		} else if(expr.isString()) {
+			result = expr.getString();
+		} else if(expr.isDate()) {
+			result = expr.getDateTime().asCalendar();
+		} else if(expr.isDateTime()) {
+			result = expr.getDateTime().asCalendar();			
+		}
+		/*
+		else if(expr instanceof NodeValueGeom){
+			result = new SqlExprValue(((NodeValueGeom) expr).getGeometry());
+		} else if (expr.isLiteral()) {
+			Node node = expr.asNode(); 
+			if(node.getLiteralDatatypeURI().equals(Vocab.wktLiteral)) {
+				result = new SqlExprValue(new PGgeometry(node.getLiteralLexicalForm()), DatatypeSystemDefault._GEOMETRY);
+			}
+		}* /
+		else {
+			throw new RuntimeException("Unknow datatype of constant: " + expr.getClass() + " ," + expr);
+		}
+
+		return result;
+		//return new ExprSqlBridge(result);
+	}*/
 }

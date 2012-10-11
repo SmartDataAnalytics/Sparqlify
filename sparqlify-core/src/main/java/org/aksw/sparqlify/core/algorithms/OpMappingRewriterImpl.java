@@ -3,8 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.core.domain.Mapping;
-import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.database.OpFilterIndexed;

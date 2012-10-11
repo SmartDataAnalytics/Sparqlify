@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.core.domain.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 
 import com.hp.hpl.jena.sparql.expr.E_Add;

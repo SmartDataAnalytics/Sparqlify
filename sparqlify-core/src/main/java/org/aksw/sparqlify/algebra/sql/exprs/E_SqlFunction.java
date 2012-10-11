@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.XClass;
 
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -55,7 +55,7 @@ public class E_SqlFunction
 	}
 
 	@Override
-	public SqlDatatype getDatatype() {
+	public XClass getDatatype() {
 		// TODO Auto-generated method stub
 		return null;
 	}

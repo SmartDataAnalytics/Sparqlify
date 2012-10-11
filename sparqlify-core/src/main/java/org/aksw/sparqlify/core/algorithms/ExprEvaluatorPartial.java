@@ -6,7 +6,6 @@ import java.util.Map;
 
 import mapping.ExprCopy;
 
-import org.aksw.sparqlify.core.domain.VarBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,19 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
+/**
+ * Evaluator for expressions.
+ * If not all of an expressions' variables are bound, it tries to evaluate as much
+ * as possible; hence the name "partial" evaluator.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ */
 public class ExprEvaluatorPartial
 	implements ExprEvaluator
 {
@@ -24,6 +36,8 @@ public class ExprEvaluatorPartial
 	private static final Logger logger = LoggerFactory.getLogger(ExprEvaluatorPartial.class);
 	
 	private FunctionRegistry registry;
+	
+	private FunctionRegistrySql sqlRegistry;
 	
 	/**
 	 *  The transformer is called AFTER all of a functions arguments have been evaluated.
@@ -37,14 +51,21 @@ public class ExprEvaluatorPartial
 	}
 	
 	
-	public static boolean isConstantArgsOnly(ExprFunction fn) {
-		for(Expr arg : fn.getArgs()) {
-			if(!arg.isConstant()) {
+	public static boolean isConstantsOnly(Iterable<Expr> exprs) {
+		for(Expr expr : exprs) {
+			if(!expr.isConstant()) {
 				return false;
 			}
 		}
 		
 		return true;
+	}
+	
+	public static boolean isConstantArgsOnly(ExprFunction fn) {
+		
+		boolean result = isConstantsOnly(fn.getArgs());
+
+		return result;
 	}
 	
 	public Expr eval(ExprFunction fn, Map<Var, Expr> binding) {
@@ -54,7 +75,8 @@ public class ExprEvaluatorPartial
 			Expr evaledArg = eval(arg, binding);
 			
 			// If an argument evaluated to type error, return type error
-			// (currently represented with nvNothing - is that safe?)			
+			// TODO: Distinguish between null and type error. Currently we use nvNothing which actually corresponds to NULL
+			// (currently represented with nvNothing - is that safe? - Rather no - see above)
 			if(evaledArg.equals(NodeValue.nvNothing)) {
 				return NodeValue.nvNothing;
 			}

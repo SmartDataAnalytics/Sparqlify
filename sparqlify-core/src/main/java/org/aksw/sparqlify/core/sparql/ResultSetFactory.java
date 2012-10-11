@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.aksw.sparqlify.core.ResultSetSparqlify;
-import org.aksw.sparqlify.core.domain.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;

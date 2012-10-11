@@ -1,9 +1,13 @@
-package org.aksw.sparqlify.core.domain;
+package org.aksw.sparqlify.core.algorithms;
 
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
 import com.hp.hpl.jena.sparql.core.Var;
 

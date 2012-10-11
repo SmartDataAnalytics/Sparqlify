@@ -66,10 +66,10 @@ import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.ColRelGenerator;
 import org.aksw.sparqlify.core.SqlDatatype;
-import org.aksw.sparqlify.core.domain.Mapping;
-import org.aksw.sparqlify.core.domain.RestrictedExpr;
-import org.aksw.sparqlify.core.domain.VarDefinition;
-import org.aksw.sparqlify.core.domain.ViewInstance;
+import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.TranslatorSql;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
@@ -877,7 +877,7 @@ public class MappingOpsImpl
 		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
 
 		
-		Map<String, SqlDatatype> unionTypeMap = new HashMap<String, SqlDatatype>();
+		Map<String, XClass> unionTypeMap = new HashMap<String, XClass>();
 		
 		
 		// For each variable, cluster the corresponding expressions
@@ -901,7 +901,7 @@ public class MappingOpsImpl
 				
 				for(RestrictedExpr def : exprsForVar) {
 				
-					Map<String, SqlDatatype> columnToDatatype = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
+					Map<String, XClass> columnToDatatype = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
 					//Integer hash = ExprStructuralHash.hash(def.getExpr(), columnToDatatype);
 					
 					Expr datatypeNorm = exprNormalizer.normalize(def.getExpr(), columnToDatatype);
@@ -980,7 +980,7 @@ public class MappingOpsImpl
 			for(Entry<String, Expr> entry : projection.entrySet()) {
 				
 				Expr sqlExpr = sqlTranslator.translateSql(entry.getValue(), null);
-				SqlDatatype datatype = datatypeAssigner.assign(sqlExpr, member.getSqlOp().getSchema().getTypeMap());
+				XClass datatype = datatypeAssigner.assign(sqlExpr, member.getSqlOp().getSchema().getTypeMap());
 
 				if(datatype == null) {
 					throw new RuntimeException("Could not determine datatype for expression: " + sqlExpr);
@@ -1009,7 +1009,7 @@ public class MappingOpsImpl
 		
 			for(String columnName : unboundColumns) {
 				
-				SqlDatatype datatype = unionTypeMap.get(columnName);
+				XClass datatype = unionTypeMap.get(columnName);
 				
 				NodeValue nullValue = new E_SqlNodeValue(NodeValue.nvNothing, datatype);
 				

@@ -15,7 +15,7 @@ import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
-import org.aksw.sparqlify.core.domain.SparqlSqlRewrite;
+import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;

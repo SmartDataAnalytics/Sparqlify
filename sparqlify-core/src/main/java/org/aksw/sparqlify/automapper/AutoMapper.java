@@ -24,7 +24,7 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
-import org.aksw.sparqlify.core.DatatypeSystem;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -199,7 +199,7 @@ public class AutoMapper {
 		//mapper.generate(getConnection());
 		
 		
-		DatatypeSystem system = new DatatypeSystemDefault();
+		DatatypeSystemOld system = new DatatypeSystemDefault();
 
 		Map<String, SqlDatatype> datatypeMap = new HashMap<String, SqlDatatype>();
 		datatypeMap.put("int4", DatatypeSystemDefault._INT);

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.XClass;
 
 /**
  * A simple schema which keeps track of column names and column datatypes.
@@ -22,7 +22,7 @@ public class SchemaImpl
 	implements Schema
 {
 	private List<String> names;
-	private Map<String, SqlDatatype> nameToType;
+	private Map<String, XClass> nameToType;
 
 	/**
 	 * An empty schema without any columns.
@@ -32,15 +32,15 @@ public class SchemaImpl
 	 */
 	public SchemaImpl() {
 		this.names = new ArrayList<String>();
-		this.nameToType = new HashMap<String, SqlDatatype>();
+		this.nameToType = new HashMap<String, XClass>();
 	}
 	
-	public SchemaImpl(List<String> names, Map<String, SqlDatatype> nameToType) {
+	public SchemaImpl(List<String> names, Map<String, XClass> nameToType) {
 		this.names = names;
 		this.nameToType = nameToType;
 	}
 	
-	public static SchemaImpl create(List<String> names, Map<String, SqlDatatype> nameToType) {
+	public static SchemaImpl create(List<String> names, Map<String, XClass> nameToType) {
 		return new SchemaImpl(names, nameToType);
 	}
 	
@@ -55,9 +55,9 @@ public class SchemaImpl
 	}
 
 	@Override
-	public SqlDatatype getColumnType(int index) {
+	public XClass getColumnType(int index) {
 		String name = names.get(index);
-		SqlDatatype result = nameToType.get(name);
+		XClass result = nameToType.get(name);
 		
 		return result;
 	}
@@ -68,14 +68,14 @@ public class SchemaImpl
 	}
 
 	@Override
-	public SqlDatatype getColumnType(String name) {
-		SqlDatatype result = nameToType.get(name);
+	public XClass getColumnType(String name) {
+		XClass result = nameToType.get(name);
 		
 		return result;
 	}
 
 	@Override
-	public Map<String, SqlDatatype> getTypeMap() {
+	public Map<String, XClass> getTypeMap() {
 		return nameToType;
 	}
 
@@ -84,7 +84,7 @@ public class SchemaImpl
 		String result = "[";
 		boolean isFirst = true;
 		for(String name : names) {
-			SqlDatatype type = nameToType.get(name);
+			XClass type = nameToType.get(name);
 			
 			if(isFirst) {
 				isFirst = false;

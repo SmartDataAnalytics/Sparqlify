@@ -12,8 +12,6 @@ import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
-import org.aksw.sparqlify.core.DatatypeSystem;
-import org.aksw.sparqlify.core.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssigner;
 import org.aksw.sparqlify.core.algorithms.DatatypeAssignerMap;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
@@ -22,6 +20,8 @@ import org.aksw.sparqlify.core.algorithms.SparqlSqlRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlExprSerializerPostgres;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
@@ -39,13 +39,13 @@ public class TestUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
 
-	public static DatatypeSystem createDefaultDatatypeSystem() throws IOException {
+	public static DatatypeSystemCustom createDefaultDatatypeSystem() throws IOException {
 		
 		Map<String, String> typeNameToClass = MapReader.readFile(new File("src/main/resources/type-class.tsv"));
 		Map<String, String> typeNameToUri = MapReader.readFile(new File("src/main/resources/type-uri.tsv"));
 		Map<String, String> typeHierarchy = MapReader.readFile(new File("src/main/resources/type-hierarchy.default.tsv"));
 		
-		DatatypeSystem result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, TestUtils.logger);
+		DatatypeSystemCustom result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, TestUtils.logger);
 	
 		return result;
 	}
@@ -110,12 +110,13 @@ public class TestUtils {
 	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, DatatypeSystem datatypeSystem) throws SQLException, IOException {		
 		
 
-		DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(datatypeSystem);
 
-		MappingOps mappingOps = new MappingOpsImpl(da);
+		//DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(datatypeSystem);
+
+		MappingOps mappingOps = new MappingOpsImpl(null /*da*/);
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		
-		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres(da);		
+		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres(null /* da */);		
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(exprSerializer);
 		
 		SqlOpSelectBlockCollector collector = new SqlOpSelectBlockCollectorImpl();
@@ -123,6 +124,7 @@ public class TestUtils {
 		SparqlSqlRewriter result = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, collector, sqlOpSerializer);
 
 		return result;
+
 	}
 
 	/*

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 
 import com.hp.hpl.jena.graph.Node;
@@ -13,14 +13,14 @@ public class E_SqlNodeValue
 	implements ExprSql 
 {
 	private NodeValue nodeValue;
-	private SqlDatatype datatype;
+	private XClass datatype;
 	
-	public E_SqlNodeValue(NodeValue nodeValue, SqlDatatype datatype) {
+	public E_SqlNodeValue(NodeValue nodeValue, XClass datatype) {
 		this.nodeValue = nodeValue;
 		this.datatype = datatype;
 	}
 	
-	public SqlDatatype getDatatype() {
+	public XClass getDatatype() {
 		return datatype;
 	}
 	

@@ -11,7 +11,7 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
-import org.aksw.sparqlify.algebra.sql.exprs.S_Equal;
+import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GeographyFromText;
 import org.aksw.sparqlify.algebra.sql.exprs.S_GeometryFromText;
@@ -382,7 +382,7 @@ abstract class SqlExprSerializerDefault
 		return "(" + serialize(expr.getLeft()) + " <= " + serialize(expr.getRight()) + ")";
 	}
 	
-	public String _serialize(S_Equal expr) {
+	public String _serialize(S_Equals expr) {
 		return "(" + serialize(expr.getLeft()) + " = " + serialize(expr.getRight()) + ")";
 	}
 

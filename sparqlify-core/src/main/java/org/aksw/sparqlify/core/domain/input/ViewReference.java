@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.domain;
+package org.aksw.sparqlify.core.domain.input;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 

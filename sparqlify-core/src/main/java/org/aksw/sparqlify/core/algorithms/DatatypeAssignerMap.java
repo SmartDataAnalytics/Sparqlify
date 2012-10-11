@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
-import org.aksw.sparqlify.core.DatatypeSystem;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.XClass;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.E_Add;
@@ -34,19 +34,19 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 class DatatypeAssignerConstant
 	implements DatatypeAssigner
 {
-	private SqlDatatype datatype;
+	private XClass datatype;
 	
-	public DatatypeAssignerConstant(SqlDatatype datatype) {
+	public DatatypeAssignerConstant(XClass datatype) {
 		this.datatype = datatype;
 	}
 	
 	@Override
-	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
+	public XClass assign(Expr expr, Map<String, XClass> typeMap) {
 		return datatype;
 	}
 
 	
-	public static DatatypeAssignerConstant create(SqlDatatype datatype) {
+	public static DatatypeAssignerConstant create(XClass datatype) {
 		return new DatatypeAssignerConstant(datatype);
 	}
 }
@@ -63,7 +63,7 @@ class DatatypeAssignerNodeValue
 	}
 	
 	@Override
-	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
+	public XClass assign(Expr expr, Map<String, XClass> typeMap) {
 		
 		if(expr instanceof ExprSql) {
 			return ((ExprSql) expr).getDatatype();
@@ -73,7 +73,7 @@ class DatatypeAssignerNodeValue
 		NodeValue nv = expr.getConstant();
 		Node node = nv.getNode();
 		
-		SqlDatatype result = null;
+		XClass result = null;
 		if(node != null) {
 			
 			if(node.isURI()) {
@@ -99,18 +99,18 @@ class DatatypeAssignerNodeValue
 class DatatypeAssignerExpr
 	implements DatatypeAssigner
 {
-	//private SqlDatatype datatype;
+	//private XClass datatype;
 	
-	public DatatypeAssignerExpr(SqlDatatype datatype) {
+	public DatatypeAssignerExpr(XClass datatype) {
 //		this.datatype = datatype;
 	}
 	
-	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
+	public XClass assign(Expr expr, Map<String, XClass> typeMap) {
 		//return datatype;
 		throw new RuntimeException("not implemented");
 	}
 	
-	public static DatatypeAssignerExpr create(SqlDatatype datatype) {
+	public static DatatypeAssignerExpr create(XClass datatype) {
 		return new DatatypeAssignerExpr(datatype);
 	}
 }
@@ -129,7 +129,7 @@ public class DatatypeAssignerMap
 		this.map = map;
 	}
 	
-	public SqlDatatype assign(Expr expr, Map<String, SqlDatatype> typeMap) {
+	public XClass assign(Expr expr, Map<String, XClass> typeMap) {
 		
 		
 		DatatypeAssigner assigner;
@@ -145,14 +145,14 @@ public class DatatypeAssignerMap
 			
 			if(expr.isVariable() && typeMap != null) {
 				String varName = expr.getVarName();
-				SqlDatatype result = typeMap.get(varName);
+				XClass result = typeMap.get(varName);
 				return result;
 			}
 			
 			return null;
 		}
 		
-		SqlDatatype result = assigner.assign(expr, typeMap);
+		XClass result = assigner.assign(expr, typeMap);
 		
 		return result;
 	}
@@ -166,10 +166,10 @@ public class DatatypeAssignerMap
 		
 		Map<Class<?>, DatatypeAssigner> map = new HashMap<Class<?>, DatatypeAssigner>();
 		
-		SqlDatatype xBoolean = datatypeSystem.getByName("boolean");
+		XClass xBoolean = datatypeSystem.getByName("boolean");
 		DatatypeAssigner aBoolean = DatatypeAssignerConstant.create(xBoolean);
 
-		SqlDatatype xString = datatypeSystem.getByName("string");
+		XClass xString = datatypeSystem.getByName("string");
 		DatatypeAssigner aString = DatatypeAssignerConstant.create(xString);
 
 		
