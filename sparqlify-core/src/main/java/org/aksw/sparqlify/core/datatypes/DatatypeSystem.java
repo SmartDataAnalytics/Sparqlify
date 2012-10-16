@@ -24,6 +24,11 @@ import org.aksw.sparqlify.core.TypeToken;
  */
 public interface DatatypeSystem {
 	
+	SparqlFunction createSparqlFunction(String name);
+	
+	void registerSqlFunction(String sparqlFunctionName, XMethod sqlFunction);
+	
+	//Collection<XMethod> getSqlFunctions(String name);
 	
     XClass getByName(String name);
     XClass getByName(TypeToken token);
@@ -36,8 +41,9 @@ public interface DatatypeSystem {
     // Same as getByName, but throws exception if none found
 	XClass requireByName(String name);
 
-    
-	XMethod lookupMethod(String name, List<TypeToken> argTypes);
+    void registerCoercion(XMethod method);
+	
+    SqlMethodCandidate lookupMethod(String sparqlFunctionName, List<TypeToken> argTypes);
 	
 	List<TypeToken> getDirectSuperClasses(TypeToken type);
 	

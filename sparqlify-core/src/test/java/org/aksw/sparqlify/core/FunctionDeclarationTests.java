@@ -12,6 +12,7 @@ import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
 import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
 import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -68,6 +69,7 @@ public class FunctionDeclarationTests {
 	public void test() throws RecognitionException, IOException {
 		ConfigParser parser = new ConfigParser();
 
+
 		/*
 		Expr test = ExprUtils.parse("'6'^^<" + XSD.getURI() + "integer> + 1");
 		System.out.println(test);
@@ -110,6 +112,8 @@ public class FunctionDeclarationTests {
 		ExprEvaluatorSql evaluatorSql = new ExprEvaluatorSql(system, sqlRegistry);
 		Expr expr = ExprUtils.parse("<http://ex.org/intersects>(1 + 1, ?a)");
 		
+		//SqlTranslator sqlTranslator = new SqlTranslatorImpl(system);
+		//sqlTranslator.translate(expr, binding, typeMap);
 		
 		Map<String, SqlDatatype> typeMap = new HashMap<String, SqlDatatype>();
 		//typeMap.put("a", integer);

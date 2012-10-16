@@ -33,7 +33,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
-import org.aksw.sparqlify.core.interfaces.TranslatorSql;
+import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +98,9 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
+@Deprecated
 public class TranslatorSqlImpl
-	implements TranslatorSql
+	implements SqlTranslator
 {
 	private ExprEvaluator evaluator;
 	
@@ -120,6 +122,14 @@ public class TranslatorSqlImpl
 		*/
 		
 		return result;
+	}
+
+	@Override
+	public org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr translate(
+			Expr sparqlExpr, Map<Var, Expr> binding,
+			Map<String, TypeToken> typeMap) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

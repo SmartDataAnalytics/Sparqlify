@@ -92,6 +92,7 @@ public class ExprEvaluatorPartial
 		}
 				
 		
+		
 		// If some arguments are not constant, we can't evaluate
 		if(tmp.isFunction() && !ExprEvaluatorPartial.isConstantArgsOnly(tmp.getFunction())) {
 			return tmp;

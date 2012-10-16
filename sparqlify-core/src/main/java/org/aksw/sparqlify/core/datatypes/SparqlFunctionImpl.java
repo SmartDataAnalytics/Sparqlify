@@ -1,0 +1,63 @@
+package org.aksw.sparqlify.core.datatypes;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.aksw.sparqlify.core.TypeToken;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.hp.hpl.jena.sparql.expr.ExprFunction;
+
+
+public class SparqlFunctionImpl
+	implements SparqlFunction
+{
+	private String name;
+	private ExprFunction evaluator;
+	//private DatatypeSystem datatypeSystem;
+	
+	private Multimap<String, XMethod> nameToSqlFunction = HashMultimap.create();
+	
+	public SparqlFunctionImpl(String name, ExprFunction evaluator) {
+		//this.datatypeSystem = datatypeSystem;
+		this.name = name;
+		this.evaluator = evaluator;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public ExprFunction getEvaluator() {
+		return evaluator;
+	}
+
+	/**
+	 * Use the result of this method to modify the mappings
+	 * 
+	 * @return
+	 */
+	public Multimap<String, XMethod> getSqlFunctionMap() {
+		return nameToSqlFunction;
+	}
+	
+	@Override
+	public Collection<XMethod> getSqlMethods() {
+		Collection<XMethod> result = nameToSqlFunction.values();
+		return result;
+	}
+
+
+	@Override
+	public SqlMethodCandidate lookup(List<TypeToken> argTypes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public void registerSqlFunction(XMethod sqlFunction) {
+		nameToSqlFunction.put(sqlFunction.getName(), sqlFunction);
+	}
+}

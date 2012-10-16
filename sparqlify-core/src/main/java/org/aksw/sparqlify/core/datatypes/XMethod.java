@@ -44,6 +44,6 @@ public interface XMethod {
 	 * 
 	 * 
 	 */
-	
-	//String getSqlString();
+	SqlFunctionSerializer getSerializer();
 }
+

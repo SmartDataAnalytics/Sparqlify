@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.transform;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +43,10 @@ public class MethodSignature<T>
 	
 	public static <T> MethodSignature<T> create(T returnType, List<T> parameterTypes) {
 		return new MethodSignature<T>(returnType, false, parameterTypes);
+	}
+
+	public static <T> MethodSignature<T> create(T returnType, T... parameterTypes) {
+		return new MethodSignature<T>(returnType, false, Arrays.asList(parameterTypes));
 	}
 
 	@Override

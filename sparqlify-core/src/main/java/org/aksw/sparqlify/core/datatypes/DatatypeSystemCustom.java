@@ -22,10 +22,23 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
 
+/*
+class SparqlFunctionMap {
+	private FunctionRegistry registry;
+	
+	public SparqlFunctionMap() {
+		registry.get().get("").create("").build(uri, args).
+	}
+}
+*/
+
+/*
+interface SparqlFunctionEvaluator {
+	Expr eval(ExprList args, Object context);
+}
+*/
 
 public class DatatypeSystemCustom
 	implements DatatypeSystem
@@ -38,20 +51,86 @@ public class DatatypeSystemCustom
 	private transient Map<Class<?>, TypeToken> classToToken;
 
 	
-	private CoercionSystem coercionSystem;
+	private CoercionSystemImpl coercionSystem = new CoercionSystemImpl();
 
 	
-	
 	//private List<XMethod> userFunctions = new ArrayList<>
-	private Multimap<String, XMethod> userFunctions = HashMultimap.create();
+	/**
+	 * Sparql function URI to SQL Method
+	 */
+	//private Multimap<String, XMethod> sqlFunctions = HashMultimap.create();
+	private Map<String, SparqlFunctionImpl> sparqlFunctions = new HashMap<String, SparqlFunctionImpl>();
 	
-	public void register(XMethod method) {
-		userFunctions.put(method.getName(), method);
+	//public getSqlFunctions
+	
+	
+	public SparqlFunctionImpl createSparqlFunction(String name) {
+		SparqlFunctionImpl result = new SparqlFunctionImpl(name, null);	
+		return result;
+	}
+	
+	public SparqlFunctionImpl getOrCreateSparqlFunction(String name) {
+		SparqlFunctionImpl result = sparqlFunctions.get(name);
+		if(result == null) {
+			result = createSparqlFunction(name);
+			sparqlFunctions.put(name, result);
+		}
+		
+		return result;
 	}
 	
 	
+	public SparqlFunction getSparqlFunction(String name) {
+		//FunctionFactory fnFactory = null;
+		SparqlFunction result = new SparqlFunctionImpl(name, null);
+		return result;
+	}
 
-    public static <T> Map<XMethod, Integer[]> findMethodCandidates(Collection<XMethod> candidates, XClass ...typeSignature)
+	public void registerSqlFunction(String sparqlFunctionName, XMethod method) {
+		SparqlFunctionImpl fn = getOrCreateSparqlFunction(sparqlFunctionName);
+		fn.getSqlFunctionMap().put(method.getName(), method);
+		
+		//sqlFunctions.put(method.getName(), method);
+	}
+	
+
+    public static  Map<XMethod, TypeDistance[]> findMethodCandidates(Collection<XMethod> candidates, CoercionSystem coercions, XClass ...typeSignature) {
+        Map<XMethod, TypeDistance[]> bestMatches = new HashMap<XMethod, TypeDistance[]>();
+        for(XMethod m : candidates) {
+
+            TypeDistance[] d = XClassUtils.getTypeDistance(typeSignature, m.getSignature().getParameterTypes().toArray(new XClass[0]), coercions);
+            if(d == null || Arrays.asList(d).contains(null)) {
+                continue;
+            }
+
+
+            // All matches that are worse than current candidate are removed
+            // The candidate is only added, if it is not worse than any of the
+            // other candidates
+            boolean canBeAdded = true;
+            for(Iterator<Entry<XMethod, TypeDistance[]>> it = bestMatches.entrySet().iterator(); it.hasNext();) {
+                Entry<XMethod, TypeDistance[]> entry = it.next();
+
+                int rel = XClassUtils.getRelation(d, entry.getValue());
+
+                if(rel == -1) {
+                    it.remove();
+                } else if(rel > 0) {
+                    canBeAdded = false;
+                }
+            }
+
+            if(canBeAdded) {
+                bestMatches.put(m, d);
+            }
+        }
+
+        return bestMatches;
+    	
+    	
+    }
+
+    public static Map<XMethod, Integer[]> findMethodCandidates(Collection<XMethod> candidates, XClass ...typeSignature)
     {
         Map<XMethod, Integer[]> bestMatches = new HashMap<XMethod, Integer[]>();
         for(XMethod m : candidates) {
@@ -88,25 +167,54 @@ public class DatatypeSystemCustom
     }
 
 	
+    public SqlMethodCandidate lookupMethod(String sparqlFunctionName, List<TypeToken> argTypes) {
+    	SparqlFunction fn = sparqlFunctions.get(sparqlFunctionName);
+    	if(fn == null) {
+    		return null;
+    	}
+    	Collection<XMethod> candidates = fn.getSqlMethods();
+    	
+    	SqlMethodCandidate result = lookupMethod(candidates, argTypes);
+    	
+    	return result;
+    }
+
 	
-	public XMethod lookupMethod(String name, List<TypeToken> argTypes) {
-		Collection<XMethod> candidates = userFunctions.get(name);
+	public SqlMethodCandidate lookupMethod(Collection<XMethod> candidates, List<TypeToken> argTypes) {
+		//Collection<XMethod> candidates = sqlFunctions.get(name);
 		
 		List<XClass> resolved = XClassUtils.resolve(this, argTypes);
 		XClass[] tmp = resolved.toArray(new XClass[0]);
 		
 		
-        Map<XMethod, Integer[]> bestMatches = findMethodCandidates(candidates, tmp);
+        Map<XMethod, TypeDistance[]> bestMatches = findMethodCandidates(candidates, coercionSystem, tmp);
 
 		if(bestMatches.size() == 0) {
-			throw new RuntimeException("No method found: " + name + " " + argTypes);
+			//throw new RuntimeException("No method found: " + name + " " + argTypes);
+			//throw new RuntimeException("No method found: " + " " + argTypes);
+			logger.debug("No method found: " + " " + argTypes);
+			return null;
 		} else if(bestMatches.size() > 1) {
 			throw new RuntimeException("Multiple matches: " + bestMatches);
 		}
 
-		return bestMatches.entrySet().iterator().next().getKey();
+		
+		Entry<XMethod, TypeDistance[]> entry = bestMatches.entrySet().iterator().next();
+		XMethod method = entry.getKey();
+		
+		TypeDistance[] typeDistances = entry.getValue();
+		List<XMethod> argCoercions = new ArrayList<XMethod>(typeDistances.length);
+		for(TypeDistance item : typeDistances) {
+			argCoercions.add(item.getCoercion());
+		}
+		
+		
+		SqlMethodCandidate result = new SqlMethodCandidate(method, argCoercions);
+		
+		return result;
 	}
-	
+
+
 	public List<TypeToken> getDirectSuperClasses(TypeToken typeToken) {
 		Collection<TypeToken> superClasses = typeHierarchy.get(typeToken);
 		List<TypeToken> result = new ArrayList<TypeToken>(superClasses);
@@ -115,22 +223,61 @@ public class DatatypeSystemCustom
 	}
 	
 	
-	/**
-	 * 
-	 * 
-	 * @param nameToType
-	 * @param typeHierarchy A mapping from sub to super type.
-	 */
-	public DatatypeSystemCustom(Map<TypeToken, XClass> nameToType, IBiSetMultimap<TypeToken, TypeToken> typeHierarchy) {
+	private void initNameToType(Map<String, String> typeToClass, Map<String, String> typeToUri, Map<String, String> typeHierarchy) //Map<String, String> typeToClass, Map<String, String> typeToUri, Map<String, String> typeHierarchy) {
+	{
+		Set<String> all = new HashSet<String>();
+		all.addAll(typeToClass.keySet());
+		all.addAll(typeToUri.keySet());
+		all.addAll(typeHierarchy.keySet());
+		all.addAll(typeHierarchy.values());
 		
 		
-		this.coercionSystem = new CoercionSystemImpl();
+		Map<TypeToken, XClass> nameToClass = new HashMap<TypeToken, XClass>();
 		
-		
-		this.nameToType = nameToType;
-		this.typeHierarchy = typeHierarchy;
+		for(String typeName : all) {
+			TypeToken typeToken = TypeToken.alloc(typeName);
+			
+			String className = typeToClass.get(typeName);
+			Class<?> clazz = null;
 
+			if(className != null) {
+				try {
+					clazz = Class.forName(className);
+				} catch (ClassNotFoundException e) {
+					logger.error("Class '" + className + "' not found");
+				}
+			}
+			
+			String uri = typeToUri.get(typeName);
+			Node node = null; 
+			if(uri != null) {
+				node = Node.createURI(uri);
+			}
+			
+			XClass datatype = new XClassImpl(this, typeToken, node, clazz);
+			
+			TypeToken token = TypeToken.alloc(typeName);
+			nameToClass.put(token, datatype);
+		}
+
+		IBiSetMultimap<TypeToken, TypeToken> subToSuperType = new BiHashMultimap<TypeToken, TypeToken>();
 		
+		for(Entry<String, String> entry : typeHierarchy.entrySet()) {
+			
+			TypeToken subType = TypeToken.alloc(entry.getKey());
+			TypeToken superType = TypeToken.alloc(entry.getValue()); 
+			//XClass subType = nameToType.get(entry.getKey());
+			//XClass superType = nameToType.get(entry.getValue());
+
+			subToSuperType.put(subType, superType);
+		}
+		
+
+		this.nameToType = nameToClass;
+		this.typeHierarchy = subToSuperType;
+	}
+	
+	private void initClassToTypeCache() {
 		// TODO Only use the most generic type:
 		// usigned short -> integer
 		// byte -> integer
@@ -162,6 +309,24 @@ public class DatatypeSystemCustom
 		for(Entry<Class<?>, TypeToken> entry : classToToken.entrySet()) {
 			System.out.println(entry);
 		}
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param nameToType
+	 * @param typeHierarchy A mapping from sub to super type.
+	 */
+	//public DatatypeSystemCustom(Map<TypeToken, XClass> nameToType, IBiSetMultimap<TypeToken, TypeToken> typeHierarchy) {
+	public DatatypeSystemCustom(Map<String, String> typeToClass, Map<String, String> typeToUri, Map<String, String> typeHierarchy)
+	{
+		initNameToType(typeToClass, typeToUri, typeHierarchy);
+		initClassToTypeCache();
+		
+		this.coercionSystem = new CoercionSystemImpl();
+
+//		this.nameToType = nameToType;
+//		this.typeHierarchy = typeHierarchy;
 	}
 
 	@Override
@@ -204,7 +369,7 @@ public class DatatypeSystemCustom
 	
 	@Override
 	public XClass requireByName(String name) {
-		XClass result = nameToType.get(name);
+		XClass result = nameToType.get(TypeToken.alloc(name));
 		if(result == null) {
 			throw new RuntimeException("No registered datatype found with name '" + name + "'");
 		}
@@ -255,54 +420,8 @@ public class DatatypeSystemCustom
 
 	
 	public static DatatypeSystemCustom create(Map<String, String> typeToClass, Map<String, String> typeToUri, Map<String, String> typeHierarchy, Logger logger) {
-		Set<String> all = new HashSet<String>();
-		all.addAll(typeToClass.keySet());
-		all.addAll(typeToUri.keySet());
-		all.addAll(typeHierarchy.keySet());
-		all.addAll(typeHierarchy.values());
-		
-		Map<TypeToken, XClass> nameToType = new HashMap<TypeToken, XClass>();
-		
-		for(String typeName : all) {
-			TypeToken typeToken = TypeToken.alloc(typeName);
-			
-			String className = typeToClass.get(typeName);
-			Class<?> clazz = null;
 
-			if(className != null) {
-				try {
-					clazz = Class.forName(className);
-				} catch (ClassNotFoundException e) {
-					logger.error("Class '" + className + "' not found");
-				}
-			}
-			
-			String uri = typeToUri.get(typeName);
-			Node node = null; 
-			if(uri != null) {
-				node = Node.createURI(uri);
-			}
-			
-			XClass datatype = new XClassImpl(null, typeToken, node, clazz);
-			
-			TypeToken token = TypeToken.alloc(typeName);
-			nameToType.put(token, datatype);
-		}
-		
-		IBiSetMultimap<TypeToken, TypeToken> subToSuperType = new BiHashMultimap<TypeToken, TypeToken>();
-		
-		for(Entry<String, String> entry : typeHierarchy.entrySet()) {
-			
-			TypeToken subType = TypeToken.alloc(entry.getKey());
-			TypeToken superType = TypeToken.alloc(entry.getValue()); 
-			//XClass subType = nameToType.get(entry.getKey());
-			//XClass superType = nameToType.get(entry.getValue());
-
-			subToSuperType.put(subType, superType);
-		}
-		
-
-		DatatypeSystemCustom result = new DatatypeSystemCustom(nameToType, subToSuperType);
+		DatatypeSystemCustom result = new DatatypeSystemCustom(typeToClass, typeToUri, typeHierarchy); //subToSuperType);
 		return result;
 	}
 
@@ -313,6 +432,13 @@ public class DatatypeSystemCustom
 		boolean result = superClasses.contains(b);
 		
 		return result;
+	}
+
+
+
+	@Override
+	public void registerCoercion(XMethod method) {
+		coercionSystem.register(method);
 	}
 
 

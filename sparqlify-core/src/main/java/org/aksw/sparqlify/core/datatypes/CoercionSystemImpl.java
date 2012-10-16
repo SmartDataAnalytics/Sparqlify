@@ -18,7 +18,7 @@ class CoercionSystemImpl
 	private Map<XClass, Map<XClass, XMethod>> sourceToTargetToDecl = new HashMap<XClass, Map<XClass, XMethod>>();
 	
 	public void register(XMethod decl) {
-		MethodSignature<XClass> signature = null; // decs.getTypeSignature
+		MethodSignature<XClass> signature = decl.getSignature();
 		
 		// Require one argument, and the return type must not be sub-type of the argument
 		if(signature.getParameterTypes().size() != 1) {

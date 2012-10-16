@@ -37,6 +37,7 @@ public class TypeToken
 	public static final TypeToken Double = alloc("double");
 	public static final TypeToken String = alloc("string");
 
+	public static final TypeToken TypeError = alloc("type_error");
 
 	private String name;
 	

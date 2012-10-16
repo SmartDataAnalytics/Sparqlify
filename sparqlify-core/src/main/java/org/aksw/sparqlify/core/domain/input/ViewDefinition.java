@@ -26,7 +26,7 @@ import com.hp.hpl.jena.sparql.core.Var;
  * 
  * Here are some notes on the references:
  * 
- * Create View person {
+ * Create View view_person {
  *     ?s a Person
  * }
  * With
@@ -39,7 +39,7 @@ import com.hp.hpl.jena.sparql.core.Var;
  *    ?p :worksIn ?d
  * }
  * References
- *     ppl: person On this.person_id = that.id
+ *     ppl: view_person On this.person_id = that.id
  *     depts: ... // Reference to the dept view on some join condition
  * With
  *    ?p  = ref(ppl, ?s) // Syntactic sugar for the following line:

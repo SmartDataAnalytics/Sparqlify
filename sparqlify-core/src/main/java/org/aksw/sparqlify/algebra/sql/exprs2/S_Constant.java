@@ -9,6 +9,10 @@ public class S_Constant
 {
 	private Object value;
 	
+	public static final S_Constant TRUE = new S_Constant(true, TypeToken.Boolean);
+	public static final S_Constant FALSE = new S_Constant(false, TypeToken.Boolean);
+	public static final S_Constant TYPE_ERROR = new S_Constant(null, TypeToken.TypeError);
+	
 	public S_Constant(Object value, TypeToken datatype) {
 		super(datatype);
 		this.value = value;

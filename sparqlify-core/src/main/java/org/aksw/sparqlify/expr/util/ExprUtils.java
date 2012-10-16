@@ -20,6 +20,7 @@ import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
@@ -192,13 +193,18 @@ public class ExprUtils {
 		if(result != null) {
 			return result;
 		}
-	
-		result = fn.getFunctionSymbol() == null ? null : fn.getFunctionSymbol().getSymbol();
+
+		
+		
+		result = fn.getFunctionIRI();
 		if(result != null) {
 			return result;
 		}
-	
-		result = fn.getFunctionIRI();
+		
+		
+		FunctionLabel label = fn.getFunctionSymbol();		 
+		result = label == null ? null : label.getSymbol();
+
 		/*
 		if(result != null) {
 			return result;

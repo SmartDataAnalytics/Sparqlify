@@ -3,16 +3,40 @@ package org.aksw.sparqlify.core.datatype;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Method;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_UserFunc;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.config.lang.ConfigParser;
+import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.syntax.FunctionDeclaration;
+import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
+import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
+import org.aksw.sparqlify.core.algorithms.ExprEvaluatorPartial;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
+import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
+import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
+import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
+import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
+import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.function.FunctionRegistry;
+import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 import cornercases.TestUtils;
 
@@ -147,10 +171,18 @@ class Ops {
 		return !a;
 	}
 	
-	
+
+	/*
 	public static String myTestFunc(String str, Integer i) {
 		return "XXX " + str + ", " + i + " XXX";
 	}
+	*/
+
+
+	public static String myTestFunc(String str, Double i) {
+		return "xxx " + i + "xxx";
+	}
+
 }
 
 
@@ -164,33 +196,70 @@ interface XMethod {
 
 public class DatatypeSystemTests {
 
+	private static final Logger logger = LoggerFactory.getLogger(DatatypeSystemTests.class);
 
 	
 	@Test
-	public void test() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
+	public void test() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, RecognitionException {
 
 		FunctionDeclaration decl;
 
 		DatatypeSystemCustom ds = TestUtils.createDefaultDatatypeSystem();
 
+		{
+			Method m = DefaultCoercions.class.getMethod("toDouble", Integer.class);
+			XMethod x = XMethodImpl.createFromMethod("toDouble", ds, null, m);
+			//ds.register(x);
+			ds.registerCoercion(x);
+		}
+
+		
 		S_Constant a = S_Constant.create("http://ex.org/", ds);
 		System.out.println(a);
 
 		S_Constant b = S_Constant.create(1, ds);
 		System.out.println(b);
 
+		S_Constant d = S_Constant.create(3.14, ds);
+		System.out.println(d);
+
+		
+
+		
+		
+		
 		//S_Concat c = S_Concat.create(a, b);
 		//System.out.println(c);
 
-		S_UserFunc c = S_UserFunc.create("myTestFunc", a, b);
+		S_UserFunc c = S_UserFunc.create("http://ex.org/fn/myTestFunc", a, b);
 		System.out.println(c);
 
 		
 		// Define a random custom function
-		Method m = Ops.class.getMethod("myTestFunc", String.class, Integer.class);
-		XMethod x = XMethodImpl.createFromMethod("myTestFunc", ds, null, m);
+		{
+			Method m = Ops.class.getMethod("myTestFunc", String.class, Double.class);
+			XMethod x = XMethodImpl.createFromMethod("myTestFunc", ds, null, m);
+			//SparqlFunction fn = ds.createSparqlFunction("http://ex.org/fn/myTestFunc");
+			ds.registerSqlFunction("http://ex.org/fn/myTestFunc", x);
+			
+		}
 
-		ds.register(x);
+		
+		{
+			//XMethodImpl.createFromMethod("http://example.org/intersects", ds, object, method)
+			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.Int, TypeToken.Int));
+			
+			XMethod x = XMethodImpl.create(ds, "ST_INTERSECTS", signature);
+			ds.registerSqlFunction("http://ex.org/intersects", x);
+			//ds.registerSqlFunction(x);
+		}
+
+		/*
+		{
+			Method m = Ops.class.getMethod("myTestFunc", String.class, Double.class);
+			XMethod x = XMethodImpl.createFromMethod("myTestFunc", ds, null, m);
+			ds.register(x);
+		}*/
 
 		
 		ExprEvaluatorSql evaluater = new ExprEvaluatorSql(ds, null); //sqlFunctionRegistry);
@@ -199,53 +268,63 @@ public class DatatypeSystemTests {
 		System.out.println("Result: " + result);
 		
 		
-		//S_UserFunc d = S_UserFunc.create("");
+		//DatatypeSystem system = TestUtils.createDefaultDatatypeSystem();
+		//SqlDatatype integer = system.getByName("integer");
+		/*
+		SqlDatatype xfloat = system.getByName("float");
+		
+		Set<SqlDatatype> xxx = system.supremumDatatypes(integer, xfloat);
+		System.out.println(xxx);
+*/
+		
+		FunctionRegistrySql sqlRegistry = new FunctionRegistrySql(ds);
 
-		
-		
-		
-		/*
-		Method m = Ops.class.getMethod("add", Integer.class, Integer.class);
-		XMethod x = XMethodImpl.createFromMethod(ds, null, m);
-		*/
-		
-		
-		
-//		System.out.println(x);
-//
-//		Object r = x.getInvocable().invoke(1, 3);
-//		System.out.println(r);
-		
-		
-		//ds.add(decl);
+		ConfigParser parser = new ConfigParser();
 
-				
-		/*
-		 * What we want to do here:
-		 * 
-		 * Declare a function
-		 *     numeric add(numeric, numeric)
-		 *     
-		 * For numeric, there is a set of corresponding java classes (Integer, Float, also Byte)
-		 * 
-		 * And for this declaration, associate a Java method for the type float with it.
-		 * 
-		 */
-		
-		//DatatypeSystem.registerMethod(declaration)
-		//declaration.addMethod(someMethod)
-		
-		/*
-		for(Method m : Ops.class.getMethods()) {
-			System.out.println(m);
+		{
+			/**
+			 * Actually it is like that:
+			 * We have an abstract sparql function, which can be overloaded by several SQL functions.
+			 * E.g. the SPARQL function ogc:intersects can be implemented by ST_Intersects for geometries or for geographies.
+			 * 
+			 */
+			
+			Config config = parser.parse("PREFIX ex:<http://ex.org/> DECLARE FUNCTION boolean ex:intersects(integer ?a, integer ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
+			FunctionDeclarationTemplate fnDecl = config.getFunctionDeclarations().get(0);
+			sqlRegistry.add(fnDecl);
+		}
+		{
+			/*
+			Config config = parser.parse("PREFIX ex:<http://ex.org/> DECLARE FUNCTION boolean ex:intersects(geometry ?a, geometry ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
+			FunctionDeclaration decl = config.getFunctionDeclarations().get(0);
+			sqlRegistry.add(decl);
+			*/
 		}
 		
-		//System.out.println();
+		ExprTransformerMap exprTransformer = new ExprTransformerMap();	
 		
-		Method m = Ops.class.getMethod("add", int.class, int.class);
-	
-		System.out.println(m.invoke(null, 1, 2));
-		*/
+		ExprEvaluator evaluatorSql = new ExprEvaluatorPartial(FunctionRegistry.get(), exprTransformer);
+		//Expr expr = ExprUtils.parse("<http://ex.org/intersects>(1 + 1, ?a)");
+		Expr expr = ExprUtils.parse("<http://ex.org/intersects>(1.1 + 1, ?a)");
+
+		Expr evaledExpr = evaluatorSql.eval(expr, null);
+		
+		
+		SqlTranslator sqlTranslator = new SqlTranslatorImpl(ds);
+		
+		Map<Var, Expr> binding = new HashMap<Var, Expr>();
+		
+		Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>();
+		typeMap.put("a", TypeToken.Int);
+		
+		
+		System.out.println(evaledExpr);
+		SqlExpr sqlExpr = sqlTranslator.translate(evaledExpr, binding, typeMap);
+
+		System.out.println("Final: " + sqlExpr);
+		
+		S_Method method = (S_Method)sqlExpr;
+		//System.out.println(method.getMethod().getSerializer().serialize(Arrays.asList("test", "b")));
 	}
 }
 

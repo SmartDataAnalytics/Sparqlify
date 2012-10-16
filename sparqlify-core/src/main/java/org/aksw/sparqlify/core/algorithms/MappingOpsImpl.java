@@ -71,7 +71,7 @@ import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.core.interfaces.TranslatorSql;
+import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionSet;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
@@ -162,7 +162,7 @@ public class MappingOpsImpl
 
 	private static final Logger logger = LoggerFactory.getLogger(MappingOpsImpl.class);
 
-	private TranslatorSql sqlTranslator = new TranslatorSqlImpl();
+	private SqlTranslator sqlTranslator = new TranslatorSqlImpl();
 
 	private DatatypeAssigner datatypeAssigner;
 	private ExprDatatypeNorm exprNormalizer;
@@ -197,7 +197,7 @@ public class MappingOpsImpl
 	}
 		
 	
-	public static Expr translateSql(RestrictedExpr restExpr, TranslatorSql sqlTranslator) {
+	public static Expr translateSql(RestrictedExpr restExpr, SqlTranslator sqlTranslator) {
 		if(restExpr.getRestrictions().isUnsatisfiable()) {
 			//return SqlExprValue.FALSE;
 			return NodeValue.FALSE;
@@ -227,7 +227,7 @@ public class MappingOpsImpl
 	 * 
 	 * 
 	 */
-	public static Expr createSqlCondition(Expr condition, VarDefinition varDef, TranslatorSql sqlTranslator) {
+	public static Expr createSqlCondition(Expr condition, VarDefinition varDef, SqlTranslator sqlTranslator) {
 		
 		
 		Set<Var> conditionVars = condition.getVarsMentioned();
@@ -317,7 +317,7 @@ public class MappingOpsImpl
 	public static VarDefKey joinDefinitionsOnEquals(
 			Collection<RestrictedExpr> a,
 			Collection<RestrictedExpr> b,
-			TranslatorSql sqlTranslator
+			SqlTranslator sqlTranslator
 			)
 	{
 		VarDefKey result = new VarDefKey();
@@ -389,7 +389,7 @@ public class MappingOpsImpl
 	public static VarDefKey joinDefinitionsOnEquals(
 			Var queryVar,
 			ViewInstance viewInstance,
-			TranslatorSql sqlTranslator
+			SqlTranslator sqlTranslator
 			)
 	{
 		//Set<Expr> result = new HashSet<Expr>();

@@ -5,21 +5,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+import org.aksw.sparqlify.core.TypeToken;
 
 public class XMethodImpl implements XMethod
 {
 	private String name;
 	private MethodSignature<XClass> signature;
 	private Invocable invocable;
-
+	private SqlFunctionSerializer serializer;
 	
 	
 	public XMethodImpl(String name, MethodSignature<XClass> signature,
 			Invocable invocable) {
+		this(name, signature, invocable, new SqlFunctionSerializerDefault(name));
+	}
+
+	public XMethodImpl(String name, MethodSignature<XClass> signature,
+			Invocable invocable, SqlFunctionSerializer serializer) {
 		super();
 		this.name = name;
 		this.signature = signature;
 		this.invocable = invocable;
+		this.serializer = serializer;
 	}
 
 
@@ -40,6 +47,10 @@ public class XMethodImpl implements XMethod
 		return invocable;
 	}
 
+	
+	public SqlFunctionSerializer getSerializer() {
+		return serializer;
+	}
 
 
 	@Override
@@ -113,7 +124,46 @@ public class XMethodImpl implements XMethod
 		return result;
 	}
 
+
+	public static XClass resolveClass(TypeToken typeName, DatatypeSystem datatypeSystem) {
+		XClass result = datatypeSystem.getByName(typeName);
+		if(result == null) {
+			throw new RuntimeException("No appropriate XClass for " + typeName);
+		}
+		
+		return result;
+	}
+
+	public static List<XClass> resolveList(DatatypeSystem datatypeSystem, List<TypeToken> typeNames) {
+		List<XClass> result = new ArrayList<XClass>(typeNames.size());
+		
+		for(TypeToken typeName : typeNames) {
+			XClass tmp = resolveClass(typeName, datatypeSystem);
+			result.add(tmp);
+		}
+		
+		
+		return result;
+	}
+
 	
+	public static XMethod create(DatatypeSystem datatypeSystem, String name, MethodSignature<TypeToken> signature) {
+		XClass returnType = resolveClass(signature.getReturnType(), datatypeSystem);
+		List<XClass> argTypes = resolveList(datatypeSystem, signature.getParameterTypes());
+		
+		MethodSignature<XClass> resolvedSignature = new MethodSignature<XClass>(returnType, false, argTypes);
+		
+		
+		//InvocableMethod invocable = new InvocableMethod(object, method);
+		InvocableMethod invocable = null;
+	
+		//XMethod result = new XMethodImpl(method.getName(), resolvedSignature, invocable);
+		XMethod result = new XMethodImpl(name, resolvedSignature, invocable);
+		
+		
+		return result;
+
+	}
 	
 	public static XMethod createFromMethod(String name, DatatypeSystem datatypeSystem, Object object, Method method) {
 		

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_SqlColumnRef;
-import org.aksw.sparqlify.algebra.sparql.expr.E_SqlNodeValue;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
@@ -13,11 +11,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.Invocable;
+import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XClass;
-import org.aksw.sparqlify.core.datatypes.XMethod;
-import org.aksw.sparqlify.expr.util.ExprUtils;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 // NOTE This file should become the replacement for the class PushDown
 
@@ -98,8 +93,10 @@ public class ExprEvaluatorSql {
 				argTypes.add(arg.getDatatype());
 			}
 
-			XMethod method = datatypeSystem.lookupMethod(fn.getName(), argTypes);
-			
+			SqlMethodCandidate method = datatypeSystem.lookupMethod(fn.getName(), argTypes);
+			if(method == null) {
+				throw new RuntimeException("SPARQL Function " + fn.getName() + " not declared");
+			}
 
 			Invocable invocable = method.getInvocable();
 			if(invocable != null && isConstantsOnly(transformedArgs)) {
