@@ -7,19 +7,18 @@ import org.aksw.sparqlify.core.TypeToken;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
 
 
 public class SparqlFunctionImpl
 	implements SparqlFunction
 {
 	private String name;
-	private ExprFunction evaluator;
+	private SqlExprEvaluator evaluator;
 	//private DatatypeSystem datatypeSystem;
 	
 	private Multimap<String, XMethod> nameToSqlFunction = HashMultimap.create();
 	
-	public SparqlFunctionImpl(String name, ExprFunction evaluator) {
+	public SparqlFunctionImpl(String name, SqlExprEvaluator evaluator) {
 		//this.datatypeSystem = datatypeSystem;
 		this.name = name;
 		this.evaluator = evaluator;
@@ -31,7 +30,7 @@ public class SparqlFunctionImpl
 	}
 
 	@Override
-	public ExprFunction getEvaluator() {
+	public SqlExprEvaluator getEvaluator() {
 		return evaluator;
 	}
 

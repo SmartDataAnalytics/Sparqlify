@@ -25,6 +25,11 @@ import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
+import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
+import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
+import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalAnd;
+import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalNot;
+import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
@@ -183,6 +188,9 @@ class Ops {
 		return "xxx " + i + "xxx";
 	}
 
+	public static Boolean equalsIgnoreCase(String a, String b) {
+		return a.equalsIgnoreCase(b);
+	}
 }
 
 
@@ -250,10 +258,38 @@ public class DatatypeSystemTests {
 			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.Int, TypeToken.Int));
 			
 			XMethod x = XMethodImpl.create(ds, "ST_INTERSECTS", signature);
-			ds.registerSqlFunction("http://ex.org/intersects", x);
+			ds.registerSqlFunction("http://ex.org/fn/intersects", x);
 			//ds.registerSqlFunction(x);
 		}
 
+		
+
+		{
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalAnd();
+			ds.createSparqlFunction("&&", evaluator);
+		}
+
+		{
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalOr();
+			ds.createSparqlFunction("||", evaluator);
+		}
+		
+		{
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalNot();
+			ds.createSparqlFunction("!", evaluator);
+		}
+		
+		
+		{
+			//MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.String, TypeToken.String));
+			
+			//XMethod x = XMethodImpl.create(ds, "equalsIgnoreCase", signature);
+			Method m = Ops.class.getMethod("equalsIgnoreCase", String.class, String.class);
+			XMethod x = XMethodImpl.createFromMethod("EQUALS_IGNORE_CASE", ds, null, m);
+			ds.registerSqlFunction("http://ex.org/fn/equalsIgnoreCase", x);
+		}
+
+		
 		/*
 		{
 			Method m = Ops.class.getMethod("myTestFunc", String.class, Double.class);
@@ -289,7 +325,7 @@ public class DatatypeSystemTests {
 			 * 
 			 */
 			
-			Config config = parser.parse("PREFIX ex:<http://ex.org/> DECLARE FUNCTION boolean ex:intersects(integer ?a, integer ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
+			Config config = parser.parse("PREFIX fn:<http://ex.org/fn/> DECLARE FUNCTION boolean ex:intersects(integer ?a, integer ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
 			FunctionDeclarationTemplate fnDecl = config.getFunctionDeclarations().get(0);
 			sqlRegistry.add(fnDecl);
 		}
@@ -305,7 +341,9 @@ public class DatatypeSystemTests {
 		
 		ExprEvaluator evaluatorSql = new ExprEvaluatorPartial(FunctionRegistry.get(), exprTransformer);
 		//Expr expr = ExprUtils.parse("<http://ex.org/intersects>(1 + 1, ?a)");
-		Expr expr = ExprUtils.parse("<http://ex.org/intersects>(1.1 + 1, ?a)");
+		
+		
+		Expr expr = ExprUtils.parse("<http://ex.org/fn/equalsIgnoreCase>('a', 'b') && <http://ex.org/fn/intersects>(1 + 1, ?a)");
 
 		Expr evaledExpr = evaluatorSql.eval(expr, null);
 		
@@ -323,7 +361,7 @@ public class DatatypeSystemTests {
 
 		System.out.println("Final: " + sqlExpr);
 		
-		S_Method method = (S_Method)sqlExpr;
+		//S_Method method = (S_Method)sqlExpr;
 		//System.out.println(method.getMethod().getSerializer().serialize(Arrays.asList("test", "b")));
 	}
 }

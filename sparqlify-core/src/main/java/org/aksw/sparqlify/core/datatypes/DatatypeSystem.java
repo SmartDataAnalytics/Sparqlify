@@ -24,7 +24,7 @@ import org.aksw.sparqlify.core.TypeToken;
  */
 public interface DatatypeSystem {
 	
-	SparqlFunction createSparqlFunction(String name);
+	SparqlFunction createSparqlFunction(String name, SqlExprEvaluator evaluator);
 	
 	void registerSqlFunction(String sparqlFunctionName, XMethod sqlFunction);
 	
@@ -43,6 +43,7 @@ public interface DatatypeSystem {
 
     void registerCoercion(XMethod method);
 	
+    SparqlFunction getSparqlFunction(String name);
     SqlMethodCandidate lookupMethod(String sparqlFunctionName, List<TypeToken> argTypes);
 	
 	List<TypeToken> getDirectSuperClasses(TypeToken type);

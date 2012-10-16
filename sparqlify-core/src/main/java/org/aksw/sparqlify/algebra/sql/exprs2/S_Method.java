@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
+import org.aksw.sparqlify.core.datatypes.Invocable;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.openjena.atlas.io.IndentedWriter;
@@ -40,7 +42,35 @@ public class S_Method
 		return result;
 	}
 
+	
+	public static SqlExpr createOrEvaluate(SqlMethodCandidate candidate, List<SqlExpr> args) {
+
+		SqlExpr result;
+		if(SqlTranslatorImpl.isConstantsOnlySql(args)) {
+			Invocable invocable = candidate.getInvocable();
+			if(invocable != null) {
+				Object[] as = new Object[args.size()];
+				
+				for(int i = 0; i < args.size(); ++i) {
+					as[i] = args.get(i).asConstant().getValue();
+				}
+				
+				Object value = invocable.invoke(as);
+				
+				result = new S_Constant(value, candidate.getMethod().getSignature().getReturnType().getToken());
+				
+				return result;
+			}
+		}
+		
+			
+		result = create(candidate, args);
+		
+		return result;
+	}
+	
 	public static S_Method create(SqlMethodCandidate candidate, List<SqlExpr> args) {
+				
 		List<XMethod> argCoercions = candidate.getArgCoercions();
 
 		List<SqlExpr> newArgs;

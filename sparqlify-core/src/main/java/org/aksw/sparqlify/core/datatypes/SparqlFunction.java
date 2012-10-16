@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
 
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-
 public interface SparqlFunction {
 	
 	/**
@@ -20,7 +18,7 @@ public interface SparqlFunction {
 	 * 
 	 * @return An object that can evaluate the function for given arguments. NULL if no evaluator exists.
 	 */
-	ExprFunction getEvaluator();
+	SqlExprEvaluator getEvaluator();
 	
 	/**
 	 * 

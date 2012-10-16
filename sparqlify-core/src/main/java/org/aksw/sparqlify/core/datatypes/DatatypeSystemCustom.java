@@ -64,16 +64,17 @@ public class DatatypeSystemCustom
 	//public getSqlFunctions
 	
 	
-	public SparqlFunctionImpl createSparqlFunction(String name) {
-		SparqlFunctionImpl result = new SparqlFunctionImpl(name, null);	
+	public SparqlFunctionImpl createSparqlFunction(String name, SqlExprEvaluator evaluator) {
+		SparqlFunctionImpl result = new SparqlFunctionImpl(name, evaluator);	
+		sparqlFunctions.put(name, result);
 		return result;
 	}
 	
 	public SparqlFunctionImpl getOrCreateSparqlFunction(String name) {
 		SparqlFunctionImpl result = sparqlFunctions.get(name);
 		if(result == null) {
-			result = createSparqlFunction(name);
-			sparqlFunctions.put(name, result);
+			result = createSparqlFunction(name, null);
+			//sparqlFunctions.put(name, result);
 		}
 		
 		return result;
@@ -82,7 +83,9 @@ public class DatatypeSystemCustom
 	
 	public SparqlFunction getSparqlFunction(String name) {
 		//FunctionFactory fnFactory = null;
-		SparqlFunction result = new SparqlFunctionImpl(name, null);
+		//SparqlFunction result = new SparqlFunctionImpl(name, null);
+		SparqlFunction result = sparqlFunctions.get(name);
+		
 		return result;
 	}
 

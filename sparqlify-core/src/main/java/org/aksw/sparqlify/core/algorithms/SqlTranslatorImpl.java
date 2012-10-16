@@ -11,6 +11,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Method;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.SparqlFunction;
+import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
@@ -96,6 +98,17 @@ public class SqlTranslatorImpl
 		
 		return true;
 	}
+
+	public static boolean isConstantsOnlySql(Iterable<SqlExpr> exprs) {
+		for(SqlExpr expr : exprs) {
+			if(!expr.isConstant()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
 	
 	public static boolean isConstantArgsOnly(ExprFunction fn) {
 		
@@ -105,17 +118,40 @@ public class SqlTranslatorImpl
 	}
 	
 	
-	
+	/**
+	 * TODO How to pass the type error to SPARQL functions,
+	 * such as logical AND/OR/NOT, so they get a chance to deal with it?
+	 * 
+	 * Using the SPARQL level evaluator is not really possible anymore, because we already translated to the SQL level.
+	 * 
+	 * We could either:
+	 * . have special treatment for logical and/or/not
+	 *     But then we can't extend the system to our liking
+	 * . have an evaluator on the SqlExpr level, rather than the expr level
+	 *     Very generic, but can we avoid the duplication with Expr and SqlExpr?
+	 *     Probably we can't.
+	 *     The expr structure does not allow adding a custom datatype, and mapping it externally turned out to be quite a hassle.
+	 *     
+	 * 
+	 * 
+	 * @param fn
+	 * @param binding
+	 * @param typeMap
+	 * @return
+	 */
 	public SqlExpr translate(ExprFunction fn, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
 		
 		SqlExpr result;
 		
 		List<SqlExpr> evaledArgs = new ArrayList<SqlExpr>();
 
+		logger.debug("Processing: " + fn);
+		/*
 		if(containsTypeError(evaledArgs)) {
 			logger.debug("Type error in argument (" + evaledArgs + ")");
 			return S_Constant.TYPE_ERROR;
 		}
+		*/
 		
 		
 		for(Expr arg : fn.getArgs()) {				
@@ -132,12 +168,39 @@ public class SqlTranslatorImpl
 			
 			evaledArgs.add(evaledArg);
 		}
-		
+
 		
 		List<TypeToken> argTypes = getTypes(evaledArgs);
 		
 		// There must be a function registered for the argument types
 		String functionId = ExprUtils.getFunctionId(fn);
+		
+		SparqlFunction sparqlFunction = datatypeSystem.getSparqlFunction(functionId);
+		if(sparqlFunction == null) {
+			throw new RuntimeException("Sparql function not declared: " + functionId);
+		}
+			
+			
+		SqlExprEvaluator evaluator = sparqlFunction.getEvaluator();
+		
+		logger.debug("Evaluator for '" + functionId + "': " + evaluator);
+		
+		// If there is an evaluator, we can pass all arguments to it, and see if it yields a new expression
+		if(evaluator != null) {
+			SqlExpr tmp = evaluator.eval(evaledArgs);
+			if(tmp != null) {
+				return tmp;
+			}
+		}
+		
+
+		// If there was no evaluator, or if the evaluator returned null, continue here.
+		
+		// If one of the arguments is a type error, we must return a type error.
+		if(containsTypeError(evaledArgs)) {
+			return S_Constant.TYPE_ERROR;
+		}
+		
 		SqlMethodCandidate castMethod = datatypeSystem.lookupMethod(functionId, argTypes);
 		
 		if(castMethod == null) {
@@ -147,8 +210,12 @@ public class SqlTranslatorImpl
 			return S_Constant.TYPE_ERROR;
 		}
 		
-		result = S_Method.create(castMethod, evaledArgs);
+		// TODO: Invoke the SQL method's invocable if it exists and all arguments are constants
+		
+		result = S_Method.createOrEvaluate(castMethod, evaledArgs);
 
+		logger.debug("[Result] " + result);
+		
 		return result;
 	}
 	
