@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.core.TypeToken;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sdb.core.JoinType;
-import com.hp.hpl.jena.sparql.expr.ExprList;
 
 
 public class SqlOpJoin
@@ -17,9 +17,9 @@ public class SqlOpJoin
 {
 	private JoinType joinType;
 	//private boolean isLeftJoin;
-	private ExprList conditions;
+	private List<SqlExpr> conditions;
 	
-	public SqlOpJoin(Schema schema, JoinType joinType, SqlOp left, SqlOp right, ExprList conditions) {
+	public SqlOpJoin(Schema schema, JoinType joinType, SqlOp left, SqlOp right, List<SqlExpr> conditions) {
 		super(schema, left, right);
 		this.joinType = joinType;
 		this.conditions = conditions;
@@ -31,7 +31,7 @@ public class SqlOpJoin
 
 
 
-	public ExprList getConditions() {
+	public List<SqlExpr> getConditions() {
 		return conditions;
 	}
 	
@@ -41,7 +41,7 @@ public class SqlOpJoin
 		names.addAll(a.getColumnNames());
 		names.addAll(b.getColumnNames());
 		
-		Map<String, XClass> typeMap = new HashMap<String, XClass>();
+		Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>();
 		typeMap.putAll(a.getTypeMap());
 		typeMap.putAll(b.getTypeMap());
 		
@@ -52,13 +52,13 @@ public class SqlOpJoin
 	}
 
 	public static SqlOpJoin create(JoinType joinType, SqlOp a, SqlOp b) {
-		SqlOpJoin result = create(joinType, a, b, new ExprList());
+		SqlOpJoin result = create(joinType, a, b, new ArrayList<SqlExpr>());
 		
 		return result;
 	}
 
 	
-	public static SqlOpJoin create(JoinType joinType, SqlOp a, SqlOp b, ExprList conditions) {
+	public static SqlOpJoin create(JoinType joinType, SqlOp a, SqlOp b, List<SqlExpr> conditions) {
 		
 		Schema newSchema = createJoinSchema(a.getSchema(), b.getSchema());
 		

@@ -1,19 +1,19 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 
 
 public class SqlSortCondition{
-	private Expr expr;
+	private SqlExpr expr;
 	private int direction;
 
-	public SqlSortCondition(Expr expr, int direction) {
+	public SqlSortCondition(SqlExpr expr, int direction) {
 		super();
 		this.expr = expr;
 		this.direction = direction;
 	}
 
-	public Expr getExpression() {
+	public SqlExpr getExpression() {
 		return expr;
 	}
 

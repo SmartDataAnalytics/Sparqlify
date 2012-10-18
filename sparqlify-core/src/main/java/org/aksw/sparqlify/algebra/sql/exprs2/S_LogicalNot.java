@@ -16,6 +16,11 @@ public class S_LogicalNot
 		writeArgs(writer);
 	}
 
+	@Override
+	public S_LogicalNot copy(SqlExpr arg) {
+		S_LogicalNot result = new S_LogicalNot(arg);
+		return result;
+	}
 	
 	public static S_LogicalNot create(SqlExpr a) {
 		return new S_LogicalNot(a);

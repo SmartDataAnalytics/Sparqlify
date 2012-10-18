@@ -39,6 +39,10 @@ public abstract class SqlExprBase
 		return (SqlExprConstant)this;
 	}
 	
+	public SqlExprVar asVariable() {
+		return (SqlExprVar)this;
+	}
+
 	public boolean isConstant() {
 		return SqlExprType.Constant.equals(getType());				
 	}

@@ -3,15 +3,15 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.TypeToken;
 
 public interface Schema {
 	int getColumnCount();
 	String getColumnName(int index);
-	XClass getColumnType(int index);	
+	TypeToken getColumnType(int index);	
 	
-	XClass getColumnType(String name);
+	TypeToken getColumnType(String name);
 	
 	List<String> getColumnNames();
-	Map<String, XClass> getTypeMap();
+	Map<String, TypeToken> getTypeMap();
 }

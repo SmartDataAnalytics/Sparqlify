@@ -227,7 +227,7 @@ public class SqlTranslatorImpl
 		Object value = ExprUtils.getJavaObject(nv);
 		XClass datatype = datatypeSystem.getByClass(value.getClass());
 		
-		SqlExpr result = new S_Constant(value, datatype.getToken());
+		SqlExpr result = new S_Constant(datatype.getToken(), value);
 
 		return result;
 	}
@@ -235,13 +235,13 @@ public class SqlTranslatorImpl
 	
 	public SqlExpr translate(ExprVar expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
 		String varName = expr.getVarName();
-		TypeToken typeName = typeMap.get(varName);
+		TypeToken datatype = typeMap.get(varName);
 
-		if(typeName == null) {
+		if(datatype == null) {
 			throw new RuntimeException("No datatype found for " + varName);
 		}
 		
-		SqlExpr result = new S_ColumnRef(typeName, varName);
+		SqlExpr result = new S_ColumnRef(datatype, varName);
 		return result;
 	}
 	
@@ -289,9 +289,11 @@ public class SqlTranslatorImpl
 	}
 
 
+	/*
 	@Override
 	public Expr translateSql(Expr sparqlExpr, Map<Var, Expr> binding) {
 		throw new RuntimeException("Do not use");
 	}
+	*/
 
 }

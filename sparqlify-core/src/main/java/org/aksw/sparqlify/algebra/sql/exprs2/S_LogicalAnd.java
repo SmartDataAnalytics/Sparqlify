@@ -16,6 +16,12 @@ public class S_LogicalAnd
 		writeArgs(writer);
 	}
 
+	@Override
+	public S_LogicalAnd copy(SqlExpr left, SqlExpr right) {
+		S_LogicalAnd result = new S_LogicalAnd(left, right);
+		return result;
+	}
+
 	
 	public static S_LogicalAnd create(SqlExpr a, SqlExpr b) {
 		return new S_LogicalAnd(a, b);

@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
+import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class SchemaProviderImpl
 			queryString += " LIMIT 1";
 		}
 
-		Map<String, XClass> typeMap = null;
+		Map<String, TypeToken> typeMap = null;
 		
 		try {
 			typeMap = SchemaProviderImpl.getTypes(conn, queryString, datatypeSystem, aliasMap);
@@ -69,7 +70,7 @@ public class SchemaProviderImpl
 			throw new RuntimeException(e);
 		}
 		
-		for(Entry<String, XClass> entry : typeMap.entrySet()) {
+		for(Entry<String, TypeToken> entry : typeMap.entrySet()) {
 			logger.info(entry.getKey() + " -> " + entry.getValue());
 		}
 		
@@ -167,22 +168,22 @@ public class SchemaProviderImpl
 	}
 
 		
-	public static Map<String, XClass> transformRawMap(Map<String, String> map, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
-		Map<String, XClass> result = new HashMap<String, XClass>();
+	public static Map<String, TypeToken> transformRawMap(Map<String, String> map, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
+		Map<String, TypeToken> result = new HashMap<String, TypeToken>();
 
 		for(Map.Entry<String, String> entry : map.entrySet()) {
-			XClass value = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
+			XClass clazz = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
 			
-			result.put(entry.getKey(), value);
+			result.put(entry.getKey(), clazz.getToken());
 		}
 		return result;
 	}
 	
-	public static Map<String, XClass> getTypes(Connection conn, String queryStr, DatatypeSystem datatypeSystem, Map<String, String> aliasMap)
+	public static Map<String, TypeToken> getTypes(Connection conn, String queryStr, DatatypeSystem datatypeSystem, Map<String, String> aliasMap)
 		throws Exception
 	{
 		Map<String, String> map = getRawTypes(conn, queryStr);
-		Map<String, XClass> result = transformRawMap(map, datatypeSystem, aliasMap);
+		Map<String, TypeToken> result = transformRawMap(map, datatypeSystem, aliasMap);
 		return result;
 	}
 

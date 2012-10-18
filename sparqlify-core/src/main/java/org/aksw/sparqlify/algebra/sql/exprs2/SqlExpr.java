@@ -8,7 +8,8 @@ import org.openjena.atlas.io.IndentedWriter;
 public interface SqlExpr {
 	List<SqlExpr> getArgs();
 
-	TypeToken getDatatype();	
+	//TypeToken getDatatype();
+	TypeToken getDatatype();
 
 
 	boolean isVariable();
@@ -20,6 +21,7 @@ public interface SqlExpr {
 
 	SqlExprFunction asFunction();
 	SqlExprConstant asConstant();
+	SqlExprVar asVariable();
 
 	
 	/* Converts the SqlExpr back into an Expr

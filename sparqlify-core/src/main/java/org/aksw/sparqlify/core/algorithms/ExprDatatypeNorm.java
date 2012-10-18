@@ -6,7 +6,8 @@ import java.util.Map;
 
 import mapping.ExprCopy;
 
-import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
@@ -24,13 +25,10 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
  */
 public class ExprDatatypeNorm {
 
-	//private DatatypeSystem datatypeSystem;
-	private DatatypeAssigner datatypeAssigner;
-	
-	//public ExprDatatypeNorm(DatatypeSystem datatypeSystem) {
-	public ExprDatatypeNorm(DatatypeAssigner datatypeAssigner) {
-		//this.datatypeSystem = datatypeSystem;
-		this.datatypeAssigner = datatypeAssigner; 
+	private DatatypeSystem datatypeSystem;
+
+	public ExprDatatypeNorm(DatatypeSystem datatypeSystem) {
+		this.datatypeSystem = datatypeSystem;
 	}
 	
 	/*
@@ -39,7 +37,7 @@ public class ExprDatatypeNorm {
 	}*/
 	
 	
-	public Expr normalize(Expr expr, Map<String, XClass> typeMap) {
+	public Expr normalize(Expr expr, Map<String, TypeToken> typeMap) {
 		
 		Expr result;
 		if(expr == null) {
@@ -59,7 +57,7 @@ public class ExprDatatypeNorm {
 		//return MultiMethod.invokeStatic(ExprDatatypeNorm.class, "_nomalize", expr, columnToDatatype);
 	}
 	
-	public List<Expr> normalizeArgs(Iterable<Expr> exprs, Map<String, XClass> columnToDatatype) {
+	public List<Expr> normalizeArgs(Iterable<Expr> exprs, Map<String, TypeToken> columnToDatatype) {
 		List<Expr> result = new ArrayList<Expr>();
 		for(Expr expr : exprs) {
 			Expr e = normalize(expr, columnToDatatype);
@@ -68,14 +66,14 @@ public class ExprDatatypeNorm {
 		return result;
 	}
 	
-	public Expr normalize(ExprFunction expr, Map<String, XClass> typeMap) {
+	public Expr normalize(ExprFunction expr, Map<String, TypeToken> typeMap) {
 		List<Expr> newArgs = normalizeArgs(expr.getArgs(), typeMap);
 
 		return ExprCopy.getInstance().copy(expr, newArgs);
 	}
 	
-	public ExprVar normalize(ExprVar expr, Map<String, XClass> typeMap) {
-		XClass datatype = typeMap.get(expr.getVarName());
+	public ExprVar normalize(ExprVar expr, Map<String, TypeToken> typeMap) {
+		TypeToken datatype = typeMap.get(expr.getVarName());
 		if(datatype == null) {
 			throw new RuntimeException("No datatype information for column " + expr.getVarName());
 		}
@@ -84,11 +82,23 @@ public class ExprDatatypeNorm {
 	}
 	
 
-	public Expr normalize(NodeValue expr, Map<String, XClass> typeMap) {
+	public Expr normalize(NodeValue expr, Map<String, TypeToken> typeMap) {
+
+		// TODO Ask the datatype system for the appropriate SQL type
+		// (Do we need physical SQL type (varchar(10)) or logical one (text)?)
+		String datatypeUri = expr.asNode().getLiteralDatatypeURI();
+		
+		Expr result = NodeValue.makeString(datatypeUri);
+		return result;
+		
+
 	
 //		if(expr.isConstant()) {
 //			System.out.println(expr);
 //		}
+		
+		/*
+		datatypeSystem.get
 		
 		XClass datatype = datatypeAssigner.assign(expr, typeMap);
 		if(datatype == null) {
@@ -97,7 +107,7 @@ public class ExprDatatypeNorm {
 		
 		NodeValue result = NodeValue.makeString(datatype.getName());
 		return result;
-		
+		*/
 		
 		//return NodeValue.makeString(s)
 		/*

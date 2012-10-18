@@ -108,9 +108,14 @@ public class TranslatorSqlImpl
 		this.evaluator = SqlTranslationUtils.createDefaultEvaluator();
 	}
 	
-	@Override
+	//@Override
 	public Expr translateSql(Expr expr, Map<Var, Expr> binding) {
-
+		
+		if(true) {
+		throw new RuntimeException("Dont use this anymore");
+		}
+		
+		
 		Expr result = evaluator.eval(expr, binding);
 		
 		/*

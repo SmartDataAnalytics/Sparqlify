@@ -23,6 +23,12 @@ public class S_Concat
 	}
 
 	@Override
+	public S_Concat copy(List<SqlExpr> args) {
+		S_Concat result = new S_Concat(args);
+		return result;
+	}
+	
+	@Override
 	public void asString(IndentedWriter writer) {
 		writer.print("Concat");
 		writeArgs(writer);

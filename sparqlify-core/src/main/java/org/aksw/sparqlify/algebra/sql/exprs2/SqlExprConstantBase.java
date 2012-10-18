@@ -2,6 +2,7 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 
 import org.aksw.sparqlify.core.TypeToken;
 
+
 public abstract class SqlExprConstantBase
 	extends SqlExpr0
 	implements SqlExprConstant

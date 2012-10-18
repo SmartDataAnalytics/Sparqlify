@@ -16,6 +16,12 @@ public class S_LogicalOr
 		writeArgs(writer);
 	}
 
+	@Override
+	public S_LogicalOr copy(SqlExpr left, SqlExpr right) {
+		S_LogicalOr result = new S_LogicalOr(left, right);
+		return result;
+	}
+
 	
 	public static S_LogicalOr create(SqlExpr a, SqlExpr b) {
 		return new S_LogicalOr(a, b);

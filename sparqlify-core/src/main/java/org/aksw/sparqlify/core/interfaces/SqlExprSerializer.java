@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.interfaces;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 
 public interface SqlExprSerializer {
-	String serialize(Expr expr);
+	String serialize(SqlExpr expr);
 }

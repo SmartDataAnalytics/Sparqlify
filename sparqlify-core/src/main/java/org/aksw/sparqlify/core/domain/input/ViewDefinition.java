@@ -9,6 +9,7 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
+import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.core.Quad;
@@ -90,6 +91,10 @@ public class ViewDefinition {
 	//private Map<Var, VarReference> viewReferences = new HashMap<Var, VarReference>();
 
 	
+	// Restrictions on the variables (rather than on their defining expressions)
+	// TODO Implement this again
+	private RestrictionManager varRestrictions;
+	
 	// The source can point to an arbitrary object from
 	// which this view definition was derived.
 	// Mainly intended for pointing back to to the syntactic
@@ -148,6 +153,10 @@ public class ViewDefinition {
 		return result;
 	}
 
+	public RestrictionManager getVarRestrictions() {
+		return varRestrictions;
+	}
+	
 	public void write(IndentedWriter writer) {
 		//Head
 		writer.println("Create View " + name + " As");

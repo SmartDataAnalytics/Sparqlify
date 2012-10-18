@@ -3,13 +3,13 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sdb.core.ScopeBase;
 import com.hp.hpl.jena.sdb.shared.SDBInternalError;
-import com.hp.hpl.jena.sparql.expr.ExprList;
 
 
 
@@ -120,7 +120,7 @@ public class SqlOpSelectBlock
 	//private List<Var> order;
 	
 	// Selection
-	private ExprList conditions = new ExprList() ;
+	private List<SqlExpr> conditions = new ArrayList<SqlExpr>() ;
     
 	// Slicing
 	private Long offset = null;
@@ -138,7 +138,7 @@ public class SqlOpSelectBlock
 	}
 	*/
 
-	public ExprList getConditions() {
+	public List<SqlExpr> getConditions() {
 		return conditions;
 	}
 
@@ -255,7 +255,7 @@ public class SqlOpSelectBlock
     }*/
 
 
-    public static SqlOp restrict(Generator generator, SqlOp sqlOp, ExprList exprs)
+    public static SqlOp restrict(Generator generator, SqlOp sqlOp, List<SqlExpr> exprs)
     {
         if ( exprs.size() == 0 )
             return sqlOp ;

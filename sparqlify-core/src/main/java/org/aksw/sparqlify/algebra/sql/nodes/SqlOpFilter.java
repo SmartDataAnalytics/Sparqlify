@@ -1,15 +1,16 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
-import org.openjena.atlas.io.IndentedWriter;
+import java.util.List;
 
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.openjena.atlas.io.IndentedWriter;
 
 public class SqlOpFilter
 	extends SqlOpBase1
 {
-	private ExprList exprs;
+	private List<SqlExpr> exprs;
 
-	public SqlOpFilter(Schema schema, SqlOp subOp, ExprList exprs) {
+	public SqlOpFilter(Schema schema, SqlOp subOp, List<SqlExpr> exprs) {
 		super(schema, subOp);
 
 		assert exprs != null : "Null pointer exception";
@@ -17,11 +18,11 @@ public class SqlOpFilter
 		this.exprs = exprs;
 	}
 
-	public ExprList getExprs() {
+	public List<SqlExpr> getExprs() {
 		return exprs;
 	}
 	
-	public static SqlOp createIfNeeded(SqlOp op, ExprList exprs) {
+	public static SqlOp createIfNeeded(SqlOp op, List<SqlExpr> exprs) {
 		SqlOp result;
 		
 		if(exprs.isEmpty()) {
@@ -34,7 +35,7 @@ public class SqlOpFilter
 	}
 	
 	
-	public static SqlOpFilter create(SqlOp op, ExprList exprs) {
+	public static SqlOpFilter create(SqlOp op, List<SqlExpr> exprs) {
 		return new SqlOpFilter(op.getSchema(), op, exprs);
 	}
 	

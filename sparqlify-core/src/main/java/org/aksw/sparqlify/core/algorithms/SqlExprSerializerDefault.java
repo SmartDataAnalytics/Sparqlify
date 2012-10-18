@@ -6,6 +6,7 @@ import java.util.List;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_SqlColumnRef;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 
@@ -34,13 +35,13 @@ public abstract class SqlExprSerializerDefault
 	implements SqlExprSerializer
 {
 
-	public DatatypeAssigner datatypeAssigner;
+	//public DatatypeAssigner datatypeAssigner;
 	
 	protected DatatypeToString datatypeSerializer;
 	
-	public SqlExprSerializerDefault(DatatypeAssigner datatypeAssigner, DatatypeToString datatypeSerializer)
+	public SqlExprSerializerDefault(DatatypeToString datatypeSerializer)
 	{
-		this.datatypeAssigner = datatypeAssigner;
+		//this.datatypeAssigner = datatypeAssigner;
 		this.datatypeSerializer = datatypeSerializer;
 	}
 	
@@ -58,8 +59,8 @@ public abstract class SqlExprSerializerDefault
 	}
 	
 	
-	
-	public String serialize(Expr expr) {
+	@Override
+	public String serialize(SqlExpr expr) {
 		try {
 			String result = (String)MultiMethod.invoke(this, "_serialize", expr);
 		
@@ -90,9 +91,9 @@ public abstract class SqlExprSerializerDefault
 	
 	
 		
-	public List<String> serializeArgs(List<Expr> exprs) {
+	public List<String> serializeArgs(List<SqlExpr> exprs) {
 		List<String> result = new ArrayList<String>();
-		for(Expr expr : exprs) {
+		for(SqlExpr expr : exprs) {
 			String tmp = serialize(expr);
 			result.add(tmp);
 		}
@@ -198,110 +199,110 @@ public abstract class SqlExprSerializerDefault
 	}
 	*/
 	
-	
-	public String _serialize(E_LessThan expr) {
-		return "(" + serialize(expr.getArg1()) + " < " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_LessThanOrEqual expr) {
-		return "(" + serialize(expr.getArg1()) + " <= " + serialize(expr.getArg2()) + ")";
-	}
-	
-	public String _serialize(E_Equals expr) {
-		return "(" + serialize(expr.getArg1()) + " = " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_GreaterThanOrEqual expr) {
-		return "(" + serialize(expr.getArg1()) + " >= " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_GreaterThan expr) {
-		return "(" + serialize(expr.getArg1()) + " > " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_LogicalAnd expr) {
-		return "(" + serialize(expr.getArg1()) + " AND " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_LogicalOr expr) {
-		return "(" + serialize(expr.getArg1()) + " OR " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_LogicalNot expr) {
-		return "(NOT " + serialize(expr.getExpr()) + ")";
-	}
-	
-	public String _serialize(E_Add expr) {
-		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
-	}
-	
-	public String _serialize(E_Subtract expr) {
-		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
-	}
-	
-	public String _serialize(E_Multiply expr) {
-		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
-	}
-
-	public String _serialize(E_Divide expr) {
-		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
-	}
-
-	
-	// IsNotNull
-	public String _serialize(E_Bound expr) {
-		String arg = serialize(expr.getExpr());
-		String result = "(" + arg + " IS NOT NULL)";
-		
-		return result;
-	}
-
-	public String _serialize(E_StrConcat concat) {
-		List<String> args = serializeArgs(concat.getArgs());
-		String result = serializeConcat(args);
-		return result;
-	}
-	
-	public String _serialize(E_StrConcatPermissive concat) {
-		List<String> args = serializeArgs(concat.getArgs());
-		String result = serializeConcat(args);
-		return result;
-	}
-	
-	public String serializeConcat(List<String> args) {	
-		String result = "(" + Joiner.on(" || ").join(args) + ")";
-
-		return result;
-	}
-	
-	public String _serialize(E_Regex expr) {
-	
-		List<Expr> args = expr.getArgs();
-		Expr varArg = args.get(0);
-		Expr patternArg = args.get(1);
-		
-		
-		if(!patternArg.isConstant()) {
-			throw new RuntimeException("Pattern for regex must be a constant, encountered: " + patternArg);
-		}
-		
-		String arg = serialize(varArg);
-		String pattern = patternArg.getConstant().asUnquotedString(); //serialize(patternArg);
-		String result = arg + " ~* " + "'" + pattern + "'";
-
-		return result;
-	}
-	
-	public String _serialize(E_SqlColumnRef expr) {
-		//System.out.println("ColumnRef: " + expr);
-		//System.err.println("Should not use variables but rather something like E_ColumnRef.");
-		return expr.getAliasName() + ".\"" + expr.getColumnName() + "\"";
-	}
-	
-
-	public String _serialize(ExprVar expr) {
-		System.err.println("Should not use variables but E_ColumnRef - Something most likely went wrong");
-		return expr.getVarName();
-	}
+//
+//	public String _serialize(E_LessThan expr) {
+//		return "(" + serialize(expr.getArg1()) + " < " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_LessThanOrEqual expr) {
+//		return "(" + serialize(expr.getArg1()) + " <= " + serialize(expr.getArg2()) + ")";
+//	}
+//	
+//	public String _serialize(E_Equals expr) {
+//		return "(" + serialize(expr.getArg1()) + " = " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_GreaterThanOrEqual expr) {
+//		return "(" + serialize(expr.getArg1()) + " >= " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_GreaterThan expr) {
+//		return "(" + serialize(expr.getArg1()) + " > " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_LogicalAnd expr) {
+//		return "(" + serialize(expr.getArg1()) + " AND " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_LogicalOr expr) {
+//		return "(" + serialize(expr.getArg1()) + " OR " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_LogicalNot expr) {
+//		return "(NOT " + serialize(expr.getExpr()) + ")";
+//	}
+//	
+//	public String _serialize(E_Add expr) {
+//		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
+//	}
+//	
+//	public String _serialize(E_Subtract expr) {
+//		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
+//	}
+//	
+//	public String _serialize(E_Multiply expr) {
+//		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	public String _serialize(E_Divide expr) {
+//		return "(" + serialize(expr.getArg1()) + " + " + serialize(expr.getArg2()) + ")";
+//	}
+//
+//	
+//	// IsNotNull
+//	public String _serialize(E_Bound expr) {
+//		String arg = serialize(expr.getExpr());
+//		String result = "(" + arg + " IS NOT NULL)";
+//		
+//		return result;
+//	}
+//
+//	public String _serialize(E_StrConcat concat) {
+//		List<String> args = serializeArgs(concat.getArgs());
+//		String result = serializeConcat(args);
+//		return result;
+//	}
+//	
+//	public String _serialize(E_StrConcatPermissive concat) {
+//		List<String> args = serializeArgs(concat.getArgs());
+//		String result = serializeConcat(args);
+//		return result;
+//	}
+//	
+//	public String serializeConcat(List<String> args) {	
+//		String result = "(" + Joiner.on(" || ").join(args) + ")";
+//
+//		return result;
+//	}
+//	
+//	public String _serialize(E_Regex expr) {
+//	
+//		List<Expr> args = expr.getArgs();
+//		Expr varArg = args.get(0);
+//		Expr patternArg = args.get(1);
+//		
+//		
+//		if(!patternArg.isConstant()) {
+//			throw new RuntimeException("Pattern for regex must be a constant, encountered: " + patternArg);
+//		}
+//		
+//		String arg = serialize(varArg);
+//		String pattern = patternArg.getConstant().asUnquotedString(); //serialize(patternArg);
+//		String result = arg + " ~* " + "'" + pattern + "'";
+//
+//		return result;
+//	}
+//	
+//	public String _serialize(E_SqlColumnRef expr) {
+//		//System.out.println("ColumnRef: " + expr);
+//		//System.err.println("Should not use variables but rather something like E_ColumnRef.");
+//		return expr.getAliasName() + ".\"" + expr.getColumnName() + "\"";
+//	}
+//	
+//
+//	public String _serialize(ExprVar expr) {
+//		System.err.println("Should not use variables but E_ColumnRef - Something most likely went wrong");
+//		return expr.getVarName();
+//	}
 
 }

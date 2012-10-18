@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_SqlColumnRef;
-import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -22,18 +22,15 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
-import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
 
 interface JoinContext {
 	SqlOp getOp();
-	ExprList getConditions();
+	List<SqlExpr> getConditions();
 	Projection getProjection();
 }
 
@@ -42,7 +39,7 @@ class JoinContextBlock
 	implements JoinContext
 {
 	private SqlOpSelectBlock block;
-	//private ExprList conditions;
+	//private List<SqlExpr> conditions;
 	
 	public JoinContextBlock(SqlOpSelectBlock block) {
 		this.block = block;
@@ -54,7 +51,7 @@ class JoinContextBlock
 	}
 
 	@Override
-	public ExprList getConditions() {
+	public List<SqlExpr> getConditions() {
 		return block.getConditions();
 	}
 
@@ -70,7 +67,7 @@ class JoinContextJoin
 {
 	// The effective op, i.e. table, query, join or union.
 	private SqlOp op;
-	private ExprList conditions = new ExprList();
+	private List<SqlExpr> conditions = new ArrayList<SqlExpr>();
 	private Projection projection = new Projection();
 
 	
@@ -82,7 +79,7 @@ class JoinContextJoin
 		return op;
 	}
 
-	public ExprList getConditions() {
+	public List<SqlExpr> getConditions() {
 		return conditions;
 	}
 
@@ -174,10 +171,10 @@ public class SqlOpSelectBlockCollectorImpl
 
 		for(String columnName : opTable.getSchema().getColumnNames())  {
 
-			//XClass datatype = result.getSchema().getColumnType(columnName);			
-			//result.getProjection().put(columnName, new SqlExprColumn(opTable.getAliasName(), columnName, datatype)); //ExprVar(aliasName + "." + columnName));
+			TypeToken datatype = result.getSchema().getColumnType(columnName);			
+			result.getProjection().put(columnName, new S_ColumnRef(datatype, opTable.getAliasName(), columnName)); //ExprVar(aliasName + "." + columnName));
 
-			result.getProjection().put(columnName, new ExprVar(opTable.getAliasName() + "." + columnName));
+			//result.getProjection().put(columnName, new ExprVar(opTable.getAliasName() + "." + columnName));
 		}
 
 		
@@ -205,19 +202,22 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}*/
 
-	
-	public static Expr transformToAliasedReferences(Expr expr, Projection projection) {
-		Map<String, Expr> map = projection.getNameToExpr();
-		NodeExprSubstitutor substitutor = NodeExprSubstitutor.create(map);
-		Expr result = substitutor.transformMM(expr);
 
+	public static SqlExpr transformToAliasedReferences(SqlExpr expr, Projection projection) {
+		
+		Map<String, SqlExpr> map = projection.getNameToExpr();
+		SqlExprSubstitutor substitutor = SqlExprSubstitutor.create(map);
+		SqlExpr result = substitutor.substitute(expr);
+		
 		return result;
 	}
 	
-	public static ExprList adjustConditions(ExprList exprs, Projection projection) {
-		Map<String, Expr> map = projection.getNameToExpr();
-		NodeExprSubstitutor substitutor = NodeExprSubstitutor.create(map);
-		ExprList result = substitutor.transformList(exprs);
+	public static List<SqlExpr> adjustConditions(List<SqlExpr> exprs, Projection projection) {
+		Map<String, SqlExpr> map = projection.getNameToExpr();
+		//SqlExprSubstitute x = new SqlEx
+
+		SqlExprSubstitutor substitutor = SqlExprSubstitutor.create(map);
+		List<SqlExpr> result = substitutor.substitute(exprs);
 
 		return result;
 	}
@@ -229,7 +229,7 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
 		result.setSchema(op.getSchema());
 		
-		ExprList transformed = adjustConditions(op.getExprs(), result.getProjection());		
+		List<SqlExpr> transformed = adjustConditions(op.getExprs(), result.getProjection());		
 		result.getConditions().addAll(transformed);
 		
 		return result;
@@ -243,10 +243,10 @@ public class SqlOpSelectBlockCollectorImpl
 		result.setSchema(op.getSchema());
 
 		Projection extendedProj = new Projection();
-		for(Entry<String, Expr> entry : op.getProjection().getNameToExpr().entrySet()) {
+		for(Entry<String, SqlExpr> entry : op.getProjection().getNameToExpr().entrySet()) {
 			String columnName = entry.getKey();
-			Expr originalExpr = entry.getValue();
-			Expr aliasedExpr = transformToAliasedReferences(originalExpr, result.getProjection());
+			SqlExpr originalExpr = entry.getValue();
+			SqlExpr aliasedExpr = transformToAliasedReferences(originalExpr, result.getProjection());
 			
 			extendedProj.getNames().add(columnName);
 			extendedProj.getNameToExpr().put(columnName, aliasedExpr);
@@ -269,7 +269,7 @@ public class SqlOpSelectBlockCollectorImpl
 		
 		//result.getProjection().project(op.get$)
 		
-		//ExprList transformed = adjustConditions(op.getExprs(), result.getProjection());		
+		//List<SqlExpr> transformed = adjustConditions(op.getExprs(), result.getProjection());		
 		//result.getConditions().addAll(transformed);
 		
 		return result;
@@ -355,7 +355,7 @@ public class SqlOpSelectBlockCollectorImpl
 
 		JoinContext result = _collectJoins(op.getSubOp());
 		
-		ExprList transformed = adjustConditions(op.getExprs(), result.getProjection());		
+		List<SqlExpr> transformed = adjustConditions(op.getExprs(), result.getProjection());		
 		result.getConditions().addAll(transformed);
 		
 		return result;
@@ -423,11 +423,12 @@ public class SqlOpSelectBlockCollectorImpl
 			
 			//XClass datatype = schema.getColumnType(columnName);			
 			//context.getProjection().put(columnName, new SqlExprColumn(aliasName, columnName, datatype)); //ExprVar(aliasName + "." + columnName));
-			XClass datatype = schema.getColumnType(newName);
+			TypeToken datatype = schema.getColumnType(newName);
 			
 			assert datatype != null : "Datatype must not be null at this point";
 			
-			projection.put(newName, new E_SqlColumnRef(oldName, aliasName, datatype));
+			//projection.put(newName, new E_SqlColumnRef(oldName, aliasName, datatype));
+			projection.put(newName, new S_ColumnRef(datatype, oldName, aliasName));
 		}
 	}
 	

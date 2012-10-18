@@ -28,6 +28,18 @@ public abstract class SqlExpr1
 		return SqlExprType.Function;
 	}
 
+	@Override
+	public SqlExprFunction copy(List<SqlExpr> args) {
+		if(args.size() != 1) {
+			throw new RuntimeException("Exactly 1 argument expected, got: " + args);
+		}
+		
+		SqlExprFunction result = copy(args.get(0));
+		return result;
+	}
+	
+	public abstract SqlExprFunction copy(SqlExpr arg);
+
 	public void writeArgs(IndentedWriter writer) {
 		writer.incIndent();
 		expr.asString(writer);

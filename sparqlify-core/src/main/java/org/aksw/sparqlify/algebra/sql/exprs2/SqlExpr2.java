@@ -33,6 +33,18 @@ public abstract class SqlExpr2
 		return SqlExprType.Function;
 	}
 
+	@Override
+	public SqlExprFunction copy(List<SqlExpr> args) {
+		if(args.size() != 2) {
+			throw new RuntimeException("Exactly 2 arguments expected, got: " + args);
+		}
+		
+		SqlExprFunction result = copy(args.get(0), args.get(1));
+		return result;
+	}
+	
+	public abstract SqlExpr2 copy(SqlExpr left, SqlExpr right);
+	
 	public void writeArgs(IndentedWriter writer) {
 		writer.println("(");
 		writer.incIndent();

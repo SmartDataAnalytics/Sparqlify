@@ -57,7 +57,7 @@ public class S_Method
 				
 				Object value = invocable.invoke(as);
 				
-				result = new S_Constant(value, candidate.getMethod().getSignature().getReturnType().getToken());
+				result = new S_Constant(candidate.getMethod().getSignature().getReturnType().getToken(), value);
 				
 				return result;
 			}
@@ -108,5 +108,17 @@ public class S_Method
 	@Override
 	public List<SqlExpr> getArgs() {
 		return args;
+	}
+
+	/**
+	 * Not: arguments are not sanity checked by this method.
+	 * 
+	 */
+	@Override
+	public S_Method copy(List<SqlExpr> args) {
+		S_Method result = new S_Method(method, args);
+		return result;
 	}	
+	
+	
 }

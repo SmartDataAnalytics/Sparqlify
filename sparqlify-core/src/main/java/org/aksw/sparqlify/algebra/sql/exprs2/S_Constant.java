@@ -2,6 +2,7 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.XClass;
 import org.openjena.atlas.io.IndentedWriter;
 
 public class S_Constant
@@ -9,11 +10,11 @@ public class S_Constant
 {
 	private Object value;
 	
-	public static final S_Constant TRUE = new S_Constant(true, TypeToken.Boolean);
-	public static final S_Constant FALSE = new S_Constant(false, TypeToken.Boolean);
-	public static final S_Constant TYPE_ERROR = new S_Constant(null, TypeToken.TypeError);
+	public static final S_Constant TRUE = new S_Constant(TypeToken.Boolean, true);
+	public static final S_Constant FALSE = new S_Constant(TypeToken.Boolean, false);
+	public static final S_Constant TYPE_ERROR = new S_Constant(TypeToken.TypeError, null);
 	
-	public S_Constant(Object value, TypeToken datatype) {
+	public S_Constant(TypeToken datatype, Object value) {
 		super(datatype);
 		this.value = value;
 	}
@@ -42,8 +43,9 @@ public class S_Constant
 		//Object value = ExprUtils.getJavaObject(nv);
 		//SqlDatatype datatype = datatypeSystem.getByClass(value.getClass());
 
-		TypeToken datatype = datatypeSystem.getTokenForClass(value.getClass());
-		S_Constant result = new S_Constant(value, datatype);
+		TypeToken typeName = datatypeSystem.getTokenForClass(value.getClass());
+		//XClass datatype = datatypeSystem.getByName(typeName);
+		S_Constant result = new S_Constant(typeName, value);
 		
 		return result;
 	}

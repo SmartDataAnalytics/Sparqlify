@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sdb.core.JoinType;
-import com.hp.hpl.jena.sparql.expr.Expr;
 
 
 
@@ -96,7 +96,7 @@ public class SqlOpSerializerImpl
 		return result;
 	}
 	
-	public static String projection(List<String> columnNames, Map<String, Expr> map)
+	public static String projection(List<String> columnNames, Map<String, SqlExpr> map)
 	{
 		// Empty projections can occur if a query response is determined by static triples
 		if(map.isEmpty()) {
@@ -113,7 +113,7 @@ public class SqlOpSerializerImpl
     	for(String columnName : columnNames) {
     	//for(Entry<String, SqlExpr> entry : map.entrySet()) {
     		
-    		Expr value = map.get(columnName);
+    		SqlExpr value = map.get(columnName);
     		//String keyStr = entry.getKey();
     		String exprStr = "";
     		
@@ -240,13 +240,16 @@ public class SqlOpSerializerImpl
     	//String selectionStr = "";
     	{
 	    	List<String> strs = new ArrayList<String>();
-	    	for(Expr expr : op.getConditions()) {
+	    	for(SqlExpr expr : op.getConditions()) {
 	    		if(expr == null) {
 	    			logger.error("Null expression in: " + op);
 	    			continue;
 	    		}
 	    		
 	    		String str = exprSerializer.serialize(expr);
+	    		
+	    		assert str != null : "An expression was serialized as null: " + expr;
+	    		
 	    		//String str = expr.asSQL();
 	    		
 	    		strs.add(str);
@@ -458,7 +461,7 @@ public class SqlOpSerializerImpl
     	
     	String restrictionStr = "";
     	List<String> strs = new ArrayList<String>();
-    	for(Expr expr : op.getConditions()) {
+    	for(SqlExpr expr : op.getConditions()) {
     		strs.add(exprSerializer.serialize(expr));
     	}
     	restrictionStr = Joiner.on(" AND ").join(strs);

@@ -7,22 +7,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 
 public class Projection {
 	private List<String> names = new ArrayList<String>();
-	private Map<String, Expr> nameToExpr = new HashMap<String, Expr>();
+	private Map<String, SqlExpr> nameToExpr = new HashMap<String, SqlExpr>();
 	
 	public Projection() {
 		
 	}
 
-	public Projection(Map<String, Expr> nameToExpr) {
+	public Projection(Map<String, SqlExpr> nameToExpr) {
 		this.nameToExpr = nameToExpr;
 		this.names = new ArrayList<String>(nameToExpr.keySet());
 	}
 	
-	public Projection(List<String> names, Map<String, Expr> nameToExpr) {
+	public Projection(List<String> names, Map<String, SqlExpr> nameToExpr) {
 		this.names = names;
 		this.nameToExpr = nameToExpr;
 	}
@@ -71,7 +71,7 @@ public class Projection {
 	public void rename(String oldName, String newName) {
 		Collections.replaceAll(names, oldName, newName);
 		
-		Expr val = nameToExpr.get(oldName);
+		SqlExpr val = nameToExpr.get(oldName);
 		nameToExpr.remove(oldName);
 		nameToExpr.put(newName, val);
 	}
@@ -87,7 +87,7 @@ public class Projection {
 		}
 	}
 	
-	public void put(String name, Expr expr) {
+	public void put(String name, SqlExpr expr) {
 		if(!nameToExpr.containsKey(name)) {
 			names.add(name);
 		}
@@ -99,7 +99,7 @@ public class Projection {
 	}
 	
 	
-	public Map<String, Expr> getNameToExpr() {
+	public Map<String, SqlExpr> getNameToExpr() {
 		return nameToExpr;
 	}
 

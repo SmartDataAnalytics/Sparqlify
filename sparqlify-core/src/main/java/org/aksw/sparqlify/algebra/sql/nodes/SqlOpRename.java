@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.TypeToken;
 import org.apache.commons.collections15.BidiMap;
 import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 import org.openjena.atlas.io.IndentedWriter;
@@ -45,10 +45,10 @@ public class SqlOpRename
 		Schema oldSchema = op.getSchema();
 		
 		List<String> newNames = new ArrayList<String>();
-		Map<String, XClass> newTypeMap = new HashMap<String, XClass>();
+		Map<String, TypeToken> newTypeMap = new HashMap<String, TypeToken>();
 		
 		for(String oldName : oldSchema.getColumnNames()) {
-			XClass datatype = oldSchema.getColumnType(oldName);
+			TypeToken datatype = oldSchema.getColumnType(oldName);
 			String newName = rename.get(oldName);
 			
 			if(newName == null) {

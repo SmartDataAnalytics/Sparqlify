@@ -9,8 +9,6 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Method;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_UserFunc;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -25,11 +23,11 @@ import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
-import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
 import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
 import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalOr;
+import org.aksw.sparqlify.core.datatypes.SqlExprOps;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
@@ -210,6 +208,8 @@ public class DatatypeSystemTests {
 	@Test
 	public void test() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, RecognitionException {
 
+		Object tmp = SqlExprOps.a;
+		
 		FunctionDeclaration decl;
 
 		DatatypeSystemCustom ds = TestUtils.createDefaultDatatypeSystem();
@@ -239,8 +239,8 @@ public class DatatypeSystemTests {
 		//S_Concat c = S_Concat.create(a, b);
 		//System.out.println(c);
 
-		S_UserFunc c = S_UserFunc.create("http://ex.org/fn/myTestFunc", a, b);
-		System.out.println(c);
+		//S_UserFunc c = S_UserFunc.create("http://ex.org/fn/myTestFunc", a, b);
+		//System.out.println(c);
 
 		
 		// Define a random custom function
@@ -300,8 +300,8 @@ public class DatatypeSystemTests {
 		
 		ExprEvaluatorSql evaluater = new ExprEvaluatorSql(ds, null); //sqlFunctionRegistry);
 		//ds.
-		SqlExpr result = evaluater.eval(c, null);
-		System.out.println("Result: " + result);
+		//SqlExpr result = evaluater.eval(c, null);
+		//System.out.println("Result: " + result);
 		
 		
 		//DatatypeSystem system = TestUtils.createDefaultDatatypeSystem();

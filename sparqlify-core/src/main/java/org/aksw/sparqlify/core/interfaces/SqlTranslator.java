@@ -21,7 +21,7 @@ public interface SqlTranslator {
 	 * @return
 	 */
 	// TODO Once the new method is known to work, remove this method, and clean up all things that break because of this.
-	Expr translateSql(Expr sparqlExpr, Map<Var, Expr> binding);
+	//Expr translateSql(Expr sparqlExpr, Map<Var, Expr> binding);
 	
 	
 	SqlExpr translate(Expr sparqlExpr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap);

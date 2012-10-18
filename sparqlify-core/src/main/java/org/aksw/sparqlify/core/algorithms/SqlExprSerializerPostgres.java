@@ -3,6 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.Calendar;
 
 import org.aksw.commons.factory.Factory1;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.postgis.PGgeometry;
 
@@ -15,39 +16,40 @@ interface DatatypeToString
 
 
 public class SqlExprSerializerPostgres
-extends SqlExprSerializerDefault
+	extends SqlExprSerializerDefault
 {
 
-public SqlExprSerializerPostgres(DatatypeAssigner datatypeAssigner) {
-	super(datatypeAssigner, new DatatypeToStringPostgres());
-}
-
-
-
-
-public String serializeConstant(Object value, SqlDatatype datatype) {
-	if(value == null) {
-		//String cast = "::" + datatypeSerializer.asString(datatype);
-		
-		Factory1<String> caster = datatypeSerializer.asString(datatype);
-		
-		return caster.create("NULL");
-	} else if(value instanceof String) {
-		return SQLUtils.quoteStr(value.toString()); 
-	} else if(value instanceof Number) {
-		return value.toString();
-	} else if(value instanceof Calendar) {
-		java.sql.Timestamp sqlDateTime = new java.sql.Timestamp(((Calendar)value).getTime().getTime());
-		return SQLUtils.quoteStr(sqlDateTime.toString());
-	} else if (value instanceof Boolean) {
-		return value.toString();
-	} else if (value instanceof PGgeometry) {
-		//return "'SRID=4326;" + value.toString() + "'::geometry";
-		return "'SRID=4326;" + value.toString() + "'";
-	} else {
-		throw new RuntimeException("Don't know how to serialize " + value + " to an SQL string");
+	public SqlExprSerializerPostgres() {
+		super(new DatatypeToStringPostgres());
 	}
-}
+	
+	
+	
+	
+	public String serializeConstant(Object value, SqlDatatype datatype) {
+		if(value == null) {
+			//String cast = "::" + datatypeSerializer.asString(datatype);
+			
+			Factory1<String> caster = datatypeSerializer.asString(datatype);
+			
+			return caster.create("NULL");
+		} else if(value instanceof String) {
+			return SQLUtils.quoteStr(value.toString()); 
+		} else if(value instanceof Number) {
+			return value.toString();
+		} else if(value instanceof Calendar) {
+			java.sql.Timestamp sqlDateTime = new java.sql.Timestamp(((Calendar)value).getTime().getTime());
+			return SQLUtils.quoteStr(sqlDateTime.toString());
+		} else if (value instanceof Boolean) {
+			return value.toString();
+		} else if (value instanceof PGgeometry) {
+			//return "'SRID=4326;" + value.toString() + "'::geometry";
+			return "'SRID=4326;" + value.toString() + "'";
+		} else {
+			throw new RuntimeException("Don't know how to serialize " + value + " to an SQL string");
+		}
+	}
+
 
 
 
