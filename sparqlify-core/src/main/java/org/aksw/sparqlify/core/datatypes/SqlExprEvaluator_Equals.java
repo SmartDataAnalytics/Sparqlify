@@ -70,6 +70,7 @@ public class SqlExprEvaluator_Equals
 			return S_Constant.TYPE_ERROR;
 		}
 		
+		SqlExpr result;
 		
 		System.err.println("TODO: Check datatypes properly");
 		if(a.getDatatype().equals(b.getDatatype())) {
@@ -78,10 +79,11 @@ public class SqlExprEvaluator_Equals
 
 			//SqlExpr result = new S_Method(x, Arrays.asList(a, b));
 			//return result;
-			S_Serialize result = new S_Serialize(TypeToken.Boolean, "=", Arrays.asList(a, b), serializer);
+			result = new S_Serialize(TypeToken.Boolean, "=", Arrays.asList(a, b), serializer);
+		} else {
+			result = S_Constant.TYPE_ERROR;
 		}
 		
-		SqlExpr result = S_Constant.TYPE_ERROR;
 		return result;
 		
 		// TODO Rule out incompatible datatype combinations

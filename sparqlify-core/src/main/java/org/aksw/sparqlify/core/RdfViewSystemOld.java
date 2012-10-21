@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import javax.sql.DataSource;
 
 import mapping.RdfViewDatabase;
+import mapping.SparqlifyConstants;
 
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.MultiMaps;
@@ -25,8 +26,8 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfUnionViewPattern;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
@@ -76,7 +77,10 @@ import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 
+import functions.PlainLiteral;
 import functions.RdfTerm;
+import functions.TypedLiteral;
+import functions.Uri;
 import functions.UrlDecode;
 import functions.UrlEncode;
 
@@ -235,8 +239,13 @@ public class RdfViewSystemOld
 	private static final Logger logger = LoggerFactory.getLogger(RdfViewSystemOld.class);
 
 	public static void initSparqlifyFunctions() {
-		FunctionRegistry.get().put("http://aksw.org/sparqlify/rdfTerm", RdfTerm.class);
+		FunctionRegistry.get().put(SparqlifyConstants.rdfTermLabel, RdfTerm.class);
 
+		FunctionRegistry.get().put(SparqlifyConstants.uriLabel, Uri.class);
+		FunctionRegistry.get().put(SparqlifyConstants.plainLiteralLabel, PlainLiteral.class);
+		FunctionRegistry.get().put(SparqlifyConstants.typedLiteralLabel, TypedLiteral.class);
+
+		
 		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlDecode", UrlDecode.class);
 
 		// Jena does not yet seem to have this strangely named encode_for_uri function

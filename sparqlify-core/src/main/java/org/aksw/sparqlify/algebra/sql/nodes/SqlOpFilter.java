@@ -36,7 +36,8 @@ public class SqlOpFilter
 	
 	
 	public static SqlOpFilter create(SqlOp op, List<SqlExpr> exprs) {
-		return new SqlOpFilter(op.getSchema(), op, exprs);
+		SqlOpFilter result = new SqlOpFilter(op.getSchema(), op, exprs); 
+		return result;
 	}
 	
 	@Override

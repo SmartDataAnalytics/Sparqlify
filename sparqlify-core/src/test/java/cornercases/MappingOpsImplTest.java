@@ -13,6 +13,7 @@ import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
@@ -54,6 +55,8 @@ public class MappingOpsImplTest {
 	@Test
 	public void creationTest() throws RecognitionException, SQLException, IOException {
 
+		RdfViewSystemOld.initSparqlifyFunctions();
+		
 		
 		DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
 		SqlTranslator sqlTranslator = new SqlTranslatorImpl(datatypeSystem);
@@ -79,55 +82,56 @@ public class MappingOpsImplTest {
 		
 
 		
-		
-		Mapping m1 = personView.getMapping();
-		
-		
-		VarBinding binding = new VarBinding();
-		ViewInstance vi = new ViewInstance(personView, binding);
-
-		//DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(vd.getDatatypeSystem());
-		
-		
-		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
-		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm(datatypeSystem);
-		
-		MappingOps ops = new MappingOpsImpl(exprTransformer, sqlTranslator, exprNormalizer);
-		
-		Mapping m2 = ops.join(m1, m1);
-		Mapping m3 = ops.join(m2, m1);
-		Mapping m4 = ops.union(Arrays.asList(m1, m3));
-		
-		Mapping mTest = m4;
-		//System.out.println(m2);
-		
-		System.out.println(mTest.getSqlOp());
-		
-		SqlExprColumn x;
-		
-//		 Context ctx = new InitialContext();
-//		 ctx.bind("jdbc/dsName", ds);		
-
-		ExprSqlBridge b;
-
-		System.out.println(personView.getMapping().getSqlOp().getSchema());
-		
-		SqlOp block = SqlOpSelectBlockCollectorImpl._makeSelect(mTest.getSqlOp());
-		System.out.println(block);
-		
-		
-		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres();//null /*da*/);
-		
-		SqlOpSerializer serializer = new SqlOpSerializerImpl(exprSerializer);
-		
-		String sqlQueryString = serializer.serialize(block);
+//		
+//		Mapping m1 = personView.getMapping();
+//		
+//		
+//		VarBinding binding = new VarBinding();
+//		ViewInstance vi = new ViewInstance(personView, binding);
+//
+//		//DatatypeAssigner da = DatatypeAssignerMap.createDefaultAssignments(vd.getDatatypeSystem());
+//		
+//		
+//		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
+//		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm(datatypeSystem);
+//		
+//
+//		MappingOps ops = new MappingOpsImpl(exprTransformer, sqlTranslator, exprNormalizer);
+//		
+//		Mapping m2 = ops.join(m1, m1);
+//		Mapping m3 = ops.join(m2, m1);
+//		Mapping m4 = ops.union(Arrays.asList(m1, m3));
+//		
+//		Mapping mTest = m4;
+//		//System.out.println(m2);
+//		
+//		System.out.println(mTest.getSqlOp());
+//		
+//		SqlExprColumn x;
+//		
+////		 Context ctx = new InitialContext();
+////		 ctx.bind("jdbc/dsName", ds);		
+//
+//		ExprSqlBridge b;
+//
+//		System.out.println(personView.getMapping().getSqlOp().getSchema());
+//		
+//		SqlOp block = SqlOpSelectBlockCollectorImpl._makeSelect(mTest.getSqlOp());
+//		System.out.println(block);
+//		
+//		
+//		SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres();//null /*da*/);
+//		
+//		SqlOpSerializer serializer = new SqlOpSerializerImpl(exprSerializer);
+//		
+//		String sqlQueryString = serializer.serialize(block);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
 		SparqlSqlRewriter rewriter = TestUtils.createTestRewriter(candidateViewSelector, datatypeSystem);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 
 
-		System.out.println(sqlQueryString);
+		//System.out.println(sqlQueryString);
 		
 		
 		QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o }");

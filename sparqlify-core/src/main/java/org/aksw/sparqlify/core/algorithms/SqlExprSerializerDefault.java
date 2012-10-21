@@ -6,6 +6,7 @@ import java.util.List;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
@@ -70,6 +71,12 @@ public abstract class SqlExprSerializerDefault
 	*/
 	
 	
+	public String _serialize(S_Serialize expr) {
+		List<String> argStrs = serializeArgs(expr.getArgs());
+		
+		String result = expr.getSerializer().serialize(argStrs);
+		return result;
+	}
 	
 	
 		

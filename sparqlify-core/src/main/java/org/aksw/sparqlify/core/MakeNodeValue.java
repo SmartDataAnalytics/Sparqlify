@@ -7,9 +7,11 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.aksw.commons.util.StreamUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.apache.commons.lang.NotImplementedException;
+import org.h2.jdbc.JdbcClob;
 import org.postgis.PGgeometry;
 import org.postgresql.util.PGobject;
 
@@ -70,6 +72,18 @@ public class MakeNodeValue
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(o);
 		return NodeValue.makeNodeDate(cal);		
+	}
+	
+	public static NodeValue _makeNodeValue(JdbcClob o) {
+		String str;
+		try {
+			str = StreamUtils.toString(o.getAsciiStream());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+		NodeValue result = NodeValue.makeString(str);
+		return result;
 	}
 	
 	public static NodeValue _makeNodeValue(PGobject o) {
