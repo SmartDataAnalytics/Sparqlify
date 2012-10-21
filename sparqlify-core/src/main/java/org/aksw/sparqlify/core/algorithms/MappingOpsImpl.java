@@ -1023,7 +1023,7 @@ public class MappingOpsImpl
 				TypeToken datatype = unionTypeMap.get(columnName);
 				
 				//NodeValue nullValue = new E_SqlNodeValue(NodeValue.nvNothing, datatype);
-				S_Constant nullValue = new S_Constant(null, datatype);
+				S_Constant nullValue = new S_Constant(datatype, null);
 				
 				unionMemberProjection.put(columnName, nullValue);
 			}

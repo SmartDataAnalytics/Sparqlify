@@ -23,5 +23,6 @@ dateTime	http://www.w3.org/2001/XMLSchema#dateTime
 timestamp	http://www.w3.org/2001/XMLSchema#dataTime
 string	http://www.w3.org/2001/XMLSchema#string
 
-#geometry
-#geography
+geometry http://sparqlify.org/resource/type/geometry
+geography http://sparqlify.org/resource/type/geography
+

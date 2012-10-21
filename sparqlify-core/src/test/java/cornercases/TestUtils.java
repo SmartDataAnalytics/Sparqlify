@@ -16,6 +16,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.TypeTokenPostgis;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
@@ -89,8 +90,12 @@ public class TestUtils {
 			ds.registerCoercion(x);
 		}
 		
+		/*
+		 * Methods that can only be rewritten
+		 */
+		
 		{
-			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.Int, TypeToken.Int));
+			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeTokenPostgis.Geometry, TypeTokenPostgis.Geometry));
 			
 			XMethod x = XMethodImpl.create(ds, "ST_INTERSECTS", signature);
 			ds.registerSqlFunction("http://ex.org/fn/intersects", x);
@@ -112,7 +117,7 @@ public class TestUtils {
 		}
 		
 		{
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals();
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals(ds);
 			ds.createSparqlFunction("=", evaluator);
 		}
 		
@@ -194,7 +199,16 @@ public class TestUtils {
 		conn.createStatement().executeUpdate("CREATE TABLE person (id INT, name VARCHAR)");
 		conn.createStatement().executeUpdate("CREATE TABLE dept (id INT, name VARCHAR)");
 		conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT)");
+
+		conn.createStatement().executeUpdate("INSERT INTO person VALUES (1, 'Anne')");
+		conn.createStatement().executeUpdate("INSERT INTO person VALUES (2, 'Bob')");
+
+		conn.createStatement().executeUpdate("INSERT INTO dept VALUES (5, 'Research')");
+		conn.createStatement().executeUpdate("INSERT INTO dept VALUES (6, 'Marketing')");
 		
+		conn.createStatement().executeUpdate("INSERT INTO person_to_dept VALUES (1, 5)");
+		conn.createStatement().executeUpdate("INSERT INTO person_to_dept VALUES (2, 6)");
+
 		return ds;
 	}
 

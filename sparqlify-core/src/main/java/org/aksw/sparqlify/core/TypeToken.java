@@ -39,7 +39,8 @@ public class TypeToken
 
 	public static final TypeToken TypeError = alloc("type_error");
 	public static final TypeToken Special = alloc("special");
-
+	
+	
 	private String name;
 	
 	public TypeToken(String name) {

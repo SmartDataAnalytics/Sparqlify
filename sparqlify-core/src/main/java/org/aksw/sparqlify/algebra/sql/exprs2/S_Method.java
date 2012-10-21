@@ -16,7 +16,7 @@ public class S_Method
 {
 	private XMethod method;
 	//private List<SqlExpr> args;
-	
+		
 	public S_Method(XMethod method, List<SqlExpr> args) {
 		super(method.getSignature().getReturnType().getToken(), method.getName(), args);
 		

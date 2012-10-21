@@ -3,15 +3,14 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.Calendar;
 
 import org.aksw.commons.factory.Factory1;
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.TypeToken;
 import org.postgis.PGgeometry;
 
 import com.hp.hpl.jena.sdb.sql.SQLUtils;
 
 interface DatatypeToString
 {
-	public Factory1<String> asString(SqlDatatype datatype);
+	public Factory1<String> asString(TypeToken datatype);
 }
 
 
@@ -26,7 +25,13 @@ public class SqlExprSerializerPostgres
 	
 	
 	
-	public String serializeConstant(Object value, SqlDatatype datatype) {
+	public String serializeConstant(Object value, TypeToken datatype) {
+		
+		if(datatype.equals(TypeToken.TypeError)) {
+			return "FALSE";
+		}
+		
+		
 		if(value == null) {
 			//String cast = "::" + datatypeSerializer.asString(datatype);
 			
@@ -59,29 +64,29 @@ public class SqlExprSerializerPostgres
 class DatatypeToStringMySql
 	implements DatatypeToString
 {
-	public String asString(SqlDatatype datatype)
+	public String asString(TokenType datatype)
 	{
 		String result = (String)MultiMethod.invoke(this, "_asString", datatype);
 		return result;		
 	}
 
-	public String _asString(SqlDatatypeDateTime datatype) {
+	public String _asString(TokenTypeDateTime datatype) {
 		return "datetime";
 	}
 
-	public String _asString(SqlDatatypeReal datatype) {
+	public String _asString(TokenTypeReal datatype) {
 		return "decimal";
 	}
 
-	public String _asString(SqlDatatypeInteger datatype) {
+	public String _asString(TokenTypeInteger datatype) {
 		return "decimal";
 	}
 	
-	public String _asString(SqlDatatypeString datatype) {
+	public String _asString(TokenTypeString datatype) {
 		return "char";
 	}
 	
-	public String _asString(SqlDatatypeBigInteger datatype) {
+	public String _asString(TokenTypeBigInteger datatype) {
 		return "decimal";
 	}	
 
@@ -101,7 +106,7 @@ class ExprSerializerMySql
 		super(new DatatypeToStringMySql());
 	}
 	
-	public String serializeConstant(Object value, SqlDatatype datatype) {
+	public String serializeConstant(Object value, TokenType datatype) {
 
 		if(value == null) {			
 			return "CAST(NULL AS " + datatypeSerializer.asString(datatype) + ")";

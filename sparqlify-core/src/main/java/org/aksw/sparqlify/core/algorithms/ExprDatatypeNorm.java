@@ -9,10 +9,12 @@ import mapping.ExprCopy;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 
 /**
@@ -84,11 +86,29 @@ public class ExprDatatypeNorm {
 
 	public Expr normalize(NodeValue expr, Map<String, TypeToken> typeMap) {
 
+		Expr result = null;
+
 		// TODO Ask the datatype system for the appropriate SQL type
 		// (Do we need physical SQL type (varchar(10)) or logical one (text)?)
-		String datatypeUri = expr.asNode().getLiteralDatatypeURI();
+		Node node = expr.asNode();
+		if(node.isLiteral()) {
 		
-		Expr result = NodeValue.makeString(datatypeUri);
+			String datatypeUri = node.getLiteralDatatypeURI();
+		
+			if(datatypeUri == null) {
+				result = NodeValue.makeString(XSD.xstring.getURI());
+			} else {
+				result = NodeValue.makeString(datatypeUri);
+			}
+		} else if(node.isURI()) {
+			// FIXME Make this a constant
+			result = NodeValue.makeString(XSD.xstring.getURI());
+		}
+		
+		if(result == null) {
+			throw new RuntimeException("Null datatype for: " + expr);
+		}
+		
 		return result;
 		
 

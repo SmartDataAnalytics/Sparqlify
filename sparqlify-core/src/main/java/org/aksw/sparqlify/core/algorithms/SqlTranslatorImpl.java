@@ -7,13 +7,11 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Method;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
-import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.expr.util.ExprUtils;
@@ -170,7 +168,7 @@ public class SqlTranslatorImpl
 		}
 
 		
-		List<TypeToken> argTypes = getTypes(evaledArgs);
+//		List<TypeToken> argTypes = getTypes(evaledArgs);
 		
 		// There must be a function registered for the argument types
 		String functionId = ExprUtils.getFunctionId(fn);
@@ -193,30 +191,33 @@ public class SqlTranslatorImpl
 			}
 		}
 		
+		throw new RuntimeException("No evaluator found for " + fn);
 
 		// If there was no evaluator, or if the evaluator returned null, continue here.
 		
-		// If one of the arguments is a type error, we must return a type error.
-		if(containsTypeError(evaledArgs)) {
-			return S_Constant.TYPE_ERROR;
-		}
-		
-		SqlMethodCandidate castMethod = datatypeSystem.lookupMethod(functionId, argTypes);
-		
-		if(castMethod == null) {
-			//throw new RuntimeException("No method found for " + fn);
-			logger.debug("No method found for " + fn);
-			
-			return S_Constant.TYPE_ERROR;
-		}
-		
-		// TODO: Invoke the SQL method's invocable if it exists and all arguments are constants
-		
-		result = S_Method.createOrEvaluate(castMethod, evaledArgs);
-
-		logger.debug("[Result] " + result);
-		
-		return result;
+//		// TODO: New approach: There must always be an evaluator
+//		
+//		// If one of the arguments is a type error, we must return a type error.
+//		if(containsTypeError(evaledArgs)) {
+//			return S_Constant.TYPE_ERROR;
+//		}
+//		
+//		SqlMethodCandidate castMethod = datatypeSystem.lookupMethod(functionId, argTypes);
+//		
+//		if(castMethod == null) {
+//			//throw new RuntimeException("No method found for " + fn);
+//			logger.debug("No method found for " + fn);
+//			
+//			return S_Constant.TYPE_ERROR;
+//		}
+//		
+//		// TODO: Invoke the SQL method's invocable if it exists and all arguments are constants
+//		
+//		result = S_Method.createOrEvaluate(castMethod, evaledArgs);
+//
+//		logger.debug("[Result] " + result);
+//		
+//		return result;
 	}
 	
 	
@@ -233,15 +234,27 @@ public class SqlTranslatorImpl
 	}
 	
 	
+	
+	
+	
 	public SqlExpr translate(ExprVar expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
-		String varName = expr.getVarName();
-		TypeToken datatype = typeMap.get(varName);
+		
+		SqlExpr result;
+		if(binding != null) {
+			Var var = expr.asVar();
+			Expr definition = binding.get(var);
+			result = translate(definition, null, typeMap);
+		} else {
+			String varName = expr.getVarName();
+			TypeToken datatype = typeMap.get(varName);
 
-		if(datatype == null) {
-			throw new RuntimeException("No datatype found for " + varName);
+			if(datatype == null) {
+				throw new RuntimeException("No datatype found for " + varName);
+			}
+			
+			result = new S_ColumnRef(datatype, varName); 
 		}
 		
-		SqlExpr result = new S_ColumnRef(datatype, varName);
 		return result;
 	}
 	
@@ -256,6 +269,11 @@ public class SqlTranslatorImpl
 	 * -> After makes more sense: Then we have constant folder arguments 
 	 */
 	public SqlExpr translate(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
+		
+		//assert expr != null : "Null pointer exception";
+		if(expr == null) {
+			throw new NullPointerException();
+		}
 		
 		//System.out.println(expr);
 		

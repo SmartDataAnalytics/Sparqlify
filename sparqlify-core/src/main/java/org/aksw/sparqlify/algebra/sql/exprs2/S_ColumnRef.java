@@ -20,6 +20,14 @@ public class S_ColumnRef
 		this.relationAlias = relationAlias;
 	}
 
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public String getRelationAlias() {
+		return relationAlias;
+	}
+
 	@Override
 	public void asString(IndentedWriter writer) {
 		writer.print(getVarName());

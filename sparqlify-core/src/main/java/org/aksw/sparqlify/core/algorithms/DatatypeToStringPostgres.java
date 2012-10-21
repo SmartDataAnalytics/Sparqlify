@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aksw.commons.factory.Factory1;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.TypeToken;
 
 class DatatypeToStringPostgres
 	implements DatatypeToString
@@ -31,7 +31,7 @@ class DatatypeToStringPostgres
 	/**
 	 * Performs a type cast
 	 */
-	public Factory1<String> asString(SqlDatatype datatype)
+	public Factory1<String> asString(TypeToken datatype)
 	{
 		/*
 		if(datatype.getName().equals("geography")) {
@@ -72,7 +72,7 @@ class DatatypeToStringPostgres
 	 * @param datatype
 	 * @return
 	 */
-	public Factory1<String> formatString(SqlDatatype datatype)
+	public Factory1<String> formatString(TypeToken datatype)
 	{
 		if(datatype.getName().equals("geometry") || datatype.getName().equals("geography")) {
 			return new Factory1<String>() {

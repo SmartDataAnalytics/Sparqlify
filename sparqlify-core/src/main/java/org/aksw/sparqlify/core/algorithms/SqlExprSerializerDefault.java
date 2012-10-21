@@ -4,31 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_SqlColumnRef;
-import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 
-import com.google.common.base.Joiner;
-import com.hp.hpl.jena.sparql.expr.E_Add;
-import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.E_Cast;
-import com.hp.hpl.jena.sparql.expr.E_Divide;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
-import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
-import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
-import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
-import com.hp.hpl.jena.sparql.expr.E_Multiply;
-import com.hp.hpl.jena.sparql.expr.E_Regex;
-import com.hp.hpl.jena.sparql.expr.E_StrConcat;
-import com.hp.hpl.jena.sparql.expr.E_Subtract;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 public abstract class SqlExprSerializerDefault
@@ -157,13 +139,12 @@ public abstract class SqlExprSerializerDefault
 
 	
 		
-	/*
-	public static String _serialize(SqlConstant expr) {
+	public String _serialize(S_Constant expr) {
 		return serializeConstant(expr.getValue(), expr.getDatatype());
-	}*/
+	}
 	
 	
-	public abstract String serializeConstant(Object value, SqlDatatype datatype);
+	public abstract String serializeConstant(Object value, TypeToken datatype);
 
 	
 	/*
@@ -293,11 +274,12 @@ public abstract class SqlExprSerializerDefault
 //		return result;
 //	}
 //	
-//	public String _serialize(E_SqlColumnRef expr) {
-//		//System.out.println("ColumnRef: " + expr);
-//		//System.err.println("Should not use variables but rather something like E_ColumnRef.");
-//		return expr.getAliasName() + ".\"" + expr.getColumnName() + "\"";
-//	}
+	public String _serialize(S_ColumnRef expr) {
+		//System.out.println("ColumnRef: " + expr);
+		//System.err.println("Should not use variables but rather something like E_ColumnRef.");
+		String result = expr.getRelationAlias() + ".\"" + expr.getColumnName() + "\"";
+		return result;
+	}
 //	
 //
 //	public String _serialize(ExprVar expr) {

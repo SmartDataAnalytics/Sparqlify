@@ -256,6 +256,7 @@ public class SqlOpSerializerImpl
 	    	}
 	    	
 	    	if(!strs.isEmpty()) {
+	    		writer.println();
 	    		writer.print("WHERE ");
 	    		//selectionStr += " WHERE ";
 	    	}
