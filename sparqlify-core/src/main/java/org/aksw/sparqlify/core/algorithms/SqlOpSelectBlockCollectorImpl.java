@@ -172,7 +172,7 @@ public class SqlOpSelectBlockCollectorImpl
 		for(String columnName : opTable.getSchema().getColumnNames())  {
 
 			TypeToken datatype = result.getSchema().getColumnType(columnName);			
-			result.getProjection().put(columnName, new S_ColumnRef(datatype, opTable.getAliasName(), columnName)); //ExprVar(aliasName + "." + columnName));
+			result.getProjection().put(columnName, new S_ColumnRef(datatype, columnName, opTable.getAliasName())); //ExprVar(aliasName + "." + columnName));
 
 			//result.getProjection().put(columnName, new ExprVar(opTable.getAliasName() + "." + columnName));
 		}
