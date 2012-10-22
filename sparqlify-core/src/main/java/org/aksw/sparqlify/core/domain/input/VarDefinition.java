@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
-import org.openjena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -59,6 +59,25 @@ public class VarDefinition {
 		return varToExprs.get(viewVar);
 	}
 	
+	
+	public VarDefinition copyExpandConstants() {
+		Multimap<Var, RestrictedExpr> resultMap = HashMultimap.create();
+		
+		for(Entry<Var, RestrictedExpr> entry : varToExprs.entries()) {
+			Var var = entry.getKey();
+			
+			RestrictedExpr restExpr = entry.getValue();
+			Expr expr = restExpr.getExpr();
+			
+			Expr expandedExpr = ConstantExpander.transform(expr);
+			RestrictedExpr finalExpr = new RestrictedExpr(expandedExpr, restExpr.getRestrictions());
+			
+			resultMap.put(var, finalExpr);
+		}
+		
+		VarDefinition result = new VarDefinition(resultMap);
+		return result;
+	}
 	
 	
 	public VarDefinition copyRenameVars(Map<Var, Var> oldToNew) {

@@ -134,7 +134,7 @@ public class MappingOpsImplTest {
 		//System.out.println(sqlQueryString);
 		
 		
-		QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o }");
+		QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . Filter(?s = <http://ex.org/person/1>) . }");
 		ResultSet rs = qe.execSelect();
 		String rsStr = ResultSetFormatter.asText(rs);
 		System.out.println(rsStr);

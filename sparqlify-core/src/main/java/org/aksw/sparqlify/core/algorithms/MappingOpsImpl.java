@@ -14,7 +14,6 @@ import java.util.Set;
 import mapping.ExprCommonFactor;
 
 import org.aksw.commons.collections.CartesianProduct;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
@@ -36,7 +35,6 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.restriction.RestrictionSet;
-import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,7 +207,7 @@ public class MappingOpsImpl
 	 * 
 	 * 
 	 */
-	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
+	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, ExprEvaluator exprTransformer, SqlTranslator sqlTranslator) {
 		
 		
 		Set<Var> conditionVars = condition.getVarsMentioned();
@@ -253,7 +251,9 @@ public class MappingOpsImpl
 				assignment.put(var, expr);
 			}
 			
-			SqlExpr sqlExpr = sqlTranslator.translate(condition, assignment, typeMap);
+			Expr expr = exprTransformer.eval(condition, assignment);
+			
+			SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
 			
 			if(sqlExpr.equals(S_Constant.TRUE)) {
 				return S_Constant.TRUE;
@@ -550,8 +550,11 @@ public class MappingOpsImpl
 			}
 		}
 
-		VarDefinition varDefinition = new VarDefinition(newVarDefMap);
+		VarDefinition tmpVarDefinition = new VarDefinition(newVarDefMap);
 
+		
+		VarDefinition varDefinition = tmpVarDefinition.copyExpandConstants();
+		
 		Mapping result = null;
 		SqlOp op = viewInstance.getViewDefinition().getMapping().getSqlOp();
 		if(ands == null) { // Unconstrained
@@ -780,7 +783,7 @@ public class MappingOpsImpl
 			// Replace any variables in the expression with the variable definitions
 			
 			
-			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap,sqlTranslator);
+			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap, exprTransformer, sqlTranslator);
 			if(sqlExpr.equals(S_Constant.TRUE)) {
 				continue;
 			}
@@ -916,7 +919,13 @@ public class MappingOpsImpl
 
 				int i = 0;
 				for(ArgExpr argExpr : argExprs) {
-					exprs.add(argExpr.getExpr());
+					
+					Expr expr = argExpr.getExpr();
+					
+					// // FIXME Constant expansion should probably already be done in the var definition!
+					//Expr expanded = ConstantExpander.transform(expr);
+					
+					exprs.add(expr);
 					exprToOp.put(i, argExpr.getIndex());
 					
 					++i;

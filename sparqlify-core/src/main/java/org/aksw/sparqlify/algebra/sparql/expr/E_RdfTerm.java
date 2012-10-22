@@ -70,6 +70,9 @@ public class E_RdfTerm
     @Override
     public boolean isConstant() 
     {
+    	return false;
+    	
+    	/*
     	for(Expr expr : super.getArgs()) {
     		if(!expr.isConstant()) {
     			return false;
@@ -77,6 +80,7 @@ public class E_RdfTerm
     	}
     	
     	return true;
+    	*/
     }
     
     @Override

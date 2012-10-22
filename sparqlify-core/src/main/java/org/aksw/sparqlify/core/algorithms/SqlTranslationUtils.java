@@ -267,7 +267,7 @@ public class SqlTranslationUtils {
 		
 		if(expr.isConstant()) {
 			
-			result = expandConstant(expr.getConstant());
+			result = expandConstant(expr.getConstant().asNode());
 			
 		}
 		
