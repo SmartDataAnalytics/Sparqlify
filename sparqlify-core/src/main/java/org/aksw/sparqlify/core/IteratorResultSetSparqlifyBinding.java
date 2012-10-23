@@ -30,16 +30,25 @@ public class IteratorResultSetSparqlifyBinding
 	private static final Logger logger = LoggerFactory.getLogger(IteratorResultSetSparqlifyBinding.class);
 	
 	private ResultSet rs;
-	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
 	private Multimap<Var, VarDef> sparqlVarMap;
 	
+	private long nextRowId;
+	private Var rowIdVar;
 	
 	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, VarDef> sparqlVarMap)
 	{
+		this(rs, sparqlVarMap, 0, null);
+	}
+
+
+	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, VarDef> sparqlVarMap, long nextRowId, String rowIdName)
+	{
 		this.rs = rs;
 		this.sparqlVarMap = sparqlVarMap;
+		this.nextRowId = nextRowId;
+		this.rowIdVar = rowIdName == null ? null : Var.alloc(rowIdName);
 	}
-	
+
 
 	@Override
 	protected Binding prefetch() throws Exception {
@@ -82,6 +91,17 @@ public class IteratorResultSetSparqlifyBinding
 				binding.add(colVar, node);
 			}
 		}
+		
+		
+		// Additional "virtual" columns
+		// FIXME Ideally this should be part of a class "ResultSetExtend" that extends a result set with additional columns
+		if(rowIdVar != null) {
+			long rowId = nextRowId++;
+			Node node = NodeValue.makeInteger(rowId).asNode();
+			
+			binding.add(rowIdVar, node);
+		}
+
 		
 		
 		boolean debugMode = true;
@@ -149,7 +169,8 @@ public class IteratorResultSetSparqlifyBinding
 				result.add((Var)entry.getKey(), resultValue);
 			}
 		}
-
+	
+		
 		return result;
 	}
 	

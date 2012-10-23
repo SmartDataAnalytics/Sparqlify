@@ -225,7 +225,7 @@ public class CsvMapperCliMain {
 			sparqlVarMap.put(entry.getKey(), new VarDef(e));
 		}
 		
-		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);
+		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap, 1, "rowId");
 		ResultSetSparqlify rss = new ResultSetSparqlify(itBinding, vars, 0);
 		
 
