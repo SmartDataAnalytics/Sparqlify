@@ -10,6 +10,8 @@ import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.util.MapReader;
+import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -18,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import cornercases.TestUtils;
-import cornercases.ViewDefinitionFactory;
 
 public class Example {
 	
@@ -42,14 +42,14 @@ public class Example {
 		
 		System.out.println(config.getPrefixMapping());
 		
-		DataSource dataSource = TestUtils.createTestDatabase(); 
+		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
 		
-		ViewDefinitionFactory vdFactory = TestUtils.createViewDefinitionFactory(conn, typeAlias);
+		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
 		String testView = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) From person";
 		ViewDefinition vd = vdFactory.create(testView);

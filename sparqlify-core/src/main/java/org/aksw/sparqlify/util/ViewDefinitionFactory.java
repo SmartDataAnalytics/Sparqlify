@@ -1,4 +1,4 @@
-package cornercases;
+package org.aksw.sparqlify.util;
 
 import java.util.List;
 

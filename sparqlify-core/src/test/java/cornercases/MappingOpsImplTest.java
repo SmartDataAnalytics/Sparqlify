@@ -36,6 +36,8 @@ import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.util.MapReader;
+import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -58,18 +60,18 @@ public class MappingOpsImplTest {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
-		DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
+		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		SqlTranslator sqlTranslator = new SqlTranslatorImpl(datatypeSystem);
 
 		
-		DataSource dataSource = TestUtils.createTestDatabase(); 
+		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
 		
-		ViewDefinitionFactory vdf = TestUtils.createViewDefinitionFactory(conn, typeAlias);
+		ViewDefinitionFactory vdf = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
 		ViewDefinition personView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) From person");
 		ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
@@ -127,7 +129,7 @@ public class MappingOpsImplTest {
 //		String sqlQueryString = serializer.serialize(block);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
-		SparqlSqlRewriter rewriter = TestUtils.createTestRewriter(candidateViewSelector, datatypeSystem);
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, datatypeSystem);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 
 

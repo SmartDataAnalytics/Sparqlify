@@ -12,6 +12,8 @@ import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.util.MapReader;
+import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -25,14 +27,14 @@ public class CandidateViewSelectionTests {
 	@Test
 	public void creationTest() throws RecognitionException, SQLException, IOException {
 
-		DataSource dataSource = TestUtils.createTestDatabase(); 
+		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
 		
-		ViewDefinitionFactory vdFactory = TestUtils.createViewDefinitionFactory(conn, typeAlias);
+		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
 		String testView = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) From person";
 		ViewDefinition coreVd = vdFactory.create(testView);

@@ -1,4 +1,4 @@
-package cornercases;
+package org.aksw.sparqlify.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,15 +46,15 @@ import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.util.MapReader;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(TestUtils.class);
+public class SparqlifyUtils {
+
+	private static final Logger logger = LoggerFactory.getLogger(SparqlifyUtils.class);
 
 	public static DatatypeSystemCustom createDefaultDatatypeSystem() throws IOException {
 		
@@ -62,7 +62,7 @@ public class TestUtils {
 		Map<String, String> typeNameToUri = MapReader.readFile(new File("src/main/resources/type-uri.tsv"));
 		Map<String, String> typeHierarchy = MapReader.readFile(new File("src/main/resources/type-hierarchy.default.tsv"));
 		
-		DatatypeSystemCustom result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, TestUtils.logger);
+		DatatypeSystemCustom result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, SparqlifyUtils.logger);
 	
 		initDatatypeSystem(result);
 		
@@ -214,7 +214,7 @@ public class TestUtils {
 
 
 	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias) throws IOException {
-		DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
+		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		
 		ViewDefinitionFactory result = createViewDefinitionFactory(conn, datatypeSystem, typeAlias);
 		

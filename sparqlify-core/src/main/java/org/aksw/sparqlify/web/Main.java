@@ -14,10 +14,16 @@ import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.lang.ConfiguratorRdfViewSystem;
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.core.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.RdfViewSystem;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.SparqlSqlRewriterImpl;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.database.RdfViewSystem2;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -34,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+
 
 public class Main {
 	/**
@@ -179,7 +186,14 @@ public class Main {
 		RdfViewSystemOld.loadDatatypes(conn, system.getViews());
 		conn.close();
 
-		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlifyDs(system, dataSource);
+		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, datatypeSystem);
+
+		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
+
+		
+		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
 		if(maxQueryExecutionTime != null) {
 			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);

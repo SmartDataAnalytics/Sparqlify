@@ -14,13 +14,13 @@ import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.util.MapReader;
+import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.ViewDefinitionFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.Syntax;
 
-import cornercases.TestUtils;
-import cornercases.ViewDefinitionFactory;
 
 
 public class SparqlifyTestFacade {
@@ -65,18 +65,18 @@ public class SparqlifyTestFacade {
 	public static SparqlifyTestFacade createWithTestDb()
 			throws SQLException, IOException
 	{
-		DataSource dataSource = TestUtils.createTestDatabase(); 
+		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
 		
-		ViewDefinitionFactory vdFactory = TestUtils.createViewDefinitionFactory(conn, typeAlias);
+		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
 		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl();
 
-		SparqlSqlRewriter rewriter = TestUtils.createTestRewriter(cvs, vdFactory.getDatatypeSystem());
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, vdFactory.getDatatypeSystem());
 	
 		SparqlifyTestFacade result = new SparqlifyTestFacade(vdFactory, cvs, rewriter);
 			

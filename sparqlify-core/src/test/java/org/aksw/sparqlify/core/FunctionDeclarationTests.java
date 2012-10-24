@@ -13,6 +13,7 @@ import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
 import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
-import cornercases.TestUtils;
 
 /*
 interface SqlStringTransformer
@@ -77,7 +77,7 @@ public class FunctionDeclarationTests {
 		System.out.println(result);
 		*/
 		
-		DatatypeSystem system = TestUtils.createDefaultDatatypeSystem();
+		DatatypeSystem system = SparqlifyUtils.createDefaultDatatypeSystem();
 		//SqlDatatype integer = system.getByName("integer");
 		/*
 		SqlDatatype xfloat = system.getByName("float");

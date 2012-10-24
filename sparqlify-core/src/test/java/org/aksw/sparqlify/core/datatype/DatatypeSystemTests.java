@@ -31,6 +31,7 @@ import org.aksw.sparqlify.core.datatypes.SqlExprOps;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -41,7 +42,6 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
-import cornercases.TestUtils;
 
 
 
@@ -212,7 +212,7 @@ public class DatatypeSystemTests {
 		
 		FunctionDeclaration decl;
 
-		DatatypeSystemCustom ds = TestUtils.createDefaultDatatypeSystem();
+		DatatypeSystemCustom ds = SparqlifyUtils.createDefaultDatatypeSystem();
 
 		{
 			Method m = DefaultCoercions.class.getMethod("toDouble", Integer.class);
