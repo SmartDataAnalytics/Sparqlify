@@ -718,7 +718,7 @@ public class MappingOpsImpl
 	@Override
 	public Mapping slice(Mapping a, Long limit, Long offset) {
 		
-		SqlOpSlice opSlice = SqlOpSlice.create(a.getSqlOp(), limit, offset);
+		SqlOpSlice opSlice = SqlOpSlice.create(a.getSqlOp(), offset, limit);
 		
 		Mapping result = new Mapping(a.getVarDefinition(), opSlice);
 

@@ -303,7 +303,7 @@ public class SqlOpSerializerImpl
     	}
     	
     	
-    	String offsetStr = "";
+    	//String offsetStr = "";
     	if(op.getOffset() != null) {
     		writer.println("OFFSET " + op.getOffset());
     		//offsetStr = " OFFSET " + node.getOffset();
