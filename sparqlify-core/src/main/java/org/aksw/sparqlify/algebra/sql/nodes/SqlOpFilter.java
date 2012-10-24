@@ -3,6 +3,7 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.core.algorithms.SqlExprUtils;
 import org.openjena.atlas.io.IndentedWriter;
 
 public class SqlOpFilter
@@ -50,5 +51,13 @@ public class SqlOpFilter
 		writer.decIndent();
 		
 		writer.print(")");
+	}
+	
+	public boolean isEmpty() {
+		boolean containsFalse = SqlExprUtils.containsFalse(exprs, true);
+		
+		boolean result = containsFalse || subOp.isEmpty();
+		
+		return result;
 	}
 }

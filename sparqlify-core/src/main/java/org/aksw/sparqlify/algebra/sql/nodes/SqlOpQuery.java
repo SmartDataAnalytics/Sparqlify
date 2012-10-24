@@ -9,12 +9,17 @@ public class SqlOpQuery
 	private String aliasName;
 
 	public SqlOpQuery(Schema schema, String queryString) {
-		super(schema);
-		this.queryString = queryString;
+		this(schema, queryString, null);
+		//super(schema);
+		//this.queryString = queryString;
 	}
 
 	public SqlOpQuery(Schema schema, String queryString, String aliasName) {
-		super(schema);
+		this(schema, queryString, aliasName, false);
+	}
+
+	public SqlOpQuery(Schema schema, String queryString, String aliasName, boolean isEmpty) {
+		super(schema, isEmpty);
 		this.queryString = queryString;
 		this.aliasName = aliasName;
 	}

@@ -31,4 +31,15 @@ public class SqlOpUnionN
 		
 		return new SqlOpUnionN(schema, subOps);
 	}
+
+	@Override
+	public boolean isEmpty() {
+		for(SqlOp member : subOps) {
+			if(!member.isEmpty()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }

@@ -13,4 +13,9 @@ public class SqlOpBase1
 	public SqlOp getSubOp() {
 		return subOp;
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		return subOp.isEmpty();
+	}
 }

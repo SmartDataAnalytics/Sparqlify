@@ -15,9 +15,11 @@ public abstract class SqlOpBase
 		return schema;
 	}
 	
-	public boolean isEmpty() {
-		return false;
-	}
+	public abstract boolean isEmpty();
+
+//	public boolean isEmpty() {
+//		return false;
+//	}
 	
 	public void write(IndentedWriter writer) {
 		//writer.println(toString());

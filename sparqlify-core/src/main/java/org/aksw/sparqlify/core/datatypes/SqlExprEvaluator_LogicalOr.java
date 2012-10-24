@@ -1,6 +1,10 @@
 package org.aksw.sparqlify.core.datatypes;
 
+import java.util.Arrays;
+
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.core.TypeToken;
 
 /**
  * 
@@ -15,6 +19,11 @@ public class SqlExprEvaluator_LogicalOr
 	@Override
 	public SqlExpr eval(SqlExpr a, SqlExpr b) {
 		SqlExpr result = SqlExprOps.logicalOr(a, b);
+		if(result == null) {
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("OR");
+			result = new S_Serialize(TypeToken.Boolean, "OR", Arrays.asList(a, b), serializer);
+		}
+		
 		return result;
 	}
 }

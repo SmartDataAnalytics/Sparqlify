@@ -82,4 +82,28 @@ public class SqlOpJoin
 		writer.print(")");
 	}
 
+	@Override
+	public boolean isEmpty() {
+		
+		boolean result;
+		
+		switch(joinType) {
+		case INNER: {
+			boolean a = left.isEmpty();
+			boolean b = right.isEmpty();
+			result = a || b;
+			break;
+		}
+		case LEFT: {
+			result = left.isEmpty();
+			break;
+		}
+		default: {
+			throw new RuntimeException("Should not happen");
+		}
+		}
+		
+		return result;
+	}
+
 }

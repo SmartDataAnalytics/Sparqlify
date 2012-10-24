@@ -11,8 +11,6 @@ import java.util.Set;
 import org.aksw.commons.collections.IterableCollection;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.Pair;
-import org.aksw.sparqlify.core.DatatypeSystemOld;
-import org.aksw.sparqlify.core.SqlDatatype;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -318,4 +316,15 @@ public class ExprUtils {
 		return result;
 		//return new ExprSqlBridge(result);
 	}*/
+	
+	
+	public static boolean containsFalse(Iterable<Expr> exprs) {
+		for(Expr expr : exprs) {
+			if(NodeValue.FALSE.equals(expr)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

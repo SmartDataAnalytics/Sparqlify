@@ -4,7 +4,7 @@ public class SqlOpEmpty
 	extends SqlOpBase0
 {
 	public SqlOpEmpty(Schema schema) {
-		super(schema);
+		super(schema, true);
 	}
 
 	public static SqlOpEmpty create(Schema schema) {

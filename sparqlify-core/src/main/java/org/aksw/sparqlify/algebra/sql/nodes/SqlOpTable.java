@@ -15,12 +15,15 @@ public class SqlOpTable
 	private String aliasName;
 	
 	public SqlOpTable(Schema schema, String tableName) {
-		super(schema);
-		this.tableName = tableName;
+		this(schema, tableName, null);
 	}
 
 	public SqlOpTable(Schema schema, String tableName, String aliasName) {
-		super(schema);
+		this(schema, tableName, aliasName, false);
+	}
+
+	public SqlOpTable(Schema schema, String tableName, String aliasName, boolean isEmpty) {
+		super(schema, isEmpty);
 		this.tableName = tableName;
 		this.aliasName = aliasName;
 	}

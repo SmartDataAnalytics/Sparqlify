@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.commons.factory.Factory2;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
@@ -28,4 +29,14 @@ public class SqlExprUtils
 		});		
 	}	
 	
+	public static boolean containsFalse(Iterable<SqlExpr> exprs, boolean includeTypeErrors) {
+		for(SqlExpr expr : exprs) {
+			if(S_Constant.FALSE.equals(expr) || (includeTypeErrors && S_Constant.TYPE_ERROR.equals(expr))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 }
