@@ -347,7 +347,7 @@ public class SqlOpSelectBlockCollectorImpl
 		//SqlOp resultOp = requireSelectBlock(newOp);
 	
 		JoinContext result = new JoinContextJoin(resultOp);
-		initProjection(result.getProjection(), op.getSchema(),resultOp.getAliasName());
+		initProjection(result.getProjection(), op.getSchema(), resultOp.getAliasName());
 		return result;
 	}
 	

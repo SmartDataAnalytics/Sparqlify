@@ -284,7 +284,10 @@ public abstract class SqlExprSerializerDefault
 	public String _serialize(S_ColumnRef expr) {
 		//System.out.println("ColumnRef: " + expr);
 		//System.err.println("Should not use variables but rather something like E_ColumnRef.");
-		String result = expr.getRelationAlias() + ".\"" + expr.getColumnName() + "\"";
+		
+		String result = expr.getVarName();
+		
+		//String result = expr.getRelationAlias() + ".\"" + expr.getColumnName() + "\"";
 		return result;
 	}
 //	

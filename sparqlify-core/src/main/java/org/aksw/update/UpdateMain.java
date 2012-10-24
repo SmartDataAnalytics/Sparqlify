@@ -16,7 +16,7 @@ public class UpdateMain {
 		throws Exception
 	{
 		Model testModel = ModelFactory.createDefaultModel();
-		testModel.read(new FileInputStream(new File("data/base.nt")), null,
+		testModel.read(new FileInputStream(new File("src/test/resources/data/base.nt")), null,
 				"N-TRIPLE");
 
 		ModelSparqlEndpoint endpoint = new ModelSparqlEndpoint(testModel);
@@ -47,7 +47,7 @@ public class UpdateMain {
 		// Attach the update manager to the cleaner
 		cleaner.getGraphListeners().add(queryUpdates);
 		
-		String inserts = Files.readContent(new File("data/inserts.nt"));
+		String inserts = Files.readContent(new File("src/test/resources/data/inserts.nt"));
 		
 		String stmt = "Insert Data {\n" + inserts + "\n}";
 		graph.executeUpdate(stmt);

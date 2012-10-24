@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 
 public class ConfiguratorRdfViewSystem {
 	
-	
+
+	@Deprecated
 	public static void configure(Config config, RdfViewSystem system, Logger logger) {
 
 		//List<RdfView> virtualGraphs = new ArrayList<RdfView>();

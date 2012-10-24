@@ -341,6 +341,8 @@ public class SqlOpSelectBlock
     		return ((SqlOpQuery) op).getAliasName();
     	} else if(op instanceof SqlOpSelectBlock) {
     		return ((SqlOpSelectBlock) op).getAliasName();
+    	} else if(op instanceof SqlOpUnionN) {
+    		return ((SqlOpUnionN) op).getAliasName();
     	}
     	
     	return null;

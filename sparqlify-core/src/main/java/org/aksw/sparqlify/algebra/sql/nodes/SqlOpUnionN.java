@@ -9,7 +9,7 @@ public class SqlOpUnionN
 	
 	
 	public SqlOpUnionN(Schema schema, List<SqlOp> subOps) {
-		super(schema, subOps);
+		this(schema, subOps, null);
 	}
 
 	public SqlOpUnionN(Schema schema, List<SqlOp> subOps, String aliasName) {

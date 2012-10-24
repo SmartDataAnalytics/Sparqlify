@@ -214,7 +214,8 @@ public class SqlOpSerializerImpl
     	writer.decIndent();
     
     	if(isUnion) {
-    		writer.print(") " + getAliasName(op));
+    		String aliasName = getAliasName(op.getSubOp());
+    		writer.print(")" + aliasName);
     	}
     	
     	

@@ -1,0 +1,5 @@
+<http://dbpedia.org/resource/Cryssean> <http://dbpedia.org/ontology/age> "23"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://dbpedia.org/resource/Cryssean> <http://dbpedia.org/ontology/gender> <http://dbpedia.org/ontology/gender/female> .
+
+<http://dbpedia.org/resource/Saldria> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> .
+<http://dbpedia.org/resource/Saldria> <http://www.w3.org/2000/01/rdf-schema#label> "Saldria"@en .

@@ -6,23 +6,24 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.sql.Connection;
+import java.util.Map;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
 import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.config.lang.ConfiguratorRdfViewSystem;
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.core.RdfViewSystem;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
+import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
+import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
+import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
+import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.algorithms.SparqlSqlRewriterImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
-import org.aksw.sparqlify.database.RdfViewSystem2;
+import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
@@ -60,13 +61,7 @@ public class Main {
 	 * @param args
 	 *            the command line arguments
 	 */
-	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws Exception {
-		/*
-		PropertyConfigurator.configure("log4j.properties");
-		LogManager.getLogManager().readConfiguration(
-				new FileInputStream("jdklog.properties"));
-		*/
 
 		CommandLineParser cliParser = new GnuParser();
 
@@ -140,16 +135,10 @@ public class Main {
 			in.close();
 		}
 
-		RdfViewSystem system = new RdfViewSystem2();
-		ConfiguratorRdfViewSystem.configure(config, system, loggerCount);
 
-
-		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
-		
-		if(loggerCount.getErrorCount() > 0) {
-			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
-		}
-
+		/*
+		 * Connection Pool  
+		 */
 		
 		PGSimpleDataSource dataSourceBean = new PGSimpleDataSource();
 
@@ -182,12 +171,31 @@ public class Main {
 		*/
 		
 		Connection conn = dataSource.getConnection();
-		 
-		RdfViewSystemOld.loadDatatypes(conn, system.getViews());
-		conn.close();
 
 		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		
+		// typeAliases for the H2 datatype
+		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
+
+
+		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias);
+		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
+
 		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();
+
+		
+		//RdfViewSystem system = new RdfViewSystem2();
+		ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, loggerCount);
+
+
+		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+		
+		if(loggerCount.getErrorCount() > 0) {
+			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
+		}
+
+		
+
 		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, datatypeSystem);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
@@ -233,101 +241,6 @@ public class Main {
 
 		server.start();
 
-		// String qs =
-		// URLEncoder.encode("Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct {?s ?p ?o } {?s ?p ?o . Filter(?p = rdfs:label && langMatches(lang(?o), 'de') && ?o = 'Buslinie') .}",
-		// "UTF8");
-		// String qs =
-		// URLEncoder.encode("Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct {?s ?p ?o } {?s ?p ?o . Filter(str(?o) = 'Hotel' || str(?o) = 'Tourism') .} Order by Desc(?o)",
-		// "UTF8");
-
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct {?s ?p ?o . ?s ?x ?y . } { ?s ?p ?o  . ?s ?x ?y . Filter(?y < 7.0) . Filter(?p = rdf:type && ?o = <http://linkedgeodata.org/ontology/Bench>) .} Order By ?s limit 100",
-		// "UTF8");
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct { ?wn ?x ?y . } { ?w lgdo:hasNodesSeq ?wn . ?wn ?x ?y . Filter(?w = <http://linkedgeodata.org/resource/way/10896141>) . } Limit 100",
-		// "UTF8");
-
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct { ?w ?p ?o . ?o ?x ?y . ?y ?a ?b .} { ?w ?p ?o . ?o ?x ?y . ?y ?a ?b . Filter(?w = <http://linkedgeodata.org/resource/way/10896141> && ?p = <http://linkedgeodata.org/ontology/hasNodeSeq> && ?a = rdf:rest) . } Limit 100",
-		// "UTF8");
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct { ?a ?c ?x .} { ?a lgdo:hasNodeList ?c . ?c rdf:rest ?x . } Limit 100",
-		// "UTF8");
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct { ?a ?b ?c .} { ?a ?b ?c . Filter(langMatches(lang(?c), 'de')) . Filter(regex(?c, 'upe')) . } Limit 100",
-		// "UTF8");
-
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct { ?a ?b ?c .} { ?a a lgdo:Relation . ?a a lgdo:TramRoute . ?a lgdo:hasMember ?x . ?x a lgdo:TramStop . } Limit 100",
-		// "UTF8");
-
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { ?a ?t ?r . ?a ?t ?tr . ?a ?hm ?x . ?x ?t ?ts . Filter(?t = rdf:type && ?r = lgdo:Relation && ?tr = lgdo:TramRoute && ?hm = lgdo:hasMember && ?ts = lgdo:TramStop) . } Limit 100",
-		// "UTF8");
-
-		Point2D.Double a = new Point2D.Double(12.34593062612, 51.33298118419);
-		Point2D.Double b = new Point2D.Double(12.404552986346, 51.348557018545);
-
-		// Rectangle2D.Double c = new Rectangle2D.Double(a.x, a.y, b.x - a.x,
-		// b.y - a.y);
-
-		String polygon = "POLYGON((" + a.x + " " + a.y + "," + b.x + " " + a.y
-				+ "," + b.x + " " + b.y + "," + a.x + " " + b.y + "," + a.x
-				+ " " + a.y + "))";
-
-		String qs = URLEncoder
-				.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/rdf#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { ?a rdf:type lgdo:TramRoute . ?a lgdo:hasMember ?b . ?b a lgdo:TramStop . ?b rdfs:label ?l . ?b geo:geometry ?geo . Filter(ogc:intersects(?geo, ogc:geomFromText('"
-						+ polygon + "'))) . } Limit 100", "UTF8");
-
-		// What happens if we search for a specific triple?
-		// qs =
-		// URLEncoder.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/rdf#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { <http://linkedgeodata.org/resource/node/123> a lgdo:TramStop .}",
-		// "UTF8");
-
-		// qs =
-		// URLEncoder.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/rdf#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select Distinct ?b ?l { ?a rdf:type lgdo:TramRoute . ?a lgdo:hasMember ?b . ?b a lgdo:TramStop . ?b rdfs:label ?l . ?b geo:geometry ?geo . } Limit 100",
-		// "UTF8");
-		qs = URLEncoder.encode("Select * {?s ?p ?o . } Limit 10");
-
-		// qs =
-		// URLEncoder.encode("DESCRIBE <http://linkedgeodata.org/resource/node/_20982927>",
-		// "UTF8");
-
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { ?b rdfs:label ?l . Filter(langMatches(lang(?l), 'de')) .} Limit 100",
-		// "UTF8");
-		// String qs =
-		// URLEncoder.encode("Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { ?b rdfs:label ?l .} Limit 3",
-		// "UTF8");
-
-		// Filter(?z = <http://linkedgeodata.org/resource/node/20974744>)
-
-		// String qs =
-		// URLEncoder.encode("Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct {?s ?p ?o } {?s ?p ?o . Filter(?o = 'Hotel') .}",
-		// "UTF8");
-		// URL test = new
-		// URL("http://localhost:9999/sparql?query=Prefix+rdfs%3A%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E+Construct+%7B+%3Fs+rdfs%3Alabel+%3Fo+.+%7D+%7B+%3Fs+rdfs%3Alabel+%3Fo+.+%7D");
-
-		/*
-		 * URL test = new URL("http://localhost:9999/sparql?query=" + qs);
-		 * 
-		 * URLConnection connection = test.openConnection();
-		 * //connection.setRequestProperty("Accept", "application/rdf+xml");
-		 * //connection.setRequestProperty("Accept",
-		 * MediaType.APPLICATION_JSON); connection.setRequestProperty("Accept",
-		 * MediaType.TEXT_PLAIN);
-		 * 
-		 * System.out.println(connection.getRequestProperties());
-		 * //connection.setRequestProperty("Accept", "text/plain");
-		 * 
-		 * StreamUtils.copyThenClose(test.openStream(), System.out);
-		 */
-
-		/*
-		 * Client c = Client.create(); WebResource r =
-		 * c.resource("http://localhost:9999/");
-		 * System.out.println(r.get(String.class));
-		 */
 		// server.stop();
 	}
 
