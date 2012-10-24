@@ -185,8 +185,8 @@ sparqlifyConfigItem[Config config]
 
 
 
-functionDeclaration returns [FunctionDeclaration value]
-    : ^(FUNCTION_DECLARATION a=functionSignature b=functionTemplate) {$value = new FunctionDeclaration($a.value, $b.value);}
+functionDeclaration returns [FunctionDeclarationTemplate value]
+    : ^(FUNCTION_DECLARATION a=functionSignature b=functionTemplate) {$value = new FunctionDeclarationTemplate($a.value, $b.value);}
     ;
 
 functionSignature returns [FunctionSignature value]
