@@ -832,8 +832,7 @@ public class MappingOpsImpl
 		if(members.size() == 1) {
 			logger.warn("Single member union - should be avoided");
 			Mapping result = members.get(0);
-			//return result;
-			
+			return result;			
 		}
  
 		
@@ -881,7 +880,7 @@ public class MappingOpsImpl
 			
 			// TODO Just clustering by hash may result in clashes!!!
 			// For each hash we have to keep a list and explicitly compare for structural equivalence
-			Multimap<Expr, ArgExpr> cluster = HashMultimap.create();
+			Multimap<String, ArgExpr> cluster = HashMultimap.create();
 			
 			
 
@@ -899,8 +898,9 @@ public class MappingOpsImpl
 					//Integer hash = ExprStructuralHash.hash(def.getExpr(), columnToDatatype);
 					
 					Expr datatypeNorm = exprNormalizer.normalize(def.getExpr(), columnToDatatype);
-													
-					cluster.put(datatypeNorm, new ArgExpr(def.getExpr(), index));
+					String hash = datatypeNorm.toString();
+					
+					cluster.put(hash, new ArgExpr(def.getExpr(), index));
 				}				
 			}
 			
@@ -909,9 +909,14 @@ public class MappingOpsImpl
 			 *  Process the entries of the clusters we just created
 			 */
 
-			for(Entry<Expr, Collection<ArgExpr>> clusterEntry : cluster.asMap().entrySet()) {
+			for(Entry<String, Collection<ArgExpr>> clusterEntry : cluster.asMap().entrySet()) {
 				Collection<ArgExpr> argExprs = clusterEntry.getValue();
 					
+//				System.out.println("Clustered: " + clusterEntry.getKey());
+//				for(ArgExpr argExpr : clusterEntry.getValue()) {
+//					System.out.println("    " + argExpr);
+//				}
+				
 				// First, we build a list of exprs of the cluster and
 				// a map for mapping the clustered exprs back to their ops
 				List<Expr> exprs = new ArrayList<Expr>();
@@ -943,19 +948,26 @@ public class MappingOpsImpl
 				for(int j = 0; j < tmpPartialProjections.size(); ++j) {
 					int memberIndex = exprToOp.get(j);
 					Mapping member = members.get(memberIndex);
+					Map<String, TypeToken> typeMap = member.getSqlOp().getSchema().getTypeMap();
 					
 					Map<Var, Expr> tmpMap = tmpPartialProjections.get(j);
 
 					Map<String, SqlExpr> map = new HashMap<String, SqlExpr>();
 					for(Entry<Var, Expr> e : tmpMap.entrySet()) {
 						
+						String columnName = e.getKey().getVarName();
 						Expr expr = e.getValue();
-						// TODO Get the typemap of the union member
-						Map<String, TypeToken> typeMap = member.getSqlOp().getSchema().getTypeMap();
 						SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
 						
 						//map.put(e.getKey().getVarName(), expr);
-						map.put(e.getKey().getVarName(), sqlExpr);
+						map.put(columnName, sqlExpr);
+
+						if(columnName.equals("c_4")) {
+							System.out.println("Debug c_4");
+						}
+						
+						unionTypeMap.put(columnName, sqlExpr.getDatatype());
+						System.out.println("Union type map: " + unionTypeMap);
 					}
 					
 					partialProjections.add(map);
@@ -985,34 +997,25 @@ public class MappingOpsImpl
 		/*
 		 * Compute the global type map based on all unionMemberProjections
          */
+		/*
 		for (int i = 0; i < unionMemberProjections.size(); ++i) {
-			
-			Mapping member = members.get(i);
-			Map<String, TypeToken> typeMap = member.getSqlOp().getSchema().getTypeMap();
 			Map<String, SqlExpr> projection = unionMemberProjections.get(i);
 
-			//Map<String, Expr> partialProjection = partialProjections.get(i);
-			
 			for(Entry<String, SqlExpr> entry : projection.entrySet()) {
 				
+				String columnName = entry.getKey();
 				SqlExpr expr = entry.getValue();
-				//SqlExpr sqlExpr = sqlTranslator.translate(entry.getValue(), null, typeMap);
 				
-				/*
-				XClass datatype = datatypeAssigner.assign(sqlExpr, member.getSqlOp().getSchema().getTypeMap());
-
-				if(datatype == null) {
-					throw new RuntimeException("Could not determine datatype for expression: " + sqlExpr);
-				}
-				*/
+				assert !unionTypeMap.containsKey(columnName) : "Column already mapped - attempted reassing of " + columnName;
 				
-				//projection.put(entry.getKey(), sqlExpr);
 				unionTypeMap.put(entry.getKey(), expr.getDatatype());
 			}			
 		}
+		*/
 
 		// The order of the column for the union
 		List<String> unionColumnOrder = new ArrayList<String>(unionTypeMap.keySet());
+		System.out.println("unionTypeMap: " + unionTypeMap);
 		
 		/*
 		 * For each member, fill it appropriately up with nulls in order to make it
@@ -1047,11 +1050,17 @@ public class MappingOpsImpl
 			
 			extended.add(opProject);
 		}
+		//System.out.println("ColumnOrder: " + unionColumnOrder);
 
 		/*
 		 * Create a mapping based on the new vardef an the new SQL union.
 		 */
 		SqlOpUnionN newUnion = SqlOpUnionN.create(extended);
+
+		
+		for(SqlOp m : newUnion.getSubOps()) {
+			System.out.println(m.getSchema().getColumnNames());
+		}
 		
 		VarDefinition varDefinition = new VarDefinition(unionVarDefs);
 		Mapping result = new Mapping(varDefinition, newUnion);

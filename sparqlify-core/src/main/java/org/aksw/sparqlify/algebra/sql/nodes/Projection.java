@@ -39,7 +39,9 @@ public class Projection {
 	 * @param columnNames
 	 */
 	public void project(List<String> columnNames) {
-		this.names.retainAll(columnNames);
+		//this.names.retainAll(columnNames);
+		this.names = columnNames;
+		
 		this.nameToExpr.keySet().retainAll(columnNames);
 	}	
 

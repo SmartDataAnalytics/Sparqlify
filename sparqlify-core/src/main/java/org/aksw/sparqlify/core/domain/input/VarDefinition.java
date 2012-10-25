@@ -69,7 +69,15 @@ public class VarDefinition {
 			RestrictedExpr restExpr = entry.getValue();
 			Expr expr = restExpr.getExpr();
 			
-			Expr expandedExpr = ConstantExpander.transform(expr);
+			//Expr expandedExpr = ConstantExpander.transform(expr);
+			Expr expandedExpr;
+			if(expr.isConstant()) {
+				expandedExpr = ConstantExpander._transform(expr.getConstant());
+			} else {
+				expandedExpr = expr;
+			}
+			
+			
 			RestrictedExpr finalExpr = new RestrictedExpr(expandedExpr, restExpr.getRestrictions());
 			
 			resultMap.put(var, finalExpr);

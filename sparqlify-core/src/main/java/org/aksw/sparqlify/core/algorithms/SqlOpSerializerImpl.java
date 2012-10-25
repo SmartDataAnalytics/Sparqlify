@@ -98,6 +98,8 @@ public class SqlOpSerializerImpl
 	
 	public static String projection(List<String> columnNames, Map<String, SqlExpr> map)
 	{
+		//System.out.println("Project column names: " + columnNames);
+		
 		// Empty projections can occur if a query response is determined by static triples
 		if(map.isEmpty()) {
 			return "true";

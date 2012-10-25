@@ -1,10 +1,15 @@
 package org.aksw.sparqlify.core.algorithms;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
@@ -13,6 +18,9 @@ import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import antlr.StringUtils;
+
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -89,7 +97,8 @@ public class SparqlSqlRewriterImpl
 		}*/
 
 		Mapping mapping = opMappingRewriter.rewrite(opViewInstance);
-		logger.debug("Mapping: " + mapping);
+		//logger.debug("Mapping:\n" + mapping);
+		logger.debug("Variable Definitions:\n" + toIndentedString(mapping.getVarDefinition()));
 		
 		// FIXME Make the collector configurable
 		//SqlOp block = SqlOpSelectBlockCollector._makeSelect(mapping.getSqlOp());
@@ -97,10 +106,48 @@ public class SparqlSqlRewriterImpl
 
 		
 		String sqlQueryString = sqlOpSerializer.serialize(block);
-		logger.info(sqlQueryString);
+		logger.info("Query String:\n" + sqlQueryString);
 
 
 		SparqlSqlRewrite result = new SparqlSqlRewrite(sqlQueryString, mapping.getVarDefinition(), projectionOrder);
+		
+		return result;
+	}
+	
+	public static String toIndentedString(VarDefinition varDef) {
+		Multimap<Var, RestrictedExpr> map = varDef.getMap();
+		String result = toIndentedString(map);
+		return result;
+	}
+	
+	public static String toIndentedString(Multimap<Var, RestrictedExpr> varToExprs) {
+		
+		String result = "";
+		
+		for(Entry<Var, Collection<RestrictedExpr>> entry : varToExprs.asMap().entrySet()) {
+			Var var = entry.getKey();
+			String varName = var.getName();
+			int varLen = varName.length();
+			Collection<RestrictedExpr> restExprs = entry.getValue();
+			
+			Iterator<RestrictedExpr> it = restExprs.iterator();
+			
+			String firstLabel;
+			if(!it.hasNext()) {
+				firstLabel = "(empty definition set)";
+			} else {
+				RestrictedExpr restExpr = it.next();
+				firstLabel = varName + ": " + restExpr.getExpr() + " [" + restExpr.getRestrictions() + "]";
+			}
+			result += firstLabel + "\n";
+			
+			while(it.hasNext()) {
+				RestrictedExpr restExpr = it.next();
+				//StringUtils.
+				// FIXME Make spaces for var length
+				result += "    " + restExpr.getExpr() + " [" + restExpr.getRestrictions() + "]" + "\n";
+			}
+		}
 		
 		return result;
 	}
