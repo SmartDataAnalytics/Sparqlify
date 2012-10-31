@@ -135,13 +135,23 @@ public class MappingOpsImplTest {
 
 		//System.out.println(sqlQueryString);
 		
+
+		{
+			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . }");
+			ResultSet rs = qe.execSelect();
+			String rsStr = ResultSetFormatter.asText(rs);
+			System.out.println(rsStr);
+		}		
+
 		
-		QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . }");
-		ResultSet rs = qe.execSelect();
-		String rsStr = ResultSetFormatter.asText(rs);
-		System.out.println(rsStr);
 		
-		
+		{
+			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . ?x ?y ?z . Filter(?s = ?x)}");
+			ResultSet rs = qe.execSelect();
+			String rsStr = ResultSetFormatter.asText(rs);
+			System.out.println(rsStr);
+		}		
+
 		//SqlSelectBlock x;
 		
 		//ViewDefinition vd = new ViewDefinition(name, );

@@ -175,7 +175,7 @@ public class SqlOpSerializerImpl
 	
 	
 	
-	public static String getAliasName(SqlOp op) {
+	public static String getAliasNameNotNull(SqlOp op) {
 		
 		String aliasName = SqlOpSelectBlock.getAliasName(op);
 		
@@ -216,7 +216,7 @@ public class SqlOpSerializerImpl
     	writer.decIndent();
     
     	if(isUnion) {
-    		String aliasName = getAliasName(op.getSubOp());
+    		String aliasName = getAliasNameNotNull(op.getSubOp());
     		writer.print(")" + aliasName);
     	}
     	
@@ -523,7 +523,7 @@ public class SqlOpSerializerImpl
     public static void _serialize(SqlOpTable op, IndentedWriter writer)
     {
     	writer.print(op.getTableName());
-    	writer.print(getAliasName(op));
+    	writer.print(getAliasNameNotNull(op));
     }
 
     /*

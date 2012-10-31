@@ -18,7 +18,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.aksw.sparqlify.core.RdfViewTemplate;
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,14 +71,14 @@ public class SparqlView
 	private String name;
 	private RdfViewTemplate template;
 	private ExprList constraints;	
-	private RestrictionManager restrictions;
+	private RestrictionManagerImpl restrictions;
 	
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 	
-	public void setRestrictions(RestrictionManager restrictions) {
+	public void setRestrictions(RestrictionManagerImpl restrictions) {
 		this.restrictions = restrictions;
 	}
 	

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +15,7 @@ import org.aksw.sparqlify.core.algorithms.ViewQuad;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
@@ -28,11 +26,12 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.expr.E_Equals;
+import com.hp.hpl.jena.sparql.expr.ExprVar;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 public class CandidateViewSelectionTests {
@@ -102,17 +101,24 @@ public class CandidateViewSelectionTests {
 		Var s = Var.alloc("s");
 		Var p = Var.alloc("p");
 		Var o = Var.alloc("o");
-		Node gv = Quad.defaultGraphIRI;
-		Node sv = Node.createURI("http://ex.org/person5");
+		Node gv = Quad.defaultGraphNodeGenerated; //Quad.defaultGraphIRI; //urn:x-arq:DefaultGraphNode
+		Node sv = Node.createURI("http://ex.org/person/5");
 		Node pv = RDF.type.asNode();
 		Node ov = Node.createURI("http://ex.org/Person");
 		Quad quad = new Quad(g, s, p, o);
 		
-		RestrictionManager r = new RestrictionManager();
+		RestrictionManagerImpl r = new RestrictionManagerImpl();
+		r.stateExpr(new E_Equals(new ExprVar(g), NodeValue.makeNode(gv)));
+		r.stateExpr(new E_Equals(new ExprVar(s), NodeValue.makeNode(sv)));
+		r.stateExpr(new E_Equals(new ExprVar(p), NodeValue.makeNode(pv)));
+		r.stateExpr(new E_Equals(new ExprVar(o), NodeValue.makeNode(ov)));
+		
+		/*
 		r.stateNode(g, gv);
 		r.stateNode(s, sv);
 		r.stateNode(p, pv);
 		r.stateNode(o, ov);
+		*/
 		
 		Set<ViewQuad> viewQuads = candidateSelector.findCandidates(quad, r);
 

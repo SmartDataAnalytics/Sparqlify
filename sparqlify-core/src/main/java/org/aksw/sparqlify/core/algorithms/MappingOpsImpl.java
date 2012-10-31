@@ -34,7 +34,7 @@ import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.restriction.RestrictionSet;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -320,7 +320,7 @@ public class MappingOpsImpl
 
 			// The restrictions that apply to the picked variable.
 			// initialized only if there are no defs (init means true, i.e. no restriction)
-			RestrictionSet varRestrictions = b.isEmpty() ? new RestrictionSet() : null;
+			RestrictionSetImpl varRestrictions = b.isEmpty() ? new RestrictionSetImpl() : null;
 
 			
 			for(RestrictedExpr rexprB : b) {
@@ -335,7 +335,7 @@ public class MappingOpsImpl
 				}
 
 				if(varRestrictions == null) {
-					varRestrictions = new RestrictionSet(); 
+					varRestrictions = new RestrictionSetImpl(); 
 				}
 				
 				varRestrictions.addAlternatives(vdEquals.getRestrictions());
@@ -850,6 +850,14 @@ public class MappingOpsImpl
 	 */
 	public Mapping union(List<Mapping> members) {
 
+		/* TODO The alias generator must be configurable
+		 * Example:
+		 *     PostgreSQL works fine with lower case aliases,
+		 *     H2 fails with them
+		 */
+		Generator aliasGen = Gensym.create("C");
+
+		
 		if(members.size() == 1) {
 			logger.warn("Single member union - should be avoided");
 			Mapping result = members.get(0);
@@ -887,7 +895,6 @@ public class MappingOpsImpl
 		// that does not define the constant.
 		// This means we have to introduce a column for discrimination, which contains NULL for
 		// all union members where to constaint is not applicable 		
-		Generator aliasGen = Gensym.create("c");
 		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
 
 		

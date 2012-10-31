@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.restriction;
+package org.aksw.sparqlify.restriction.experiment;
 
 public interface RestrictionOps {
 	Restriction and(Restriction a, Restriction b);

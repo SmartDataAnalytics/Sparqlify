@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.database;
 
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
@@ -16,17 +16,17 @@ public class OpExtFilterIndexed
 	extends OpExt
 {
 	protected Op subOp;
-	protected RestrictionManager restrictions;
+	protected RestrictionManagerImpl restrictions;
 
 	public Op getSubOp() {
 		return subOp;
 	}
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 
-	public OpExtFilterIndexed(Op subOp, RestrictionManager restrictions) {
+	public OpExtFilterIndexed(Op subOp, RestrictionManagerImpl restrictions) {
 		super("OpExtFilterIndexed");
 		this.subOp = subOp;
 		this.restrictions = restrictions;

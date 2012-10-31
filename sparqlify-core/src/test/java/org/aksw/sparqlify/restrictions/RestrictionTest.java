@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.restrictions;
 
 import org.aksw.sparqlify.restriction.RestrictionImpl;
-import org.aksw.sparqlify.restriction.RestrictionManager;
-import org.aksw.sparqlify.restriction.RestrictionManager2;
-import org.aksw.sparqlify.restriction.Type;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.aksw.sparqlify.restriction.RdfTermType;
+import org.aksw.sparqlify.restriction.experiment.RestrictionManager2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class RestrictionTest {
 		a.stateRestriction(r);
 		Assert.assertTrue(r.getSatisfiability());
 
-		a.stateType(Type.UNKNOWN);
+		a.stateType(RdfTermType.UNKNOWN);
 		Assert.assertTrue(r.getSatisfiability());
 		
 		//a.stateUriPrefixes(null);
@@ -45,7 +45,7 @@ public class RestrictionTest {
 		Assert.assertTrue(r.isConsistent());
 		
 		r.stateNode(Node.createURI("http://example.org"));
-		Assert.assertEquals(Type.URI, r.getType());
+		Assert.assertEquals(RdfTermType.URI, r.getType());
 		
 		r.stateNode(Node.createURI("http://example.org"));
 		Assert.assertTrue(r.isConsistent());
@@ -71,7 +71,7 @@ public class RestrictionTest {
 	}
 	
 	public void testRestrictionManagerOld() {
-		RestrictionManager m = new RestrictionManager();
+		RestrictionManagerImpl m = new RestrictionManagerImpl();
 		
 		Assert.assertTrue(m.getSatisfiability());
 		

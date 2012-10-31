@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.domain.input;
 
-import org.aksw.sparqlify.restriction.RestrictionSet;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 
@@ -22,13 +22,13 @@ import com.hp.hpl.jena.sparql.expr.Expr;
  */
 public class RestrictedExpr {
 	private Expr expr;
-	private RestrictionSet restrictions;
+	private RestrictionSetImpl restrictions;
 
 	public RestrictedExpr(Expr expr) {
-		this(expr, new RestrictionSet());
+		this(expr, new RestrictionSetImpl());
 	}
 
-	public RestrictedExpr(Expr expr, RestrictionSet restrictions) {
+	public RestrictedExpr(Expr expr, RestrictionSetImpl restrictions) {
 		super();
 		this.expr = expr;
 		this.restrictions = restrictions;
@@ -38,7 +38,7 @@ public class RestrictedExpr {
 		return new RestrictedExpr(expr);
 	}
 
-	public static RestrictedExpr create(Expr expr, RestrictionSet restrictions) {
+	public static RestrictedExpr create(Expr expr, RestrictionSetImpl restrictions) {
 		return new RestrictedExpr(expr, restrictions);
 	}
 
@@ -48,7 +48,7 @@ public class RestrictedExpr {
 	}
 	
 	
-	public RestrictionSet getRestrictions() {
+	public RestrictionSetImpl getRestrictions() {
 		return restrictions;
 	}
 

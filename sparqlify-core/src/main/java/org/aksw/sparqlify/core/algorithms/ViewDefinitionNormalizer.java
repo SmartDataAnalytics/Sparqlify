@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
+import java.util.Collection;
 import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
@@ -10,8 +11,12 @@ import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
-import org.aksw.sparqlify.restriction.RestrictionSet;
-import org.aksw.sparqlify.restriction.Type;
+import org.aksw.sparqlify.restriction.RdfTermType;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -23,18 +28,19 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
 
 public class ViewDefinitionNormalizer {
 	
+	private static final Logger logger = LoggerFactory.getLogger(ViewDefinitionNormalizer.class);
 	
 	public RestrictedExpr normalize(RestrictedExpr restExpr) {
 
-		RestrictionSet rs = restExpr.getRestrictions();
+		RestrictionSetImpl rs = restExpr.getRestrictions();
 		if(rs == null) {
-			rs = new RestrictionSet();
+			rs = new RestrictionSetImpl();
 		} else {
 			rs = restExpr.getRestrictions().clone();
 		}
 				
 		Expr expr = restExpr.getExpr();
-		Type type = deriveType(expr);
+		RdfTermType type = deriveType(expr);
 		if(type != null) {
 			rs.stateType(type);
 		}
@@ -70,12 +76,49 @@ public class ViewDefinitionNormalizer {
 		return result;
 	}
 
+	/**
+	 * Combines all of a variables restrictions. 
+	 * 
+	 * @param varDef
+	 * @return
+	 */
+	public RestrictionManagerImpl createVarRestrictions(VarDefinition varDef) {
+		RestrictionManagerImpl result = new RestrictionManagerImpl();
+		
+		for(Entry<Var, Collection<RestrictedExpr>> entry : varDef.getMap().asMap().entrySet()) {
+			Var var = entry.getKey();
+			Collection<RestrictedExpr> restExprs = entry.getValue();
+			
+			int m = restExprs.size(); 
+			if(m == 1) {
+				RestrictedExpr restExpr = restExprs.iterator().next();
+				RestrictionSetImpl rs = restExpr.getRestrictions();
+
+				int n = rs.getRestrictions().size(); 
+				if(n == 1) {
+					RestrictionImpl r = rs.getRestrictions().iterator().next();
+
+					result.stateRestriction(var, r);		
+				}
+				else if(n > 1) {
+					logger.warn("More than 1 restriction found; having to ignore all for now: " + rs);
+				}
+			}
+			else if(m > 1) {
+				logger.warn("More than 1 definition found; can't derive restrictions because of that: " + restExprs);
+			}
+		}
+		
+		return result;
+	}
 
 	public ViewDefinition normalize(ViewDefinition viewDefinition) {
 		VarDefinition normVarDef = normalize(viewDefinition.getMapping().getVarDefinition());
 		
+		RestrictionManagerImpl restrictionManager = createVarRestrictions(normVarDef);
+		
 		Mapping newMapping = new Mapping(normVarDef, viewDefinition.getMapping().getSqlOp());
-		ViewDefinition result = new ViewDefinition(viewDefinition.getName(), viewDefinition.getTemplate(), viewDefinition.getViewReferences(), newMapping, viewDefinition);
+		ViewDefinition result = new ViewDefinition(viewDefinition.getName(), viewDefinition.getTemplate(), viewDefinition.getViewReferences(), newMapping, restrictionManager, viewDefinition);
 		
 		return result;
 	}
@@ -156,21 +199,21 @@ public class ViewDefinitionNormalizer {
 	}
 	
 
-	public static Type deriveType(Node node) {
+	public static RdfTermType deriveType(Node node) {
 		if(node.isURI()) {
-			return Type.URI;
+			return RdfTermType.URI;
 		} else if(node.isLiteral()) {
-			return Type.LITERAL;
+			return RdfTermType.LITERAL;
 		} else if(node.isBlank()) {
 			throw new RuntimeException("Decide on what to return here.");
 			//return Type.URI;
 		} else {
-			return Type.UNKNOWN;
+			return RdfTermType.UNKNOWN;
 		}
 	}
 
 
-	public static Type deriveType(E_RdfTerm termCtor) {				
+	public static RdfTermType deriveType(E_RdfTerm termCtor) {				
 		Expr arg = termCtor.getArg(1);
 		if(arg.isConstant()) {
 			Object o = NodeValueUtils.getValue(arg.getConstant());
@@ -178,34 +221,34 @@ public class ViewDefinitionNormalizer {
 			Number number = (Number)o;
 			switch(number.intValue()) {
 			case 1:
-				return Type.URI;
+				return RdfTermType.URI;
 			case 2:
 			case 3:
-				return Type.LITERAL;
+				return RdfTermType.LITERAL;
 			}
 		}
 
-		return Type.UNKNOWN;
+		return RdfTermType.UNKNOWN;
 	}
 	
 
-	public static Type deriveType(ExprFunction fn) {
+	public static RdfTermType deriveType(ExprFunction fn) {
 		E_RdfTerm termCtor = SqlTranslationUtils.expandRdfTerm(fn);
 		
-		Type result; 
+		RdfTermType result; 
 		if(termCtor != null) {
 			result = deriveType(termCtor);
 		} else {
-			result = Type.UNKNOWN; 
+			result = RdfTermType.UNKNOWN; 
 		}
 
 		return result;
 	}
 	
 
-	public static Type deriveType(Expr expr) {
+	public static RdfTermType deriveType(Expr expr) {
 		
-		Type result = null;
+		RdfTermType result = null;
 		if(expr.isConstant()) {
 			result = deriveType(expr.getConstant().asNode());
 		} else if(expr.isFunction()) {

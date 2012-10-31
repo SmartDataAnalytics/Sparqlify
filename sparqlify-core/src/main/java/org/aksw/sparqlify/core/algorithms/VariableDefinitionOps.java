@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
-import org.aksw.sparqlify.restriction.RestrictionSet;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 
 import com.hp.hpl.jena.sparql.expr.E_Add;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -16,7 +16,7 @@ public class VariableDefinitionOps {
 	}
 	
 	public static RestrictedExpr equals(RestrictedExpr a, RestrictedExpr  b) {
-		RestrictionSet ar = a.getRestrictions().clone();
+		RestrictionSetImpl ar = a.getRestrictions().clone();
 		
 		ar.stateRestriction(b.getRestrictions());
 		

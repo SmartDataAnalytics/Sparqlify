@@ -20,7 +20,7 @@ import org.aksw.sparqlify.config.syntax.QueryString;
 import org.aksw.sparqlify.config.syntax.Relation;
 import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.sparqlview.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,13 +99,13 @@ public class RdfView
 	private ConstraintContainer constraints;
 	
 	// This field is intended to be set by the RdfViewSystem
-	private RestrictionManager restrictions;
+	private RestrictionManagerImpl restrictions;
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 	
-	public void setRestrictions(RestrictionManager restrictions) {
+	public void setRestrictions(RestrictionManagerImpl restrictions) {
 		this.restrictions = restrictions;
 	}
 	

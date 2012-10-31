@@ -11,11 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.commons.util.Pair;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.database.Clause;
-import org.aksw.sparqlify.database.IndirectEquiMap;
 import org.aksw.sparqlify.database.NestedNormalForm;
 import org.apache.commons.lang.NotImplementedException;
 
@@ -30,6 +28,7 @@ import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
@@ -68,59 +67,30 @@ import com.hp.hpl.jena.sparql.util.ExprUtils;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class RestrictionManager2 {
+public class RestrictionManagerImpl implements RestrictionManager {
 	
-	private RestrictionManager2 parent;
+	private RestrictionManagerImpl parent;
 	
-	private IndirectEquiMap<Var, RestrictionSet> restrictions = new IndirectEquiMap<Var, RestrictionSet>();
+	//private IndirectEquiMap<Var, Restriction> restrictions = new IndirectEquiMap<Var, Restriction>();
+	private HashMap<Var, RestrictionImpl> restrictions = new HashMap<Var, RestrictionImpl>();
+
 	private NestedNormalForm cnf;
+
 	
+	// TODO I want to get rid of this ExprIndex instance
+	// I rather want to have a set of dnfs managed here
+	// The question is how to combine that with the parent lookup (can we avoid copying everything?)
 	
+	// Hm, is it sufficient to cache unsatisfiable clauses?
+	// So I never copy the DNF, but I keep track of the clauses which can be ignored
+	//private Set<Clause> unsatisfiableClauses = new HashSet<Clause>();  
+
+
 	/*
-	public void getLocalVariables(Collection<Var> result) {
-		result.addAll(restrictions.keySet());
+	public Iterator<Clause> getEffectiveClauses() {
+		
 	}*/
 	
-	public Set<Var> getVariables() {
-		Set<Var> result = new HashSet<Var>();
-		
-		RestrictionManager2 current = this;
-		while(current != null) {
-			result.addAll(current.restrictions.keySet());
-			current = current.parent;
-		}
-		
-		return result;		
-	}
-	
-	
-	/*
-	public IndirectEquiMap<Var, RestrictionSet> getRestrictions() {
-		if(parent == null) {
-			return restrictions;
-		}
-
-		
-		IndirectEquiMap<Var, RestrictionSet> result = new IndirectEquiMap<Var, RestrictionSet>();
-		
-		//result.
-		
-		RestrictionManager2 current = this;
-		while(this != null) {
-			result.addAll(current.restrictions.keySet());
-			current = current.parent;
-		}
-		
-		return result;		
-
-		Set<Var> vars = getVariables();
-		for(Var var : vars) {
-			RestrictionSet r = getRestriction(var);
-			
-			//restrictions.pu
-		}		
-	}
-	*/
 	
 	//private ExprIndex expr;
 	
@@ -128,7 +98,7 @@ public class RestrictionManager2 {
 	
 	
 	// Mapping of constraints derived from the expressions in expr
-	//private Map<Expr, Restriction> exprToRestriction = new HashMap<Expr, Restriction>();
+	private Map<Expr, RestrictionImpl> exprToRestriction = new HashMap<Expr, RestrictionImpl>();
 	
 	
 	// Mapping of variables to constants - derived from the restrictions
@@ -139,19 +109,19 @@ public class RestrictionManager2 {
 	// Without any constraints, we assume a tautology
 	private Boolean satisfiability = Boolean.TRUE;
 
-	public RestrictionManager2() {
+	public RestrictionManagerImpl() {
 		this.cnf = new NestedNormalForm(null, false);
-		Set<Expr> emptyExprSet = Collections.emptySet();
-		this.cnf.add(new Clause(emptyExprSet));
+		//Set<Expr> emptyExprSet = Collections.emptySet();
+		//this.cnf.add(new Clause(emptyExprSet));
 		this.satisfiability = Boolean.TRUE;
 	}
 	
-	public RestrictionManager2(RestrictionManager2 parent) {
+	public RestrictionManagerImpl(RestrictionManagerImpl parent) {
 		this.parent = parent;
 		this.cnf = new NestedNormalForm(parent.getCnf(), true);
 	}
 	
-	public RestrictionManager2(NestedNormalForm cnf) {
+	public RestrictionManagerImpl(NestedNormalForm cnf) {
 		this.cnf = cnf;
 		
 		deriveRestrictions(cnf);
@@ -234,13 +204,10 @@ public class RestrictionManager2 {
 	*/	
 	
 	
+	
+	
 	public boolean stateRestriction(Var var, RestrictionImpl restriction) {
-		return stateRestriction(var, new RestrictionSet(restriction));
-	}
-	
-	
-	public boolean stateRestriction(Var var, RestrictionSet restriction) {
-		RestrictionSet r = getOrCreateLocalRestriction(var);
+		RestrictionImpl r = getOrCreateLocalRestriction(var);
 		if(r.stateRestriction(restriction)) {
 			if(r.isUnsatisfiable()) {
 				satisfiability = Boolean.FALSE;
@@ -257,12 +224,28 @@ public class RestrictionManager2 {
 	/* (non-Javadoc)
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#check(com.hp.hpl.jena.sparql.core.Var)
 	 */
+	/*
 	public void check(Var var) {
 		Collection<Var> vars = restrictions.getEquivalences(var);
 		check(vars);
+	}*/
+	
+	/*
+	public Set<Clause> getClausesForVar(Var var) {
+		Set<Clause> result = new HashSet<Clause>();
+		Set<Clause> tmp = cnf.getClausesByVar(var);
+		if(tmp != null) {
+			result.addAll(tmp);
+		}
+
+		return result;
+	}*/
+	
+	
+	public Set<Clause> getClausesForVar(Var var) {
+		return getClausesForVars(Collections.singleton(var));
 	}
-	
-	
+
 	public Set<Clause> getClausesForVars(Collection<Var> vars) {
 		Set<Clause> result = new HashSet<Clause>();
 		for(Var var : vars) {
@@ -278,9 +261,11 @@ public class RestrictionManager2 {
 	/* (non-Javadoc)
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#check(java.util.Collection)
 	 */
-	public void check(Collection<Var> vars) {
-		Set<Clause> clauses = getClausesForVars(vars);
-		checkClauses(clauses);
+	public void check(Var var) {
+		Set<Clause> clauses = cnf.getClausesByVar(var);
+		if(clauses != null) {
+			checkClauses(clauses);
+		}
 	}
 	
 	public void checkClauses(Collection<Clause> clauses) {
@@ -293,8 +278,29 @@ public class RestrictionManager2 {
 			}
 		}
 	}
+
+	
+	public void check(Clause clause)
+	{
+		// Hm, the cnf is nested for each restriction manager, but the clauses are not nested
+		// Ok, so if I change a clause, I create a new one
+		// The old one gets removed from the cnf, the new one gets added
+		// The question is, do I want nesting withing clauses? Naaah, guess not
+
+		//Clause modify = null;
+		for(Expr expr : clause.getExprs()) {
+			Boolean satisfiability = determineSatisfiability(expr);
+			
+			if(satisfiability == null || satisfiability == Boolean.TRUE) {
+				return;
+			}
+		}
 		
+		this.satisfiability = Boolean.FALSE;
+	}
+
 		
+	/*
 	public void check(Clause clause)
 	{
 		// Hm, the cnf is nested for each restriction manager, but the clauses are not nested
@@ -332,8 +338,13 @@ public class RestrictionManager2 {
 			cnf.add(new Clause(modify));
 		}
 	}
+	*/
 	
 	
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#isUnsatisfiable(com.hp.hpl.jena.sparql.expr.Expr)
+	 */
+	@Override
 	public Boolean determineSatisfiability(Expr expr) {		
 		
 		/*
@@ -360,8 +371,8 @@ public class RestrictionManager2 {
 		else if(expr instanceof E_Equals) {
 			E_Equals e = (E_Equals)expr;
 
-			RestrictionSet a = getRestriction(e.getArg1());
-			RestrictionSet b = getRestriction(e.getArg2());
+			RestrictionImpl a = getRestriction(e.getArg1());
+			RestrictionImpl b = getRestriction(e.getArg2());
 
 			return determineSatisfiabilityEquals(a, b);
 		} else {
@@ -370,17 +381,17 @@ public class RestrictionManager2 {
 		
 	}
 	
-
-	public RestrictionSet getRestriction(Expr expr) {
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#getRestriction(com.hp.hpl.jena.sparql.expr.Expr)
+	 */
+	@Override
+	public RestrictionImpl getRestriction(Expr expr) {
 		if(expr.isVariable()) {
 			return restrictions.get(expr.asVar());
 		} else {
-			return new RestrictionSet();
-			//return null;
-			//return exprToRestriction.get(expr);
+			return exprToRestriction.get(expr);
 		}
 	}
-
 
 	/**
 	 *
@@ -403,23 +414,9 @@ public class RestrictionManager2 {
 			return null;
 		}
 	}
-
-	public static Boolean determineSatisfiabilityEquals(RestrictionSet a, RestrictionSet b) {
-		if(a == null || b == null) {
-			return null;
-		}
-
-		RestrictionSet tmp = new RestrictionSet(a);
-		tmp.stateRestriction(b);
-		
-		if(tmp.isUnsatisfiable()) {
-			return false;
-		} else {
-			return null;
-		}
-	}
-
 	
+	
+	/*
 	public boolean isEqual(Var a, Var b) {
 		boolean e = restrictions.isEqual(a, b);
 		if(e) {
@@ -437,8 +434,13 @@ public class RestrictionManager2 {
 		}
 		
 		return result;
-	}	
+	}*/	
 	
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateEqual(com.hp.hpl.jena.sparql.core.Var, com.hp.hpl.jena.sparql.core.Var)
+	 */
+	/*
+	@Override
 	public void stateEqual(Var a, Var b) {
 		
 		boolean didCopy = false;
@@ -450,10 +452,10 @@ public class RestrictionManager2 {
 			} else {
 				// Copy the equivalences from the parent
 				Collection<Var> ae = getEquivalences(a);
-				RestrictionSet ar = getRestriction(a);
+				Restriction ar = getRestriction(a);
 				
 				Collection<Var> be = getEquivalences(b);
-				RestrictionSet br = getRestriction(b);
+				Restriction br = getRestriction(b);
 				
 				// TODO We copy the equivalences in order to avoid ConcurrentModificationException
 				restrictions.stateEqual(new HashSet<Var>(ae), ar);
@@ -463,11 +465,11 @@ public class RestrictionManager2 {
 			}
 		}
 		
-		Pair<RestrictionSet, RestrictionSet> conflict = restrictions.stateEqual(a, b);
+		Pair<Restriction, Restriction> conflict = restrictions.stateEqual(a, b);
 		//Restriction r;
 		if(conflict != null) {
 			
-			RestrictionSet r = conflict.getKey();
+			Restriction r = conflict.getKey();
 			if(didCopy) {
 				r = r.clone();
 			}
@@ -478,14 +480,19 @@ public class RestrictionManager2 {
 		/*
 		else {
 			r = restrictions.get(a);
-		}*/
+		}* /
 		
 		// Recheck clauses with variable a (which is now equal to b)
 		check(a);
 	}
+	*/
 
-	public RestrictionSet getRestriction(Var a) {
-		RestrictionSet result = restrictions.get(a);
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#getRestriction(com.hp.hpl.jena.sparql.core.Var)
+	 */
+	@Override
+	public RestrictionImpl getRestriction(Var a) {
+		RestrictionImpl result = restrictions.get(a);
 		if(result == null && parent != null) {
 			return parent.getRestriction(a);
 		}
@@ -493,26 +500,34 @@ public class RestrictionManager2 {
 		return result;
 	}
 	
-	public RestrictionSet getOrCreateLocalRestriction(Var a) {
-		RestrictionSet result = restrictions.get(a);
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#getOrCreateRestriction(com.hp.hpl.jena.sparql.core.Var)
+	 */
+	@Override
+	public RestrictionImpl getOrCreateLocalRestriction(Var a) {
+		RestrictionImpl result = restrictions.get(a);
 		
 		if(result == null && parent != null) {
-			RestrictionSet toCopy = parent.getRestriction(a);
+			RestrictionImpl toCopy = parent.getRestriction(a);
 			if(toCopy != null) {
 				result = toCopy.clone();
 			}			
 		}
 		
 		if(result == null) {
-			result = new RestrictionSet();
+			result = new RestrictionImpl();
 			restrictions.put(a, result);
 		}
 		
 		return result;
 	}
 
-	public void stateType(Var a, Type type) {
-		RestrictionSet r = getOrCreateLocalRestriction(a);
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateType(com.hp.hpl.jena.sparql.core.Var, org.aksw.sparqlify.database.Type)
+	 */
+	@Override
+	public void stateType(Var a, RdfTermType type) {
+		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateType(type)) {
 			if(r.isUnsatisfiable()) {
 				this.satisfiability = false;				
@@ -522,10 +537,14 @@ public class RestrictionManager2 {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateNode(com.hp.hpl.jena.sparql.core.Var, com.hp.hpl.jena.graph.Node)
+	 */
+	@Override
 	public void stateNode(Var a, Node b) {
-		RestrictionSet r = getOrCreateLocalRestriction(a);
+		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateNode(b)) {
-			if(r.isUnsatisfiable()) {
+			if(r.isConsistent() == false) {
 				satisfiability = Boolean.FALSE;
 				return;
 			}
@@ -533,29 +552,41 @@ public class RestrictionManager2 {
 			check(a);
 
 			if(!(satisfiability == Boolean.FALSE)) {
-				for(Var v : restrictions.getEquivalences(a)) {
-					binding.put(v, b);				
-					bindingMap.add(v, b);
-				}
+				binding.put(a, b);				
+				bindingMap.add(a, b);
 			}
 
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateUri(com.hp.hpl.jena.sparql.core.Var, java.lang.String)
+	 */
+	@Override
 	public void stateUri(Var a, String uri) {
 		stateNode(a, Node.createURI(uri));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateLiteral(com.hp.hpl.jena.sparql.core.Var, com.hp.hpl.jena.sparql.expr.NodeValue)
+	 */
+	@Override
 	public void stateLiteral(Var a, NodeValue b) {
 		stateNode(a, b.asNode());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateLexicalValuePrefixes(com.hp.hpl.jena.sparql.core.Var, org.aksw.sparqlify.config.lang.PrefixSet)
+	 */
+	/*
+	@Override
 	public void stateLexicalValuePrefixes(Var a, PrefixSet prefixes) {
-		RestrictionSet r = getOrCreateLocalRestriction(a);
+		RestrictionImpl r = getOrCreateLocalRestriction(a);		
 		if(r.stateUriPrefixes(prefixes)) {
 			check(a);
 		}
 	}
+	*/
 	
 	/**
 	 * States a new expression, which is treated as conjuncted with previous expressions.
@@ -583,15 +614,75 @@ public class RestrictionManager2 {
 			return;
 		}
 
+		/*
+		if(cnf.contains(newCnf)) {
+			for(Clause c : cnf) {
+				if(c.equals(newCnf)) {
+					System.out.println(c + " --- " + newCnf);
+				}
+			}
+			
+		}*/
+		
 		cnf.addAll(newCnf);
 		checkClauses(newCnf);
 	}			
 
 	
+	/* (non-Javadoc)
+	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateNonEqual(com.hp.hpl.jena.sparql.core.Var, com.hp.hpl.jena.sparql.core.Var)
+	 */
+	@Override
 	public void stateNonEqual(Var a, Var b) {
 		throw new NotImplementedException();
 	}
 	
+
+	public Set<Var> getVariables() {
+		Set<Var> result = new HashSet<Var>();
+		
+		RestrictionManagerImpl current = this;
+		while(current != null) {
+			result.addAll(current.restrictions.keySet());
+			current = current.parent;
+		}
+		
+		return result;		
+	}
+
+	// Adds all constraints of the rm to this one
+	public boolean stateRestriction(RestrictionManagerImpl rm) {
+		if(this.isUnsatisfiable()) {
+			return false;
+		}
+
+		Set<Var> vars = rm.getVariables();
+		for(Var var : vars) {
+			RestrictionImpl r = getRestriction(var);
+			if(r != null) {
+				this.stateRestriction(var, r);
+			
+				if(r.isUnsatisfiable()) {
+					this.satisfiability = Boolean.FALSE;
+					return true;
+				}
+			}
+		}
+		
+		
+		if(rm.isUnsatisfiable()) {
+			this.satisfiability = Boolean.FALSE;
+			return true;
+		}
+
+		this.stateCnf(rm.getCnf());
+		
+		if(this.isUnsatisfiable()) {
+			return true;
+		}
+	
+		return true;
+	}
 	
 	// TODO I need this method due to the lack of suppert for CNF lookups on tables right now
 	// Also, it does not use nesting
@@ -612,6 +703,16 @@ public class RestrictionManager2 {
 		return result;
 	}
 	
+	
+	public ExprList getExprs() {
+		ExprList result = new ExprList();
+		
+		for(Clause clause : this.getCnf()) {
+			result.add(org.aksw.sparqlify.expr.util.ExprUtils.orifyBalanced(clause.getExprs()));
+		}
+		
+		return result;
+	}
 
 	/**
 	 * I use this method for getting constraints for finding view candidates
@@ -657,9 +758,9 @@ public class RestrictionManager2 {
 	}
 
 	public void stateUriPrefixes(Var a, PrefixSet prefixes) {
-		RestrictionSet r = getOrCreateLocalRestriction(a);
+		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateUriPrefixes(prefixes)) {
-			if(r.isUnsatisfiable()) {
+			if(!r.isConsistent()) {
 				satisfiability = Boolean.FALSE;
 				return;
 			}
@@ -672,65 +773,5 @@ public class RestrictionManager2 {
 		return satisfiability == Boolean.FALSE;
 	}
 	
-	
-	
-	/**
-	 * How to create unions of CNFs?
-	 * 
-	 * (a AND (b OR c))   OR    (A AND (b OR c))
-	 * 
-	 * The good thing: It should be easy to figure out whether a clause already exists in the CNF
-	 * Actually: Can we even separate the restrictions from the CNF? I guess so.
-	 * Actually, thats why I have the copy on write stuff anyway.
-	 * 
-	 * 
-	 * Ok: First step: Create a union of the restrictions per variable
-	 * 
-	 * 
-	 * 
-	 * 
-	 * @param rms
-	 * @return
-	 */
-	public static RestrictionManager2 createUnion(Collection<RestrictionManager2> rms) {
-
-		// TODO Actually we just want the query variables - and not all (which includes view vars)
-		Set<Var> vars = new HashSet<Var>();
-		for(RestrictionManager2 rm : rms) {
-			if(rm.isUnsatisfiable()) {
-				continue;
-			}
-			
-			vars.addAll(rm.getVariables());
-		}
-		
-		RestrictionManager2 result = new RestrictionManager2();
-		// TODO: How to deal with the equivalences and the CNFs?
-		
-		
-		for(Var var : vars) {
-			
-			RestrictionSet newRs = new RestrictionSet();
-			for(RestrictionManager2 rm : rms) {
-				if(rm.isUnsatisfiable()) {
-					continue;
-				}
-				
-				RestrictionSet rs = rm.getRestriction(var);
-				if(rs == null || rs.isUnsatisfiable()) {
-					continue;
-				}
-				
-				for(RestrictionImpl r : rs.getRestrictions()) {
-					newRs.addAlternative(r);
-				}
-			}
-			
-			result.stateRestriction(var, newRs);
-		}
-		
-		return result;
-	}
-
 
 }

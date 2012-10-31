@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.restriction;
+package org.aksw.sparqlify.restriction.experiment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +17,9 @@ import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.IndirectEquiMap;
 import org.aksw.sparqlify.database.NestedNormalForm;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
+import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RdfTermType;
 import org.apache.commons.lang.NotImplementedException;
 
 import sparql.CnfUtils;
@@ -68,7 +71,7 @@ import com.hp.hpl.jena.sparql.util.ExprUtils;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class RestrictionManagerBeforeChangingToMap implements IRestrictionManager {
+public class RestrictionManagerBeforeChangingToMap implements RestrictionManager {
 	
 	private RestrictionManagerBeforeChangingToMap parent;
 	
@@ -482,7 +485,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateType(com.hp.hpl.jena.sparql.core.Var, org.aksw.sparqlify.database.Type)
 	 */
 	@Override
-	public void stateType(Var a, Type type) {
+	public void stateType(Var a, RdfTermType type) {
 		RestrictionImpl r = getOrCreateLocalRestriction(a);
 		if(r.stateType(type)) {
 			if(r.isUnsatisfiable()) {
@@ -536,6 +539,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 	/* (non-Javadoc)
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#stateLexicalValuePrefixes(com.hp.hpl.jena.sparql.core.Var, org.aksw.sparqlify.config.lang.PrefixSet)
 	 */
+	/*
 	@Override
 	public void stateLexicalValuePrefixes(Var a, PrefixSet prefixes) {
 		RestrictionImpl r = getOrCreateLocalRestriction(a);		
@@ -543,6 +547,7 @@ public class RestrictionManagerBeforeChangingToMap implements IRestrictionManage
 			check(a);
 		}
 	}
+	*/
 	
 	/**
 	 * States a new expression, which is treated as conjuncted with previous expressions.

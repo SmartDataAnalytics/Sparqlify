@@ -275,6 +275,11 @@ public class SqlOpSelectBlockCollectorImpl
 		
 		result.getProjection().project(op.getColumnNames());
 		
+		SqlOp effectiveOp = result.getSubOp();
+		if(effectiveOp instanceof SqlOpUnionN) {
+			initProjection(result.getProjection(), effectiveOp.getSchema(), SqlOpSelectBlock.getAliasName(effectiveOp));
+		}
+		
 		//result.getProjection().project(op.get$)
 		
 		//List<SqlExpr> transformed = adjustConditions(op.getExprs(), result.getProjection());		

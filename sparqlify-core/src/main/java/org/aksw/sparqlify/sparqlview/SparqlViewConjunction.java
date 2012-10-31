@@ -3,13 +3,13 @@ package org.aksw.sparqlify.sparqlview;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
 import sparql.TwoWayBinding;
 
 public class SparqlViewConjunction {
 	private List<SparqlViewInstance> viewBindings;		// Maybe set of views???
-	private RestrictionManager restrictions;
+	private RestrictionManagerImpl restrictions;
 	
 	private TwoWayBinding completeBinding; // Not sure if that is needed - maybe the restrictions already contain all information
 	
@@ -25,7 +25,7 @@ public class SparqlViewConjunction {
 	
 	@Deprecated
 	public SparqlViewConjunction(List<SparqlViewInstance> viewBindings, 
-			RestrictionManager restrictions, TwoWayBinding completeBinding) {
+			RestrictionManagerImpl restrictions, TwoWayBinding completeBinding) {
 		super();
 		this.viewBindings = viewBindings;
 		this.restrictions = restrictions;
@@ -35,7 +35,7 @@ public class SparqlViewConjunction {
 	}
 	
 	public SparqlViewConjunction(List<SparqlViewInstance> viewBindings, 
-			RestrictionManager restrictions) //, TwoWayBinding completeBinding)
+			RestrictionManagerImpl restrictions) //, TwoWayBinding completeBinding)
 	{
 		super();
 		this.viewBindings = viewBindings;
@@ -48,7 +48,7 @@ public class SparqlViewConjunction {
 		return viewBindings;
 	}
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 

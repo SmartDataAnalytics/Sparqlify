@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
 import sparql.TwoWayBinding;
 
@@ -17,7 +17,7 @@ import sparql.TwoWayBinding;
  */
 public class RdfViewConjunction {
 	private List<RdfViewInstance> viewBindings;		// Maybe set of views???
-	private RestrictionManager restrictions;
+	private RestrictionManagerImpl restrictions;
 	
 	//private TwoWayBinding completeBinding; // Not sure if that is needed - maybe the restrictions already contain all information
 	
@@ -38,7 +38,7 @@ public class RdfViewConjunction {
 	}
 	
 	public RdfViewConjunction(List<RdfViewInstance> viewBindings, 
-			RestrictionManager restrictions) //, TwoWayBinding completeBinding)
+			RestrictionManagerImpl restrictions) //, TwoWayBinding completeBinding)
 	{
 		super();
 		this.viewBindings = viewBindings;
@@ -51,7 +51,7 @@ public class RdfViewConjunction {
 		return viewBindings;
 	}
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 

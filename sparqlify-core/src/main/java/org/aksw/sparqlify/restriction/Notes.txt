@@ -1,0 +1,46 @@
+I think the constraint/restriction system should be redesigned,
+but right now I don't know how to best model things :/
+
+So far it is clear that:
+
+- A variable may be associated with a Restriction.
+- A Restriction can be either primitive or compound.
+
+But:
+- Should a restriction indicate for which field (type, value, data type, lang) it applies to?
+  Actually this sounds reasonable. So then we could use prefix constraints for the value and the data type field.
+  (Not that there are many use cases for the latter, but formally it would be clean)
+  
+So in this case we would have the levels:
+field
+rdf term
+expression
+
+- On the other hand the field level is not so cool: We could state type uri, plainlit, and state prefixes. Then
+  we don't know which prefix applies to the uri and which is for the literal.
+  
+  Hm, actually no:
+  ConstraintUriPrefix(prefixes) -> type = 1
+  
+  Ah, whatever lets live with the code we have right now and try to improve this later...
+
+
+
+Intersection of restriction yields unknown if no handler is implemented.
+
+
+Below are just some meaningles notes...
+---------------------------------------
+
+Restriction
+|- RestrictionUri
+|  |- RestrictionUriPrefixes (includes constants)
+|
+|- RestrictionPlainLiteral
+|  |- lanugage tag, prefix, range restriction
+|
+
+RestrictionRdfTerm
+|- type (uri, literal)
+|- prefixes (for the value field)
+|-

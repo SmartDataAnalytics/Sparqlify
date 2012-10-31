@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.database;
 
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.OpVisitor;
@@ -11,13 +11,13 @@ import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 public class OpFilterIndexed
 	extends Op1
 {
-	protected RestrictionManager restrictions;
+	protected RestrictionManagerImpl restrictions;
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 	
-	public OpFilterIndexed(Op subOp, RestrictionManager restrictions) {
+	public OpFilterIndexed(Op subOp, RestrictionManagerImpl restrictions) {
 		super(subOp);
 		this.restrictions = restrictions;
 	}
@@ -55,7 +55,7 @@ public class OpFilterIndexed
 
 	@Override
 	public Op copy(Op subOp) {
-		return OpFilterIndexed.filter(new RestrictionManager(restrictions), subOp);
+		return OpFilterIndexed.filter(new RestrictionManagerImpl(restrictions), subOp);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class OpFilterIndexed
 	}
 	
 	
-	public static OpFilterIndexed filter(RestrictionManager restrictions, Op subOp) {
+	public static OpFilterIndexed filter(RestrictionManagerImpl restrictions, Op subOp) {
 		return new OpFilterIndexed(subOp, restrictions);
 	}
 }

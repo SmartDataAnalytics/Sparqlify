@@ -51,7 +51,7 @@ import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
-import org.aksw.sparqlify.restriction.RestrictionSet;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
@@ -833,21 +833,21 @@ public class SqlNodeBinding {
 			Collection<VarDef> newTermDefs = new ArrayList<VarDef>();
 			Collection<VarDef> ebs = c.getSparqlVarToExprs().get(var);
 			boolean foundSatisfiableJoinCondition = false; //ebs.isEmpty();
-			RestrictionSet ras = new RestrictionSet(false);
+			RestrictionSetImpl ras = new RestrictionSetImpl(false);
 
 			for(VarDef ea : a.getSparqlVarToExprs().get(var)) {
 				
 				
 				// If there are no expressions to join on, then we retain the variable
-				RestrictionSet ra = ea.getRestrictions();
+				RestrictionSetImpl ra = ea.getRestrictions();
 				
 				//Restriction ra = (Restriction)ea.getRestriction().clone();
 				
 				for(VarDef eb : ebs) {
 
 					// Check if the constraints associated with the termDefs are unsatisfiable
-					RestrictionSet rc = ra.clone();
-					RestrictionSet rb = eb.getRestrictions();
+					RestrictionSetImpl rc = ra.clone();
+					RestrictionSetImpl rb = eb.getRestrictions();
 
 					rc.stateRestriction(rb);
 
@@ -2281,7 +2281,7 @@ public class SqlNodeBinding {
 			//IBiSetMultimap<Integer, Integer> exprToOrigin = new BiHashMultimap<Integer, Integer>();
 			//Multimap<Integer, Integer> exprToOrigin = HashMultimap.create();
 			
-			RestrictionSet restrictionsForVar = new RestrictionSet(false);
+			RestrictionSetImpl restrictionsForVar = new RestrictionSetImpl(false);
 			for (int index : entry.getValue()) {
 				SqlNodeOld sqlNode = sqlNodes.get(index);
 

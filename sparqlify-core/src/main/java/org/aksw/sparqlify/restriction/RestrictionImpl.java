@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.restriction;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -48,9 +49,9 @@ import com.karneim.util.collection.regex.PatternPro;
  *
  */
 public class RestrictionImpl
-	implements IRestriction
+	implements Restriction
 {
-	private Type type = Type.UNKNOWN;
+	private RdfTermType type = RdfTermType.UNKNOWN;
 	private Node node;
 	private PrefixSet uriPrefixes;
 
@@ -112,7 +113,7 @@ public class RestrictionImpl
 		satisfiability = Boolean.TRUE;
 	}
 	
-	public RestrictionImpl(Type type) {
+	public RestrictionImpl(RdfTermType type) {
 		this.stateType(type);
 	}
 	
@@ -141,8 +142,22 @@ public class RestrictionImpl
 		return !hasConstant() && uriPrefixes != null;
 	}
 
-	public Type getType() {
+	/**
+	 * Get the rdf term type of this restriction.
+	 * Deprecated because this can be a set.
+	 * 
+	 * @return
+	 */
+	@Deprecated
+	public RdfTermType getType() {
 		return type;
+	}
+	
+	public EnumSet<RdfTermType> getRdfTermTypes() {
+		EnumSet<RdfTermType> result = EnumSet.noneOf(RdfTermType.class);
+		result.add(type);
+		
+		return result;
 	}
 	
 	public Node getNode() {
@@ -157,7 +172,9 @@ public class RestrictionImpl
 	 * @see org.aksw.sparqlify.restriction.IRestriction#stateRestriction(org.aksw.sparqlify.restriction.Restriction)
 	 */
 	@Override
-	public boolean stateRestriction(RestrictionImpl other) {
+	public boolean stateRestriction(Restriction that) {
+		RestrictionImpl other = (RestrictionImpl)that;
+		
 		if(other.satisfiability == Boolean.TRUE) {
 			return false;
 		}
@@ -171,7 +188,7 @@ public class RestrictionImpl
 			return stateNode(other.node);
 		} else if(other.uriPrefixes != null) {
 			return stateUriPrefixes(other.uriPrefixes);
-		} else if(other.getType() != Type.UNKNOWN) {
+		} else if(other.getType() != RdfTermType.UNKNOWN) {
 			return stateType(other.type);
 		}
 		
@@ -183,13 +200,13 @@ public class RestrictionImpl
 	 * @see org.aksw.sparqlify.restriction.IRestriction#stateType(org.aksw.sparqlify.restriction.Type)
 	 */
 	@Override
-	public boolean stateType(Type newType) {		
+	public boolean stateType(RdfTermType newType) {		
 		if(satisfiability == Boolean.FALSE) {
 			return false;
 		}
 
-		if(type == Type.UNKNOWN) {
-			if(newType != Type.UNKNOWN) {
+		if(type == RdfTermType.UNKNOWN) {
+			if(newType != RdfTermType.UNKNOWN) {
 				type = newType;
 				satisfiability = null;
 				return true;
@@ -206,13 +223,13 @@ public class RestrictionImpl
 	}
 	
 	
-	public static Type getNodeType(Node node) {
+	public static RdfTermType getNodeType(Node node) {
 		if(node == null) {
-			return Type.UNKNOWN;
+			return RdfTermType.UNKNOWN;
 		} else if(node.isURI()) {
-			return Type.URI;
+			return RdfTermType.URI;
 		} else if(node.isLiteral()) {
-			return Type.LITERAL;
+			return RdfTermType.LITERAL;
 		} else {
 			throw new RuntimeException("Should not happen");
 		}
@@ -269,7 +286,7 @@ public class RestrictionImpl
 			throw new RuntimeException("Should not happen");
 		}
 		
-		boolean change = stateType(Type.URI);		
+		boolean change = stateType(RdfTermType.URI);		
 		
 		if(satisfiability == Boolean.FALSE) {
 			return change;
@@ -425,7 +442,7 @@ public class RestrictionImpl
 			return "" + node;
 		} else if(hasPrefix()){
 			return "" + uriPrefixes;
-		} else if(type != Type.UNKNOWN) {
+		} else if(type != RdfTermType.UNKNOWN) {
 			return "" + type;
 		} else {
 			return "Invalid state";

@@ -4,7 +4,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
 /***
  * A complete binding consists of a list of views and an overall binding
@@ -17,7 +17,7 @@ import org.aksw.sparqlify.restriction.RestrictionManager;
 public class ViewInstanceJoin
 {
 	private List<ViewInstance> viewInstances;		// Maybe set of views???
-	private RestrictionManager restrictions;
+	private RestrictionManagerImpl restrictions;
 	
 	//private TwoWayBinding completeBinding; // Not sure if that is needed - maybe the restrictions already contain all information
 	
@@ -32,7 +32,7 @@ public class ViewInstanceJoin
 	}
 
 	public ViewInstanceJoin(List<ViewInstance> viewBindings, 
-			RestrictionManager restrictions) //, TwoWayBinding completeBinding)
+			RestrictionManagerImpl restrictions) //, TwoWayBinding completeBinding)
 	{
 		super();
 		this.viewInstances = viewBindings;
@@ -45,7 +45,7 @@ public class ViewInstanceJoin
 		return viewInstances;
 	}
 	
-	public RestrictionManager getRestrictions() {
+	public RestrictionManagerImpl getRestrictions() {
 		return restrictions;
 	}
 	

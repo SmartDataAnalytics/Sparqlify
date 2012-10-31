@@ -1,6 +1,12 @@
 package org.aksw.sparqlify.restriction;
 
-public enum Type {
+/**
+ * RDF term types
+ * 
+ * @author raven
+ *
+ */
+public enum RdfTermType {
 	UNKNOWN,
 	//BLANK,
 	URI, // TODO This should probably be resource (i.e. uri + blank node)

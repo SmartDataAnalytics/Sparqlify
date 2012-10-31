@@ -9,7 +9,7 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.core.Quad;
@@ -93,7 +93,7 @@ public class ViewDefinition {
 	
 	// Restrictions on the variables (rather than on their defining expressions)
 	// TODO Implement this again
-	private RestrictionManager varRestrictions;
+	private RestrictionManagerImpl varRestrictions;
 	
 	// The source can point to an arbitrary object from
 	// which this view definition was derived.
@@ -118,7 +118,7 @@ public class ViewDefinition {
 		*/
 	}
 
-	public ViewDefinition(String name, QuadPattern template, Map<String, ViewReference> viewReferences, Mapping mapping, RestrictionManager varRestrictions, Object source)
+	public ViewDefinition(String name, QuadPattern template, Map<String, ViewReference> viewReferences, Mapping mapping, RestrictionManagerImpl varRestrictions, Object source)
 	{
 		this.name = name;
 		this.template = template;
@@ -166,7 +166,7 @@ public class ViewDefinition {
 		return result;
 	}
 
-	public RestrictionManager getVarRestrictions() {
+	public RestrictionManagerImpl getVarRestrictions() {
 		return varRestrictions;
 	}
 	

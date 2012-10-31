@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.restriction;
+package org.aksw.sparqlify.restriction.experiment;
 
 import org.aksw.sparqlify.config.lang.PrefixSet;
 
@@ -38,7 +38,7 @@ public class RestrictionPrefix
 	
 	
 	@Override
-	public Restriction and(Restriction other) {
+	public Restriction intersect(Restriction other) {
 		RestrictionPrefix o = (RestrictionPrefix)other;
 
 //		o.getPositive().getPrefixesOf(s, inclusive)
@@ -50,13 +50,13 @@ public class RestrictionPrefix
 	}
 
 	@Override
-	public Restriction or(Restriction other) {
+	public Restriction union(Restriction other) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Restriction not(Restriction other) {
+	public Restriction negate() {
 		// TODO Auto-generated method stub
 		return null;
 	}

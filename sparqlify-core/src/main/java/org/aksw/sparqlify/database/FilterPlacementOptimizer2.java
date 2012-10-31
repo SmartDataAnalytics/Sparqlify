@@ -8,7 +8,7 @@ import java.util.Set;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
-import org.aksw.sparqlify.restriction.RestrictionManager;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
 import org.apache.commons.collections15.Predicate;
 import org.slf4j.Logger;
@@ -67,12 +67,12 @@ public class FilterPlacementOptimizer2 {
 	private static final Logger logger = LoggerFactory.getLogger(FilterPlacementOptimizer2.class);
 	
 	public static Op optimize(Op op) {
-		RestrictionManager cnf = new RestrictionManager();
+		RestrictionManagerImpl cnf = new RestrictionManagerImpl();
 		return (Op)MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
 	}
 
 	
-	public static Op optimize(Op op, RestrictionManager cnf) {
+	public static Op optimize(Op op, RestrictionManagerImpl cnf) {
 		if(op instanceof OpNull) {
 			return op;
 		}
@@ -82,20 +82,20 @@ public class FilterPlacementOptimizer2 {
 	}
 	
 	
-	public static RestrictionManager filterByVars(RestrictionManager cnf, Op op) {	
+	public static RestrictionManagerImpl filterByVars(RestrictionManagerImpl cnf, Op op) {	
 		Set<Clause> clauses = cnf.getClausesForVars(GetVarsMentioned.getVarsMentioned(op));
-		return new RestrictionManager(new NestedNormalForm(clauses));
+		return new RestrictionManagerImpl(new NestedNormalForm(clauses));
 	}
 
-	public static Op _optimize(OpOrder op, RestrictionManager cnf) {
+	public static Op _optimize(OpOrder op, RestrictionManagerImpl cnf) {
 		return new OpOrder(optimize(op.getSubOp(), cnf), op.getConditions());
 	}
 	
 	
-	public static Op _optimize(OpJoin op, RestrictionManager cnf) {
+	public static Op _optimize(OpJoin op, RestrictionManagerImpl cnf) {
 		
-		RestrictionManager leftCnf = filterByVars(cnf, op.getLeft());
-		RestrictionManager rightCnf = filterByVars(cnf, op.getRight());
+		RestrictionManagerImpl leftCnf = filterByVars(cnf, op.getLeft());
+		RestrictionManagerImpl rightCnf = filterByVars(cnf, op.getRight());
 		
 		Set<Clause> union = Sets.union(leftCnf.getCnf(), rightCnf.getCnf());
 		Set<Clause> remaining = Sets.difference(cnf.getCnf(), union);
@@ -104,7 +104,7 @@ public class FilterPlacementOptimizer2 {
 		
 		if(!remaining.isEmpty()) {
 			//result = OpFilter.filter(cnfToExprList(remaining), result);
-			result = OpFilterIndexed.filter(new RestrictionManager(new NestedNormalForm(remaining)), result);
+			result = OpFilterIndexed.filter(new RestrictionManagerImpl(new NestedNormalForm(remaining)), result);
 		}
 		
 		return result;
@@ -114,7 +114,7 @@ public class FilterPlacementOptimizer2 {
 
 	// TODO This method looks wrong
 	// For each element of the union push all appropriate clauses
-	public static Op _optimize(OpDisjunction op, RestrictionManager cnf)
+	public static Op _optimize(OpDisjunction op, RestrictionManagerImpl cnf)
 	{
 		List<Op> args = new ArrayList<Op>();
 		for(Op element : op.getElements()) {
@@ -146,20 +146,20 @@ public class FilterPlacementOptimizer2 {
 	}
 
 
-	public static Op _optimize(OpDistinct op, RestrictionManager cnf) {
+	public static Op _optimize(OpDistinct op, RestrictionManagerImpl cnf) {
 		return new OpDistinct(optimize(op.getSubOp(), cnf));
 	}
 
-	public static Op _optimize(OpProject op, RestrictionManager cnf) {
+	public static Op _optimize(OpProject op, RestrictionManagerImpl cnf) {
 		return new OpProject(optimize(op.getSubOp(), cnf), op.getVars());
 	}
 	
-	public static Op _optimize(OpExtend op, RestrictionManager cnf) {
+	public static Op _optimize(OpExtend op, RestrictionManagerImpl cnf) {
 		logger.warn("OpExtend probably not optimally implemented");
 		return op.copy(optimize(op.getSubOp(), cnf));
 	}
 	
-	public static Op _optimize(OpGroup op, RestrictionManager cnf) {
+	public static Op _optimize(OpGroup op, RestrictionManagerImpl cnf) {
 		return new OpGroup(optimize(op.getSubOp(), cnf), op.getGroupVars(), op.getAggregators());
 	}
 	
@@ -179,8 +179,8 @@ public class FilterPlacementOptimizer2 {
 		return optimize(op.getSubOp(), child);
 	}
 	*/
-	public static Op _optimize(OpFilterIndexed op, RestrictionManager cnf) {
-		RestrictionManager child = new RestrictionManager(cnf);
+	public static Op _optimize(OpFilterIndexed op, RestrictionManagerImpl cnf) {
+		RestrictionManagerImpl child = new RestrictionManagerImpl(cnf);
 		
 
 		child.stateRestriction(op.getRestrictions());
@@ -189,12 +189,12 @@ public class FilterPlacementOptimizer2 {
 		return optimize(op.getSubOp(), child);
 	}
 
-	public static Op _optimize(OpNull op, RestrictionManager cnf) 
+	public static Op _optimize(OpNull op, RestrictionManagerImpl cnf) 
 	{
 		return op;
 	}
 	
-	public static Op _optimize(OpSlice op, RestrictionManager cnf)
+	public static Op _optimize(OpSlice op, RestrictionManagerImpl cnf)
 	{
 		return op.copy(optimize(op.getSubOp(), cnf));
 	}
@@ -235,7 +235,7 @@ public class FilterPlacementOptimizer2 {
 	}
 	
 	
-	public static Op _optimize(OpLeftJoin op, RestrictionManager cnf) {		
+	public static Op _optimize(OpLeftJoin op, RestrictionManagerImpl cnf) {		
 		// Only push those expression on the, that do not contain any
 		// variables of the right side
 		
@@ -256,8 +256,8 @@ public class FilterPlacementOptimizer2 {
 			}
 		}
 		
-		RestrictionManager left = new RestrictionManager(new NestedNormalForm(leftClauses));
-		RestrictionManager np = new RestrictionManager(new NestedNormalForm(nonPushable));
+		RestrictionManagerImpl left = new RestrictionManagerImpl(new NestedNormalForm(leftClauses));
+		RestrictionManagerImpl np = new RestrictionManagerImpl(new NestedNormalForm(nonPushable));
 		
 		Op leftJoin = OpLeftJoin.create(optimize(op.getLeft(), left), optimize(op.getRight(), left), new ExprList());
 
@@ -277,7 +277,7 @@ public class FilterPlacementOptimizer2 {
 		return result;
 	}*/
 
-	public static Op surroundWithFilterIfNeccessary(Op op, RestrictionManager cnf)
+	public static Op surroundWithFilterIfNeccessary(Op op, RestrictionManagerImpl cnf)
 	{
 		if(cnf.getCnf().isEmpty()) {
 			return op;
@@ -294,11 +294,11 @@ public class FilterPlacementOptimizer2 {
 	}
 
 	@Deprecated
-	public static Op _optimize(OpRdfViewPattern op, RestrictionManager cnf) {
+	public static Op _optimize(OpRdfViewPattern op, RestrictionManagerImpl cnf) {
 		return surroundWithFilterIfNeccessary(op, cnf);
 	}
 
-	public static Op _optimize(OpViewInstanceJoin op, RestrictionManager cnf) {
+	public static Op _optimize(OpViewInstanceJoin op, RestrictionManagerImpl cnf) {
 		return surroundWithFilterIfNeccessary(op, cnf);
 	}
 

@@ -38,8 +38,8 @@ import org.aksw.sparqlify.database.TreeIndex;
 import org.aksw.sparqlify.database.VariableConstraint;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
-import org.aksw.sparqlify.restriction.RestrictionManager;
-import org.aksw.sparqlify.restriction.Type;
+import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.aksw.sparqlify.restriction.RdfTermType;
 import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -312,8 +312,8 @@ public class SparqlViewSystem
 	
 	
 
-	public Map<Var, Type> deriveTypeConstraints(SparqlView view) {
-		Map<Var, Type> result = new HashMap<Var, Type>();		
+	public Map<Var, RdfTermType> deriveTypeConstraints(SparqlView view) {
+		Map<Var, RdfTermType> result = new HashMap<Var, RdfTermType>();		
 		
 		for(Entry<Node, Expr> entry : view.getBinding().entrySet()) {
 			Var var = 
@@ -332,18 +332,18 @@ public class SparqlViewSystem
 					Number number = (Number)o;
 					switch(number.intValue()) {
 					case 1:
-						result.put(var, Type.URI);
+						result.put(var, RdfTermType.URI);
 						break;
 					case 2:
 					case 3:
-						result.put(var, Type.LITERAL);
+						result.put(var, RdfTermType.LITERAL);
 						break;
 					}
 				}
 			} else if(functionIri.equals(SparqlifyConstants.uriLabel)) {
-				result.put(var, Type.URI);
+				result.put(var, RdfTermType.URI);
 			} else if(functionIri.equals(SparqlifyConstants.plainLiteralLabel) || functionIri.equals(SparqlifyConstants.typedLiteralLabel)) {
-				result.put(var, Type.LITERAL);
+				result.put(var, RdfTermType.LITERAL);
 			}
 		}
 
@@ -401,19 +401,19 @@ public class SparqlViewSystem
 	}
 	*/
 
-	public static Type getType(Node node, RestrictionManager restrictions) {
+	public static RdfTermType getType(Node node, RestrictionManagerImpl restrictions) {
 		if(node.isVariable()) {
 			RestrictionImpl r = restrictions.getRestriction((Var)node);
 			if(r != null) {
 				return r.getType();
 			}
 		} else if(node.isURI()) {
-			return Type.URI;
+			return RdfTermType.URI;
 		} else if(node.isLiteral()) {
-			return Type.LITERAL;
+			return RdfTermType.LITERAL;
 		}
 		
-		return Type.UNKNOWN;
+		return RdfTermType.UNKNOWN;
 	}
 	
 	private void index(SparqlView view) {
@@ -422,7 +422,7 @@ public class SparqlViewSystem
 			System.out.println("Debug");
 		}
 		
-		RestrictionManager restrictions = new RestrictionManager();
+		RestrictionManagerImpl restrictions = new RestrictionManagerImpl();
 		view.setRestrictions(restrictions);
 
 		
@@ -454,7 +454,7 @@ public class SparqlViewSystem
 				Node node = QuadUtils.getNode(quad, i);
 
 				if(i == 3) {
-					Type type = getType(node, restrictions);					
+					RdfTermType type = getType(node, restrictions);					
 					switch(type) {
 					case URI:
 						collections.add(Collections.singleton(1));
@@ -646,7 +646,7 @@ public class SparqlViewSystem
 	 * such as 'aaaa' = prefix
 	 * 'aaaaa$' = constant
 	 */
-	public List<SparqlViewConjunction> getApplicableViewsBase(OpQuadPattern op, RestrictionManager restrictions)
+	public List<SparqlViewConjunction> getApplicableViewsBase(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
 		List<SparqlViewConjunction> result = new ArrayList<SparqlViewConjunction>();
 
@@ -676,7 +676,7 @@ public class SparqlViewSystem
 	
 	private static final String[] columnNames = new String[]{"g_prefix", "s_prefix", "p_prefix", "o_prefix"};
 
-	public Set<ViewQuad> findCandidates(Quad quad, RestrictionManager restrictions) {
+	public Set<ViewQuad> findCandidates(Quad quad, RestrictionManagerImpl restrictions) {
 		
 		//Multimap<Quad, ViewQuad> quadToView = HashMultimap.create();
 		
@@ -707,7 +707,7 @@ public class SparqlViewSystem
 					continue;
 				}
 				
-				if(r.getType().equals(Type.URI) && r.hasConstant()) {
+				if(r.getType().equals(RdfTermType.URI) && r.hasConstant()) {
 					String columnName = columnNames[i];
 
 					columnConstraints.put(columnName, new IsPrefixOfConstraint(r.getNode().getURI()));
@@ -755,7 +755,7 @@ public class SparqlViewSystem
 	}
 
 	
-	public Pair<NavigableMap<Integer, Set<Quad>>, Map<Quad, Set<ViewQuad>>> findQuadWithFewestViewCandidates(QuadPattern queryQuads, RestrictionManager restrictions)
+	public Pair<NavigableMap<Integer, Set<Quad>>, Map<Quad, Set<ViewQuad>>> findQuadWithFewestViewCandidates(QuadPattern queryQuads, RestrictionManagerImpl restrictions)
 	{
 		//Map<Integer, Map<Quad, Set<ViewQuad>>> quadToView = new TreeMap<Integer, Map<Quad, Set<ViewQuad>>>();
 				
@@ -809,7 +809,7 @@ public class SparqlViewSystem
 	 * @param restrictions
 	 * @param result
 	 */
-	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManager restrictions, NestedStack<SparqlViewInstance> instances, List<SparqlViewConjunction> result)
+	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManagerImpl restrictions, NestedStack<SparqlViewInstance> instances, List<SparqlViewConjunction> result)
 	{
 		List<String> debug = Arrays.asList("view_nodes", "node_tags_resource_kv"); // "view_lgd_relation_specific_resources");
 		List<String> viewNames = new ArrayList<String>();		
@@ -860,8 +860,8 @@ public class SparqlViewSystem
 			}
 
 
-			RestrictionManager subRestrictions = new RestrictionManager(restrictions);
-			RestrictionManager viewRestrictions = viewQuad.getView().getRestrictions();
+			RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
+			RestrictionManagerImpl viewRestrictions = viewQuad.getView().getRestrictions();
 
 
 			for(int i = 0; i < 4; ++i) {
@@ -996,7 +996,7 @@ public class SparqlViewSystem
 		// Hm, but actually: If I pick those quads with the least view candidates first, then I will quickly
 		// Get to those quads causing contradictions
 		
-	public Op getApplicableViews(OpQuadPattern op, RestrictionManager restrictions)
+	public Op getApplicableViews(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
 		List<SparqlViewConjunction> conjunctions = getApplicableViewsBase(op, restrictions);
 		
@@ -1043,23 +1043,23 @@ public class SparqlViewSystem
 	 */
 	public Op _getApplicableViews(Op op)
 	{
-		return _getApplicableViews(op, new RestrictionManager());
+		return _getApplicableViews(op, new RestrictionManagerImpl());
 	}
 
-	public Op _getApplicableViews(Op op, RestrictionManager restrictions)
+	public Op _getApplicableViews(Op op, RestrictionManagerImpl restrictions)
 	{
 		return MultiMethod.invoke(this, "getApplicableViews", op, restrictions);
 	}
 
-	public Op getApplicableViews(OpProject op, RestrictionManager restrictions) {
+	public Op getApplicableViews(OpProject op, RestrictionManagerImpl restrictions) {
 		return new OpProject(_getApplicableViews(op.getSubOp(), restrictions), op.getVars());
 	}
 	
-	public Op getApplicableViews(OpOrder op, RestrictionManager restrictions) {
+	public Op getApplicableViews(OpOrder op, RestrictionManagerImpl restrictions) {
 		return new OpOrder(_getApplicableViews(op.getSubOp(), restrictions), op.getConditions());
 	}
 	
-	public Op getApplicableViews(OpGroup op, RestrictionManager restrictions) {
+	public Op getApplicableViews(OpGroup op, RestrictionManagerImpl restrictions) {
 		return new OpGroup(_getApplicableViews(op.getSubOp(), restrictions), op.getGroupVars(), op.getAggregators());
 	}
 	
@@ -1081,13 +1081,13 @@ public class SparqlViewSystem
 		return OpFilterIndexed.filter(restrictions, _getApplicableViews(op.getSubOp(), restrictions));
 	}
 	*/
-	public Op getApplicableViews(OpExtend op, RestrictionManager _restrictions) {
+	public Op getApplicableViews(OpExtend op, RestrictionManagerImpl _restrictions) {
 		return OpExtend.extend(_getApplicableViews(op.getSubOp()), op.getVarExprList());
 	}
 	
 	
 	
-	public Op getApplicableViews(OpFilter op, RestrictionManager restrictions) 
+	public Op getApplicableViews(OpFilter op, RestrictionManagerImpl restrictions) 
 	{
 		/*
 		RestrictionManager subRestrictions = new RestrictionManager(restrictions);
@@ -1099,7 +1099,7 @@ public class SparqlViewSystem
 		return OpFilter.filter(op.getExprs(), _getApplicableViews(op.getSubOp(), subRestrictions));
 		*/
 		
-		RestrictionManager subRestrictions = new RestrictionManager(restrictions);
+		RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
 		
 		for(Expr expr : op.getExprs()) {
 			subRestrictions.stateExpr(expr);
@@ -1108,12 +1108,12 @@ public class SparqlViewSystem
 		return OpFilterIndexed.filter(subRestrictions, _getApplicableViews(op.getSubOp(), subRestrictions));		
 	}
 
-	public Op getApplicableViews(OpUnion op, RestrictionManager restrictions) 
+	public Op getApplicableViews(OpUnion op, RestrictionManagerImpl restrictions) 
 	{
 		//ExprList subExprsLeft = new ExprList(exprs);
 		//ExprList subExprsRight = new ExprList(exprs);
-		RestrictionManager subRestrictionsLeft = new RestrictionManager(restrictions);
-		RestrictionManager subRestrictionsRight = new RestrictionManager(restrictions);
+		RestrictionManagerImpl subRestrictionsLeft = new RestrictionManagerImpl(restrictions);
+		RestrictionManagerImpl subRestrictionsRight = new RestrictionManagerImpl(restrictions);
 
 		//return new OpDisjunction.
 		return OpDisjunction.create(_getApplicableViews(op.getLeft(), subRestrictionsLeft), _getApplicableViews(op.getRight(), subRestrictionsRight));
@@ -1122,19 +1122,19 @@ public class SparqlViewSystem
 	}
 	
 	
-	public Op getApplicableViews(OpJoin op, RestrictionManager restrictions) {
+	public Op getApplicableViews(OpJoin op, RestrictionManagerImpl restrictions) {
 		return OpJoin.create(_getApplicableViews(op.getLeft(), restrictions), _getApplicableViews(op.getRight(), restrictions));
 	}
 
-	public Op getApplicableViews(OpLeftJoin op, RestrictionManager restrictions) 
+	public Op getApplicableViews(OpLeftJoin op, RestrictionManagerImpl restrictions) 
 	{		
 		Op left = _getApplicableViews(op.getLeft(), restrictions);
 
 		//List<RestrictionManager> moreRestrictions = getRestrictions(left);
 
-		RestrictionManager subRestrictions = new RestrictionManager(restrictions);
+		RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
 
-		RestrictionManager moreRestrictions = getRestrictions2(left);
+		RestrictionManagerImpl moreRestrictions = getRestrictions2(left);
 		
 		if(moreRestrictions != null) {
 			subRestrictions.stateRestriction(moreRestrictions);
@@ -1158,18 +1158,18 @@ public class SparqlViewSystem
 		return OpLeftJoin.create(left, right, new ExprList());
 	}
 	
-	public Op getApplicableViews(OpSlice op, RestrictionManager restrictions)
+	public Op getApplicableViews(OpSlice op, RestrictionManagerImpl restrictions)
 	{
 		return new OpSlice(_getApplicableViews(op.getSubOp(), restrictions), op.getStart(), op.getLength());
 	}	
 	
-	public Op getApplicableViews(OpDistinct op, RestrictionManager restrictions)
+	public Op getApplicableViews(OpDistinct op, RestrictionManagerImpl restrictions)
 	{
 		return new OpDistinct(_getApplicableViews(op.getSubOp(), restrictions));
 	}
 	
 	
-	public static RestrictionManager getRestrictions2(Op op) {
+	public static RestrictionManagerImpl getRestrictions2(Op op) {
 		if(op instanceof OpFilterIndexed) {
 			return ((OpFilterIndexed) op).getRestrictions();
 		} else if(op instanceof Op1) {
@@ -1189,8 +1189,8 @@ public class SparqlViewSystem
 	
 	
 	
-	public static List<RestrictionManager> getRestrictions(Op op) {
-		List<RestrictionManager> result = new ArrayList<RestrictionManager>();
+	public static List<RestrictionManagerImpl> getRestrictions(Op op) {
+		List<RestrictionManagerImpl> result = new ArrayList<RestrictionManagerImpl>();
 		
 		getRestrictions(op, result);
 		
@@ -1202,7 +1202,7 @@ public class SparqlViewSystem
 	 * 
 	 * Returns a disjunction (list) of restrictions that apply for a given node
 	 */
-	public static void getRestrictions(Op op, Collection<RestrictionManager> result) {
+	public static void getRestrictions(Op op, Collection<RestrictionManagerImpl> result) {
 		if(op instanceof Op1) {
 			getRestrictions(((Op1) op).getSubOp(), result);
 		} else if(op instanceof OpJoin) {
