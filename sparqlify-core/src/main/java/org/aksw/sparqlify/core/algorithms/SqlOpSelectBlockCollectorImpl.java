@@ -145,6 +145,8 @@ public class SqlOpSelectBlockCollectorImpl
 		String aliasName = aliasGenerator.next();
 		SqlOpUnionN result = new SqlOpUnionN(op.getSchema(), newMembers, aliasName); // makeSelectOrTable(op);
 		
+		//SqlOpUnionN result = SqlOpUnionN.create(newMembers, aliasName);
+		
 
 		//SqlOpSelectBlock result = SqlOpSelectBlock.create(opTable);
 
@@ -190,7 +192,13 @@ public class SqlOpSelectBlockCollectorImpl
 
 
 	public static SqlOpSelectBlock requireSelectBlock(SqlOp op) {
-		SqlOpSelectBlock result = (op instanceof SqlOpSelectBlock) ? (SqlOpSelectBlock) op : SqlOpSelectBlock.create(op);
+		SqlOpSelectBlock result;
+		if(op instanceof SqlOpSelectBlock) {
+			result = (SqlOpSelectBlock) op;
+		} else {
+			result = SqlOpSelectBlock.create(op);
+			initProjection(result.getProjection(), op.getSchema(), result.getAliasName());
+		}
 		
 		return result;
 	}

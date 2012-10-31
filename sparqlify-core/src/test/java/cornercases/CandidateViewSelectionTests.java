@@ -4,27 +4,40 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.ViewQuad;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.restriction.RestrictionManager;
 import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.sparql.algebra.Op;
+import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 public class CandidateViewSelectionTests {
 
-	@Test
+	//@Test
 	public void creationTest() throws RecognitionException, SQLException, IOException {
 
 		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
@@ -54,5 +67,72 @@ public class CandidateViewSelectionTests {
 		
 		System.out.println(op);
 		
+	}
+	
+	
+	@Test
+	public void test2() throws Exception {
+		RdfViewSystemOld.initSparqlifyFunctions();
+		
+		
+		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+
+		
+		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
+		Connection conn = dataSource.getConnection();
+
+		// typeAliases for the H2 datatype
+		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
+		
+		
+		ViewDefinitionFactory vdf = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
+		
+		ViewDefinition personView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) From person");
+		ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
+		ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
+
+		
+		
+		CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl();
+		candidateSelector.addView(personView);
+		candidateSelector.addView(deptView);
+		candidateSelector.addView(personToDeptView);
+
+		Var g = Var.alloc("g");
+		Var s = Var.alloc("s");
+		Var p = Var.alloc("p");
+		Var o = Var.alloc("o");
+		Node gv = Quad.defaultGraphIRI;
+		Node sv = Node.createURI("http://ex.org/person5");
+		Node pv = RDF.type.asNode();
+		Node ov = Node.createURI("http://ex.org/Person");
+		Quad quad = new Quad(g, s, p, o);
+		
+		RestrictionManager r = new RestrictionManager();
+		r.stateNode(g, gv);
+		r.stateNode(s, sv);
+		r.stateNode(p, pv);
+		r.stateNode(o, ov);
+		
+		Set<ViewQuad> viewQuads = candidateSelector.findCandidates(quad, r);
+
+		// If the constraints are working, there should be only 1 candidate
+		
+		
+		System.out.println("# View quads: " + viewQuads.size());
+		System.out.println("View quads: " + viewQuads);
+		
+
+		/*
+		Query query = QueryFactory.create("Prefix ex:<http://ex.org/> Select * { <http://ex.org/person/123> a ex:Person }");
+		Op op = candidateSelector.getApplicableViews(query);
+		
+		System.out.println(op);
+		
+		
+		System.out.println(personView);
+
+		Collection<ViewDefinition> viewDefs= Arrays.asList(personView, deptView, personToDeptView);
+		*/	
 	}
 }

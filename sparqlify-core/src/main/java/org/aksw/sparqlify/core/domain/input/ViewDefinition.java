@@ -108,10 +108,23 @@ public class ViewDefinition {
 
 	public ViewDefinition(String name, QuadPattern template, Map<String, ViewReference> viewReferences, Mapping mapping, Object source)
 	{
+		this(name, template, viewReferences, mapping, null, source);
+		/*
 		this.name = name;
 		this.template = template;
 		this.mapping = mapping;
 		this.viewReferences = viewReferences;
+		this.source = source;
+		*/
+	}
+
+	public ViewDefinition(String name, QuadPattern template, Map<String, ViewReference> viewReferences, Mapping mapping, RestrictionManager varRestrictions, Object source)
+	{
+		this.name = name;
+		this.template = template;
+		this.mapping = mapping;
+		this.viewReferences = viewReferences;
+		this.varRestrictions = varRestrictions;
 		this.source = source;
 	}
 

@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.domain.input;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -59,6 +60,20 @@ public class VarDefinition {
 		return varToExprs.get(viewVar);
 	}
 	
+	
+	public VarDefinition copyProject(List<Var> viewVars) {
+		Multimap<Var, RestrictedExpr> map = HashMultimap.create();
+	
+		for(Var var : viewVars) {
+			Collection<RestrictedExpr> restExprs = varToExprs.get(var);
+			
+			map.putAll(var, restExprs);			
+		}
+
+		VarDefinition result = new VarDefinition(map);
+		
+		return result;
+	}
 	
 	public VarDefinition copyExpandConstants() {
 		Multimap<Var, RestrictedExpr> resultMap = HashMultimap.create();

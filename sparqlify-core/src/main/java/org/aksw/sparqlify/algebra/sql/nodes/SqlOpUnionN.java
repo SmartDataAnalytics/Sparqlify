@@ -21,15 +21,20 @@ public class SqlOpUnionN
 		return aliasName;
 	}
 
-	
+
 	public static SqlOpUnionN create(List<SqlOp> subOps) {
+		SqlOpUnionN result = create(subOps, null);
+		return result;
+	}
+
+	public static SqlOpUnionN create(List<SqlOp> subOps, String aliasName) {
 		
 		System.err.println("FIXME schemas of union members not validated");
 		
 		SqlOp pick = subOps.get(0);
 		Schema schema = pick.getSchema();
 		
-		return new SqlOpUnionN(schema, subOps);
+		return new SqlOpUnionN(schema, subOps, aliasName);
 	}
 
 	@Override

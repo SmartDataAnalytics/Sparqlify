@@ -53,6 +53,14 @@ public class Mapping
 	}
 	
 	
+	/**
+	 * 
+	 * @return whether the underlying sql of has zero rows
+	 */
+	public boolean isEmpty() {
+		return sqlOp.isEmpty();
+	}
+	
 	/*
 	public Mapping createRenamed(Map<String, String> map) {
 		varDefinition.createWithRenamedColumnReferences();

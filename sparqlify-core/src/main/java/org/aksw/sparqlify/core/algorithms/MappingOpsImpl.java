@@ -246,6 +246,11 @@ public class MappingOpsImpl
 		for(List<RestrictedExpr> item : cart) {
 			for(int i = 0; i < commonVars.size(); ++i) {
 				Var var = commonVars.get(i);
+				
+//				if(var.equals(Var.alloc("var_2"))) {
+//					System.out.println("here");
+//				}
+				
 				Expr expr = item.get(i).getExpr();
 				
 				assignment.put(var, expr);
@@ -276,7 +281,8 @@ public class MappingOpsImpl
 
 
 		if(result == null) {
-			throw new NullPointerException();
+			//throw new NullPointerException();
+			result = S_Constant.FALSE;
 		}
 
 		
@@ -741,11 +747,26 @@ public class MappingOpsImpl
 	 */
 	@Override
 	public Mapping project(Mapping a, List<Var> vars) {		
-
-		// TODO Implement
-		System.err.println("Projection of mappings not implemented yet");
+				
+		//List<String> referencedColumns = new HashSet<String>();
+		List<String> referencedColumns = new ArrayList<String>();
 		
-		return a;
+		// Track all columns that contribute to the construction of SQL variables
+		for(Var var : vars) {
+			for(RestrictedExpr def : a.getVarDefinition().getDefinitions(var)) {
+				for(Var item : def.getExpr().getVarsMentioned()) {
+					referencedColumns.add(item.getName());
+				}
+			}
+		}
+		
+		
+		SqlOpProject sqlOp = SqlOpProject.create(a.getSqlOp(), referencedColumns);
+		VarDefinition newVarDef = a.getVarDefinition().copyProject(vars);		
+	
+		Mapping result = new Mapping(newVarDef, sqlOp);
+		
+		return result;
 	}
 
 	
@@ -962,12 +983,12 @@ public class MappingOpsImpl
 						//map.put(e.getKey().getVarName(), expr);
 						map.put(columnName, sqlExpr);
 
-						if(columnName.equals("c_4")) {
-							System.out.println("Debug c_4");
-						}
+//						if(columnName.equals("c_4")) {
+//							System.out.println("Debug c_4");
+//						}
 						
 						unionTypeMap.put(columnName, sqlExpr.getDatatype());
-						System.out.println("Union type map: " + unionTypeMap);
+//						System.out.println("Union type map: " + unionTypeMap);
 					}
 					
 					partialProjections.add(map);
@@ -1015,7 +1036,7 @@ public class MappingOpsImpl
 
 		// The order of the column for the union
 		List<String> unionColumnOrder = new ArrayList<String>(unionTypeMap.keySet());
-		System.out.println("unionTypeMap: " + unionTypeMap);
+//		System.out.println("unionTypeMap: " + unionTypeMap);
 		
 		/*
 		 * For each member, fill it appropriately up with nulls in order to make it
@@ -1058,9 +1079,9 @@ public class MappingOpsImpl
 		SqlOpUnionN newUnion = SqlOpUnionN.create(extended);
 
 		
-		for(SqlOp m : newUnion.getSubOps()) {
-			System.out.println(m.getSchema().getColumnNames());
-		}
+//		for(SqlOp m : newUnion.getSubOps()) {
+//			System.out.println("SubOp schema: " + m.getSchema().getColumnNames());
+//		}
 		
 		VarDefinition varDefinition = new VarDefinition(unionVarDefs);
 		Mapping result = new Mapping(varDefinition, newUnion);

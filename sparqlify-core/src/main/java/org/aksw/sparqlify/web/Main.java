@@ -18,6 +18,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
+import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -169,6 +170,10 @@ public class Main {
 		ComboPooledDataSource pooledDataSource = new ComboPooledDataSource();
 		pooledDataSource.
 		*/
+		
+		
+		RdfViewSystemOld.initSparqlifyFunctions();
+		
 		
 		Connection conn = dataSource.getConnection();
 
