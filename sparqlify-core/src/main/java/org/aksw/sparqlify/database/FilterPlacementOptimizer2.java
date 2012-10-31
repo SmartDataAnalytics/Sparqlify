@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.database;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,7 @@ import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 /**
@@ -62,6 +64,8 @@ class PredicateInstanceOf<T>
  *
  * Uses RestrictionManager for the filter expressions (indexed set of dnfs)
  *
+ *
+ * TODO: Inconsistent filters disappear
  */
 public class FilterPlacementOptimizer2 {
 	private static final Logger logger = LoggerFactory.getLogger(FilterPlacementOptimizer2.class);
@@ -78,7 +82,8 @@ public class FilterPlacementOptimizer2 {
 		}
 		
 		
-		return (Op)MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
+		Op result = MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
+		return result;
 	}
 	
 	
@@ -136,7 +141,8 @@ public class FilterPlacementOptimizer2 {
 				continue;
 			}
 			
-			args.add(optimize(element, cnf));
+			Op optimizedMember = optimize(element, cnf);
+			args.add(optimizedMember);
 		}
 		
 		OpDisjunction result = OpDisjunction.create();
@@ -180,13 +186,21 @@ public class FilterPlacementOptimizer2 {
 	}
 	*/
 	public static Op _optimize(OpFilterIndexed op, RestrictionManagerImpl cnf) {
+		
 		RestrictionManagerImpl child = new RestrictionManagerImpl(cnf);
 		
 
 		child.stateRestriction(op.getRestrictions());
+
+		/*
+		if(child.isUnsatisfiable()) {
+			 Op result = OpNull.create();
+			 return result;
+		}*/
+
 		
-		
-		return optimize(op.getSubOp(), child);
+		Op result = optimize(op.getSubOp(), child);
+		return result;
 	}
 
 	public static Op _optimize(OpNull op, RestrictionManagerImpl cnf) 
@@ -279,18 +293,24 @@ public class FilterPlacementOptimizer2 {
 
 	public static Op surroundWithFilterIfNeccessary(Op op, RestrictionManagerImpl cnf)
 	{
-		if(cnf.getCnf().isEmpty()) {
-			return op;
-		} else {
-			Op result = new OpFilterIndexed(op, cnf);
+		Op result;
+
+		if(cnf.isUnsatisfiable()) {
+			result = new OpFilterIndexed(op, new RestrictionManagerImpl(new NestedNormalForm(new HashSet<Clause>(Collections.singleton(new Clause(new HashSet<Expr>(Collections.singleton(NodeValue.FALSE))))))));
+		}
+		else if(cnf.getCnf().isEmpty()) {
+			result = op;
+		}
+		else {
+			result = new OpFilterIndexed(op, cnf);
 			/*
 			ExprList exprs = cnfToExprList(cnf);
 			
 			Op result = OpFilter.filter(exprs, op);
-			*/
-			
-			return result;
-		}		
+			*/			
+		}
+		
+		return result;
 	}
 
 	@Deprecated

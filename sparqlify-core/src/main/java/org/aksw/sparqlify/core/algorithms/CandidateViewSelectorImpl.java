@@ -1026,7 +1026,8 @@ public class CandidateViewSelectorImpl
 			subRestrictions.stateExpr(expr);
 		}
 		
-		return OpFilterIndexed.filter(subRestrictions, _getApplicableViews(op.getSubOp(), subRestrictions));		
+		Op result = OpFilterIndexed.filter(subRestrictions, _getApplicableViews(op.getSubOp(), subRestrictions));		
+		return result;
 	}
 
 	public Op getApplicableViews(OpUnion op, RestrictionManagerImpl restrictions) 

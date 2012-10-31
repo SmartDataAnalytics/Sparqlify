@@ -216,9 +216,14 @@ public class MappingOpsImpl
 		Set<Var> cVars = conditionVars;
 		cVars.retainAll(varDef.getMap().keySet());
 		List<Var> commonVars = new ArrayList<Var>(cVars);
-		
+
+		// If the condition and the varDef have no variables in common,
+		// we still need to consider the constants, such as FALSE and TRUE.
 		if(commonVars.isEmpty()) {
-			return S_Constant.TRUE;
+			SqlExpr sqlExpr = sqlTranslator.translate(condition, null, typeMap);
+
+			//return S_Constant.TRUE;
+			return sqlExpr;
 		}
 		
 		// Sort the variable definitions by number of alternatives
@@ -795,15 +800,13 @@ public class MappingOpsImpl
 	}
 
 	@Override
-	public Mapping select(Mapping a, ExprList exprs) {
+	public Mapping filter(Mapping a, ExprList exprs) {
 		Map<String, TypeToken> typeMap = a.getSqlOp().getSchema().getTypeMap();
 		
 		List<SqlExpr> sqlExprs = new ArrayList<SqlExpr>();
 		for(Expr expr : exprs) {
 			
-			// Replace any variables in the expression with the variable definitions
-			
-			
+			// Replace any variables in the expression with the variable definitions			
 			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap, exprTransformer, sqlTranslator);
 			if(sqlExpr.equals(S_Constant.TRUE)) {
 				continue;

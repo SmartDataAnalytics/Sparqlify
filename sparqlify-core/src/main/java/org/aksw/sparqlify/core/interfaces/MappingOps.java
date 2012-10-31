@@ -45,7 +45,7 @@ public interface MappingOps {
 	
 	Mapping project(Mapping a, List<Var> vars);
 	
-	Mapping select(Mapping a, ExprList exprs);
+	Mapping filter(Mapping a, ExprList exprs);
 	
 	Mapping distinct(Mapping a);
 }

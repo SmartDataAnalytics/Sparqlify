@@ -3,6 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
@@ -14,6 +15,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
+import com.hp.hpl.jena.sparql.algebra.op.OpNull;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 
@@ -97,7 +99,7 @@ public class OpMappingRewriterImpl
 	public Mapping rewrite(OpFilterIndexed op) {
 		Mapping a = rewrite(op.getSubOp());
 		
-		Mapping result = ops.select(a, op.getRestrictions().getExprs());
+		Mapping result = ops.filter(a, op.getRestrictions().getExprs());
 		return result;
 	}
 	
@@ -126,6 +128,13 @@ public class OpMappingRewriterImpl
 		
 		return result;
 	}
+	
+	
+	/*
+	public Mapping rewrite(OpNull op) {
+		Mapping a = new Mapping(SqlOpEmpty.create(schema));
+	}
+	*/
 
 	
 	@Override
@@ -134,21 +143,33 @@ public class OpMappingRewriterImpl
 		Mapping result;
 		if(op instanceof OpViewInstanceJoin) {
 			result = rewrite((OpViewInstanceJoin)op);
-		} else if (op instanceof OpDisjunction) {
+		}
+		else if (op instanceof OpDisjunction) {
 			result = rewrite((OpDisjunction)op);
-		} else if (op instanceof OpFilterIndexed) {
+		} 
+		else if (op instanceof OpFilterIndexed) {
 			result = rewrite((OpFilterIndexed)op);
-		} else if (op instanceof OpProject) {
+		}
+		else if (op instanceof OpProject) {
 			result = rewrite((OpProject)op);
-		} else if (op instanceof OpJoin) {
+		}
+		else if (op instanceof OpJoin) {
 			result = rewrite((OpJoin)op);
-		} else if (op instanceof OpLeftJoin) {
+		}
+		else if (op instanceof OpLeftJoin) {
 			result = rewrite((OpLeftJoin)op);
-		} else if (op instanceof OpSlice) {
+		}
+		else if (op instanceof OpSlice) {
 			result = rewrite((OpSlice)op);
-		} else if (op instanceof OpDistinct) {
+		}
+		else if (op instanceof OpDistinct) {
 			result = rewrite((OpDistinct)op);
-		} else {
+		}
+		/*
+		else if(op instanceof OpNull) {
+			result = rewrite((OpNull) op);
+		}*/
+		else {
 			throw new RuntimeException("Unhandled op type: " + op.getClass() + "; " + op);
 		}
 		

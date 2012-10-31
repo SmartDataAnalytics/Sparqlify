@@ -137,20 +137,34 @@ public class MappingOpsImplTest {
 		
 
 		{
-			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . }");
+			QueryExecution qe = qef.createQueryExecution("Select ?s (Count(*) As ?c) { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . } Group By ?s");
 			ResultSet rs = qe.execSelect();
 			String rsStr = ResultSetFormatter.asText(rs);
 			System.out.println(rsStr);
 		}		
 
 		
-		
-		{
-			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . ?x ?y ?z . Filter(?s = ?x)}");
-			ResultSet rs = qe.execSelect();
-			String rsStr = ResultSetFormatter.asText(rs);
-			System.out.println(rsStr);
-		}		
+//		{
+//			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> && ?s = <http://ex.org/person/2>) . }");
+//			ResultSet rs = qe.execSelect();
+//			String rsStr = ResultSetFormatter.asText(rs);
+//			System.out.println(rsStr);
+//		}		
+
+//		{
+//			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . Filter(!(?s = <http://ex.org/person/1>)) . }");
+//			ResultSet rs = qe.execSelect();
+//			String rsStr = ResultSetFormatter.asText(rs);
+//			System.out.println(rsStr);
+//		}		
+//
+//		
+//		{
+//			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o . ?x ?y ?z . Filter(?s = ?x)}");
+//			ResultSet rs = qe.execSelect();
+//			String rsStr = ResultSetFormatter.asText(rs);
+//			System.out.println(rsStr);
+//		}		
 
 		//SqlSelectBlock x;
 		
