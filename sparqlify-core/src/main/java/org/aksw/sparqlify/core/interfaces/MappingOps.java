@@ -5,8 +5,11 @@ import java.util.Map;
 
 import org.aksw.sparqlify.core.algorithms.ViewInstance;
 import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.core.VarExprList;
+import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
 /**
@@ -48,4 +51,8 @@ public interface MappingOps {
 	Mapping filter(Mapping a, ExprList exprs);
 	
 	Mapping distinct(Mapping a);
+
+	Mapping groupBy(Mapping a, VarExprList groupVars, List<ExprAggregator> aggregators);
+
+	Mapping extend(Mapping a, VarDefinition varDef);
 }

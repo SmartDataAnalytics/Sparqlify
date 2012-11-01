@@ -3,19 +3,22 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.database.OpFilterIndexed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
+import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
+import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpNull;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 
@@ -23,6 +26,8 @@ import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 public class OpMappingRewriterImpl
 	implements OpMappingRewriter
 {
+	private static final Logger logger = LoggerFactory.getLogger(OpMappingRewriterImpl.class);
+	
 	private MappingOps ops;
 
 	//private Map<Class<?>, OpMappingRewriter> map;
@@ -113,6 +118,25 @@ public class OpMappingRewriterImpl
 		return result;
 	}
 	
+	public Mapping rewrite(OpExtend op) {
+		Mapping a = rewrite(op.getSubOp());
+
+		logger.warn("OpExtend: We need to check whether term constructors must be injected");
+		/*
+		 * A thought on injecting term constructors:
+		 *   Can we just rewrite the expression to SQL, and then make it a typed literal?
+		 *   No, because the expression might actually compute a URI, so we can't just guess the type.
+		 *   
+		 * Maybe for now we could assume, that the expressions that go here are all sane (i.e. have the appropriate term ctors)
+		 * 
+		 */
+		VarDefinition varDef = VarDefinition.create(op.getVarExprList());
+		
+		Mapping result = ops.extend(a, varDef);
+		
+		return result;
+	}
+	
 	public Mapping rewrite(OpProject op) {
 		Mapping a = rewrite(op.getSubOp());
 		
@@ -128,7 +152,23 @@ public class OpMappingRewriterImpl
 		
 		return result;
 	}
+
 	
+	/**
+	 * The aggregators need to be wrapped with an appropriate term ctor.
+	 * E.g. count(*) -> typedLiteral(count(*), xsd:long)
+	 * 
+	 * @param op
+	 * @return
+	 */
+	public Mapping rewrite(OpGroup op) {
+		
+		Mapping a = rewrite(op.getSubOp());
+		
+		Mapping result = ops.groupBy(a, op.getGroupVars(), op.getAggregators());
+		
+		return result;
+	}
 	
 	/*
 	public Mapping rewrite(OpNull op) {
@@ -164,6 +204,12 @@ public class OpMappingRewriterImpl
 		}
 		else if (op instanceof OpDistinct) {
 			result = rewrite((OpDistinct)op);
+		}
+		else if (op instanceof OpGroup) {
+			result = rewrite((OpGroup)op);
+		}
+		else if (op instanceof OpExtend) {
+			result = rewrite((OpExtend)op);
 		}
 		/*
 		else if(op instanceof OpNull) {

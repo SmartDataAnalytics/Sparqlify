@@ -46,7 +46,9 @@ import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sdb.core.JoinType;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
@@ -1099,6 +1101,46 @@ public class MappingOpsImpl
 
 		return result;
 	}
+
+	
+	/**
+	 * Extends a mapping with additional variable definitions.
+	 * 
+	 * 
+	 * Ignore below for now.
+	 * 
+	 * FIXME We need to introduce var orders in the var definitions, if extending may refer to other variables.
+	 * 
+	 * Example:
+	 *   extend(?c = ?x)
+	 *     group (?s) (?x=(count)) 
+	 * 
+	 * 
+	 */
+	@Override
+	public Mapping extend(Mapping a, VarDefinition varDef) {		
+		
+		VarDefinition newVarDef = a.getVarDefinition().extend(varDef);			
+		Mapping result = new Mapping(newVarDef, a.getSqlOp());
+		
+		return result;
+	}
+
+	/**
+	 * GroupBy 
+	 * 
+	 * 
+	 * 
+	 */
+	@Override
+	public Mapping groupBy(Mapping a, VarExprList groupVars,
+			List<ExprAggregator> aggregators) {
+		
+		throw new RuntimeException("Not implemented");
+		
+		//return null;
+	}
+
 }	
 	
 	

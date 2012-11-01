@@ -12,6 +12,7 @@ import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 
@@ -32,7 +33,9 @@ import com.hp.hpl.jena.sparql.expr.ExprVar;
  * @author Claus Stader
  *
  */
-public class VarDefinition {
+public class VarDefinition
+//	implements Cloneable
+{
 	private Multimap<Var, RestrictedExpr> varToExprs;
 	
 	
@@ -157,6 +160,15 @@ public class VarDefinition {
 		return result;
 	}
 
+	//@Override
+	public VarDefinition extend(VarDefinition that) {
+		Multimap<Var, RestrictedExpr> map = HashMultimap.create(varToExprs);
+		map.putAll(that.varToExprs);
+		
+		VarDefinition result = new VarDefinition(map);
+		return result;
+	}
+	
 	@Override
 	public String toString() {
 		return "VarDefinition [varToExprs=" + varToExprs + "]";
@@ -199,6 +211,20 @@ public class VarDefinition {
 		
 	}*/
 	
-	
+	public static VarDefinition create(VarExprList varExprs) {
+
+		Multimap<Var, RestrictedExpr> map = HashMultimap.create();
+		for(Entry<Var, Expr> entry : varExprs.getExprs().entrySet()) {
+			Var var = entry.getKey();
+			Expr expr = entry.getValue();
+			
+			RestrictedExpr restExpr = new RestrictedExpr(expr);
+			
+			map.put(var, restExpr);
+		}
+		
+		VarDefinition result = new VarDefinition(map);
+		return result;
+	}
 	
 }
