@@ -14,6 +14,7 @@ import java.util.Set;
 import mapping.ExprCommonFactor;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
@@ -22,6 +23,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpGroupBy;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
@@ -39,12 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sdb.core.JoinType;
+import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -839,6 +843,17 @@ public class MappingOpsImpl
 //		}			
 //	};
 
+	
+	public Mapping unionIfNeeded(List<Mapping> members) {
+		Mapping result;
+		if(members.size() == 1) {
+			result = members.iterator().next();
+		} else {
+			result = union(members);
+		}
+		
+		return result;
+	}
 
 	/**
 	 * 
@@ -1136,8 +1151,61 @@ public class MappingOpsImpl
 	public Mapping groupBy(Mapping a, VarExprList groupVars,
 			List<ExprAggregator> aggregators) {
 		
-		throw new RuntimeException("Not implemented");
 		
+		// TODO Add variables mentioned in aggregators aswell?
+		List<Var> vars = new ArrayList<Var>(groupVars.getVars());
+		
+		List<Mapping> ms = MappingRefactor.refactorToUnion(a, vars);
+
+		ListMultimap<String, Mapping> groups = MappingRefactor.groupBy(exprNormalizer, ms, vars);
+		
+		
+		List<Mapping> gg = new ArrayList<Mapping>();
+		for(Collection<Mapping> group : groups.asMap().values()) {
+			List<Mapping> list = new ArrayList<Mapping>(group);
+			
+			Mapping u = union(list);
+			// Get the SQL column references
+			
+			
+			// Collect all column names we have to group by
+			List<String> columnNames = new ArrayList<String>();			
+			for(Var var : vars) {
+				
+				Collection<RestrictedExpr> defs = u.getVarDefinition().getDefinitions(var);
+				if(defs.size() > 1) {
+					throw new RuntimeException("Should not happen");
+				}
+				else if(defs.isEmpty()) {
+					continue;
+				} else {
+					RestrictedExpr restExpr = defs.iterator().next();
+					Expr expr = restExpr.getExpr();
+					Set<Var> mentionedVars = expr.getVarsMentioned();
+					
+					for(Var mv : mentionedVars) {
+						String varName = mv.getVarName();
+						if(!columnNames.contains(varName)) {
+							columnNames.add(varName);
+						}
+					}
+				}
+			}
+			
+			
+			List<SqlExprAggregator> sqlAggregators = new ArrayList<SqlExprAggregator>();
+			
+			SqlOpGroupBy sqlOpGroupBy = SqlOpGroupBy.create(u.getSqlOp(), columnNames, sqlAggregators);
+			
+			
+			Mapping tmp = new Mapping(u.getVarDefinition(), sqlOpGroupBy);
+			
+			gg.add(tmp);
+		}
+		
+		Mapping result = unionIfNeeded(gg);
+		return result;
+				
 		//return null;
 	}
 
