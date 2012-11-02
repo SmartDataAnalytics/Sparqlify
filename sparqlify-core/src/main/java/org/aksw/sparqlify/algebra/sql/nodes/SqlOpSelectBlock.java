@@ -46,6 +46,7 @@ public class SqlOpSelectBlock
     private String aliasName;
     
     
+    
     public SqlOpSelectBlock(SqlOp node) {
     	this(node.getSchema(), node);
     	
@@ -127,8 +128,16 @@ public class SqlOpSelectBlock
     private Long limit = null;
     private boolean distinct = false ;
     
+    
     //private SqlNode join;
     //private SqlTable vTable ;           // Naming base for renamed columns
+    
+    //private List<SqlExprAggregator> aggregators = new ArrayList<SqlExprAggregator>();
+
+    
+    private List<SqlExpr> groupByExprs = new ArrayList<SqlExpr>();
+    
+    
     
     private List<SqlSortCondition> sortConditions = new ArrayList<SqlSortCondition>();
 
@@ -167,9 +176,14 @@ public class SqlOpSelectBlock
 		this.distinct = distinct;
 	}
 
+	public List<SqlExpr> getGroupByExprs() {
+		return groupByExprs;
+	}
+	
 	public List<SqlSortCondition> getSortConditions() {
 		return sortConditions;
 	}
+	
 	
 	//@Override
 	public SqlOpSelectBlock copy1(SqlOp subOp) {

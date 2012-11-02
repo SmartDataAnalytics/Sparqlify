@@ -130,9 +130,13 @@ public class OpMappingRewriterImpl
 		 * Maybe for now we could assume, that the expressions that go here are all sane (i.e. have the appropriate term ctors)
 		 * 
 		 */
+
+		//Multimap<Var, RestrictedExpr> map = HashMultimap.create(a.getVarDefinition().getMap());
+				
+				
 		VarDefinition varDef = VarDefinition.create(op.getVarExprList());
-		
 		Mapping result = ops.extend(a, varDef);
+
 		
 		return result;
 	}

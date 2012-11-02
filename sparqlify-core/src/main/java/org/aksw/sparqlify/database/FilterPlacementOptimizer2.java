@@ -72,7 +72,8 @@ public class FilterPlacementOptimizer2 {
 	
 	public static Op optimize(Op op) {
 		RestrictionManagerImpl cnf = new RestrictionManagerImpl();
-		return (Op)MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
+		Op result = MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
+		return result;
 	}
 
 	
@@ -157,7 +158,9 @@ public class FilterPlacementOptimizer2 {
 	}
 
 	public static Op _optimize(OpProject op, RestrictionManagerImpl cnf) {
-		return new OpProject(optimize(op.getSubOp(), cnf), op.getVars());
+		Op subOp = optimize(op.getSubOp(), cnf);
+		Op result = new OpProject(subOp, op.getVars());
+		return result;
 	}
 	
 	public static Op _optimize(OpExtend op, RestrictionManagerImpl cnf) {

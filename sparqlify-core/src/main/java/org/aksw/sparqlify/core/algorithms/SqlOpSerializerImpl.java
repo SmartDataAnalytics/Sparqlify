@@ -269,6 +269,19 @@ public class SqlOpSerializerImpl
     	}    	
     	
     	
+    	List<String> groupByExprStrs = new ArrayList<String>();
+    	for(SqlExpr groupByExpr : op.getGroupByExprs()) {
+    		String exprStr = exprSerializer.serialize(groupByExpr);
+
+    		groupByExprStrs.add(exprStr);
+    	}
+    	if(!groupByExprStrs.isEmpty()) {
+        	String groupByStr = "GROUP BY " + Joiner.on(", ").join(groupByExprStrs);
+    		writer.println(groupByStr);
+    	}
+    	
+    	
+    	
 		List<String> sortColumnExprStrs = new ArrayList<String>();
     	for(SqlSortCondition condition : op.getSortConditions()) {
     		String dirStr = null;

@@ -980,6 +980,11 @@ public class CandidateViewSelectorImpl
 	
 	
 	/**
+	 * Extend defines now variables and is therefore similar to a VarDefinition.
+	 * 
+	 * 
+	 * Below is outdated.
+	 * 
 	 * We treat OpExtend as a filter for now
 	 * TODO This breaks for instance Count(*) as Jena also does renaming with extend:
 	 * 
@@ -990,22 +995,28 @@ public class CandidateViewSelectorImpl
 	 * 
 	 */
 	public Op getApplicableViews(OpExtend op, RestrictionManagerImpl _restrictions) {
-		RestrictionManagerImpl restrictions = new RestrictionManagerImpl(_restrictions);
-		
-		for(Var var : op.getVarExprList().getVars()) {
-			Expr expr = op.getVarExprList().getExpr(var);
-			
-			Expr item = new E_Equals(new ExprVar(var), expr);
-			restrictions.stateExpr(item);
-		}
 
-		//OpProject projection = new OpPro
-		
-		//return _getApplicableViews(OpFilterIndexed.filter(restrictions, op.getSubOp()), restrictions);
-		Op filter =  OpFilterIndexed.filter(restrictions, _getApplicableViews(op.getSubOp(), restrictions));
-		
-		Op result = op.copy(filter);
+		Op subOp = _getApplicableViews(op.getSubOp(), _restrictions);
+		Op result = op.copy(subOp);
+			
 		return result;
+
+		// Outdated code:
+//		RestrictionManagerImpl restrictions = new RestrictionManagerImpl(_restrictions);
+//		
+//		for(Var var : op.getVarExprList().getVars()) {
+//			Expr expr = op.getVarExprList().getExpr(var);
+//			
+//			Expr item = new E_Equals(new ExprVar(var), expr);
+//			restrictions.stateExpr(item);
+//		}
+//
+//		
+//		//return _getApplicableViews(OpFilterIndexed.filter(restrictions, op.getSubOp()), restrictions);
+//		Op filter =  OpFilterIndexed.filter(restrictions, _getApplicableViews(op.getSubOp(), restrictions));
+//		
+//		Op result = op.copy(filter);
+//		return result;
 	}
 	
 	public Op getApplicableViews(OpFilter op, RestrictionManagerImpl restrictions) 

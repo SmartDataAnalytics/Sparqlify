@@ -6,15 +6,19 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import mapping.ExprCommonFactor;
+import mapping.SparqlifyConstants;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
@@ -48,13 +52,15 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sdb.core.JoinType;
-import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
+import com.hp.hpl.jena.sparql.expr.E_Function;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 
 
@@ -1118,6 +1124,43 @@ public class MappingOpsImpl
 	}
 
 	
+	
+	public static List<Map<Var, Expr>> createBindingProduct(VarDefinition varDef, Collection<Var> vars) {
+				
+		Multimap<Var, RestrictedExpr> map = varDef.getMap();
+		List<Collection<RestrictedExpr>> assignments = new ArrayList<Collection<RestrictedExpr>>(vars.size());
+		for(Var var : vars) {
+			assignments.add(map.get(var));
+		}
+
+		CartesianProduct<RestrictedExpr> cart = CartesianProduct.create(assignments);
+		
+		List<Map<Var, Expr>> result = new ArrayList<Map<Var, Expr>>();
+		for(List<RestrictedExpr> item : cart) {
+
+			Iterator<Var> itVar = vars.iterator();
+			Iterator<RestrictedExpr> itRestExpr = item.iterator();
+			
+			//BindingMap binding = new BindingHashMap();
+			Map<Var, Expr> binding = new HashMap<Var, Expr>();
+			for(int i = 0; i < vars.size(); ++i) {
+				Var var = itVar.next();
+				RestrictedExpr restExpr = itRestExpr.next();
+				
+				Expr expr = restExpr.getExpr();
+				
+				binding.put(var, expr);
+				//binding.add(var, expr);
+				
+				//assignment.put(var, expr);
+				result.add(binding);
+			}			
+		}
+
+		return result;
+	}
+	
+
 	/**
 	 * Extends a mapping with additional variable definitions.
 	 * 
@@ -1134,8 +1177,38 @@ public class MappingOpsImpl
 	 */
 	@Override
 	public Mapping extend(Mapping a, VarDefinition varDef) {		
+
+		// TODO Replace variables in the definition with the SQL definitions
 		
-		VarDefinition newVarDef = a.getVarDefinition().extend(varDef);			
+		Multimap<Var, RestrictedExpr> newMap = HashMultimap.create();
+		
+		Multimap<Var, RestrictedExpr> map = varDef.getMap();
+		for(Entry<Var, Collection<RestrictedExpr>> entry : map.asMap().entrySet()) {
+			Var var = entry.getKey();
+			Collection<RestrictedExpr> restExprs = entry.getValue();
+			
+			
+			for(RestrictedExpr restExpr : restExprs) {
+				Expr expr = restExpr.getExpr();
+				Set<Var> vars = expr.getVarsMentioned();
+				
+
+				List<Map<Var, Expr>> bindings = createBindingProduct(varDef, vars);
+
+				for(Map<Var, Expr> binding : bindings) {
+					NodeExprSubstitutor substitutor = new NodeExprSubstitutor(binding);
+					
+					Expr newExpr = substitutor.transformMM(expr);
+					
+					newMap.put(var, new RestrictedExpr(newExpr, restExpr.getRestrictions()));
+				}
+			}
+		}
+		
+		VarDefinition tmpVarDef = new VarDefinition(newMap);
+		
+		
+		VarDefinition newVarDef = a.getVarDefinition().extend(tmpVarDef);
 		Mapping result = new Mapping(newVarDef, a.getSqlOp());
 		
 		return result;
@@ -1193,9 +1266,18 @@ public class MappingOpsImpl
 			}
 			
 			
+			Map<String, TypeToken> typeMap = u.getSqlOp().getSchema().getTypeMap();
+			List<SqlExpr> columnRefs = new ArrayList<SqlExpr>();
+			for(String columnName : columnNames) {
+				TypeToken type = typeMap.get(columnName);
+				
+				SqlExpr expr = new S_ColumnRef(type, columnName);
+				columnRefs.add(expr);
+			}
+			
 			List<SqlExprAggregator> sqlAggregators = new ArrayList<SqlExprAggregator>();
 			
-			SqlOpGroupBy sqlOpGroupBy = SqlOpGroupBy.create(u.getSqlOp(), columnNames, sqlAggregators);
+			SqlOpGroupBy sqlOpGroupBy = SqlOpGroupBy.create(u.getSqlOp(), columnRefs, sqlAggregators);
 			
 			
 			Mapping tmp = new Mapping(u.getVarDefinition(), sqlOpGroupBy);
@@ -1204,9 +1286,34 @@ public class MappingOpsImpl
 		}
 		
 		Mapping result = unionIfNeeded(gg);
+		
+		
+		// HACK
+		for(ExprAggregator ea : aggregators) {
+			
+			Projection ex = new Projection();
+			ex.put("dummy", new S_Constant(TypeToken.Int, null));
+			
+			SqlOp newOp = SqlOpExtend.create(result.getSqlOp(), ex);
+			
+			ExprList args = new ExprList();
+			ExprVar dummyCol = new ExprVar(Var.alloc("dummy")); 
+			args.add(dummyCol);
+			args.add(NodeValue.makeString(XSD.xlong.getURI()));
+			Expr t = new E_Function(SparqlifyConstants.typedLiteralLabel, args);
+			
+			logger.warn("Using hack, no aggregator will be present - implement this properly");
+			Var var = ea.getVar();
+
+			Multimap<Var, RestrictedExpr> map = HashMultimap.create(result.getVarDefinition().getMap());
+			map.put(var, new RestrictedExpr(t));
+
+			VarDefinition newVd = new VarDefinition(map);
+			
+			result = new Mapping(newVd, newOp); 
+		}
+		
 		return result;
-				
-		//return null;
 	}
 
 }	

@@ -14,6 +14,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpGroupBy;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
@@ -116,6 +117,21 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+
+	public static SqlOp makeSelect(SqlOpGroupBy op) {
+		SqlOp newOp = _makeSelect(op.getSubOp());
+		SqlOpSelectBlock result = requireSelectBlock(newOp);
+		
+		List<SqlExpr> newExprs = adjustConditions(op.getGroupByExprs(), result.getProjection());
+		
+		result.getGroupByExprs().addAll(newExprs);
+		
+		
+		return result;
+
+	}
+
+	
 	public static SqlOp makeSelect(SqlOpSlice op) {
 		SqlOp newOp = _makeSelect(op.getSubOp());
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
@@ -271,14 +287,16 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOp subOp = _makeSelect(op.getSubOp());
 		
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
-		result.setSchema(op.getSchema());
-		
-		result.getProjection().project(op.getColumnNames());
 		
 		SqlOp effectiveOp = result.getSubOp();
 		if(effectiveOp instanceof SqlOpUnionN) {
-			initProjection(result.getProjection(), effectiveOp.getSchema(), SqlOpSelectBlock.getAliasName(effectiveOp));
+			initProjection(result.getProjection(), effectiveOp.getSchema(), SqlOpSelectBlock.getAliasName(effectiveOp));			
 		}
+
+		
+		result.setSchema(op.getSchema());
+		
+		result.getProjection().project(op.getColumnNames());
 		
 		//result.getProjection().project(op.get$)
 		
