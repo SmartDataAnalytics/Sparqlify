@@ -23,7 +23,7 @@ public interface SparqlFunction {
 	/**
 	 * 
 	 * 
-	 * @return The set of SQL methods registered for this Sparql Function
+	 * @return The set of SQL methods registered for this Sparql Function. Should be consistent with an evaluator.
 	 */
 	Collection<XMethod> getSqlMethods();
 	
