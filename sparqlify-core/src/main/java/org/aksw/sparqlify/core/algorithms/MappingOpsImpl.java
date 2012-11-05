@@ -18,6 +18,8 @@ import mapping.SparqlifyConstants;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
@@ -60,6 +62,8 @@ import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
+import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 
@@ -1288,14 +1292,27 @@ public class MappingOpsImpl
 		Mapping result = unionIfNeeded(gg);
 		
 		
+		
+		// Gensym for SPARQL variables 
+		Gensym varsym = Gensym.create("v");
+		
+		// Gensym for SQL columns
+		Gensym aggSym = Gensym.create("G");
+		
 		// HACK
 		for(ExprAggregator ea : aggregators) {
 			
+			Aggregator agg = ea.getAggregator();
+			ExprSqlRewrite rewrite = rewrite(aggSym, agg);
+			
+			
 			Projection ex = new Projection();
-			ex.put("dummy", new S_Constant(TypeToken.Int, null));
+			ex.add(rewrite.getProjection());
+			//ex.put("dummy", new S_Constant(TypeToken.Int, null));
 			
 			SqlOp newOp = SqlOpExtend.create(result.getSqlOp(), ex);
 			
+			/*
 			ExprList args = new ExprList();
 			ExprVar dummyCol = new ExprVar(Var.alloc("dummy")); 
 			args.add(dummyCol);
@@ -1304,9 +1321,12 @@ public class MappingOpsImpl
 			
 			logger.warn("Using hack, no aggregator will be present - implement this properly");
 			Var var = ea.getVar();
+			*/
+			
+			Var var = Var.alloc(varsym.next());
 
 			Multimap<Var, RestrictedExpr> map = HashMultimap.create(result.getVarDefinition().getMap());
-			map.put(var, new RestrictedExpr(t));
+			map.put(var, new RestrictedExpr(rewrite.getExpr()));
 
 			VarDefinition newVd = new VarDefinition(map);
 			
@@ -1316,6 +1336,77 @@ public class MappingOpsImpl
 		return result;
 	}
 
+	
+	class ExprSqlRewrite {
+		private Expr expr;
+		private Projection projection;
+		
+		public ExprSqlRewrite(Expr expr, Projection projection) {
+			super();
+			this.expr = expr;
+			this.projection = projection;
+		}
+
+		public Expr getExpr() {
+			return expr;
+		}
+		public Projection getProjection() {
+			return projection;
+		}
+		
+		public List<String> getReferencedColumnNames() {
+			Set<Var> vars = expr.getVarsMentioned();
+		
+			List<String> result = new ArrayList<String>(vars.size());
+			for(Var var : vars) {
+				result.add(var.getVarName());
+			}
+			
+			return result;
+		}
+	}
+	
+	
+	/**
+	 * Returns a pair comprised of:
+	 * - A SPARQL expression that references the SQL column of the aggregater
+	 * - A projection 
+	 * // Ignore: the typeMap is implied by the projection - A type map
+	 * 
+	 * @param agg
+	 */
+	public ExprSqlRewrite rewrite(Gensym gensym, Aggregator agg) {
+		ExprSqlRewrite result;
+		if(agg instanceof AggCount) {
+			result = rewrite(gensym, (AggCount)agg);
+		}
+		else {
+			throw new RuntimeException("Unsupported aggregator: " + agg);
+		}
+		
+		return result;
+	}
+	
+	public ExprSqlRewrite rewrite(Gensym gensym, AggCount agg) {
+		
+		String columnAlias = gensym.next();
+		S_AggCount count = new S_AggCount();
+		S_Agg sagg = new S_Agg(count);
+		
+		Projection p = new Projection();
+		p.put(columnAlias, sagg);
+		
+		ExprVar columnRef = new ExprVar(columnAlias);
+		
+		ExprList args = new ExprList();
+		args.add(columnRef);
+		args.add(NodeValue.makeString(XSD.integer.getURI()));
+
+		Expr e = new E_Function(SparqlifyConstants.typedLiteralLabel, args);
+
+		ExprSqlRewrite result = new ExprSqlRewrite(e, p);
+		return result;
+	}
 }	
 	
 	

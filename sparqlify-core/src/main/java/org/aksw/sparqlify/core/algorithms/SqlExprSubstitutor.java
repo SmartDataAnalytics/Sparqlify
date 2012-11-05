@@ -31,6 +31,13 @@ public class SqlExprSubstitutor {
 	}
 	
 	public SqlExpr substitute(SqlExpr expr) {
+
+		if(expr == null) {
+			System.out.println("Null expr");
+		}
+		
+		assert expr != null : "Expr must not be null";
+		assert expr.getType() != null : "Type of exprs must not be null";
 		
 		SqlExpr result;
 		switch(expr.getType()) {
