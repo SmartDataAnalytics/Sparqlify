@@ -26,6 +26,8 @@
 
 		<jetty.version>7.1.6.v20100715</jetty.version>
 
+		<sparqlify.platform.contextPath>/sparqlify</sparqlify.platform.contextPath>
+
 		<!-- project defaults -->
 		<java.version>1.6</java.version>
 		<java.version.javadoc>http://java.sun.com/javase/6/docs/api/</java.version.javadoc>
@@ -48,6 +50,7 @@
 
 
 	<build>
+		<finalName>sparqlify</finalName>
 		<plugins>
 
 			<!-- That's a sledge hammer solution - but at least it works ... -->
@@ -143,6 +146,9 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>8.1.6.v20120903</version>
 				<configuration>
+				 <webAppConfig>
+				      <contextPath>${sparqlify.platform.contextPath}</contextPath>
+				 </webAppConfig>
 					<systemProperties>
 						<systemProperty>
 							<name>jetty.port</name>
