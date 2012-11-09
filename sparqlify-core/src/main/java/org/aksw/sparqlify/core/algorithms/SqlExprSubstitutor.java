@@ -9,6 +9,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
 
+import com.google.common.collect.Iterables;
+
 public class SqlExprSubstitutor {
 
 	private Map<String, ? extends SqlExpr> map;
@@ -47,8 +49,12 @@ public class SqlExprSubstitutor {
 		}
 		case Function: {
 			SqlExprFunction fn = expr.asFunction();
+
+			List<SqlExpr> args = fn.getArgs();
 			
-			List<SqlExpr> newArgs = substitute(fn.getArgs());
+			assert !Iterables.contains(args, null) : "Null argument in expr: " + fn;
+			
+			List<SqlExpr> newArgs = substitute(args);
 			result = fn.copy(newArgs);
 			break;
 		}

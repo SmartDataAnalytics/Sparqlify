@@ -14,4 +14,6 @@ public interface SqlAggregator {
 	TypeToken getDatatype();
 
 	void asString(IndentedWriter writer);
+	
+	SqlAggregator copy(SqlExpr arg);
 }

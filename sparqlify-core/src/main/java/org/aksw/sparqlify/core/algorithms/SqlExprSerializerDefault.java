@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
@@ -52,7 +53,13 @@ public abstract class SqlExprSerializerDefault
 			throw new RuntimeException("Error serializing expression" + expr, e);
 		}
 	}
-	
+
+	public String _serialize(S_Agg expr) {
+		System.err.println("Hack used for serializing aggregators.");
+		String result = expr.getAggregator().toString();  ////this._serializeAgg(expr.getAggregator());
+		return result;
+	}
+
 	/*
 	public String _serialize(ExprAggregator expr) {
 		String result = this._serializeAgg(expr.getAggregator());

@@ -11,7 +11,7 @@ import org.openjena.atlas.io.IndentedWriter;
  */
 public class S_AggCount
 	implements SqlAggregator
-{
+{	
 	public S_AggCount() {
 
 	}
@@ -34,5 +34,12 @@ public class S_AggCount
 	public void asString(IndentedWriter writer) {
 		String str = toString();
 		writer.print(str);
+	}
+
+	@Override
+	public S_AggCount copy(SqlExpr arg) {
+		S_AggCount result =new  S_AggCount();
+		
+		return result;
 	}
 }

@@ -138,7 +138,8 @@ public class MappingOpsImplTest {
 
 		{
 			//QueryExecution qe = qef.createQueryExecution("Select ?s (Count(*) As ?c) { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . } Group By ?s");
-			QueryExecution qe = qef.createQueryExecution("Select ?s (Count(*) As ?c) { ?s ?p ?o . } Group By ?s");
+			//QueryExecution qe = qef.createQueryExecution("Select ?s ?p (Count(*) As ?c) { ?s ?p ?o . } Group By ?s ?p");
+			QueryExecution qe = qef.createQueryExecution("Select ?s { ?s ?p ?o . } ");
 			ResultSet rs = qe.execSelect();
 			String rsStr = ResultSetFormatter.asText(rs);
 			System.out.println(rsStr);

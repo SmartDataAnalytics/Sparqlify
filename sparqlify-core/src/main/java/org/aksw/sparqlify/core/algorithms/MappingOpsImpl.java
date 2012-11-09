@@ -1197,7 +1197,7 @@ public class MappingOpsImpl
 				Set<Var> vars = expr.getVarsMentioned();
 				
 
-				List<Map<Var, Expr>> bindings = createBindingProduct(varDef, vars);
+				List<Map<Var, Expr>> bindings = createBindingProduct(a.getVarDefinition(), vars);
 
 				for(Map<Var, Expr> binding : bindings) {
 					NodeExprSubstitutor substitutor = new NodeExprSubstitutor(binding);
@@ -1322,8 +1322,8 @@ public class MappingOpsImpl
 			logger.warn("Using hack, no aggregator will be present - implement this properly");
 			Var var = ea.getVar();
 			*/
-			
-			Var var = Var.alloc(varsym.next());
+
+			Var var = ea.getVar(); //Var.alloc(varsym.next());
 
 			Multimap<Var, RestrictedExpr> map = HashMultimap.create(result.getVarDefinition().getMap());
 			map.put(var, new RestrictedExpr(rewrite.getExpr()));
@@ -1363,6 +1363,51 @@ public class MappingOpsImpl
 			}
 			
 			return result;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((expr == null) ? 0 : expr.hashCode());
+			result = prime * result
+					+ ((projection == null) ? 0 : projection.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ExprSqlRewrite other = (ExprSqlRewrite) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (expr == null) {
+				if (other.expr != null)
+					return false;
+			} else if (!expr.equals(other.expr))
+				return false;
+			if (projection == null) {
+				if (other.projection != null)
+					return false;
+			} else if (!projection.equals(other.projection))
+				return false;
+			return true;
+		}
+
+		private MappingOpsImpl getOuterType() {
+			return MappingOpsImpl.this;
+		}
+
+		@Override
+		public String toString() {
+			return "ExprSqlRewrite [expr=" + expr + ", projection="
+					+ projection + "]";
 		}
 	}
 	
@@ -1407,6 +1452,8 @@ public class MappingOpsImpl
 		ExprSqlRewrite result = new ExprSqlRewrite(e, p);
 		return result;
 	}
+	
+	
 }	
 	
 	
