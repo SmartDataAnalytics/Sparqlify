@@ -1,12 +1,12 @@
 package org.aksw.sparqlify.compile.sparql;
 
-import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.old.E_GenericSqlExpr;
 import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeomFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.old.E_Intersects;
+import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.sparql.expr.E_LangMatches;
 import com.hp.hpl.jena.sparql.expr.E_OneOf;

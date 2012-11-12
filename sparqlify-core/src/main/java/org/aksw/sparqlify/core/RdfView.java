@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import mapping.RenamerNodes;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
@@ -22,6 +21,7 @@ import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.sparqlview.View;
+import org.aksw.sparqlify.trash.RenamerNodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

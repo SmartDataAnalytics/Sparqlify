@@ -2,11 +2,11 @@ package org.aksw.sparqlify.compile.sparql;
 
 import java.util.Map;
 
-import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sparql.core.Var;

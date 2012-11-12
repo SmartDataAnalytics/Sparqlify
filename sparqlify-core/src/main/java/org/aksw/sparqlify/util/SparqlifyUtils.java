@@ -11,6 +11,11 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
@@ -32,10 +37,6 @@ import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
 import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_Equals;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalAnd;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalNot;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -116,9 +117,19 @@ public class SparqlifyUtils {
 			ds.createSparqlFunction("!", evaluator);
 		}
 		
+		/*
 		{
 			SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals(ds);
 			ds.createSparqlFunction("=", evaluator);
+		}
+		*/
+		
+		
+		{
+			String[] compareSymbols = new String[]{"<=", "<", "=", ">", ">="};
+			for(String opSymbol : compareSymbols) {
+				ds.createSparqlFunction(opSymbol, new SqlExprEvaluator_Compare(opSymbol, ds));
+			}
 		}
 		
 //		{

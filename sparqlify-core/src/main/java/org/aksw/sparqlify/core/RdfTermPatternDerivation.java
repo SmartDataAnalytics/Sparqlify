@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.core;
 
-import mapping.SparqlifyConstants;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;

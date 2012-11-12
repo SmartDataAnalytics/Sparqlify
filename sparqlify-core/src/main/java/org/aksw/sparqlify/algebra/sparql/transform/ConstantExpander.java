@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.algebra.sparql.transform;
 
-import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.apache.commons.lang.NotImplementedException;
 
 import com.hp.hpl.jena.sparql.algebra.Op;

@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import mapping.ExprCommonFactor;
-import mapping.ExprCopy;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
@@ -52,6 +50,8 @@ import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
+import org.aksw.sparqlify.trash.ExprCommonFactor;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;

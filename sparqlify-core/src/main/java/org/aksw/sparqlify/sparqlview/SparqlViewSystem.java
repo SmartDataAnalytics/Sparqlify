@@ -13,7 +13,6 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-import mapping.SparqlifyConstants;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.jena.util.QuadUtils;
@@ -22,6 +21,7 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.Constraint;
 import org.aksw.sparqlify.database.EqualsConstraint;

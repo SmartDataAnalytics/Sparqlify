@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import mapping.RenamerNodes;
 
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
@@ -19,6 +18,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.aksw.sparqlify.core.RdfViewTemplate;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.aksw.sparqlify.trash.RenamerNodes;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

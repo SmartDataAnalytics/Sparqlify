@@ -2,14 +2,15 @@ package org.aksw.sparqlify.algebra.sparql.expr;
 
 import java.util.List;
 
-import mapping.SparqlifyConstants;
+import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.jena.functions.RdfTerm;
+
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
-import functions.RdfTerm;
 
 public class E_RdfTerm
 	extends ExprFunctionN

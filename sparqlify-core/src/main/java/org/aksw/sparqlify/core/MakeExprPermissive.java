@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.core;
 
-import mapping.ExprCopy;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;

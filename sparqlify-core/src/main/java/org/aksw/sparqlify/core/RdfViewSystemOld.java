@@ -15,8 +15,6 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import mapping.RdfViewDatabase;
-import mapping.SparqlifyConstants;
 
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.MultiMaps;
@@ -31,7 +29,14 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
+import org.aksw.sparqlify.core.jena.functions.PlainLiteral;
+import org.aksw.sparqlify.core.jena.functions.RdfTerm;
+import org.aksw.sparqlify.core.jena.functions.TypedLiteral;
+import org.aksw.sparqlify.core.jena.functions.Uri;
+import org.aksw.sparqlify.core.jena.functions.UrlDecode;
+import org.aksw.sparqlify.core.jena.functions.UrlEncode;
 import org.aksw.sparqlify.sparqlview.View;
+import org.aksw.sparqlify.trash.RdfViewDatabase;
 import org.aksw.sparqlify.views.transform.FilterPlacementOptimizer;
 import org.aksw.sparqlify.views.transform.ViewRewriter;
 import org.slf4j.Logger;
@@ -77,12 +82,6 @@ import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 
-import functions.PlainLiteral;
-import functions.RdfTerm;
-import functions.TypedLiteral;
-import functions.Uri;
-import functions.UrlDecode;
-import functions.UrlEncode;
 
 
 

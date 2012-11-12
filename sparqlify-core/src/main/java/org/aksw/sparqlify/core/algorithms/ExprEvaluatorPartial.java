@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import mapping.ExprCopy;
 
+import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,14 @@ import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 /**
  * Evaluator for expressions.
+ * Transforms SPARQL expressions so that they can be translated to SQL.
+ * Concretely, this class attempts to remove all type constructors
+ * from the expressions. 
+ * 
+ * 
+ * 
+ * 
+ * 
  * If not all of an expressions' variables are bound, it tries to evaluate as much
  * as possible; hence the name "partial" evaluator.
  * 
@@ -102,7 +111,7 @@ public class ExprEvaluatorPartial
 		
 		// Check if the function's IRI is not registered
 		// If not, don't try to evaluate it
-		String fnIri = fn.getFunctionIRI();			
+		String fnIri = org.aksw.sparqlify.expr.util.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();			
 		if(fnIri != null && !fnIri.isEmpty()) {
 			if(registry.get(fnIri) == null) {
 				return tmp;
@@ -137,7 +146,10 @@ public class ExprEvaluatorPartial
 		
 		Expr result = null;
 		if(expr.isConstant()) {
+			
+			//result = ConstantExpander.transform(expr);
 			result = expr;
+			
 		} else if(expr.isFunction()) {
 			ExprFunction fn = expr.getFunction();
 			

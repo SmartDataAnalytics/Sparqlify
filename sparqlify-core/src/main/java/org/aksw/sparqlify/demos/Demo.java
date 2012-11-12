@@ -10,6 +10,7 @@ import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetFactory;
+import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 import org.aksw.sparqlify.views.transform.ViewRewriter;
 import org.apache.log4j.PropertyConfigurator;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -22,7 +23,6 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 
-import functions.RdfTerm;
 
 public class Demo {
 

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mapping.ExprCopy;
 
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
@@ -22,6 +21,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.SqlDatatype;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

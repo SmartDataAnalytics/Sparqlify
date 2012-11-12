@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mapping.SparqlifyConstants;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
@@ -14,6 +13,7 @@ import org.aksw.sparqlify.config.lang.Constraint;
 import org.aksw.sparqlify.config.lang.PrefixConstraint;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

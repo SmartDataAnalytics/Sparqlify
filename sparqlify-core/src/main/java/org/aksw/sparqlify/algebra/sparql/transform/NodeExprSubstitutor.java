@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.apache.commons.lang.NotImplementedException;
 
 import com.hp.hpl.jena.graph.Node;

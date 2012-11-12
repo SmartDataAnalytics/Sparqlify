@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.algebra.sparql.transform;
 
-import mapping.ExprCopy;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
@@ -9,6 +8,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr1;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr2;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
+import org.aksw.sparqlify.trash.ExprCopy;
 
 
 public class SqlExprArgs {

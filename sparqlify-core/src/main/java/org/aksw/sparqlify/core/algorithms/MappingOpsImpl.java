@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import mapping.ExprCommonFactor;
-import mapping.SparqlifyConstants;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
@@ -36,6 +34,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.ArgExpr;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
@@ -43,6 +42,7 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
+import org.aksw.sparqlify.trash.ExprCommonFactor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -276,7 +276,7 @@ public class MappingOpsImpl
 				
 				assignment.put(var, expr);
 			}
-			
+						
 			Expr expr = exprTransformer.eval(condition, assignment);
 			
 			SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);

@@ -9,6 +9,7 @@ import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetFactory;
+import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 import org.aksw.sparqlify.views.transform.ViewRewriter;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -21,7 +22,6 @@ import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-import functions.RdfTerm;
 
 public class DemoWortschatz {
 
