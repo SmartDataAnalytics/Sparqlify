@@ -22,10 +22,12 @@ import com.hp.hpl.jena.sparql.expr.E_NotEquals;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 // TODO There is already com.hp.hpl.jena.sparql.algebra.optimize.TransformFilterConjunction
 public class CnfUtils {
+
 	
 	public static NestedNormalForm toCnf(Expr expr) {
 		Set<Set<Expr>> ss = toSetCnf(expr);

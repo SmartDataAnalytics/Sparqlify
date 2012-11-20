@@ -69,7 +69,26 @@ public class DnfUtils
 		System.out.println("Clauses: " + clauses);
 		
 	}
+
 	
+	public static Expr toExpr(List<List<Expr>> ors) {
+		List<Expr> tmpOrs = new ArrayList<Expr>();
+		for(List<Expr> ands : ors) {
+			Expr and = ExprUtils.andifyBalanced(ands);
+			
+			tmpOrs.add(and);
+		}
+		
+		if(ors.size() == 0) {
+			return NodeValue.FALSE;
+		}
+		
+		Expr result = ExprUtils.orifyBalanced(tmpOrs);
+
+		return result;
+	}
+	
+
 	
 	public static void addConstantConstraint(Map<Var, NodeValue> map, Pair<Var, NodeValue> constraint) {
 		if(constraint == null) {

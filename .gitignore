@@ -4,6 +4,8 @@
 .settings
 target
 
+cache
+
 *.jar
 *.toc
 *.out

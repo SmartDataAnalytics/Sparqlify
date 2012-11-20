@@ -15,6 +15,10 @@
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 
+	<build>
+		<finalName>sparqlify-core</finalName>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>

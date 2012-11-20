@@ -18,6 +18,8 @@ import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sparql.DnfUtils;
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
@@ -446,11 +448,37 @@ public class SqlTranslationUtils {
 	public static Expr optimizeEqualsConcat(ExprFunction2 fn) {
 		Expr ta = fn.getArg1();
 		Expr tb = fn.getArg2();
-	
-		// None of the arguments is a concat-expression.
-		if (!isConcatExpr(ta) && !isConcatExpr(tb)) {
-			return fn;
+		
+		Expr result;
+		if(!isEqualsConcatExpr(ta, tb)) {
+			result = fn;
+		} else {
+			result = optimizeEqualsConcat(ta, tb); 
 		}
+		
+		return result;
+	}
+	
+	public static Expr optimizeEqualsConcat(Expr ta, Expr tb) {
+		
+		
+		List<List<Expr>> ors = splitEqualsConcat(ta, tb);
+
+		Expr result = DnfUtils.toExpr(ors);
+
+		return result;
+	}
+	
+	public static boolean isEqualsConcatExpr(Expr ta, Expr tb) {
+	
+		if (isConcatExpr(ta) || isConcatExpr(tb)) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	public static List<List<Expr>> splitEqualsConcat(Expr ta, Expr tb) {
 	
 		// Create a list of concat-arguments (if not a concat, treat the expression
 		// as an argument
@@ -463,17 +491,16 @@ public class SqlTranslationUtils {
 		la = mergeConsecutiveConstants(la).getList();
 		lb = mergeConsecutiveConstants(lb).getList();
 	
-		Expr result = SqlTranslationUtils.optimizeEqualsConcatAlign(la, lb);
+		List<List<Expr>> result = SqlTranslationUtils.splitEqualsConcat(la, lb); //optimizeEqualsConcatAlign(la, lb);
 	
 		return result;
 	}
 
-
-	public static Expr optimizeEqualsConcatAlign(List<Expr> la, List<Expr> lb)
-	{
+	
+	public static List<List<Expr>> splitEqualsConcat(List<Expr> la, List<Expr> lb) {
 		List<Alignment> cs = SqlExprOptimizer.align(la, lb);
 		
-		List<Expr> ors = new ArrayList<Expr>();
+		List<List<Expr>> ors = new ArrayList<List<Expr>>();
 		for(Alignment c : cs) {
 			
 			List<Expr> ands = new ArrayList<Expr>();
@@ -506,17 +533,78 @@ public class SqlTranslationUtils {
 					));
 			}
 			
+			ors.add(ands);
+		}
+				
+		return ors;		 
+	}
+
+	@Deprecated
+	public static Expr optimizeEqualsConcatAlign(List<Expr> la, List<Expr> lb)
+	{
+		List<List<Expr>> ors = splitEqualsConcat(la, lb);
+
+		List<Expr> tmpOrs = new ArrayList<Expr>();
+		for(List<Expr> ands : ors) {
 			Expr and = ExprUtils.andifyBalanced(ands);
-			ors.add(and);
+			
+			tmpOrs.add(and);
 		}
 		
 		if(ors.size() == 0) {
 			return NodeValue.FALSE;
 		}
 		
-		Expr result = ExprUtils.orifyBalanced(ors);
-		
+		Expr result = ExprUtils.orifyBalanced(tmpOrs);
+
 		return result;
+		
+//		List<Alignment> cs = SqlExprOptimizer.align(la, lb);
+//		
+//		List<Expr> ors = new ArrayList<Expr>();
+//		for(Alignment c : cs) {
+//			
+//			List<Expr> ands = new ArrayList<Expr>();
+//	
+//			if(c.isSameSize()) {
+//			
+//				for(int i = 0; i < c.getKey().size(); ++i) {
+//					Expr ea = c.getKey().get(i);
+//					
+//					/*
+//					if(i >= c.getValue().size()) {
+//						System.out.println("OOpps");
+//					}
+//					*/
+//					
+//					Expr eb = c.getValue().get(i);
+//					
+//					if(ea.isConstant() && ea.equals(eb)) {
+//						continue;
+//					}
+//					
+//					E_Equals eq = new E_Equals(ea, eb);
+//					ands.add(eq);
+//				}
+//			} else {
+//				ands.add(
+//					new E_Equals(
+//						new E_StrConcatPermissive(new ExprList(c.getKey())),
+//						new E_StrConcatPermissive(new ExprList(c.getValue()))
+//					));
+//			}
+//			
+//			Expr and = ExprUtils.andifyBalanced(ands);
+//			ors.add(and);
+//		}
+//		
+//		if(ors.size() == 0) {
+//			return NodeValue.FALSE;
+//		}
+//		
+//		Expr result = ExprUtils.orifyBalanced(ors);
+//		
+//		return result;
 	}
 
 	

@@ -1,6 +1,8 @@
 package org.aksw.sparqlify.database;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +23,10 @@ public class Clause
 	extends ClauseBase
 {
 	private Map<Var, RestrictionImpl> varToRestriction = new HashMap<Var, RestrictionImpl>();
+	
+	public Clause(Expr expr) {
+		this(new HashSet<Expr>(Collections.singleton(expr)));
+	}
 	
 	public Clause(Set<Expr> exprs) {
 		super(exprs);
