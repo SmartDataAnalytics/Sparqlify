@@ -50,6 +50,16 @@ Create View view_article As
 	?journal = uri(concat("http://localhost/publications/journals/", ?venuedocstringid))
   From v_pub_article
 
+Create View view_article_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/articles/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
+
+
+
 Create View view_inprocs As
   Construct {
 
@@ -75,10 +85,16 @@ Create View view_inprocs As
 	?issued = typedLiteral(?issued, xsd:integer)
 	?pages =  typedLiteral(?pages, xsd:integer)
 	?hp = typedLiteral(?homepage, xsd:string) 
-	?booktitle = typedLiteral(?booktitle, xsd:string) 
 	?proceed = uri(concat("http://localhost/publications/procs/", ?venuedocstringid))
   From v_pub_inproc
 
+Create View view_inprocs_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/inprocs/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
 
 
 Create View view_incolls As
@@ -106,6 +122,14 @@ Create View view_incolls As
 	?cdrom = typedLiteral(?cdrom, xsd:string)
   From v_pub_incoll
 
+Create View view_inprocs_author As
+  Construct {
+	?doc dc:creator ?person .
+  } With 
+	?doc = uri(concat("http://localhost/publications/inprocs/",  ?stringid))
+	?person  = uri(concat("http://localhost/persons/", ?stringid))
+  From v_author
+
 Create View view_journal As
   Construct {
 	?doc dc:title ?title . 
@@ -113,6 +137,7 @@ Create View view_journal As
 	?doc swrc:volume ?volume .
 	?doc dcterms:issued ?issued .
 	?doc rdf:type bench:Journal .
+	?doc rdf:type foaf:Document .
   } With 
 	?doc = uri(concat("http://localhost/publications/journals/", ?stringid))
 	?title = typedLiteral(?title, xsd:string)
@@ -133,6 +158,7 @@ Create View view_proceedings As
 	?doc dcterms:issued ?issued .
 	?doc swrc:series ?series .
 	?doc rdf:type bench:Proceedings .
+	?doc rdf:type foaf:Docuent .
   } With 
 	?doc = uri(concat("http://localhost/publications/procs/", ?stringid))
 	?title = typedLiteral(?title, xsd:string)
@@ -159,13 +185,13 @@ Create View view_person As
 	?name = typedLiteral(?name, xsd:string)
   From v_person
 
-Create View view_author As
-  Construct {
-	?doc dc:creator ?person .
-  } With 
-	?doc = uri(concat("http://localhost/publications/",?resourcepart,"/",  ?stringid))
-	?person  = uri(concat("http://localhost/persons/", ?stringid))
-  From v_author
+//Create View view_author As
+//  Construct {
+//	?doc dc:creator ?person .
+//  } With 
+//	?doc = uri(concat("http://localhost/publications/",?resourcepart,"/",  ?stringid))
+//	?person  = uri(concat("http://localhost/persons/", ?stringid))
+//  From v_author
 
 Create View view_editor As
   Construct {

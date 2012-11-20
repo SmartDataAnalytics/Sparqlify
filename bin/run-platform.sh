@@ -13,6 +13,7 @@ fi
 
 
 port="${2:-7531}"
+contextPath="${3:-/}"
 
 cd "$DIR/../sparqlify-platform"
 
@@ -22,6 +23,6 @@ echo "Port  : $port"
 echo "Config: $configDir"
 echo "---------------------------"
 
-mvn jetty:run-war "-Djetty.port=$port" "-DconfigDirectory=$configDir"
+mvn jetty:run-war "-Djetty.port=$port" "-Dsparqlify.platform.contextPath=$contextPath" "-DconfigDirectory=$configDir"
 
 
