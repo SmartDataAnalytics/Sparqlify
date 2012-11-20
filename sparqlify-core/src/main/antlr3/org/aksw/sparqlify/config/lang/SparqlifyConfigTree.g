@@ -56,7 +56,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 	import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 
 
-    import mapping.SparqlifyConstants;
+    import org.aksw.sparqlify.core.SparqlifyConstants;
 }
 
 
