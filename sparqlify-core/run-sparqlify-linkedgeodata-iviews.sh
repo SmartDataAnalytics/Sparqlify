@@ -1,1 +1,1 @@
-java -cp target/sparqlify-0.2-SNAPSHOT-jar-with-dependencies.jar org.aksw.sparqlify.rest.Main -h localhost -u postgres -p postgres -d lgd_bremen -c mappings/LinkedGeoData-Triplify-IndividualViews.sparqlify -t 30
+java -cp target/sparqlify-core-jar-with-dependencies.jar org.aksw.sparqlify.web.Main -h localhost -u postgres -p postgres -d lgd_bremen -c mappings/LinkedGeoData-Triplify-IndividualViews.sparqlify -t 30

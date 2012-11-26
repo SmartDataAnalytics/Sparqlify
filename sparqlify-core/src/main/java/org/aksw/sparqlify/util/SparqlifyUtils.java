@@ -207,9 +207,9 @@ public class SparqlifyUtils {
 		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person;");
 		
 		
-		conn.createStatement().executeUpdate("CREATE TABLE person (id INT, name VARCHAR)");
-		conn.createStatement().executeUpdate("CREATE TABLE dept (id INT, name VARCHAR)");
-		conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT)");
+		conn.createStatement().executeUpdate("CREATE TABLE person (id INT PRIMARY KEY, name VARCHAR)");
+		conn.createStatement().executeUpdate("CREATE TABLE dept (id INT PRIMARY KEY , name VARCHAR)");
+		conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT, UNIQUE(person_id, dept_id))");
 
 		conn.createStatement().executeUpdate("INSERT INTO person VALUES (1, 'Anne')");
 		conn.createStatement().executeUpdate("INSERT INTO person VALUES (2, 'Bob')");
