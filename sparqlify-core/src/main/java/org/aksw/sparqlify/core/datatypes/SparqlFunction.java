@@ -3,6 +3,7 @@ package org.aksw.sparqlify.core.datatypes;
 import java.util.Collection;
 import java.util.List;
 
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
 
 public interface SparqlFunction {

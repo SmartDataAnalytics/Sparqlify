@@ -12,8 +12,6 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator2;
-import org.aksw.sparqlify.core.datatypes.SqlFunctionSerializer;
 
 
 
@@ -28,12 +26,14 @@ public class SqlExprEvaluator_Compare
 	extends SqlExprEvaluator2
 {
 	private DatatypeSystem datatypeSystem;
-	private SqlFunctionSerializer serializer;
-	
 	private String symbol;
-	
+
+	private SqlFunctionSerializer serializer;
+		
 	public SqlExprEvaluator_Compare(String symbol, DatatypeSystem datatypeSystem) {
 		this.datatypeSystem = datatypeSystem;
+		this.symbol = symbol;
+
 		this.serializer = new SqlFunctionSerializerOp2(symbol);
 	}
 	

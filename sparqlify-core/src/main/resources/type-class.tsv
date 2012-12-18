@@ -1,4 +1,5 @@
 #type-name	java-class
+object	java.lang.Object
 byte	java.lang.Byte
 short	java.lang.Short
 int	java.lang.Integer

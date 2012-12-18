@@ -11,6 +11,7 @@ public abstract class SqlExprConstantBase
 		super(datatype);
 	}
 	
+	@Override
 	public SqlExprType getType() {
 		return SqlExprType.Constant;
 	}

@@ -366,12 +366,12 @@ public class SqlExprOptimizer {
 		//Expr result = expr;
 
 		// Optimize Equals(RdfTerm(.), RdfTerm(.))
-		Expr expr2 = SqlTranslationUtils.optimizeRdfTerm((E_Equals) expr);
+		Expr expr2 = SqlTranslationUtils.optimizeRdfTerm(expr);
 		if(expr2 != expr) {
 			return optimizeMM(expr2);
 		}
 		
-		Expr result = SqlTranslationUtils.optimizeEqualsConcat(expr);
+		Expr result = SqlTranslationUtils.optimizeOpConcat(expr);
 
 
 		if (result instanceof E_Equals) {

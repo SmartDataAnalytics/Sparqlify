@@ -18,6 +18,7 @@ import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.Caster;
 import org.aksw.commons.util.reflect.ClassUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

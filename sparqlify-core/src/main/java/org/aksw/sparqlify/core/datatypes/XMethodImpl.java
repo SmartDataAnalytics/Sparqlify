@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.core.TypeToken;
 
 public class XMethodImpl implements XMethod
@@ -151,7 +153,7 @@ public class XMethodImpl implements XMethod
 		XClass returnType = resolveClass(signature.getReturnType(), datatypeSystem);
 		List<XClass> argTypes = resolveList(datatypeSystem, signature.getParameterTypes());
 		
-		MethodSignature<XClass> resolvedSignature = new MethodSignature<XClass>(returnType, false, argTypes);
+		MethodSignature<XClass> resolvedSignature = new MethodSignature<XClass>(returnType, argTypes, null);
 		
 		
 		//InvocableMethod invocable = new InvocableMethod(object, method);
@@ -172,7 +174,7 @@ public class XMethodImpl implements XMethod
 		XClass returnType = resolveClass(method.getReturnType(), datatypeSystem);
 		List<XClass> argTypes = resolveList(datatypeSystem, method.getParameterTypes());
 		
-		MethodSignature<XClass> resolvedSignature = new MethodSignature<XClass>(returnType, false, argTypes);
+		MethodSignature<XClass> resolvedSignature = new MethodSignature<XClass>(returnType, argTypes, null);
 		
 		
 		InvocableMethod invocable = new InvocableMethod(object, method);

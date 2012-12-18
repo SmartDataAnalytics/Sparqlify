@@ -11,7 +11,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
@@ -36,7 +38,6 @@ import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -96,12 +97,26 @@ public class SparqlifyUtils {
 		 */
 		
 		{
-			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeTokenPostgis.Geometry, TypeTokenPostgis.Geometry));
+			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeTokenPostgis.Geometry, TypeTokenPostgis.Geometry), null);
 			
 			XMethod x = XMethodImpl.create(ds, "ST_INTERSECTS", signature);
 			ds.registerSqlFunction("http://ex.org/fn/intersects", x);
 		}		
 
+		{
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Concat();
+			ds.createSparqlFunction("concat", evaluator);
+			
+			/*
+			MethodSignature<TypeToken> signature = MethodSignature.create(true, TypeToken.String, TypeToken.Object);
+			
+			// TODO: We need a serializer for concat
+			XMethod x = XMethodImpl.create(ds, "||", signature);
+			ds.registerSqlFunction("concat", x);
+			*/
+		}		
+
+		
 		{
 			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalAnd();
 			ds.createSparqlFunction("&&", evaluator);
@@ -116,6 +131,7 @@ public class SparqlifyUtils {
 			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalNot();
 			ds.createSparqlFunction("!", evaluator);
 		}
+
 		
 		/*
 		{
@@ -207,12 +223,12 @@ public class SparqlifyUtils {
 		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person;");
 		
 		
-		conn.createStatement().executeUpdate("CREATE TABLE person (id INT PRIMARY KEY, name VARCHAR)");
+		conn.createStatement().executeUpdate("CREATE TABLE person (id INT PRIMARY KEY, name VARCHAR, age INT)");
 		conn.createStatement().executeUpdate("CREATE TABLE dept (id INT PRIMARY KEY , name VARCHAR)");
 		conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT, UNIQUE(person_id, dept_id))");
 
-		conn.createStatement().executeUpdate("INSERT INTO person VALUES (1, 'Anne')");
-		conn.createStatement().executeUpdate("INSERT INTO person VALUES (2, 'Bob')");
+		conn.createStatement().executeUpdate("INSERT INTO person VALUES (1, 'Anne', 20)");
+		conn.createStatement().executeUpdate("INSERT INTO person VALUES (2, 'Bob', 22)");
 
 		conn.createStatement().executeUpdate("INSERT INTO dept VALUES (5, 'Research')");
 		conn.createStatement().executeUpdate("INSERT INTO dept VALUES (6, 'Marketing')");

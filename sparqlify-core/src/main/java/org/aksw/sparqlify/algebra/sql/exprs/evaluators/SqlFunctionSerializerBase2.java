@@ -2,9 +2,8 @@ package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
 import java.util.List;
 
-import org.aksw.sparqlify.core.datatypes.SqlFunctionSerializer;
 
-abstract class SqlFunctionSerializerBase2
+public abstract class SqlFunctionSerializerBase2
 	implements SqlFunctionSerializer
 {		
 	@Override

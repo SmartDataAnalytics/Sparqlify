@@ -1,11 +1,9 @@
 package org.aksw.sparqlify.algebra.sparql.transform;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
@@ -18,8 +16,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
-import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
@@ -72,7 +70,14 @@ class GenericSqlFunctionDefinition
 			paramTypes.add(paramType);
 		}
 		
-		MethodSignature<SqlDatatype> result = new MethodSignature<SqlDatatype>(returnType, signature.isVararg(), paramTypes);
+		String varArgType = signature.getVarArgType();
+		SqlDatatype resVarArgType = null;
+		if(varArgType != null) {
+			resVarArgType = datatypeSystem.requireByName(varArgType);
+		}
+		
+		
+		MethodSignature<SqlDatatype> result = MethodSignature.create(returnType, paramTypes, resVarArgType);//new MethodSignature<SqlDatatype>(returnType, signature.isVararg(), paramTypes);
 
 		return result;
 	}
@@ -89,7 +94,10 @@ class GenericSqlFunctionDefinition
 	}
 
 	public void add(SqlStringTransformer transformer, String returnType, boolean isVararg, String ...paramTypes) {
-		add(transformer, new MethodSignature<String>(returnType, isVararg, Arrays.asList(paramTypes)));
+		MethodSignature<String> signature = MethodSignature.create(isVararg, returnType, paramTypes);
+		
+		//new MethodSignature<String>(returnType, isVararg, Arrays.asList(paramTypes)
+		add(transformer, signature);
 	}
 
 	@Override

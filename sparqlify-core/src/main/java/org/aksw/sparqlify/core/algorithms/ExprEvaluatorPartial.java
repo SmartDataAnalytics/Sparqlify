@@ -1,11 +1,15 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.management.RuntimeErrorException;
 
-import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import com.hp.hpl.jena.sparql.expr.ExprNotComparableException;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
@@ -84,10 +89,8 @@ public class ExprEvaluatorPartial
 			Expr evaledArg = eval(arg, binding);
 			
 			// If an argument evaluated to type error, return type error
-			// TODO: Distinguish between null and type error. Currently we use nvNothing which actually corresponds to NULL
-			// (currently represented with nvNothing - is that safe? - Rather no - see above)
-			if(evaledArg.equals(NodeValue.nvNothing)) {
-				return NodeValue.nvNothing;
+			if(evaledArg.equals(SparqlifyConstants.nvTypeError)) {
+				return SparqlifyConstants.nvTypeError;
 			}
 			
 			evaledArgs.add(evaledArg);
@@ -103,17 +106,21 @@ public class ExprEvaluatorPartial
 		
 		
 		// If some arguments are not constant, we can't evaluate
+		// FIXME This is not true, we could still perform a partial evaluation
+		// What is true, though, is, that Jena throws errors when evaluating exprs with unbound vars
 		if(tmp.isFunction() && !ExprEvaluatorPartial.isConstantArgsOnly(tmp.getFunction())) {
 			return tmp;
 		}
 
 		
 		
-		// Check if the function's IRI is not registered
-		// If not, don't try to evaluate it
+		// Check if the function's IRI is registered
+		// If not, don't try to evaluate the corresponding expression
+		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">="));
+		
 		String fnIri = org.aksw.sparqlify.expr.util.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();			
 		if(fnIri != null && !fnIri.isEmpty()) {
-			if(registry.get(fnIri) == null) {
+			if(!builtInOps.contains(fnIri) && registry.get(fnIri) == null) {
 				return tmp;
 			}
 		}
@@ -122,7 +129,10 @@ public class ExprEvaluatorPartial
 		
 		try {
 			result = ExprUtils.eval(tmp);
-		} catch(Exception e) {
+		} catch(ExprNotComparableException e) {
+			return SparqlifyConstants.nvTypeError;
+		}
+		catch(Exception e) {
 			// Failed to evaluate - use original value
 			logger.warn("Failed to evaluate expr: " + tmp);
 		}
@@ -141,6 +151,11 @@ public class ExprEvaluatorPartial
 	 * -> After makes more sense: Then we have constant folder arguments 
 	 */
 	public Expr eval(Expr expr, Map<Var, Expr> binding) {
+		
+		
+		if(expr == null) {
+			throw new RuntimeException("Null expression should not happen");
+		}
 		
 		//System.out.println(expr);
 		

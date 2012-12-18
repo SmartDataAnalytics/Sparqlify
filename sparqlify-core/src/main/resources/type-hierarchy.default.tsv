@@ -1,4 +1,9 @@
 # sub-type	super-type
+boolean	object
+byte	object
+numeric	object
+text	object
+
 byte	short
 short	int
 int	long

@@ -11,6 +11,7 @@ import java.util.Set;
 import org.aksw.commons.collections.IterableCollection;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.Pair;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -220,7 +221,9 @@ public class ExprUtils {
 
 		Object result;
 
-		if(expr.isIRI()){
+		if(expr.equals(SparqlifyConstants.nvTypeError)) {
+			result = false;
+		} else if(expr.isIRI()){
 			result = expr.asNode().getURI();
 			//logger.debug("HACK - Uri constants should be converted to RdfTerms first");
 		} else if(expr.isBoolean()) {

@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.datatypes;
+package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
 import java.util.List;
 

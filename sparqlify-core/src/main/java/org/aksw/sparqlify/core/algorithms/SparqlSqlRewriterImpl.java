@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
@@ -56,6 +57,10 @@ public class SparqlSqlRewriterImpl
 					+ query.toString() + "]");
 		}
 		*/
+		
+		// Expand the query
+		
+		
 		
 		Op opViewInstance = candidateViewSelector.getApplicableViews(query);
 

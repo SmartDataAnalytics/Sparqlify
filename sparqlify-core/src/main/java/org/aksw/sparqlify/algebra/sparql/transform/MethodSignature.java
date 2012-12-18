@@ -14,18 +14,14 @@ import java.util.List;
 public class MethodSignature<T>
 {
 	private T returnType;
-	private List<T> parameterTypes;
-	private T varargType; 
+	private List<T> paramTypes;
+	private T varArgType; 
 
-	// FIXME Better store are vararg-type (such as in Java: String ...varargs)
-	private boolean isVararg;
-	
-	public MethodSignature(T returnType,
-			boolean isVararg, List<T> parameterTypes) {
+	public MethodSignature(T returnType, List<T> paramTypes, T varArgType) {
 		super();
 		this.returnType = returnType;
-		this.parameterTypes = parameterTypes;
-		this.isVararg = isVararg;
+		this.paramTypes = paramTypes;
+		this.varArgType = varArgType;
 	}
 
 	public T getReturnType() {
@@ -33,38 +29,73 @@ public class MethodSignature<T>
 	}
 
 	public List<T> getParameterTypes() {
-		return parameterTypes;
+		return paramTypes;
+	}
+	
+	public T getVarArgType() {
+		return varArgType;
 	}
  
 	public boolean isVararg() {
 		//return isVararg;
-		return varargType != null;
+		return varArgType != null;
 	}
 	
-	public static <T> MethodSignature<T> create(T returnType, List<T> parameterTypes) {
-		return new MethodSignature<T>(returnType, false, parameterTypes);
+	public static <T> MethodSignature<T> create(T returnType, List<T> parameterTypes, T varArgType) {
+		return new MethodSignature<T>(returnType, parameterTypes, null);
 	}
 
+	/*
 	public static <T> MethodSignature<T> create(T returnType, T... parameterTypes) {
-		return new MethodSignature<T>(returnType, false, Arrays.asList(parameterTypes));
+		return new MethodSignature<T>(returnType, Arrays.asList(parameterTypes), null);
+	}
+	*/
+
+	/**
+	 * 
+	 * @param returnType
+	 * @param isVarArg If true, the last paramType becomes the vararg type
+	 * @param paramTypes
+	 * @return
+	 */
+	public static <T> MethodSignature<T> create(boolean isVarArg, T returnType, T... paramTypes) {
+		
+		T varArgType = null;
+		List<T> fixedArgTypes = Arrays.asList(paramTypes);
+
+		if(isVarArg) {
+			if(paramTypes.length == 0) {
+				throw new RuntimeException("Need a type for varArgs");
+			}
+			
+			int lastIndex = paramTypes.length - 1;
+			varArgType = paramTypes[lastIndex];
+			fixedArgTypes = fixedArgTypes.subList(0, lastIndex);
+		}	
+
+		MethodSignature<T> result = create(returnType, fixedArgTypes, varArgType);
+		return result;
+		//return new MethodSignature<T>(returnType, fixedArgTypes, varArgType);
 	}
 
+	
+	
 	@Override
 	public String toString() {
-		return "MethodSignature [returnType=" + returnType
-				+ ", parameterTypes=" + parameterTypes + ", isVararg="
-				+ isVararg + "]";
+		return "MethodSignature [returnType=" + returnType + ", paramTypes="
+				+ paramTypes + ", varArgType=" + varArgType + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (isVararg ? 1231 : 1237);
 		result = prime * result
-				+ ((parameterTypes == null) ? 0 : parameterTypes.hashCode());
+				+ ((paramTypes == null) ? 0 : paramTypes.hashCode());
 		result = prime * result
 				+ ((returnType == null) ? 0 : returnType.hashCode());
+		result = prime * result
+				+ ((varArgType == null) ? 0 : varArgType.hashCode());
 		return result;
 	}
 
@@ -77,17 +108,20 @@ public class MethodSignature<T>
 		if (getClass() != obj.getClass())
 			return false;
 		MethodSignature<?> other = (MethodSignature<?>) obj;
-		if (isVararg != other.isVararg)
-			return false;
-		if (parameterTypes == null) {
-			if (other.parameterTypes != null)
+		if (paramTypes == null) {
+			if (other.paramTypes != null)
 				return false;
-		} else if (!parameterTypes.equals(other.parameterTypes))
+		} else if (!paramTypes.equals(other.paramTypes))
 			return false;
 		if (returnType == null) {
 			if (other.returnType != null)
 				return false;
 		} else if (!returnType.equals(other.returnType))
+			return false;
+		if (varArgType == null) {
+			if (other.varArgType != null)
+				return false;
+		} else if (!varArgType.equals(other.varArgType))
 			return false;
 		return true;
 	}

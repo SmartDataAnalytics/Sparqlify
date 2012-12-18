@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
@@ -26,7 +27,6 @@ import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator;
 import org.aksw.sparqlify.core.datatypes.SqlExprOps;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
@@ -255,7 +255,7 @@ public class DatatypeSystemTests {
 		
 		{
 			//XMethodImpl.createFromMethod("http://example.org/intersects", ds, object, method)
-			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.Int, TypeToken.Int));
+			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.Int, TypeToken.Int), null);
 			
 			XMethod x = XMethodImpl.create(ds, "ST_INTERSECTS", signature);
 			ds.registerSqlFunction("http://ex.org/fn/intersects", x);

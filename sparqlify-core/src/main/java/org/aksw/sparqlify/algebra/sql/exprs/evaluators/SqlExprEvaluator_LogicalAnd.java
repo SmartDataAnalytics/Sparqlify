@@ -5,9 +5,7 @@ import java.util.Arrays;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.SqlExprEvaluator2;
 import org.aksw.sparqlify.core.datatypes.SqlExprOps;
-import org.aksw.sparqlify.core.datatypes.SqlFunctionSerializer;
 
 /**
  * 

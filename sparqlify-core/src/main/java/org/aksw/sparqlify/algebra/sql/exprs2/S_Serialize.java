@@ -2,8 +2,8 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 
 import java.util.List;
 
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.SqlFunctionSerializer;
 import org.openjena.atlas.io.IndentedWriter;
 
 /**

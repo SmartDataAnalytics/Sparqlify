@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
-class SqlFunctionSerializerOp2
+public class SqlFunctionSerializerOp2
 	extends SqlFunctionSerializerBase2
 {
 	private String opSymbol;

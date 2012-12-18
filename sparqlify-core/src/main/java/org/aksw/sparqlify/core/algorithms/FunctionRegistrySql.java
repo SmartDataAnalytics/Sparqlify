@@ -49,7 +49,7 @@ public class FunctionRegistrySql {
 			parameterTypes.add(resPt);
 		}
 		
-		MethodSignature<XClass> typeSignature = MethodSignature.create(returnType, parameterTypes);
+		MethodSignature<XClass> typeSignature = MethodSignature.create(returnType, parameterTypes, null);
 		
 		RegisteredFunction registeredFn = new RegisteredFunction(declaration, typeSignature);
 		

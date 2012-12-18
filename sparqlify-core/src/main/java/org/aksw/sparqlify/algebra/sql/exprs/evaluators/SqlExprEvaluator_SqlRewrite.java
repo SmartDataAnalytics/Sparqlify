@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.datatypes;
+package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
 import java.util.List;
 
@@ -7,6 +7,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Method;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
+import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

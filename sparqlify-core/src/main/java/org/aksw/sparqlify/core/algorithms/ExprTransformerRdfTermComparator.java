@@ -2,12 +2,15 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.List;
 
+import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import com.hp.hpl.jena.sparql.expr.ExprFunction2;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
  * 
@@ -29,7 +32,12 @@ public class ExprTransformerRdfTermComparator
 	
 	public Expr handleConcat(ExprFunction fn) {
 		
-		Expr result = SqlTranslationUtils.optimizeEqualsConcat(fn);
+		// The result is null if it could not be further transformed
+		Expr result = SqlTranslationUtils.optimizeOpConcat(fn);
+		
+		if(result == null) {
+			result = fn;
+		}
 		
 		return result;
 	}
@@ -48,13 +56,19 @@ public class ExprTransformerRdfTermComparator
 		E_RdfTerm leftTerm = SqlTranslationUtils.expandRdfTerm(left);
 		E_RdfTerm rightTerm = SqlTranslationUtils.expandRdfTerm(right);
 		
+		
+		// TODO: The following condition breaks if we have two constants or
+		// variable and constant. E.g. <http://some.uri> > 5
+		
 		// If none of the arguments is a E_rdfTerm, continue with further checks
+
 		if(leftTerm == null && rightTerm == null) {
 			
 			Expr tmp = handleConcat(fn);
 			
 			return tmp;
 		}
+
 		
 		// However, if one of the arguments is one, transform
 		if(leftTerm == null) {
@@ -62,25 +76,14 @@ public class ExprTransformerRdfTermComparator
 		}
 		
 		if(rightTerm == null) {
-			
 			rightTerm = SqlTranslationUtils.expandConstant(right);
-			
 		}
 	
+		Factory2<Expr> exprFactory = ExprFactoryUtils.createCopyFactory2((ExprFunction2)fn);
+		
 		if(leftTerm != null && rightTerm != null) {
 			
-			Expr eqT = new E_Equals(leftTerm.getType(), rightTerm.getType());
-			Expr eqV = new E_Equals(leftTerm.getLexicalValue(), rightTerm.getLexicalValue());
-			Expr eqD = new E_Equals(leftTerm.getDatatype(), rightTerm.getDatatype());
-			Expr eqL = new E_Equals(leftTerm.getLanguageTag(), rightTerm.getLanguageTag());
-			
-			Expr tmp =
-					new E_LogicalAnd(
-							new E_LogicalAnd(eqT, eqV),
-							new E_LogicalAnd(eqD, eqL)
-					);
-			
-			result = exprEvaluator.eval(tmp, null);
+			result = processOpRdfTerm(leftTerm, rightTerm, exprFactory);
 			
 		} else {
 			
@@ -92,4 +95,32 @@ public class ExprTransformerRdfTermComparator
 		return result;
 	}
 	
+	
+	public Expr processOpRdfTerm(E_RdfTerm a, E_RdfTerm b, Factory2<Expr> opFactory) {
+		
+		Expr result;
+		
+		Expr eqT = new E_Equals(a.getType(), b.getType());
+		//Expr eqV = new E_Equals(a.getLexicalValue(), b.getLexicalValue());
+		
+		Expr tmpEqV = opFactory.create(a.getLexicalValue(), b.getLexicalValue());
+		Expr eqV = transform((ExprFunction2)tmpEqV);
+		
+		
+		// TODO We need to consider type hierarchies, but for now we just skip on that.
+		Expr eqD = NodeValue.TRUE;
+		//Expr eqD = new E_Equals(a.getDatatype(), b.getDatatype());
+		Expr eqL = new E_Equals(a.getLanguageTag(), b.getLanguageTag());
+		
+		Expr tmp =
+				new E_LogicalAnd(
+						new E_LogicalAnd(eqT, eqV),
+						new E_LogicalAnd(eqD, eqL)
+				);
+		
+		result = exprEvaluator.eval(tmp, null);
+
+		return result;
+		
+	}
 }

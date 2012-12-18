@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.datatypes;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 
@@ -113,11 +114,20 @@ public class SqlExprOps {
 	}
 	
 
+	
 	public static SqlExpr logicalNot(SqlExpr x) {
 		int ix = exprToTruthValue(x);
-		
 		SqlExpr tmp = tableLogicalNot[ix];
-		SqlExpr result = interpretResult(tmp, x, null);		
+
+		SqlExpr result;
+		// If the original arg is returned, we need to negate it!		
+		if(tmp == a) {
+			//result = S_LogicalNot.create(x);
+			return null;
+		} else {
+			result = interpretResult(tmp, x, null);			
+		}
+		
 		return result;
 	}	
 }

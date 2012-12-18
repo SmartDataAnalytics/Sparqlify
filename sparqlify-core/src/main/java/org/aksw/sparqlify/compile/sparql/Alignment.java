@@ -34,11 +34,11 @@ import com.hp.hpl.jena.sparql.expr.Expr;
  */
 
 public class Alignment
-extends Pair<List<Expr>, List<Expr>>
+	extends Pair<List<Expr>, List<Expr>>
 {
-public Alignment(List<Expr> key, List<Expr> value) {
-	super(key, value);
-}		
+	public Alignment(List<Expr> key, List<Expr> value) {
+		super(key, value);
+	}		
 
 	public boolean isSameSize() {
 		return this.getKey().size() == this.getValue().size();

@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
@@ -26,6 +25,7 @@ import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
 import com.hp.hpl.jena.sparql.expr.E_LessThan;
 import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
+import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
@@ -34,6 +34,40 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
+import com.hp.hpl.jena.sparql.sse.Tags;
+
+
+/**
+ * Iterator for iterating all of a list's subLists with a given offset (default 0)
+ * and increasing size.
+ * 
+ * @author raven
+ *
+ * @param <T>
+ */
+//class SubListIterator<T>
+//	extends SinglePrefetchIterator<List<T>>
+//{
+//	private List<T> list;
+//	private int startIndex;
+//	private int endIndex;
+//	
+//	public SubListIterator(List<T> list) {
+//		this.list = list;
+//		this.startIndex = 0;
+//		
+//		endIndex = this.startIndex;
+//	}
+//	
+//	@Override
+//	protected List<T> prefetch() throws Exception {
+//		++endIndex;
+//		List<T> result = list.subList(startIndex, endIndex);
+//		
+//		return result;
+//	}
+//}
+
 
 public class SqlTranslationUtils {
 
@@ -144,7 +178,8 @@ public class SqlTranslationUtils {
 				result = NodeValue.makeString(datatype);
 				
 			} else {
-				result = NodeValue.nvNothing;
+				throw new RuntimeException("Should not happen");
+				//result = NodeValue.nvNothing;
 			}
 		} else if(expr.isFunction()) {
 			
@@ -204,8 +239,12 @@ public class SqlTranslationUtils {
 		E_RdfTerm result = null;
 		
 		if(expr.isFunction()) {
-			result = expandRdfTerm(expr.getFunction());
+			result = expandRdfTerm(expr.getFunction());		
 		}
+		/*
+		else if(expr.isConstant()) {
+			result = expandConstant(expr);
+		}*/
 		
 		return result;
 	}
@@ -431,6 +470,7 @@ public class SqlTranslationUtils {
 	 * @param expr
 	 * @return
 	 */
+	/*
 	public static Expr optimizeEqualsConcat(ExprFunction fn) {
 		
 		if(fn instanceof ExprFunction2) {
@@ -443,8 +483,49 @@ public class SqlTranslationUtils {
 		
 		return fn;
 	}
+	*/
+	public static Expr optimizeOpConcat(ExprFunction fn) {
+		
+		if(fn instanceof ExprFunction2) {
+			ExprFunction2 tmp = (ExprFunction2)fn;
+			
+			Expr result = optimizeOpConcat(tmp);
+			
+			return result;
+		}
+		
+		return fn;
+	}
 	
 	
+	public static Expr optimizeOpConcat(ExprFunction2 fn) {
+		Expr ta = fn.getArg1();
+		Expr tb = fn.getArg2();
+		
+		Expr result;
+		if(!isOpConcatExpr(ta, tb)) {
+			result = fn;
+		} else {
+			String fnId = ExprUtils.getFunctionId(fn);
+			
+			if(fnId.equals(Tags.symEQ)) {
+				result = optimizeEqualsConcat(ta, tb);
+			} else {
+				
+				Factory2<Expr> exprFactory = ExprFactoryUtils.getFactory2(fnId);
+				assert exprFactory != null : "No expr factory for " + fnId;
+				
+				result = optimizeOpConcat(ta, tb, exprFactory);
+			}
+			
+			
+			//result = optimizeOpConcat(ta, tb); 
+		}
+		
+		return result;		
+	}
+	
+	/*
 	public static Expr optimizeEqualsConcat(ExprFunction2 fn) {
 		Expr ta = fn.getArg1();
 		Expr tb = fn.getArg2();
@@ -458,9 +539,9 @@ public class SqlTranslationUtils {
 		
 		return result;
 	}
+	*/
 	
 	public static Expr optimizeEqualsConcat(Expr ta, Expr tb) {
-		
 		
 		List<List<Expr>> ors = splitEqualsConcat(ta, tb);
 
@@ -468,8 +549,18 @@ public class SqlTranslationUtils {
 
 		return result;
 	}
+
+	public static Expr optimizeOpConcat(Expr ta, Expr tb, Factory2<Expr> exprFactory) {
+		
+		List<Expr> ors = splitOpConcat(ta, tb, exprFactory);
+
+		Expr result = ExprUtils.orifyBalanced(ors);
+
+		return result;
+	}
+
 	
-	public static boolean isEqualsConcatExpr(Expr ta, Expr tb) {
+	public static boolean isOpConcatExpr(Expr ta, Expr tb) {
 	
 		if (isConcatExpr(ta) || isConcatExpr(tb)) {
 			return true;
@@ -478,25 +569,123 @@ public class SqlTranslationUtils {
 		return false;
 	}
 
+	
+	/**
+	 * 
+	 * @param expr
+	 * @return
+	 */
+	public static List<Expr> getOptimizedConcatArgs(Expr expr) {
+		List<Expr> args = isConcatExpr(expr)
+				? expr.getFunction().getArgs()
+				: Collections.singletonList(expr);
+
+		List<Expr> result = mergeConsecutiveConstants(args).getList();
+		
+		return result;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param ta The first concat expression
+	 * @param tb The second concat expression
+	 * @return
+	 */
 	public static List<List<Expr>> splitEqualsConcat(Expr ta, Expr tb) {
 	
 		// Create a list of concat-arguments (if not a concat, treat the expression
 		// as an argument
-		List<Expr> la = isConcatExpr(ta) ? ta.getFunction().getArgs()
-				: Collections.singletonList(ta);
-		List<Expr> lb = isConcatExpr(tb) ? tb.getFunction().getArgs()
-				: Collections.singletonList(tb);
-	
-		// FIXME For efficiency, this could be done once in a separate step
-		la = mergeConsecutiveConstants(la).getList();
-		lb = mergeConsecutiveConstants(lb).getList();
-	
+		List<Expr> la = getOptimizedConcatArgs(ta);
+		List<Expr> lb = getOptimizedConcatArgs(tb);
+
 		List<List<Expr>> result = SqlTranslationUtils.splitEqualsConcat(la, lb); //optimizeEqualsConcatAlign(la, lb);
 	
 		return result;
 	}
 
+	public static List<Expr> splitOpConcat(Expr ta, Expr tb, Factory2<Expr> exprFactory) {
+		
+		// Create a list of concat-arguments (if not a concat, treat the expression
+		// as an argument
+		List<Expr> la = getOptimizedConcatArgs(ta);
+		List<Expr> lb = getOptimizedConcatArgs(tb);
+
+		List<Expr> result = SqlTranslationUtils.splitOpConcat(la, lb, exprFactory); //optimizeEqualsConcatAlign(la, lb);
 	
+		return result;
+	}
+
+	
+	/**
+	 * [(a1, b1)], [(a1, b1), (a2, b2)]
+	 * 
+	 * 
+	 * @param la
+	 * @param lb
+	 * @return
+	 */
+	public static List<Expr> splitOpConcat(List<Expr> la, List<Expr> lb, Factory2<Expr> exprFactory) {
+		List<Alignment> cs = SqlExprOptimizer.align(la, lb);
+		
+		List<Expr> ors = new ArrayList<Expr>();
+		for(Alignment c : cs) {
+			
+
+			if(c.isSameSize()) {
+
+				Expr headExpr = null;
+			
+				for(int i = 0; i < c.getKey().size(); ++i) {
+					Expr ea = c.getKey().get(i);
+					Expr eb = c.getValue().get(i);
+											
+					if(ea.isConstant() && ea.equals(eb)) {
+						continue;
+					}
+					
+					// Create the inequality expression (e.g. a > b)
+					Expr tmpExpr = exprFactory.create(ea, eb);
+					
+					// Prepend all 'head' conditions (e.g. ?x = ?y)
+					Expr expr;
+					if(headExpr == null) {
+						expr = tmpExpr;
+					} else {
+						expr = new E_LogicalAnd(headExpr, tmpExpr); 
+					}
+					
+					ors.add(expr);
+					
+					// Try to add an additional condition to the head expr
+					// TODO Detect unsatisfiability early
+					E_Equals eq = new E_Equals(ea, eb);
+					headExpr = new E_LogicalAnd(headExpr, eq);					
+				}
+					
+			} else {
+				ors.add(
+					new E_Equals(
+						new E_StrConcatPermissive(new ExprList(c.getKey())),
+						new E_StrConcatPermissive(new ExprList(c.getValue()))
+					));
+			}
+			
+			//ors.add(ands);
+		}
+				
+		return ors;		 
+	}
+	
+	/**
+	 * Returns a list of alternatives (ors), whereas each alternative
+	 * is a list of Equals expressions:
+	 * [ [Equals("x", "x"), Equals(?a, ?b)], [...], ... ]
+	 * 
+	 * @param la
+	 * @param lb
+	 * @return
+	 */
 	public static List<List<Expr>> splitEqualsConcat(List<Expr> la, List<Expr> lb) {
 		List<Alignment> cs = SqlExprOptimizer.align(la, lb);
 		
@@ -765,6 +954,8 @@ public class SqlTranslationUtils {
 		transMap.put("concat", new ExprTransformerConcatNested());
 		transMap.put("lang", new ExprTransformerLang());
 		transMap.put("=", new ExprTransformerRdfTermComparator(evaluator));
+		transMap.put(">", new ExprTransformerRdfTermComparator(evaluator));
+
 		
 		transMap.put("&&", new ExprTransformerLogicalAnd());
 

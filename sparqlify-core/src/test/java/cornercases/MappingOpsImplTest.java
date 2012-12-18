@@ -4,35 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
+import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
-import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
-import org.aksw.sparqlify.core.algorithms.SqlExprSerializerPostgres;
-import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
-import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
-import org.aksw.sparqlify.core.algorithms.VarBinding;
-import org.aksw.sparqlify.core.algorithms.ViewInstance;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
-import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
-import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
-import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.util.MapReader;
@@ -46,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 
@@ -71,18 +63,64 @@ public class MappingOpsImplTest {
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
 		
+		/* Some important interfaces for quick access */
+		SqlExprSerializer serExpr = null;
+		SqlFunctionSerializer serFn = null;
+		
+		
+		
 		ViewDefinitionFactory vdf = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
 		ViewDefinition personView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) From person");
 		ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
 		ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
-
+		
+		ViewDefinition personAgeView = vdf.create("Prefix ex:<http://ex.org/> Prefix xsd:<http://www.w3.org/2001/XMLSchema#> Create View person As Construct { ?s ex:age ?a } With ?s = uri(concat('http://ex.org/person/', ?ID) ?a = typedLiteral(?AGE, xsd:int) From person");
+		
 		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();		
-		candidateViewSelector.addView(personView);
-		candidateViewSelector.addView(deptView);
+		//candidateViewSelector.addView(personView);
+		//candidateViewSelector.addView(deptView);
 		candidateViewSelector.addView(personToDeptView);
+		//candidateViewSelector.addView(personAgeView);
+		
+		
 		
 
+
+		/*
+		 * A test with (in)equalities in filter conditions of the query
+		 */
+		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
+//
+//		
+		Expr expr = ExprUtils.parse("concat('http://ex.org/dept/', ?DEPT_ID) > 5");
+		Expr transExpr = exprTransformer.eval(expr, null);
+//
+		System.out.println(transExpr);
+
+		
+//		
+//		Expr expr = ExprUtils.parse("<http://aksw.org/sparqlify/uri>(concat('foo', 'bar', ?v)) > <http://aksw.org/sparqlify/uri>('foobarx')");
+//		Expr transExpr = exprTransformer.eval(expr, null);
+//
+//		System.out.println(transExpr);
+//
+//		
+		Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>();
+		typeMap.put("DEPT_ID", TypeToken.Int);
+		SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
+		
+		System.out.println(sqlExpr);
+//
+//				
+//		
+//		//Expr transExpr = SqlTranslationUtils.optimizeOpConcat((ExprFunction2)expr);
+//		
+//		if(true) {
+//			System.exit(1);
+//		}
+
+		
 		
 //		
 //		Mapping m1 = personView.getMapping();
@@ -139,7 +177,7 @@ public class MappingOpsImplTest {
 		{
 			//QueryExecution qe = qef.createQueryExecution("Select ?s (Count(*) As ?c) { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . } Group By ?s");
 			//QueryExecution qe = qef.createQueryExecution("Select ?s ?p (Count(*) As ?c) { ?s ?p ?o . } Group By ?s ?p");
-			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o .  Filter(?o > 5) .} ");
+			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o .  Filter(!(?o > 5)) .} ");
 			ResultSet rs = qe.execSelect();
 			String rsStr = ResultSetFormatter.asText(rs);
 			System.out.println(rsStr);

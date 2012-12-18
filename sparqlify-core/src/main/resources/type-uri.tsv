@@ -1,4 +1,6 @@
 #type-name	java-class
+object	http://sparqlify.org/resource/type/object
+
 byte	http://www.w3.org/2001/XMLSchema#byte
 short	http://www.w3.org/2001/XMLSchema#short
 int	http://www.w3.org/2001/XMLSchema#int
