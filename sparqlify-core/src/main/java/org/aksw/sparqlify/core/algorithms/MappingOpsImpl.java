@@ -878,8 +878,21 @@ public class MappingOpsImpl
 	 * ?s -> [c1: string, c2: int] with expr foo and restriction bar.
 	 * 
 	 */
-	public Mapping union(List<Mapping> members) {
+	public Mapping union(List<Mapping> rawMembers) {
 
+		/*
+		 * Remove all members that do not yield results 
+		 */
+//		List<Mapping> members = new ArrayList<Mapping>();
+//		for(Mapping rawMember : rawMembers) {
+//			if(!rawMember.isEmpty()) {
+//				members.add(rawMember);
+//			}
+//		}
+
+		List<Mapping> members = rawMembers;
+		
+		
 		/* TODO The alias generator must be configurable
 		 * Example:
 		 *     PostgreSQL works fine with lower case aliases,

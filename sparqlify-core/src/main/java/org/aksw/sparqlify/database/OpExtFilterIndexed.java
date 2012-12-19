@@ -45,10 +45,13 @@ public class OpExtFilterIndexed
 	@Override
 	public void outputArgs(IndentedWriter out, SerializationContext sCxt) {
         int line = out.getRow() ;
-        out.println(restrictions);
+        out.println("[Restrictions: " + restrictions + "]");
+        
         WriterOp.output(out, this.subOp, sCxt) ;
-        if ( line != out.getRow() )
-            out.ensureStartOfLine() ;
+        
+        if (line != out.getRow()) {
+            out.ensureStartOfLine();
+        }
 	}
 
 	@Override

@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
+import com.hp.hpl.jena.sparql.algebra.op.OpAssign;
+import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
@@ -21,6 +23,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
+import com.hp.hpl.jena.sparql.expr.ExprList;
 
 
 public class OpMappingRewriterImpl
@@ -91,12 +94,20 @@ public class OpMappingRewriterImpl
 		Mapping result = ops.join(a, b);
 		return result;
 	}
-
+	
 	public Mapping rewrite(OpLeftJoin op) {
 		Mapping a = rewrite(op.getLeft());
 		Mapping b = rewrite(op.getRight());
 		
 		Mapping result = ops.leftJoin(a, b);
+		return result;
+	}
+
+	public Mapping rewrite(OpConditional op) {
+		OpLeftJoin tmp = (OpLeftJoin)OpLeftJoin.create(op.getLeft(), op.getRight(), new ExprList());
+		
+		Mapping result = rewrite(tmp);
+		
 		return result;
 	}
 
@@ -115,6 +126,14 @@ public class OpMappingRewriterImpl
 		Long offset = (op.getStart() == Query.NOLIMIT) ? null : op.getStart();
 		
 		Mapping result = ops.slice(a, limit, offset);
+		return result;
+	}
+	
+	public Mapping rewrite(OpAssign op) {
+		OpExtend tmp = (OpExtend)OpExtend.extend(op.getSubOp(), op.getVarExprList());
+		
+		Mapping result = rewrite(tmp);
+		
 		return result;
 	}
 	
@@ -203,6 +222,9 @@ public class OpMappingRewriterImpl
 		else if (op instanceof OpLeftJoin) {
 			result = rewrite((OpLeftJoin)op);
 		}
+		else if (op instanceof OpConditional) {
+			result = rewrite((OpConditional)op);
+		}		
 		else if (op instanceof OpSlice) {
 			result = rewrite((OpSlice)op);
 		}
@@ -214,6 +236,9 @@ public class OpMappingRewriterImpl
 		}
 		else if (op instanceof OpExtend) {
 			result = rewrite((OpExtend)op);
+		}
+		else if (op instanceof OpAssign) {
+			result = rewrite((OpAssign)op);
 		}
 		/*
 		else if(op instanceof OpNull) {

@@ -2,12 +2,14 @@ package org.aksw.sparqlify.core.domain.input;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.openjena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -169,9 +171,52 @@ public class VarDefinition
 		return result;
 	}
 	
+	public String toPrettyString() {
+		return toIndentedString(this);
+	}
+	
+	public static String toIndentedString(VarDefinition varDef) {
+		Multimap<Var, RestrictedExpr> map = varDef.getMap();
+		String result = toIndentedString(map);
+		return result;
+	}
+	
+	public static String toIndentedString(Multimap<Var, RestrictedExpr> varToExprs) {
+		
+		String result = "";
+		
+		for(Entry<Var, Collection<RestrictedExpr>> entry : varToExprs.asMap().entrySet()) {
+			Var var = entry.getKey();
+			String varName = var.getName();
+			//int varLen = varName.length();
+			Collection<RestrictedExpr> restExprs = entry.getValue();
+			
+			Iterator<RestrictedExpr> it = restExprs.iterator();
+			
+			String firstLabel;
+			if(!it.hasNext()) {
+				firstLabel = "(empty definition set)";
+			} else {
+				RestrictedExpr restExpr = it.next();
+				firstLabel = varName + ": " + restExpr.getExpr() + " [" + restExpr.getRestrictions() + "]";
+			}
+			result += firstLabel + "\n";
+			
+			while(it.hasNext()) {
+				RestrictedExpr restExpr = it.next();
+				//StringUtils.
+				// FIXME Make spaces for var length
+				result += "    " + restExpr.getExpr() + " [" + restExpr.getRestrictions() + "]" + "\n";
+			}
+		}
+		
+		return result;
+	}	
+	
 	@Override
 	public String toString() {
-		return "VarDefinition [varToExprs=" + varToExprs + "]";
+		return toPrettyString();
+		//return "VarDefinition [varToExprs=" + varToExprs + "]";
 	}
 
 	@Override

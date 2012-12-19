@@ -78,9 +78,9 @@ public class MappingOpsImplTest {
 		ViewDefinition personAgeView = vdf.create("Prefix ex:<http://ex.org/> Prefix xsd:<http://www.w3.org/2001/XMLSchema#> Create View person As Construct { ?s ex:age ?a } With ?s = uri(concat('http://ex.org/person/', ?ID) ?a = typedLiteral(?AGE, xsd:int) From person");
 		
 		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();		
-		//candidateViewSelector.addView(personView);
+		candidateViewSelector.addView(personView);
 		//candidateViewSelector.addView(deptView);
-		candidateViewSelector.addView(personToDeptView);
+		//candidateViewSelector.addView(personToDeptView);
 		//candidateViewSelector.addView(personAgeView);
 		
 		
@@ -90,13 +90,13 @@ public class MappingOpsImplTest {
 		/*
 		 * A test with (in)equalities in filter conditions of the query
 		 */
-		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
+//		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
 //
 //		
-		Expr expr = ExprUtils.parse("concat('http://ex.org/dept/', ?DEPT_ID) > 5");
-		Expr transExpr = exprTransformer.eval(expr, null);
+//		Expr expr = ExprUtils.parse("concat('http://ex.org/dept/', ?DEPT_ID) > 21");
+//		Expr transExpr = exprTransformer.eval(expr, null);
 //
-		System.out.println(transExpr);
+//		System.out.println(transExpr);
 
 		
 //		
@@ -106,11 +106,11 @@ public class MappingOpsImplTest {
 //		System.out.println(transExpr);
 //
 //		
-		Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>();
-		typeMap.put("DEPT_ID", TypeToken.Int);
-		SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
-		
-		System.out.println(sqlExpr);
+//		Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>();
+//		typeMap.put("DEPT_ID", TypeToken.Int);
+//		SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
+//		
+//		System.out.println(sqlExpr);
 //
 //				
 //		
@@ -177,7 +177,8 @@ public class MappingOpsImplTest {
 		{
 			//QueryExecution qe = qef.createQueryExecution("Select ?s (Count(*) As ?c) { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . } Group By ?s");
 			//QueryExecution qe = qef.createQueryExecution("Select ?s ?p (Count(*) As ?c) { ?s ?p ?o . } Group By ?s ?p");
-			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o .  Filter(!(?o > 5)) .} ");
+			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s ?p ?o . Optional { ?s ex:name ?l } . Filter(!(?o > 21)) }");
+			//QueryExecution qe = qef.createQueryExecution("Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Select * { ?s rdfs:label ?l . ?s ?p ?o . Filter(!(?o > 21)) .} ");
 			ResultSet rs = qe.execSelect();
 			String rsStr = ResultSetFormatter.asText(rs);
 			System.out.println(rsStr);

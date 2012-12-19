@@ -658,7 +658,7 @@ public class RestrictionManagerImpl implements RestrictionManager {
 
 		Set<Var> vars = rm.getVariables();
 		for(Var var : vars) {
-			RestrictionImpl r = getRestriction(var);
+			RestrictionImpl r = rm.getRestriction(var);
 			if(r != null) {
 				this.stateRestriction(var, r);
 			

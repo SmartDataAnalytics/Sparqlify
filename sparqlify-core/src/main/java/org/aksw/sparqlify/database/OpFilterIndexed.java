@@ -35,9 +35,15 @@ public class OpFilterIndexed
     }*/
 
 
+	private static boolean hackWarningDisplayed = false;
 	@Override
 	public void visit(OpVisitor opVisitor) {
-		System.out.println("[HACK] Replace OpFilterIndexed with OpExtFilterIndexed");
+
+		if(!hackWarningDisplayed) {
+			System.err.println("[HACK] Replace OpFilterIndexed with OpExtFilterIndexed");
+			hackWarningDisplayed = true;
+		}
+		
 		OpExtFilterIndexed tmp = new OpExtFilterIndexed(this.getSubOp(), this.getRestrictions());
 		tmp.visit(opVisitor);
 	}

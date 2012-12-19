@@ -13,7 +13,7 @@ import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
 /**
- * Interface for the mapping algebra operations. 
+ * Interface for the mapping algebra operations.
  * 
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *

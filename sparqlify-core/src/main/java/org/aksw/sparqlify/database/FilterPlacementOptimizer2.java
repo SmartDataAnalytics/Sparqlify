@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.algebra.Op;
+import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
@@ -252,11 +254,42 @@ public class FilterPlacementOptimizer2 {
 	}
 	
 	
-	public static Op _optimize(OpLeftJoin op, RestrictionManagerImpl cnf) {		
+	
+	public static Op _optimize(OpLeftJoin op, RestrictionManagerImpl cnf) {
+	
+		Factory2<Op> factory = new Factory2<Op>() {
+			@Override
+			public Op create(Op a, Op b) {
+				Op result = OpLeftJoin.create(a, b, new ExprList());
+				return result;
+			}
+		
+		};
+		
+		Op result = handleLeftJoin(op.getLeft(), op.getRight(), cnf, factory);
+		return result;		
+	}
+
+	public static Op _optimize(OpConditional op, RestrictionManagerImpl cnf) {
+		Factory2<Op> factory = new Factory2<Op>() {
+			@Override
+			public Op create(Op a, Op b) {
+				Op result = new OpConditional(a, b);
+				return result;
+			}
+		
+		};
+
+		Op result = handleLeftJoin(op.getLeft(), op.getRight(), cnf, factory);
+		return result;
+	}
+
+	
+	public static Op handleLeftJoin(Op left, Op right, RestrictionManagerImpl cnf, Factory2<Op> factory) {
 		// Only push those expression on the, that do not contain any
 		// variables of the right side
 		
-		Set<Var> rightVars = GetVarsMentioned.getVarsMentioned(op.getRight());
+		Set<Var> rightVars = GetVarsMentioned.getVarsMentioned(right);
 		
 		
 		Set<Clause> leftClauses = new HashSet<Clause>();
@@ -273,10 +306,14 @@ public class FilterPlacementOptimizer2 {
 			}
 		}
 		
-		RestrictionManagerImpl left = new RestrictionManagerImpl(new NestedNormalForm(leftClauses));
+		RestrictionManagerImpl leftRm = new RestrictionManagerImpl(new NestedNormalForm(leftClauses));
 		RestrictionManagerImpl np = new RestrictionManagerImpl(new NestedNormalForm(nonPushable));
 		
-		Op leftJoin = OpLeftJoin.create(optimize(op.getLeft(), left), optimize(op.getRight(), left), new ExprList());
+		Op newLeft = optimize(left, leftRm);
+		Op newRight = optimize(right, leftRm);
+		
+		//Op leftJoin = OpLeftJoin.create(newLeft, newRight, new ExprList());
+		Op leftJoin = factory.create(newLeft, newRight);
 
 		Op result = surroundWithFilterIfNeccessary(leftJoin, np);
 		return result;

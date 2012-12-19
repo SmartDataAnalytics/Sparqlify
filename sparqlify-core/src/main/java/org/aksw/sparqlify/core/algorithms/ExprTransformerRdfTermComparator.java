@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 
+import com.hp.hpl.jena.sparql.expr.E_Conditional;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -100,7 +102,13 @@ public class ExprTransformerRdfTermComparator
 		
 		Expr result;
 		
-		Expr eqT = new E_Equals(a.getType(), b.getType());
+				
+		
+		Expr eqTA = new E_Equals(a.getType(), b.getType());
+		
+		E_Conditional eqT = new E_Conditional(eqTA, NodeValue.TRUE, SparqlifyConstants.nvTypeError);
+
+		
 		//Expr eqV = new E_Equals(a.getLexicalValue(), b.getLexicalValue());
 		
 		Expr tmpEqV = opFactory.create(a.getLexicalValue(), b.getLexicalValue());

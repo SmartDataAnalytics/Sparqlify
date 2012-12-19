@@ -10,6 +10,8 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sparql.algebra.Op;
+import com.hp.hpl.jena.sparql.algebra.op.OpAssign;
+import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
 import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
@@ -99,6 +101,13 @@ public class ReplaceConstants {
 	public static Op _replace(OpExtend op) {
 		return OpExtend.extend(replace(op.getSubOp()), op.getVarExprList());
 	}
+
+	public static Op _replace(OpAssign op) {
+		Op newSubOp = replace(op.getSubOp());
+		Op result = OpExtend.extend(newSubOp, op.getVarExprList());
+		return result;
+	}
+
 	
 	public static Op _replace(OpSlice op)
 	{
@@ -121,6 +130,15 @@ public class ReplaceConstants {
 	public static Op _replace(OpLeftJoin op) {
 		return OpLeftJoin.create(replace(op.getLeft()), replace(op.getRight()), op.getExprs());
 	}
+	
+	public static Op _replace(OpConditional op) {
+		Op newLeft = replace(op.getLeft());
+		Op newRight = replace(op.getRight());
+		
+		Op result = new OpConditional(newLeft, newRight);
+		return result;
+	}
+
 	
 	public static Op _replace(OpJoin op) {
 		return OpJoin.create(replace(op.getLeft()), replace(op.getRight()));

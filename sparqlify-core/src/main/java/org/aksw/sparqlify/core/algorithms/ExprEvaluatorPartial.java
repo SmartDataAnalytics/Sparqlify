@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.expr.E_Conditional;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprNotComparableException;
@@ -83,20 +84,51 @@ public class ExprEvaluatorPartial
 	}
 	
 	public Expr eval(ExprFunction fn, Map<Var, Expr> binding) {
-		List<Expr> evaledArgs = new ArrayList<Expr>();
+
 		
-		for(Expr arg : fn.getArgs()) {				
-			Expr evaledArg = eval(arg, binding);
+		Expr newExpr;
+		
+		if(fn instanceof E_Conditional) {
+			E_Conditional cond = (E_Conditional)fn;
 			
-			// If an argument evaluated to type error, return type error
-			if(evaledArg.equals(SparqlifyConstants.nvTypeError)) {
-				return SparqlifyConstants.nvTypeError;
+			Expr a = eval(cond.getArg1(), binding);
+			if(a.equals(SparqlifyConstants.nvTypeError)) {
+				newExpr = SparqlifyConstants.nvTypeError;
+			} else {
+			
+				Expr b = eval(cond.getArg2(), binding);
+				Expr c = eval(cond.getArg3(), binding);
+				
+				newExpr = new E_Conditional(a, b, c);
+			}
+		} else {
+	
+			
+			List<Expr> evaledArgs = new ArrayList<Expr>();
+			
+			for(Expr arg : fn.getArgs()) {				
+				// If an argument evaluated to type error, return type error
+				// TODO This way we can't have a conditional :/
+				// E.g: if(condition) then TRUE else TYPE-ERROR
+				// So in the general case, the function definition must include
+				// handling of arguments. For now we hard code this case here
+	
+				
+				Expr evaledArg = eval(arg, binding);
+	
+				
+				
+				
+				
+				if(evaledArg.equals(SparqlifyConstants.nvTypeError)) {
+					return SparqlifyConstants.nvTypeError;
+				}
+				
+				evaledArgs.add(evaledArg);
 			}
 			
-			evaledArgs.add(evaledArg);
+			newExpr = ExprCopy.getInstance().copy(fn, evaledArgs);
 		}
-		
-		Expr newExpr = ExprCopy.getInstance().copy(fn, evaledArgs);
 		Expr tmp = newExpr;
 		
 		if(exprTransformer != null && newExpr.isFunction()) {
@@ -116,7 +148,7 @@ public class ExprEvaluatorPartial
 		
 		// Check if the function's IRI is registered
 		// If not, don't try to evaluate the corresponding expression
-		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">="));
+		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">=", "if"));
 		
 		String fnIri = org.aksw.sparqlify.expr.util.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();			
 		if(fnIri != null && !fnIri.isEmpty()) {

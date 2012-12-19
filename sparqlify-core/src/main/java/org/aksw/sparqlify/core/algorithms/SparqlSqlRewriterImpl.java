@@ -103,7 +103,7 @@ public class SparqlSqlRewriterImpl
 
 		Mapping mapping = opMappingRewriter.rewrite(opViewInstance);
 		//logger.debug("Mapping:\n" + mapping);
-		logger.debug("Variable Definitions:\n" + toIndentedString(mapping.getVarDefinition()));
+		logger.debug("Variable Definitions:\n" + mapping.getVarDefinition().toPrettyString());
 		
 		// FIXME Make the collector configurable
 		//SqlOp block = SqlOpSelectBlockCollector._makeSelect(mapping.getSqlOp());
@@ -119,41 +119,4 @@ public class SparqlSqlRewriterImpl
 		return result;
 	}
 	
-	public static String toIndentedString(VarDefinition varDef) {
-		Multimap<Var, RestrictedExpr> map = varDef.getMap();
-		String result = toIndentedString(map);
-		return result;
-	}
-	
-	public static String toIndentedString(Multimap<Var, RestrictedExpr> varToExprs) {
-		
-		String result = "";
-		
-		for(Entry<Var, Collection<RestrictedExpr>> entry : varToExprs.asMap().entrySet()) {
-			Var var = entry.getKey();
-			String varName = var.getName();
-			int varLen = varName.length();
-			Collection<RestrictedExpr> restExprs = entry.getValue();
-			
-			Iterator<RestrictedExpr> it = restExprs.iterator();
-			
-			String firstLabel;
-			if(!it.hasNext()) {
-				firstLabel = "(empty definition set)";
-			} else {
-				RestrictedExpr restExpr = it.next();
-				firstLabel = varName + ": " + restExpr.getExpr() + " [" + restExpr.getRestrictions() + "]";
-			}
-			result += firstLabel + "\n";
-			
-			while(it.hasNext()) {
-				RestrictedExpr restExpr = it.next();
-				//StringUtils.
-				// FIXME Make spaces for var length
-				result += "    " + restExpr.getExpr() + " [" + restExpr.getRestrictions() + "]" + "\n";
-			}
-		}
-		
-		return result;
-	}
 }

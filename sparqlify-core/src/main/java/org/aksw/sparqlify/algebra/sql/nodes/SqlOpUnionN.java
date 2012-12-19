@@ -29,6 +29,10 @@ public class SqlOpUnionN
 
 	public static SqlOpUnionN create(List<SqlOp> subOps, String aliasName) {
 		
+		if(subOps.isEmpty()) {
+			throw new RuntimeException("Cannot create union without any members");
+		}
+		
 		System.err.println("FIXME schemas of union members not validated");
 		
 		SqlOp pick = subOps.get(0);

@@ -40,9 +40,9 @@ import org.aksw.sparqlify.database.TableBuilder;
 import org.aksw.sparqlify.database.TreeIndex;
 import org.aksw.sparqlify.database.VariableConstraint;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
+import org.aksw.sparqlify.restriction.RdfTermType;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-import org.aksw.sparqlify.restriction.RdfTermType;
 import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +52,8 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Algebra;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.Op1;
+import com.hp.hpl.jena.sparql.algebra.op.OpAssign;
+import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
@@ -67,11 +69,11 @@ import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
 
 class ConstraintContext
 {
@@ -409,7 +411,7 @@ public class CandidateViewSelectorImpl
 		Op op = Algebra.compile(query);
 		op = Algebra.toQuadForm(op);		
 		
-		op = ReplaceConstants.replace(op);
+		
 		//op = FilterPlacementOptimizer.optimize(op);
 		
 		// Add a projection if the query contains a result star
@@ -428,7 +430,17 @@ public class CandidateViewSelectorImpl
 
 		//op.(transformer);
 
-		//op = Algebra.optimize(op);
+		op = Algebra.optimize(op);
+
+		op = ReplaceConstants.replace(op);
+		System.out.println("ConstantsEleminated" + op);
+
+		// Note:
+		// OpAssign: The assignments end up in a mapping's variable definition
+		// I guess it is valid to convert them to OpExtend
+		
+		System.out.println("Optimized Algebra" + op);
+		
 		
 		Op augmented = _getApplicableViews(op);
 
@@ -966,6 +978,8 @@ public class CandidateViewSelectorImpl
 		return MultiMethod.invoke(this, "getApplicableViews", op, restrictions);
 	}
 
+
+	
 	public Op getApplicableViews(OpProject op, RestrictionManagerImpl restrictions) {
 		return new OpProject(_getApplicableViews(op.getSubOp(), restrictions), op.getVars());
 	}
@@ -995,9 +1009,21 @@ public class CandidateViewSelectorImpl
 	 * 
 	 */
 	public Op getApplicableViews(OpExtend op, RestrictionManagerImpl _restrictions) {
+		Op result = processOpExtend(op.getSubOp(), op.getVarExprList(), _restrictions);
+		return result;
+	}
+	
+	public Op getApplicableViews(OpAssign op, RestrictionManagerImpl _restrictions) {
+		Op result = processOpExtend(op.getSubOp(), op.getVarExprList(), _restrictions);
+		return result;
+	}
+	
+	
+	public Op processOpExtend(Op subOp, VarExprList varExprs, RestrictionManagerImpl _restrictions) {
 
-		Op subOp = _getApplicableViews(op.getSubOp(), _restrictions);
-		Op result = op.copy(subOp);
+		Op newSubOp = _getApplicableViews(subOp, _restrictions);
+		Op result = OpExtend.extend(newSubOp, varExprs);
+		//Op result = op.copy(subOp);
 			
 		return result;
 
@@ -1037,7 +1063,8 @@ public class CandidateViewSelectorImpl
 			subRestrictions.stateExpr(expr);
 		}
 		
-		Op result = OpFilterIndexed.filter(subRestrictions, _getApplicableViews(op.getSubOp(), subRestrictions));		
+		Op newSubOp = _getApplicableViews(op.getSubOp(), subRestrictions);
+		Op result = OpFilterIndexed.filter(subRestrictions, newSubOp);		
 		return result;
 	}
 
@@ -1080,14 +1107,30 @@ public class CandidateViewSelectorImpl
 	}
 	
 	public Op getApplicableViews(OpLeftJoin op, RestrictionManagerImpl restrictions) 
-	{		
-		Op left = _getApplicableViews(op.getLeft(), restrictions);
+	{
+		Op result = processLeftJoin(op.getLeft(), op.getRight(), op.getExprs(), restrictions);
+		return result;
+	}
+
+	public Op getApplicableViews(OpConditional op, RestrictionManagerImpl restrictions) {
+		OpLeftJoin tmp = processLeftJoin(op.getLeft(), op.getRight(), null, restrictions);
+		
+		Op result = new OpConditional(tmp.getLeft(), tmp.getRight());
+		
+		return result;
+
+	}
+
+	
+	public OpLeftJoin processLeftJoin(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
+	{
+		Op newLeft = _getApplicableViews(left, restrictions);
 
 		//List<RestrictionManager> moreRestrictions = getRestrictions(left);
 
 		RestrictionManagerImpl subRestrictions = filterRestrictionsBound(restrictions);//new RestrictionManager(restrictions);
 
-		RestrictionManagerImpl moreRestrictions = filterRestrictionsBound(getRestrictions2(left));
+		RestrictionManagerImpl moreRestrictions = filterRestrictionsBound(getRestrictions2(newLeft));
 		
 		// Filter out !Bound restrictions
 		if(moreRestrictions != null) {
@@ -1103,8 +1146,8 @@ public class CandidateViewSelectorImpl
 			subRestrictions.stateRestriction(moreRestrictions);
 		}
 		
-		if(op.getExprs() != null) {
-			for(Expr expr : op.getExprs()) {
+		if(exprs != null) {
+			for(Expr expr : exprs) {
 				subRestrictions.stateExpr(expr);
 			}
 		}
@@ -1116,9 +1159,10 @@ public class CandidateViewSelectorImpl
 		
 		
 		
-		Op right = _getApplicableViews(op.getRight(), subRestrictions);
+		Op newRight = _getApplicableViews(right, subRestrictions);
 		
-		return OpLeftJoin.create(left, right, new ExprList());
+		OpLeftJoin result = (OpLeftJoin)OpLeftJoin.create(newLeft, newRight, new ExprList());
+		return result;
 	}
 	
 	public Op getApplicableViews(OpSlice op, RestrictionManagerImpl restrictions)
@@ -1141,12 +1185,14 @@ public class CandidateViewSelectorImpl
 			throw new RuntimeException("TODO Merge the restrictions of both sides of the join");
 		} else if(op instanceof OpLeftJoin) {
 			return getRestrictions2(((OpLeftJoin) op).getLeft());
+		} else if(op instanceof OpConditional) {
+			return getRestrictions2(((OpConditional)op).getLeft());			
 		} else if(op instanceof OpDisjunction) {
 			return null; // TODO We could factor out restrictions common to all elements
 		} else if(op instanceof OpRdfViewPattern) {
 			return null;
 		} else {
-			throw new RuntimeException("Should not happen");
+			throw new RuntimeException("Should not happen: Unhandled Op: " + op.getClass() + " --- "+ op);
 		}		
 	}
 	
