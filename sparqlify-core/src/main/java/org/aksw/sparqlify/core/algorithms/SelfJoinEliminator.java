@@ -114,6 +114,9 @@ public class SelfJoinEliminator {
 	 */
 	public static void merge(ViewInstanceJoin conjunction) {
 		
+		// TODO Self joins only occur to view instance from the same view definition
+		// So the viewInstanceJoin should "cluster" the view instances by their parent view - i.e. have a MultiMap<parentViewName, ViewInstance>
+		
 		for(int i = 0; i < conjunction.getViewInstances().size(); ++i) {
 			ViewInstance a = conjunction.getViewInstances().get(i);
 			

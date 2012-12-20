@@ -298,12 +298,20 @@ public class FilterPlacementOptimizer2 {
 		for(Clause clause : cnf.getCnf()) {
 			Set<Var> clauseVars = clause.getVarsMentioned();
 
+			// If there are variables in the clause which do not appear on the right side, we cannot push the clause down the right side of the left join
+			if(rightVars.containsAll(clauseVars)) {
+				leftClauses.add(clause);				
+			} else {
+				nonPushable.add(clause);				
+			}
 
+			/*
 			if(Sets.intersection(clauseVars, rightVars).isEmpty()) { //  Do we need to check && !doesClauseContainBoundExpr(clause)) {				
 				leftClauses.add(clause);
 			} else {
 				nonPushable.add(clause);
 			}
+			*/
 		}
 		
 		RestrictionManagerImpl leftRm = new RestrictionManagerImpl(new NestedNormalForm(leftClauses));

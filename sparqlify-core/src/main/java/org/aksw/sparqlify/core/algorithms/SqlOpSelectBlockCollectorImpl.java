@@ -371,13 +371,15 @@ public class SqlOpSelectBlockCollectorImpl
 
 	public static JoinContext collectJoins(SqlOpUnionN op) {
 		SqlOpUnionN newOp = makeSelect(op);
-		
-		SqlOpSelectBlock resultOp = SqlOpSelectBlock.create(newOp, newOp.getAliasName());
-		initProjection(resultOp.getProjection(), op.getSchema(), resultOp.getAliasName());
 
-		//SqlOp resultOp = requireSelectBlock(newOp);
+		//SqlOpSelectBlock resultOp = SqlOpSelectBlock.create(newOp, newOp.getAliasName());		
+		//initProjection(resultOp.getProjection(), op.getSchema(), resultOp.getAliasName());
+		SqlOpUnionN resultOp = newOp;
+		
+		////SqlOp resultOp = requireSelectBlock(newOp);
 	
-		JoinContext result = new JoinContextJoin(resultOp);
+		//JoinContext result = new JoinContextJoin(resultOp);
+		JoinContext result = new JoinContextJoin(newOp);
 		initProjection(result.getProjection(), op.getSchema(), resultOp.getAliasName());
 		return result;
 	}

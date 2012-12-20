@@ -431,22 +431,24 @@ public class CandidateViewSelectorImpl
 		//op.(transformer);
 
 		op = Algebra.optimize(op);
+		System.out.println("[Algebra] Jena Optimized: " + op);
 
 		op = ReplaceConstants.replace(op);
-		System.out.println("ConstantsEleminated" + op);
+		System.out.println("[Algebra] ConstantsEleminated: " + op);
 
 		// Note:
 		// OpAssign: The assignments end up in a mapping's variable definition
 		// I guess it is valid to convert them to OpExtend
 		
-		System.out.println("Optimized Algebra" + op);
 		
 		
 		Op augmented = _getApplicableViews(op);
+		System.out.println("[Algebra] View Candidates: " + augmented);
 
 		
 		Op optimizedFilters = FilterPlacementOptimizer2.optimize(augmented);
 		
+		System.out.println("[Algebra] Filter Placement Optimized: " + optimizedFilters);
 		//System.out.println(optimizedFilters);
 		
 		//Op result = augmented;
@@ -765,9 +767,15 @@ public class CandidateViewSelectorImpl
 			*/
 
 
+			// All restrictions that apply to this quad (even those whose variables are not bound by the quad pattern)
 			RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
+			
+			// Restrictions that are intrinsic to the view definition
 			RestrictionManagerImpl viewRestrictions = viewQuad.getView().getVarRestrictions();
 
+			// Only the restrictions that apply to this quad
+			//RestrictionManagerImpl mapRestrictions = new RestrictionManagerImpl();
+			
 			if(viewRestrictions == null) {
 				throw new NullPointerException();
 			}
@@ -1057,13 +1065,20 @@ public class CandidateViewSelectorImpl
 		return OpFilter.filter(op.getExprs(), _getApplicableViews(op.getSubOp(), subRestrictions));
 		*/
 		
-		RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
+		RestrictionManagerImpl combinedRestrictions = new RestrictionManagerImpl(restrictions);
+		
+		// FIXME For filters we create an empty subRestrictions, but we pass on the combined restrictions for
+		// optimizing the lookups
+		// What I want to say is: We only keep track of the restrictions in order optimizing the lookups of candidate views
+		// We do not optimize filter placement here 
+		RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl();
 		
 		for(Expr expr : op.getExprs()) {
 			subRestrictions.stateExpr(expr);
+			combinedRestrictions.stateExpr(expr);
 		}
 		
-		Op newSubOp = _getApplicableViews(op.getSubOp(), subRestrictions);
+		Op newSubOp = _getApplicableViews(op.getSubOp(), combinedRestrictions);
 		Op result = OpFilterIndexed.filter(subRestrictions, newSubOp);		
 		return result;
 	}

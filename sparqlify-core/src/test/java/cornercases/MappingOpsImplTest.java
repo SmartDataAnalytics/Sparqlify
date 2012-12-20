@@ -77,11 +77,15 @@ public class MappingOpsImplTest {
 		
 		ViewDefinition personAgeView = vdf.create("Prefix ex:<http://ex.org/> Prefix xsd:<http://www.w3.org/2001/XMLSchema#> Create View person As Construct { ?s ex:age ?a } With ?s = uri(concat('http://ex.org/person/', ?ID) ?a = typedLiteral(?AGE, xsd:int) From person");
 		
+		
+		ViewDefinition personAndAgeView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t ; ex:age ?a } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) ?a = typedLiteral(?AGE, xsd:int) From person");
+		
 		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();		
-		candidateViewSelector.addView(personView);
+		//candidateViewSelector.addView(personView);
 		//candidateViewSelector.addView(deptView);
 		//candidateViewSelector.addView(personToDeptView);
 		//candidateViewSelector.addView(personAgeView);
+		candidateViewSelector.addView(personAndAgeView);
 		
 		
 		
@@ -177,8 +181,24 @@ public class MappingOpsImplTest {
 		{
 			//QueryExecution qe = qef.createQueryExecution("Select ?s (Count(*) As ?c) { ?s ?p ?o . Filter(?s = <http://ex.org/person/1> || ?s = <http://ex.org/person/2>) . } Group By ?s");
 			//QueryExecution qe = qef.createQueryExecution("Select ?s ?p (Count(*) As ?c) { ?s ?p ?o . } Group By ?s ?p");
-			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s ?p ?o . Optional { ?s ex:name ?l } . Filter(!(?o > 21)) }");
+			
+			// Simple Optional Test
+			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?x ?y ?z . ?s ?p ?o . Optional { ?s ex:name ?l } . Filter(!(?o > 21)) }");
+
+			// Self Join elimination test
+			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person ; ex:name ?l ; ex:age ?a . }");
+			
+			
+			// Simple Optional Test With Scope [not working]
+			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s ?p ?o . Optional { ?s ex:name ?l . Filter(!(?o > 21)) }  }");
+
 			//QueryExecution qe = qef.createQueryExecution("Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Select * { ?s rdfs:label ?l . ?s ?p ?o . Filter(!(?o > 21)) .} ");
+
+			
+			// Filter Scope Test
+			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ?t . Optional { ?s ex:name ?l . Filter(?t = ex:Person) } . }");
+
+			
 			ResultSet rs = qe.execSelect();
 			String rsStr = ResultSetFormatter.asText(rs);
 			System.out.println(rsStr);

@@ -124,7 +124,10 @@ public class SqlOpSerializerImpl
     			exprStr = exprSerializer.serialize(value); //sqlExpr.asSQL() + " ";
     		} 
     		
-    		strs.add(exprStr + " " + escapeAlias(columnName));
+    		//String asSeparator = " AS ";
+    		String asSeparator = " ";
+    		
+    		strs.add(exprStr + asSeparator + escapeAlias(columnName));
     	}
 
     	result = Joiner.on(", ").join(strs);
@@ -442,26 +445,27 @@ public class SqlOpSerializerImpl
     
     
     public void serializeJoinU(SqlOp op, String aliasName, IndentedWriter writer) {
-    	serialize(op, writer);
+    	//serialize(op, writer);
 
 
-    	/*
-    	boolean isSubSelect = node instanceof SqlSelectBlock || node instanceof SqlUnionN;
+
+    	//boolean isSubSelect = node instanceof SqlSelectBlock || node instanceof SqlUnionN;
+    	boolean isSubSelect = op instanceof SqlOpUnionN;
     	
     	if(isSubSelect) {
-    		writer.print("(");
+    		writer.println("(");
     		writer.incIndent();
     	}
 
-    	serialize(node, writer);
+    	serialize(op, writer);
 
     	if(isSubSelect) {
-    		writer.decIndent();    		
+    		writer.decIndent();
     		if(!writer.atLineStart()) {
     			writer.println();
     		}
-			writer.print(")" + aliasName);
-    	} */
+			writer.print(") " + aliasName);
+    	}
     }
 
     

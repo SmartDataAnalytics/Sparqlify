@@ -40,6 +40,25 @@ public class IteratorResultSetSparqlifyBinding
 	{
 		this.rs = rs;
 		this.sparqlVarMap = sparqlVarMap;
+		
+//		ResultSetMetaData meta;
+//		try {
+//			rs.next();
+//			System.out.println("h__4: " + rs.getObject("h__4"));
+//			System.out.println("AGE: " + rs.getObject("AGE"));
+//			
+//			
+//			meta = rs.getMetaData();
+//			for(int i = 1; i <= meta.getColumnCount(); ++i) {
+//				String colName = meta.getColumnName(i);
+//				
+//				System.out.println("Column [" + i + "]: " + colName);
+//			}
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
 	}
 	
 
@@ -60,10 +79,11 @@ public class IteratorResultSetSparqlifyBinding
 		for(int i = 1; i <= meta.getColumnCount(); ++i) {
 			binding.add(Var.alloc("" + i), node)
 		}*/	
+
 		
 		// Substitute the variables in the expressions
 		for(int i = 1; i <= meta.getColumnCount(); ++i) {
-			String colName = meta.getColumnName(i);
+			String colName = meta.getColumnLabel(i);
 			Object colValue = rs.getObject(i);
 
 			NodeValue nodeValue = MakeNodeValue.makeNodeValue(colValue);
