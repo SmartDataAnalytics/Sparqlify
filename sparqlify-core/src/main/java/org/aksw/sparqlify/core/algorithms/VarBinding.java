@@ -7,8 +7,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.commons.collections.multimaps.BiHashMultimap;
+import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.jena.util.QuadUtils;
 
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -82,7 +85,62 @@ public class VarBinding {
 	
 	public VarBinding() {
 	}
+
+	public Map<Var, Node> getQueryVarToConstant() {
+		Map<Var, Node> result = new HashMap<Var, Node>();
+		
+		for(Entry<Var, Integer> entry : keyToToken.entrySet()) {
+			Var value = entry.getKey();
+			Integer token = entry.getValue();
+			
+			BindingVal val = tokenToSet.get(token);
+			Node constant = val.getValue();
+			result.put(value, constant);
+		}
+		
+		return result;				
+	}
 	
+	public IBiSetMultimap<Var, Var> getQueryVarToViewVars() {
+		IBiSetMultimap<Var, Var> result = new BiHashMultimap<Var, Var>();
+		
+		for(Entry<Var, Integer> entry : keyToToken.entrySet()) {
+			Var value = entry.getKey();
+			Integer token = entry.getValue();
+			
+			BindingVal val = tokenToSet.get(token);
+			Set<Var> keys = val.getKeys();
+			result.putAll(value, keys);
+		}
+		
+		return result;		
+	}
+
+	/*
+	 * Return a mapping from view to query vars
+	 * 
+	 */
+	public IBiSetMultimap<Var, Var> getViewVarToQueryVars() {
+		IBiSetMultimap<Var, Var> tmp = getQueryVarToViewVars();
+		IBiSetMultimap<Var, Var> result = tmp.getInverse();
+		
+		return result;
+		
+		/*
+		Multimap<Var, Var> result = HashMultimap.create();
+		
+		for(Entry<Var, Integer> entry : valueToToken.entrySet()) {
+			Var value = entry.getKey();
+			Integer token = entry.getValue();
+			
+			BindingVal val = tokenToSet.get(token);
+			Set<Var> keys = val.getKeys();
+			result.putAll(value, keys);
+		}
+		
+		return result;
+		*/
+	}
 	
 	public Set<Var> getQueryVars() {
 		return keyToToken.keySet();
@@ -228,6 +286,17 @@ public class VarBinding {
 			} else {
 				return false;
 			}
+		}
+	}
+	
+	
+	public void putAll(VarBinding that) {
+		for(Entry<Var, Var> entry : that.getQueryVarToViewVars().entries()) {
+			this.put(entry.getKey(), entry.getValue());
+		}
+
+		for(Entry<Var, Node> entry : that.getQueryVarToConstant().entrySet()) {
+			this.put(entry.getKey(), entry.getValue());
 		}
 	}
 

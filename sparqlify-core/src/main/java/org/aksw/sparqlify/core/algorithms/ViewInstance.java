@@ -4,11 +4,16 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
+import sparql.TwoWayBinding;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import com.hp.hpl.jena.sparql.core.Var;
 
 
@@ -54,6 +59,37 @@ public class ViewInstance {
 		
 	}*/
 	
+	
+	/**
+	 * How the query variables map to the parent view
+	 * Given a query with var a, and a virtual graph with ?s:
+	 * 
+	 * e.g. {?view1_s=[?a]}
+	 * 
+	 * 
+	 * @return
+	 */
+//	public SetMultimap<Var, Var> getParentToQueryBinding()
+//	{		
+//		TwoWayBinding twb = null;
+//		throw new RuntimeException("To implement");
+//		/*
+//		SetMultimap<Var, Var> result = HashMultimap.create();
+//		//binding.g
+//		
+//		for(Entry<Var, Var> entry : binding.getEquiMap().getEquivalences().entries()) {
+//			Var back = (Var)renamer.inverse().get(entry.getValue());
+//			if(back == null) {
+//				continue;
+//			}
+//			
+//			result.put(back, entry.getKey());
+//		}
+//		
+//		return result;
+//		*/
+//	}
+
 	
 	
 	/**

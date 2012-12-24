@@ -209,6 +209,23 @@ class UnionBiMultiMap<K, V>
 	public int size() {
 		throw new NotImplementedException();		
 	}
+
+	@Override
+	public void putAll(K key, Collection<V> values) {
+		for(V value : values) {
+			put(key, value);
+		}
+	}
+
+	@Override
+	public Set<K> keySet() {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public Collection<K> keys() {
+		throw new NotImplementedException();
+	}
 }
 
 
