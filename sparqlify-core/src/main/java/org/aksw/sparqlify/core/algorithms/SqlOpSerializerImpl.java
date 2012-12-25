@@ -152,7 +152,12 @@ public class SqlOpSerializerImpl
 	
 	
 	public void _serialize(SqlOpEmpty node, IndentedWriter writer) {
-		writer.print("EMPTY_SQL_NODE");
+		writer.print("(SELECT NULL WHERE FALSE)");
+		if(node.getAliasName() != null) {
+			writer.print(" " + node.getAliasName());
+		}
+		
+		//writer.print("EMPTY_SQL_NODE");
 	}
 	
 	

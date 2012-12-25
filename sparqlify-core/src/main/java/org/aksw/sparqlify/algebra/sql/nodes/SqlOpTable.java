@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import org.openjena.atlas.io.IndentedWriter;
 
 public class SqlOpTable
-	extends SqlOpBase0
+	extends SqlOpLeaf
 {
 	private String tableName;
 	
@@ -12,7 +12,6 @@ public class SqlOpTable
 	 * If you think you need this field during the creation of algebraic expressions,
 	 * you are probably doing something wrong; (at least I did so with the first version of Sparqlify)
 	 */
-	private String aliasName;
 	
 	public SqlOpTable(Schema schema, String tableName) {
 		this(schema, tableName, null);
@@ -23,19 +22,13 @@ public class SqlOpTable
 	}
 
 	public SqlOpTable(Schema schema, String tableName, String aliasName, boolean isEmpty) {
-		super(schema, isEmpty);
+		super(schema, isEmpty, aliasName);
 		this.tableName = tableName;
-		this.aliasName = aliasName;
 	}
 
 	
 	public String getTableName() {
 		return tableName;
-	}
-	
-	
-	public String getAliasName() {
-		return aliasName;
 	}
 
 	@Override

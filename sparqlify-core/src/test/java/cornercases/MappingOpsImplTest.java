@@ -188,7 +188,7 @@ public class MappingOpsImplTest {
 			// Self Join elimination test
 			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person ; ex:name ?l ; ex:age ?a . }");
 			
-			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s ex:foo ex:bar. }");
+			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person . Optional { ?s ex:foo ex:bar. } }");
 
 			
 			// Simple Optional Test With Scope [not working]

@@ -364,6 +364,14 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+	// TODO SqlOpEmpty needs an alias
+	public static JoinContext collectJoins(SqlOpEmpty op) {
+		SqlOpEmpty table = makeSelectOrTable(op);		
+		JoinContextJoin result = new JoinContextJoin(table);		
+		initProjection(result.getProjection(), op.getSchema(), table.getAliasName());
+		
+		return result;		
+	}
 	
 	public static JoinContext collectJoins(SqlOpJoin op) {
 		
@@ -516,7 +524,15 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	*/
+	public static SqlOpEmpty makeSelectOrTable(SqlOpEmpty node) {
+		
+		String alias = aliasGenerator.next();
+		SqlOpEmpty result = new SqlOpEmpty(node.getSchema(), alias);
+		
+		return result;
+	}
 
+	
 	public static SqlOpTable makeSelectOrTable(SqlOpTable node) {
 		
 		String alias = aliasGenerator.next();

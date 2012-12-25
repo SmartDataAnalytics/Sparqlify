@@ -3,10 +3,9 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import org.openjena.atlas.io.IndentedWriter;
 
 public class SqlOpQuery
-	extends SqlOpBase0
+	extends SqlOpLeaf
 {
 	private String queryString;
-	private String aliasName;
 
 	public SqlOpQuery(Schema schema, String queryString) {
 		this(schema, queryString, null);
@@ -19,20 +18,15 @@ public class SqlOpQuery
 	}
 
 	public SqlOpQuery(Schema schema, String queryString, String aliasName, boolean isEmpty) {
-		super(schema, isEmpty);
+		super(schema, isEmpty, aliasName);
 		this.queryString = queryString;
-		this.aliasName = aliasName;
 	}
 
 	
 	public String getQueryString() {
 		return queryString;
 	}
-	
-	public String getAliasName() {
-		return aliasName;
-	}
-	
+		
 	@Override
 	public void write(IndentedWriter writer) {
 		String aliasPart = aliasName == null ? "" : " AS '" + aliasName + "'";

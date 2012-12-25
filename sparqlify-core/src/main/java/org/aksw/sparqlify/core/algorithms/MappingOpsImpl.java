@@ -677,7 +677,7 @@ public class MappingOpsImpl
 		SqlOp opResult = opJoin;
 
 		
-		if(opJoin.getLeft().isEmpty() || opJoin.getRight().isEmpty()) {
+		if(opJoin.getLeft().isEmpty() || (joinType.equals(JoinType.INNER) && opJoin.getRight().isEmpty())) {
 			opResult = SqlOpEmpty.create(opJoin.getSchema());
 		}
 		

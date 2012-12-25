@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
@@ -59,7 +60,6 @@ public class SparqlSqlRewriterImpl
 		*/
 		
 		// Expand the query
-		
 		
 		
 		Op opViewInstance = candidateViewSelector.getApplicableViews(query);

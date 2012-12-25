@@ -1,10 +1,14 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
 public class SqlOpEmpty
-	extends SqlOpBase0
+	extends SqlOpLeaf
 {
 	public SqlOpEmpty(Schema schema) {
-		super(schema, true);
+		this(schema, null);
+	}
+
+	public SqlOpEmpty(Schema schema, String aliasName) {
+		super(schema, true, aliasName);
 	}
 
 	public static SqlOpEmpty create() {
@@ -15,9 +19,13 @@ public class SqlOpEmpty
 	public static SqlOpEmpty create(Schema schema) {
 		return new SqlOpEmpty(schema);
 	}
+
+	public static SqlOpEmpty create(Schema schema, String aliasName) {
+		return new SqlOpEmpty(schema, aliasName);
+	}
 	
 	@Override
 	public boolean isEmpty() {
 		return true;
-	}
+	}	
 }
