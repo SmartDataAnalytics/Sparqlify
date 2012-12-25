@@ -114,7 +114,7 @@ public class SparqlSqlRewriterImpl
 		logger.info("Query String:\n" + sqlQueryString);
 
 
-		SparqlSqlRewrite result = new SparqlSqlRewrite(sqlQueryString, mapping.getVarDefinition(), projectionOrder);
+		SparqlSqlRewrite result = new SparqlSqlRewrite(sqlQueryString, mapping.isEmpty(), mapping.getVarDefinition(), projectionOrder);
 		
 		return result;
 	}

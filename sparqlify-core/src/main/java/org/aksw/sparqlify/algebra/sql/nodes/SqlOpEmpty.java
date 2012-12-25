@@ -7,6 +7,11 @@ public class SqlOpEmpty
 		super(schema, true);
 	}
 
+	public static SqlOpEmpty create() {
+		SqlOpEmpty result = create(new SchemaImpl());
+		return result;
+	}
+	
 	public static SqlOpEmpty create(Schema schema) {
 		return new SqlOpEmpty(schema);
 	}

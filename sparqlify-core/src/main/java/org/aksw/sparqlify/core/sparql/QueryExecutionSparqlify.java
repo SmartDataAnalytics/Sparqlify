@@ -287,8 +287,10 @@ class QueryExecutionSelect
 
 		//timeoutHelper.startExecutionTimer();
 
+		String queryString = rewrite.isEmptyResult() ? null : rewrite.getSqlQueryString();
+		
 		rs = ResultSetFactory.create(
-				stmt, rewrite.getSqlQueryString(),
+				stmt, queryString,
 				rewrite.getVarDefinition().getMap(), rewrite.getProjectionOrder());
 
 		return rs;

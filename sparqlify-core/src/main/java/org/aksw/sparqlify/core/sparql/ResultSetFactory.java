@@ -10,17 +10,19 @@ import java.util.List;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
+
 
 public class ResultSetFactory {
 
 	/**
 	 * 
 	 * @param conn
-	 * @param sqlQuery
+	 * @param sqlQuery An SQL query to be sent to the database. null if empty result set.
 	 * @param sparqlVarMap
 	 * @param projectionVars The variables that should appear in the result set. If null, sparqlVarMap.keySet() is used.
 	 * @return
@@ -50,9 +52,15 @@ public class ResultSetFactory {
 		stmt.setFetchSize(Integer.MIN_VALUE);
 		*/
 		
-		ResultSet rs = stmt.executeQuery(sqlQuery);
-		Iterator<Binding> it = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);
-
+		Iterator<Binding> it;
+		
+		if(sqlQuery == null) {
+			it = Iterators.emptyIterator(); 
+		} else {
+			ResultSet rs = stmt.executeQuery(sqlQuery);
+			it = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);
+		}
+		
 		ResultSetSparqlify result = new ResultSetSparqlify(it, resultVars, 0);
 		
 		return result;

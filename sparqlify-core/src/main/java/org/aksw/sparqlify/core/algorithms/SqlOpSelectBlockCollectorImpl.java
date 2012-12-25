@@ -12,6 +12,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpGroupBy;
@@ -114,6 +115,23 @@ public class SqlOpSelectBlockCollectorImpl
 	public static SqlOp _makeSelect(SqlOp sqlOp) {
 		SqlOp result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp);
 		
+		return result;
+	}
+	
+	/**
+	 * Create a dummy select query:
+	 * 
+	 * SELECT NULL WHERE FALSE;
+	 * 
+	 * If above is not cross db safe, we could change to:
+	 * SELECT NULL c FROM (SELECT NULL) t WHERE FALSE;
+	 * 
+	 * @param op
+	 * @return
+	 */
+	public static SqlOp makeSelect(SqlOpEmpty op) {
+		SqlOpSelectBlock result = requireSelectBlock(op);
+
 		return result;
 	}
 

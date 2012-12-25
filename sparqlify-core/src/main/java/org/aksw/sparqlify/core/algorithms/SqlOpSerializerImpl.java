@@ -10,6 +10,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
@@ -150,6 +151,9 @@ public class SqlOpSerializerImpl
 	
 	
 	
+	public void _serialize(SqlOpEmpty node, IndentedWriter writer) {
+		writer.print("EMPTY_SQL_NODE");
+	}
 	
 	
 	

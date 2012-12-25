@@ -879,7 +879,12 @@ public class MappingOpsImpl
 	 * 
 	 */
 	public Mapping union(List<Mapping> rawMembers) {
-
+		if(rawMembers.isEmpty()) {
+			SqlOp empty = SqlOpEmpty.create();
+			Mapping result = new Mapping(empty);
+			return result;
+		}
+		
 		/*
 		 * Remove all members that do not yield results 
 		 */

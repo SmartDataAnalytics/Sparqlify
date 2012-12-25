@@ -81,11 +81,11 @@ public class MappingOpsImplTest {
 		ViewDefinition personAndAgeView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t ; ex:age ?a } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) ?a = typedLiteral(?AGE, xsd:int) From person");
 		
 		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();		
-		//candidateViewSelector.addView(personView);
-		//candidateViewSelector.addView(deptView);
-		//candidateViewSelector.addView(personToDeptView);
-		//candidateViewSelector.addView(personAgeView);
-		candidateViewSelector.addView(personAndAgeView);
+		candidateViewSelector.addView(personView);
+		candidateViewSelector.addView(deptView);
+		candidateViewSelector.addView(personToDeptView);
+		candidateViewSelector.addView(personAgeView);
+		//candidateViewSelector.addView(personAndAgeView);
 		
 		
 		
@@ -186,8 +186,10 @@ public class MappingOpsImplTest {
 			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?x ?y ?z . ?s ?p ?o . Optional { ?s ex:name ?l } . Filter(!(?o > 21)) }");
 
 			// Self Join elimination test
-			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person ; ex:name ?l ; ex:age ?a . }");
+			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person ; ex:name ?l ; ex:age ?a . }");
 			
+			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s ex:foo ex:bar. }");
+
 			
 			// Simple Optional Test With Scope [not working]
 			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s ?p ?o . Optional { ?s ex:name ?l . Filter(!(?o > 21)) }  }");

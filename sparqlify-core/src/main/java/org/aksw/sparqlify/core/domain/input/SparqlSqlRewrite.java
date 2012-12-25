@@ -5,16 +5,24 @@ import java.util.List;
 import com.hp.hpl.jena.sparql.core.Var;
 
 public class SparqlSqlRewrite {
+	// Whether the query is known to yield an empty result
+	private boolean isEmptyResult;
+	
 	private String sqlQueryString;
 	private VarDefinition varDefinition;
 	private List<Var> projectionOrder;
 
-	public SparqlSqlRewrite(String sqlQueryString, VarDefinition varDefinition, List<Var> projectionOrder) {
+	public SparqlSqlRewrite(String sqlQueryString, boolean isEmptyResult, VarDefinition varDefinition, List<Var> projectionOrder) {
 		this.sqlQueryString = sqlQueryString;
+		this.isEmptyResult = isEmptyResult;
 		this.varDefinition = varDefinition;
 		this.projectionOrder = projectionOrder;
 	}
 
+	public boolean isEmptyResult() {
+		return isEmptyResult;
+	}
+	
 	public String getSqlQueryString() {
 		return sqlQueryString;
 	}
