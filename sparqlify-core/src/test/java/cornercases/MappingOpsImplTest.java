@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
@@ -188,7 +189,7 @@ public class MappingOpsImplTest {
 			// Self Join elimination test
 			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person ; ex:name ?l ; ex:age ?a . }");
 			
-			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ex:Person . Optional { ?s ex:foo ex:bar. } }");
+			QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ?t . Optional { ?s ex:name ?n . } . ?s ex:age ?a . Filter(?a > 20) .}");
 
 			
 			// Simple Optional Test With Scope [not working]
@@ -199,7 +200,6 @@ public class MappingOpsImplTest {
 			
 			// Filter Scope Test
 			//QueryExecution qe = qef.createQueryExecution("Prefix ex:<http://ex.org/> Select * { ?s a ?t . Optional { ?s ex:name ?l . Filter(?t = ex:Person) } . }");
-
 			
 			ResultSet rs = qe.execSelect();
 			String rsStr = ResultSetFormatter.asText(rs);

@@ -64,6 +64,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
+import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.core.Quad;
@@ -984,6 +985,19 @@ public class CandidateViewSelectorImpl
 	public Op _getApplicableViews(Op op, RestrictionManagerImpl restrictions)
 	{
 		return MultiMethod.invoke(this, "getApplicableViews", op, restrictions);
+	}
+
+	public Op getApplicableViews(OpSequence op, RestrictionManagerImpl restrictions) {
+		List<Op> members = op.getElements();
+		
+		List<Op> newMembers = new ArrayList<Op>(members.size());
+		for(Op member : members) {
+			Op newMember = _getApplicableViews(member, restrictions);
+			newMembers.add(newMember);
+		}
+				
+		Op result = OpSequence.create().copy(newMembers);
+		return result;
 	}
 
 

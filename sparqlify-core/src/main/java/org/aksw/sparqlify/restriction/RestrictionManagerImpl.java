@@ -246,6 +246,12 @@ public class RestrictionManagerImpl implements RestrictionManager {
 		return getClausesForVars(Collections.singleton(var));
 	}
 
+	/**
+	 * Returns all clauses having any of the given variables
+	 * 
+	 * @param vars
+	 * @return
+	 */
 	public Set<Clause> getClausesForVars(Collection<Var> vars) {
 		Set<Clause> result = new HashSet<Clause>();
 		for(Var var : vars) {

@@ -28,6 +28,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpNull;
 import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
+import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
@@ -80,9 +81,9 @@ public class FilterPlacementOptimizer2 {
 
 	
 	public static Op optimize(Op op, RestrictionManagerImpl cnf) {
-		if(op instanceof OpNull) {
-			return op;
-		}
+//		if(op instanceof OpNull) {
+//			return op;
+//		}
 		
 		
 		Op result = MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
@@ -91,7 +92,8 @@ public class FilterPlacementOptimizer2 {
 	
 	
 	public static RestrictionManagerImpl filterByVars(RestrictionManagerImpl cnf, Op op) {	
-		Set<Clause> clauses = cnf.getClausesForVars(GetVarsMentioned.getVarsMentioned(op));
+		Set<Var> vars = GetVarsMentioned.getVarsMentioned(op);
+		Set<Clause> clauses = cnf.getClausesForVars(vars);
 		return new RestrictionManagerImpl(new NestedNormalForm(clauses));
 	}
 
@@ -118,6 +120,49 @@ public class FilterPlacementOptimizer2 {
 		return result;
 	}
 	
+
+//	public static Op _optimize(OpJoin op, RestrictionManagerImpl cnf) {		
+//		RestrictionManagerImpl leftCnf = filterByVars(cnf, op.getLeft());
+//		RestrictionManagerImpl rightCnf = filterByVars(cnf, op.getRight());
+//		
+//		Set<Clause> union = Sets.union(leftCnf.getCnf(), rightCnf.getCnf());
+//		Set<Clause> remaining = Sets.difference(cnf.getCnf(), union);
+//
+//		Op result = OpJoin.create(optimize(op.getLeft(), leftCnf), optimize(op.getRight(), rightCnf));
+//		
+//		if(!remaining.isEmpty()) {
+//			//result = OpFilter.filter(cnfToExprList(remaining), result);
+//			result = OpFilterIndexed.filter(new RestrictionManagerImpl(new NestedNormalForm(remaining)), result);
+//		}
+//		
+//		return result;
+//	}
+
+	public static Op _optimize(OpSequence op, RestrictionManagerImpl cnf) {
+		List<Op> members = op.getElements();
+		
+		List<Op> newMembers = new ArrayList<Op>(members.size());
+		Set<Clause> intersection = new HashSet<Clause>();
+
+		for(Op member : members) {			
+			RestrictionManagerImpl restrictions = filterByVars(cnf, member);
+			Op newMember = optimize(member, restrictions);
+			newMembers.add(newMember);
+
+			Set<Clause> tmp = Sets.intersection(restrictions.getCnf(), intersection);
+			intersection = new HashSet<Clause>(tmp);
+		}
+		Set<Clause> remaining = Sets.difference(cnf.getCnf(), intersection);
+				
+		Op result = OpSequence.create().copy(newMembers);
+		if(!remaining.isEmpty()) {
+			//result = OpFilter.filter(cnfToExprList(remaining), result);
+			result = OpFilterIndexed.filter(new RestrictionManagerImpl(new NestedNormalForm(remaining)), result);
+		}
+
+		
+		return result;
+	}
 	
 
 	// TODO This method looks wrong

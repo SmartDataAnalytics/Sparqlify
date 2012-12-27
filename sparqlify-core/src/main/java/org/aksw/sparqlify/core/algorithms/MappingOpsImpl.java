@@ -493,6 +493,11 @@ public class MappingOpsImpl
 		
 	}
 	*/
+	public static Mapping createEmptyMapping() {
+		SqlOp empty = SqlOpEmpty.create();
+		Mapping result = new Mapping(empty);
+		return result;
+	}
 	
 	public static Mapping createEmptyMapping(ViewInstance viewInstance) {
 		SqlOp empty = SqlOpEmpty.create(viewInstance.getViewDefinition().getMapping().getSqlOp().getSchema());
@@ -880,8 +885,7 @@ public class MappingOpsImpl
 	 */
 	public Mapping union(List<Mapping> rawMembers) {
 		if(rawMembers.isEmpty()) {
-			SqlOp empty = SqlOpEmpty.create();
-			Mapping result = new Mapping(empty);
+			Mapping result = createEmptyMapping();
 			return result;
 		}
 		

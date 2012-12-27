@@ -22,6 +22,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
+import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
@@ -86,12 +87,36 @@ public class OpMappingRewriterImpl
 		return result;
 	}
 
-
-	public Mapping rewrite(OpJoin op) {
-		Mapping a = rewrite(op.getLeft());
-		Mapping b = rewrite(op.getRight());
+	public Mapping rewrite(OpSequence op) {
+		List<Op> members = op.getElements();
+		if(members.isEmpty()) {
+			MappingOpsImpl.createEmptyMapping();
+		}
 		
-		Mapping result = ops.join(a, b);
+		Mapping a = null;
+		for(Op member : members) {
+			Mapping b = rewrite(member);
+			
+			if(a == null) {
+				a = b;
+			} else {
+				a = ops.join(a, b);
+			}
+		}
+		
+		return a;
+	}
+
+	public Mapping join(Op a, Op b) {
+		Mapping ma = rewrite(a);
+		Mapping mb = rewrite(b);
+		
+		Mapping result = ops.join(ma, mb);
+		return result;		
+	}
+	
+	public Mapping rewrite(OpJoin op) {
+		Mapping result = join(op.getLeft(), op.getRight());
 		return result;
 	}
 	
@@ -102,7 +127,7 @@ public class OpMappingRewriterImpl
 		Mapping result = ops.leftJoin(a, b);
 		return result;
 	}
-
+	
 	public Mapping rewrite(OpConditional op) {
 		OpLeftJoin tmp = (OpLeftJoin)OpLeftJoin.create(op.getLeft(), op.getRight(), new ExprList());
 		
@@ -221,6 +246,9 @@ public class OpMappingRewriterImpl
 		}
 		else if (op instanceof OpLeftJoin) {
 			result = rewrite((OpLeftJoin)op);
+		}
+		else if (op instanceof OpSequence) {
+			result = rewrite((OpSequence)op);
 		}
 		else if (op instanceof OpConditional) {
 			result = rewrite((OpConditional)op);

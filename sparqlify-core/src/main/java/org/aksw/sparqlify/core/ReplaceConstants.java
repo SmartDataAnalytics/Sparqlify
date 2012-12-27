@@ -21,6 +21,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
+import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.algebra.op.OpTable;
 import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
@@ -130,6 +131,20 @@ public class ReplaceConstants {
 	public static Op _replace(OpLeftJoin op) {
 		return OpLeftJoin.create(replace(op.getLeft()), replace(op.getRight()), op.getExprs());
 	}
+	
+	public static Op _replace(OpSequence op) {
+		List<Op> members = op.getElements();
+		
+		List<Op> newMembers = new ArrayList<Op>(members.size());
+		for(Op member : members) {
+			Op newMember = replace(member);
+			newMembers.add(newMember);
+		}
+				
+		Op result = OpSequence.create().copy(newMembers);
+		return result;
+	}
+	
 	
 	public static Op _replace(OpConditional op) {
 		Op newLeft = replace(op.getLeft());
