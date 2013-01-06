@@ -1,14 +1,14 @@
 package org.aksw.sparqlify.core.algorithms;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -40,14 +40,29 @@ public class SelfJoinEliminator {
 	{
 	*/
 		if(a.getViewDefinition() != b.getViewDefinition()) {
+			System.out.println(a.getViewDefinition());
+			System.out.println(b.getViewDefinition());
 			return null;
 		}
 		
 		IBiSetMultimap<Var, Var> backA = a.getBinding().getViewVarToQueryVars(); //HashMultimap.create(a.getParentToQueryBinding());
 		IBiSetMultimap<Var, Var> backB = b.getBinding().getViewVarToQueryVars(); //HashMultimap.create(b.getParentToQueryBinding());
 		
-		//System.out.println("BackA: " + backA);
-		//System.out.println("BackB: " + backB);
+		// Swap a and b
+		if(backB.keySet().size() > backA.keySet().size()) {
+
+			ViewInstance t = a;
+			a = b;
+			b = t;
+			
+			IBiSetMultimap<Var, Var> backT = backA;
+			backA = backB;
+			backB = backT;
+		}
+		
+		System.out.println("BackA: " + backA);
+		System.out.println("BackB: " + backB);
+		System.out.println("---");
 
 		// Now check if each parent variable in backA maps to the same
 		// query variables as in backB
@@ -163,22 +178,31 @@ public class SelfJoinEliminator {
 		// TODO Self joins only occur to view instance from the same view definition
 		// So the viewInstanceJoin should "cluster" the view instances by their parent view - i.e. have a MultiMap<parentViewName, ViewInstance>
 		
-		for(int i = 0; i < conjunction.getViewInstances().size(); ++i) {
-			ViewInstance a = conjunction.getViewInstances().get(i);
+		ListMultimap<String, ViewInstance> nameToInstance = conjunction.getInstancesGroupedByParent();
+
+		for(Entry<String, Collection<ViewInstance>> entry : nameToInstance.asMap().entrySet()) {
+			List<ViewInstance> list = (List<ViewInstance>)entry.getValue();
 			
-			for(int j = i + 1; j < conjunction.getViewInstances().size(); ++j) {
-				ViewInstance b = conjunction.getViewInstances().get(j);
+			eliminateSelfJoins(list);
+		}
+	}
+
+	public static void eliminateSelfJoins(List<ViewInstance> viewInstances) {
+		for(int i = 0; i < viewInstances.size(); ++i) {
+			ViewInstance a = viewInstances.get(i);
+			
+			for(int j = i + 1; j < viewInstances.size(); ++j) {
+				ViewInstance b = viewInstances.get(j);
 				
 				ViewInstance view = merge(a, b);
 				if(view != null) { // FIXME Assumes that b is always merged into a (maybe in the future it may change)
 					a = view;
-					conjunction.getViewInstances().set(i, view);
-					conjunction.getViewInstances().remove(j);
+					viewInstances.set(i, view);
+					viewInstances.remove(j);
 					--j;
 				}
 
 			}
-		}
+		}		
 	}
-
 }

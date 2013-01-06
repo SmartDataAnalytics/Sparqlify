@@ -147,6 +147,12 @@ public class MappingRefactor {
 		List<Var> vars = new ArrayList<Var>(tmpVars.size());
 		List<Collection<RestrictedExpr>> c = new ArrayList<Collection<RestrictedExpr>>(tmpVars.size());
 
+		
+		if(tmpVars.isEmpty()) {
+			result.add(m);
+			return result;
+		}
+		
 		for(Var var : tmpVars) {
 			
 			Collection<RestrictedExpr> defs = varDef.getDefinitions(var);

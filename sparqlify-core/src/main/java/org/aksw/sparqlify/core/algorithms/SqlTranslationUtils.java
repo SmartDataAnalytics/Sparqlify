@@ -955,9 +955,13 @@ public class SqlTranslationUtils {
 		transMap.put("lang", new ExprTransformerLang());
 		transMap.put("=", new ExprTransformerRdfTermComparator(evaluator));
 		transMap.put(">", new ExprTransformerRdfTermComparator(evaluator));
+		transMap.put(">=", new ExprTransformerRdfTermComparator(evaluator));
+		transMap.put("<", new ExprTransformerRdfTermComparator(evaluator));
+		transMap.put("<=", new ExprTransformerRdfTermComparator(evaluator));
 
 		
 		transMap.put("&&", new ExprTransformerLogicalAnd());
+		//transMap.put("||", new ExprTransformerLogicalAnd());
 
 		return evaluator;
 	}

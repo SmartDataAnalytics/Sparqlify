@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.aksw.sparqlify.core.domain.input.Mapping;
@@ -53,7 +54,7 @@ public class OpMappingRewriterImpl
 	}
 
 	public Mapping rewrite(OpViewInstanceJoin op) {
-		List<ViewInstance> vis = op.getJoin().getViewInstances();
+		Collection<ViewInstance> vis = op.getJoin().getViewInstances();
 		
 		Mapping result = null;
 		for(ViewInstance vi : vis) {

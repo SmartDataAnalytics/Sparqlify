@@ -51,6 +51,9 @@ public class ExprTransformerMap
 			ExprTransformer transformer = lookup(fn);
 			if(transformer != null) {
 				result = transformer.transform(expr);
+			} else {
+				System.err.println("Warning: No transformer registered for " + fn);
+				//throw new RuntimeException("No transformer registered for " + fn);
 			}
 		}
 		
