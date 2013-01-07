@@ -85,6 +85,7 @@ class NodeV {
  * @param <K>
  * @param <V>
  */
+/*
 class UnionBiMultiMap<K, V>
 	implements IBiSetMultimap<K, V>
 {
@@ -122,7 +123,7 @@ class UnionBiMultiMap<K, V>
 	 * that stuff... guava doesn't have a union multimap view it seems
 	 * But too much work to implement properly for now. 
 	 * 
-	 */
+	 * /
 	private SetMultimap<K, V> copyAll()
 	{
 		SetMultimap<K, V> copy = HashMultimap.create();
@@ -210,7 +211,7 @@ class UnionBiMultiMap<K, V>
 		throw new NotImplementedException();		
 	}
 }
-
+*/
 
 public class TwoWayBinding
 {	
