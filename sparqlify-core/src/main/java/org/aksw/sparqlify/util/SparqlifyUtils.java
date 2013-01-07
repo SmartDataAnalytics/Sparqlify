@@ -58,7 +58,8 @@ public class SparqlifyUtils {
 	private static final Logger logger = LoggerFactory.getLogger(SparqlifyUtils.class);
 
 	public static InputStream getResourceAsStream(String name) {
-		InputStream result = SparqlifyUtils.class.getResourceAsStream(name);
+		InputStream result = System.class.getResourceAsStream(name);
+
 		return result;
 	}
 	
@@ -66,6 +67,10 @@ public class SparqlifyUtils {
 			throws IOException
 	{
 		InputStream in = getResourceAsStream(name);
+		if(in == null) {
+			throw new RuntimeException("Resource not found: " + name);
+		}
+
 		Map<String, String> result = MapReader.read(in);
 		
 		return result;
@@ -73,10 +78,10 @@ public class SparqlifyUtils {
 	
 	public static DatatypeSystemCustom createDefaultDatatypeSystem() throws IOException {
 		
-		
-		Map<String, String> typeNameToClass = readMapFromResource("src/main/resources/type-class.tsv");
-		Map<String, String> typeNameToUri = readMapFromResource("src/main/resources/type-uri.tsv");
-		Map<String, String> typeHierarchy = readMapFromResource("src/main/resources/type-hierarchy.default.tsv");
+		//String basePath = "src/main/resources";
+		Map<String, String> typeNameToClass = readMapFromResource("/type-class.tsv");
+		Map<String, String> typeNameToUri = readMapFromResource("/type-uri.tsv");
+		Map<String, String> typeHierarchy = readMapFromResource("/type-hierarchy.default.tsv");
 		
 		DatatypeSystemCustom result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, SparqlifyUtils.logger);
 	
