@@ -16,6 +16,26 @@ public class MapReader {
 	private static final Logger logger = LoggerFactory
 			.getLogger(MapReader.class);
 
+	public static InputStream getResourceAsStream(String name) {
+		InputStream result = MapReader.class.getResourceAsStream(name);
+
+		return result;
+	}
+
+	public static Map<String, String> readFromResource(String name)
+			throws IOException
+	{
+		InputStream in = getResourceAsStream(name);
+		if(in == null) {
+			throw new RuntimeException("Resource not found: " + name);
+		}
+
+		Map<String, String> result = read(in);
+		
+		return result;
+
+	}
+		
 	public static Map<String, String> read(File file) throws IOException {
 		InputStream in = new FileInputStream(file);
 		Map<String, String> result = read(in);

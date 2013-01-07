@@ -38,8 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
@@ -202,7 +200,7 @@ public class Main {
 		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		
 		// typeAliases for the H2 datatype
-		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
+		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
 
 		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias);
