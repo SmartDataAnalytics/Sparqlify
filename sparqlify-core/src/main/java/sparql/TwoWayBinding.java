@@ -85,148 +85,148 @@ class NodeV {
  * @param <K>
  * @param <V>
  */
-class UnionBiMultiMap<K, V>
-	implements IBiSetMultimap<K, V>
-{
-	private Collection<IBiSetMultimap<K, V>> wrapped;
-	private UnionBiMultiMap<V, K> inverse;
-	
-
-	public static <K, V> UnionBiMultiMap<K, V> create(IBiSetMultimap<K, V> a, IBiSetMultimap<K, V> b)
-	{
-		Collection<IBiSetMultimap<K, V>> union = new ArrayList<IBiSetMultimap<K, V>>();
-		union.add(a);
-		union.add(b);
-		
-		return new UnionBiMultiMap<K, V>(union);
-	}
-	
-	public UnionBiMultiMap(Collection<IBiSetMultimap<K, V>> wrapped)
-	{
-		this.wrapped = wrapped;
-		inverse = new UnionBiMultiMap<V, K>(this);
-	}
-	
-	protected UnionBiMultiMap(UnionBiMultiMap<V, K> original)
-	{
-		this.inverse = original;
-		
-		wrapped = new ArrayList<IBiSetMultimap<K, V>>();
-		for(IBiSetMultimap<V, K> item : original.wrapped) {
-			wrapped.add(item.getInverse());
-		}
-	}
-	
-	/**
-	 * Making a copy of the values is just what we want to avoid by doing all
-	 * that stuff... guava doesn't have a union multimap view it seems
-	 * But too much work to implement properly for now. 
-	 * 
-	 */
-	private SetMultimap<K, V> copyAll()
-	{
-		SetMultimap<K, V> copy = HashMultimap.create();
-		
-		for(IBiSetMultimap<K, V> item : wrapped) {
-			copy.asMap().putAll(item.asMap());
-		}
-		
-		return copy;
-	}
-	
-	@Override
-	public Map<K, Collection<V>> asMap()
-	{
-		return copyAll().asMap();
-	}
-
-	@Override
-	public boolean put(K key, V value)
-	{
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Set<V> removeAll(Object key)
-	{
-		throw new NotImplementedException();
-	}
-
-	
-	// TODO This should be a view
-	@Override
-	public Set<V> get(Object key)
-	{
-		Set<V> result = new HashSet<V>();
-
-		for(IBiSetMultimap<K, V> item : wrapped) {
-			result.addAll(item.get(key));
-		}
-		
-		return result;
-	}
-
-	@Override
-	public IBiSetMultimap<V, K> getInverse()
-	{
-		return inverse;
-	}
-
-	@Override
-	public Set<Entry<K, V>> entries()
-	{
-		return copyAll().entries();
-	}
-
-	@Override
-	public void putAll(ISetMultimap<K, V> other)
-	{
-		throw new NotImplementedException();		
-	}
-
-	@Override
-	public void clear()
-	{
-		throw new NotImplementedException();		
-	}
-
-	@Override
-	public boolean containsEntry(Object key, Object value) {
-		throw new NotImplementedException();		
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		throw new NotImplementedException();		
-	}
-
-	@Override
-	public boolean containsKey(Object key) {
-		throw new NotImplementedException();		
-	}
-
-	@Override
-	public int size() {
-		throw new NotImplementedException();		
-	}
-
-	@Override
-	public void putAll(K key, Collection<V> values) {
-		for(V value : values) {
-			put(key, value);
-		}
-	}
-
-	@Override
-	public Set<K> keySet() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Collection<K> keys() {
-		throw new NotImplementedException();
-	}
-}
+//class UnionBiMultiMap<K, V>
+//	implements IBiSetMultimap<K, V>
+//{
+//	private Collection<IBiSetMultimap<K, V>> wrapped;
+//	private UnionBiMultiMap<V, K> inverse;
+//	
+//
+//	public static <K, V> UnionBiMultiMap<K, V> create(IBiSetMultimap<K, V> a, IBiSetMultimap<K, V> b)
+//	{
+//		Collection<IBiSetMultimap<K, V>> union = new ArrayList<IBiSetMultimap<K, V>>();
+//		union.add(a);
+//		union.add(b);
+//		
+//		return new UnionBiMultiMap<K, V>(union);
+//	}
+//	
+//	public UnionBiMultiMap(Collection<IBiSetMultimap<K, V>> wrapped)
+//	{
+//		this.wrapped = wrapped;
+//		inverse = new UnionBiMultiMap<V, K>(this);
+//	}
+//	
+//	protected UnionBiMultiMap(UnionBiMultiMap<V, K> original)
+//	{
+//		this.inverse = original;
+//		
+//		wrapped = new ArrayList<IBiSetMultimap<K, V>>();
+//		for(IBiSetMultimap<V, K> item : original.wrapped) {
+//			wrapped.add(item.getInverse());
+//		}
+//	}
+//	
+//	/**
+//	 * Making a copy of the values is just what we want to avoid by doing all
+//	 * that stuff... guava doesn't have a union multimap view it seems
+//	 * But too much work to implement properly for now. 
+//	 * 
+//	 */
+//	private SetMultimap<K, V> copyAll()
+//	{
+//		SetMultimap<K, V> copy = HashMultimap.create();
+//		
+//		for(IBiSetMultimap<K, V> item : wrapped) {
+//			copy.asMap().putAll(item.asMap());
+//		}
+//		
+//		return copy;
+//	}
+//	
+//	@Override
+//	public Map<K, Collection<V>> asMap()
+//	{
+//		return copyAll().asMap();
+//	}
+//
+//	@Override
+//	public boolean put(K key, V value)
+//	{
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Set<V> removeAll(Object key)
+//	{
+//		throw new NotImplementedException();
+//	}
+//
+//	
+//	// TODO This should be a view
+//	@Override
+//	public Set<V> get(Object key)
+//	{
+//		Set<V> result = new HashSet<V>();
+//
+//		for(IBiSetMultimap<K, V> item : wrapped) {
+//			result.addAll(item.get(key));
+//		}
+//		
+//		return result;
+//	}
+//
+//	@Override
+//	public IBiSetMultimap<V, K> getInverse()
+//	{
+//		return inverse;
+//	}
+//
+//	@Override
+//	public Set<Entry<K, V>> entries()
+//	{
+//		return copyAll().entries();
+//	}
+//
+//	@Override
+//	public void putAll(ISetMultimap<K, V> other)
+//	{
+//		throw new NotImplementedException();		
+//	}
+//
+//	@Override
+//	public void clear()
+//	{
+//		throw new NotImplementedException();		
+//	}
+//
+//	@Override
+//	public boolean containsEntry(Object key, Object value) {
+//		throw new NotImplementedException();		
+//	}
+//
+//	@Override
+//	public boolean containsValue(Object value) {
+//		throw new NotImplementedException();		
+//	}
+//
+//	@Override
+//	public boolean containsKey(Object key) {
+//		throw new NotImplementedException();		
+//	}
+//
+//	@Override
+//	public int size() {
+//		throw new NotImplementedException();		
+//	}
+//
+//	@Override
+//	public void putAll(K key, Collection<V> values) {
+//		for(V value : values) {
+//			put(key, value);
+//		}
+//	}
+//
+//	@Override
+//	public Set<K> keySet() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Collection<K> keys() {
+//		throw new NotImplementedException();
+//	}
+//}
 
 
 public class TwoWayBinding
