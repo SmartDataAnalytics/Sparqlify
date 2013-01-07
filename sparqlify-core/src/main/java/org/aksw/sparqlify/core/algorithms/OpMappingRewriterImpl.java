@@ -60,7 +60,7 @@ public class OpMappingRewriterImpl
 		for(ViewInstance vi : vis) {
 
 			Mapping tmp = ops.createMapping(vi);
-			System.out.println(vi + "\n    --> " + tmp);
+			//System.out.println(vi + "\n    --> " + tmp);
 			
 			if(result == null) {				
 				result = tmp;				

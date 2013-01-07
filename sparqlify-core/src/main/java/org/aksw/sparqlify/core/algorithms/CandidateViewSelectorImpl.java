@@ -432,10 +432,10 @@ public class CandidateViewSelectorImpl
 		//op.(transformer);
 
 		op = Algebra.optimize(op);
-		System.out.println("[Algebra] Jena Optimized: " + op);
+		logger.debug("[Algebra] Jena Optimized: " + op);
 
 		op = ReplaceConstants.replace(op);
-		System.out.println("[Algebra] ConstantsEleminated: " + op);
+		logger.debug("[Algebra] ConstantsEleminated: " + op);
 
 		// Note:
 		// OpAssign: The assignments end up in a mapping's variable definition
@@ -444,12 +444,12 @@ public class CandidateViewSelectorImpl
 		
 		
 		Op augmented = _getApplicableViews(op);
-		System.out.println("[Algebra] View Candidates: " + augmented);
+		logger.debug("[Algebra] View Candidates: " + augmented);
 
 		
 		Op optimizedFilters = FilterPlacementOptimizer2.optimize(augmented);
 		
-		System.out.println("[Algebra] Filter Placement Optimized: " + optimizedFilters);
+		logger.debug("[Algebra] Filter Placement Optimized: " + optimizedFilters);
 		//System.out.println(optimizedFilters);
 		
 		//Op result = augmented;

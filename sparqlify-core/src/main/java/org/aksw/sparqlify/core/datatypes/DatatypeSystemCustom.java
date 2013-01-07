@@ -311,7 +311,7 @@ public class DatatypeSystemCustom
 		}
 
 		for(Entry<Class<?>, TypeToken> entry : classToToken.entrySet()) {
-			System.out.println(entry);
+			logger.debug("[DatatypeSytem] Added type mapping: " + entry);
 		}
 	}
 
