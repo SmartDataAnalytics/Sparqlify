@@ -1,10 +1,8 @@
 package org.aksw.sparqlify.web;
 
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.sql.Connection;
 import java.util.Map;
 
@@ -39,10 +37,13 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-
 
 public class Main {
 	/**
@@ -78,6 +79,10 @@ public class Main {
 		cliOptions.addOption("p", "password", true, "");
 		cliOptions.addOption("h", "hostname", true, "");
 
+		// Note: Q and D are exclusive. If either is given, no server is started
+		cliOptions.addOption("Q", "query", true, "");
+		cliOptions.addOption("D", "dump", false, "");
+		
 		cliOptions.addOption("c", "config", true, "Sparqlify config file");
 
 		cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout");
@@ -98,6 +103,23 @@ public class Main {
 		String userName = commandLine.getOptionValue("u", "");
 		String passWord = commandLine.getOptionValue("p", "");
 
+		boolean isDump = commandLine.hasOption("D");
+		String query = commandLine.getOptionValue("Q", "");
+		
+		boolean isQuery = !query.isEmpty();
+		if(!isQuery) {
+			query = null;
+		}
+		
+		if(isDump && isQuery) {
+			logger.error("Options D and Q are exclusive");
+		}
+		
+		if(isDump) {
+			query = "Construct { ?s ?p ?o } { ?s ?p ?o }";
+		}
+		
+		
 		String maxQueryExecutionTimeStr = commandLine.getOptionValue("t", null);
 		Integer maxQueryExecutionTime = maxQueryExecutionTimeStr == null
 				? null
@@ -216,6 +238,25 @@ public class Main {
 			qef = QueryExecutionFactoryLimit.decorate(qef, false, maxResultSetSize);
 		}
 		
+		
+		if(query != null) {
+//			{
+//			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o }");
+//			ResultSet rs = qe.execSelect();
+//			System.out.println(ResultSetFormatter.asText(rs));
+//			}
+
+//			{
+			QueryExecution qe = qef.createQueryExecution(query);
+			Model model = qe.execConstruct();
+			model.write(System.out, "N-TRIPLES");
+//			}
+			
+			return;
+		}
+		
+		
+		
 		//sparqler = qef; //new QueryExecutionFactorySparqlify(system, conn);
 
 		//QueryExecutionFactoryStreamingProvider provider = new QueryExecutionFactoryStreamingProvider(qef);
@@ -248,5 +289,4 @@ public class Main {
 
 		// server.stop();
 	}
-
 }

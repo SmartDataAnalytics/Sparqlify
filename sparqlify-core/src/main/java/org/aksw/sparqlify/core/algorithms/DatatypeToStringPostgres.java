@@ -25,6 +25,7 @@ class DatatypeToStringPostgres
 		
 		//nameToPostgres.put("d", "datetime");
 		nameToPostgres.put("datetime", "date");
+		nameToPostgres.put("dateTime", "date");
 		// bigint nameToPostgres.put("geography", "geography");
 
 		nameToPostgres.put("timestamp", "timestamp");
