@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +16,35 @@ public class MapReader {
 	private static final Logger logger = LoggerFactory
 			.getLogger(MapReader.class);
 
-	public static Map<String, String> readFile(File file) throws IOException {
+	public static Map<String, String> read(File file) throws IOException {
+		InputStream in = new FileInputStream(file);
+		Map<String, String> result = read(in);
+		return result;		
+	}
 
+	public static Map<String, String> read(InputStream in)
+		throws IOException
+	{
+		InputStreamReader reader = new InputStreamReader(in);
+		Map<String, String> result = read(reader);
+		return result;
+	}
+	
+	public static Map<String, String> read(InputStreamReader reader)
+			throws IOException
+	{
+		BufferedReader bufferedReader = new BufferedReader(reader);		
+		Map<String, String> result = read(bufferedReader);
+		return result;
+	}
+	
+	public static Map<String, String> read(BufferedReader reader)
+			throws IOException
+	{
 		Map<String, String> result = new HashMap<String, String>();
 
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		try {
-		
+			
 			String line = null;
 			while((line = reader.readLine()) != null) {
 				
@@ -45,6 +67,14 @@ public class MapReader {
 		}
 	
 		return result;
+	}
+
+
+	
+	@Deprecated
+	public static Map<String, String> readFile(File file) throws IOException {
+
+		return read(file);
 		
 	}
 	/*

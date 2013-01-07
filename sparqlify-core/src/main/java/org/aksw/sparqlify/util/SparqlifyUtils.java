@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,7 +14,6 @@ import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Concat;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
@@ -58,11 +57,26 @@ public class SparqlifyUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(SparqlifyUtils.class);
 
+	public static InputStream getResourceAsStream(String name) {
+		InputStream result = SparqlifyUtils.class.getResourceAsStream(name);
+		return result;
+	}
+	
+	public static Map<String, String> readMapFromResource(String name)
+			throws IOException
+	{
+		InputStream in = getResourceAsStream(name);
+		Map<String, String> result = MapReader.read(in);
+		
+		return result;
+	}
+	
 	public static DatatypeSystemCustom createDefaultDatatypeSystem() throws IOException {
 		
-		Map<String, String> typeNameToClass = MapReader.readFile(new File("src/main/resources/type-class.tsv"));
-		Map<String, String> typeNameToUri = MapReader.readFile(new File("src/main/resources/type-uri.tsv"));
-		Map<String, String> typeHierarchy = MapReader.readFile(new File("src/main/resources/type-hierarchy.default.tsv"));
+		
+		Map<String, String> typeNameToClass = readMapFromResource("src/main/resources/type-class.tsv");
+		Map<String, String> typeNameToUri = readMapFromResource("src/main/resources/type-uri.tsv");
+		Map<String, String> typeHierarchy = readMapFromResource("src/main/resources/type-hierarchy.default.tsv");
 		
 		DatatypeSystemCustom result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, SparqlifyUtils.logger);
 	
