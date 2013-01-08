@@ -1,9 +1,13 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
@@ -19,6 +23,9 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
 public class ExprTransformerMap
 	implements ExprTransformer
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExprTransformerMap.class);
+	
 	private Map<String, ExprTransformer> idToTransformer = new HashMap<String, ExprTransformer>();
 
 
@@ -42,6 +49,8 @@ public class ExprTransformerMap
 		return result;
 	}
 	
+	private static Set<Expr> seenErrors = new HashSet<Expr>();
+	
 	public Expr transform(ExprFunction expr) {
 		Expr result = expr;
 		
@@ -52,7 +61,12 @@ public class ExprTransformerMap
 			if(transformer != null) {
 				result = transformer.transform(expr);
 			} else {
-				System.err.println("Warning: No transformer registered for " + fn);
+				
+				if(!seenErrors.contains(fn)) {
+					logger.warn("No transformer registered for " + fn);
+					seenErrors.add(fn);
+				}
+				
 				//throw new RuntimeException("No transformer registered for " + fn);
 			}
 		}

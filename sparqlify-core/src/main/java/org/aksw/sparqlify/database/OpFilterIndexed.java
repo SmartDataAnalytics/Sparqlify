@@ -1,6 +1,8 @@
 package org.aksw.sparqlify.database;
 
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.OpVisitor;
@@ -11,6 +13,9 @@ import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 public class OpFilterIndexed
 	extends Op1
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(OpFilterIndexed.class);
+	
 	protected RestrictionManagerImpl restrictions;
 	
 	public RestrictionManagerImpl getRestrictions() {
@@ -40,7 +45,7 @@ public class OpFilterIndexed
 	public void visit(OpVisitor opVisitor) {
 
 		if(!hackWarningDisplayed) {
-			System.err.println("[HACK] Replace OpFilterIndexed with OpExtFilterIndexed");
+			logger.warn("[HACK] Replace OpFilterIndexed with OpExtFilterIndexed");
 			hackWarningDisplayed = true;
 		}
 		
