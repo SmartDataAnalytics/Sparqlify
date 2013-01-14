@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 
 import com.hp.hpl.jena.graph.Node;
@@ -55,10 +55,10 @@ class DatatypeAssignerConstant
 class DatatypeAssignerNodeValue
 	implements DatatypeAssigner
 {
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 	
 
-	public DatatypeAssignerNodeValue(DatatypeSystem datatypeSystem) {
+	public DatatypeAssignerNodeValue(TypeSystem datatypeSystem) {
 		this.datatypeSystem = datatypeSystem;
 	}
 	
@@ -161,7 +161,7 @@ public class DatatypeAssignerMap
 		return map;
 	}
 	
-	public static DatatypeAssignerMap createDefaultAssignments(DatatypeSystem datatypeSystem) {
+	public static DatatypeAssignerMap createDefaultAssignments(TypeSystem datatypeSystem) {
 				
 		
 		Map<Class<?>, DatatypeAssigner> map = new HashMap<Class<?>, DatatypeAssigner>();

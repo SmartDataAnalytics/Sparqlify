@@ -18,7 +18,7 @@ import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
@@ -53,7 +53,7 @@ public class MappingOpsImplTest {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
-		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		SqlTranslator sqlTranslator = new SqlTranslatorImpl(datatypeSystem);
 
 		

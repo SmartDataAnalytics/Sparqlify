@@ -31,7 +31,7 @@ public class SqlExprOps {
 	public static final SqlExpr O = S_Constant.FALSE;
 	public static final SqlExpr l = S_Constant.TRUE;
 	public static final SqlExpr e = S_Constant.TYPE_ERROR;
-	public static final SqlExpr n = new S_Constant(TypeToken.Boolean, null);
+	public static final SqlExpr n = new S_Constant(TypeToken.Boolean);
 	
 	//public static final SqlExpr d = null; // "Don't know"; used if an argument is not a constant
 	public static final SqlExpr a = new S_Constant(TypeToken.Special, "firstArg");

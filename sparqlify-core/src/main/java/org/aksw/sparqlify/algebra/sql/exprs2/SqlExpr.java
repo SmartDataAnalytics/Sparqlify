@@ -5,6 +5,7 @@ import java.util.List;
 import org.aksw.sparqlify.core.TypeToken;
 import org.openjena.atlas.io.IndentedWriter;
 
+
 public interface SqlExpr {
 	List<SqlExpr> getArgs();
 

@@ -2,22 +2,22 @@ package org.aksw.sparqlify.sparqlview;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 public class QueryExecutionFactorySparqlView
-	extends QueryExecutionFactoryBackQuery<QueryExecutionStreaming>
+	extends QueryExecutionFactoryBackQuery
 {
 	private static Logger logger = LoggerFactory.getLogger(QueryExecutionFactorySparqlView.class);
 	
-	private QueryExecutionFactory<QueryExecutionStreaming> factory;
+	private QueryExecutionFactory factory;
 	private SparqlViewSystem system;
 	private Dialect dialect;
 	
-	public QueryExecutionFactorySparqlView(QueryExecutionFactory<QueryExecutionStreaming> factory, SparqlViewSystem system, Dialect dialect) {
+	public QueryExecutionFactorySparqlView(QueryExecutionFactory factory, SparqlViewSystem system, Dialect dialect) {
 		this.factory = factory;
 		this.system = system;
 		this.dialect = dialect;
@@ -34,11 +34,11 @@ public class QueryExecutionFactorySparqlView
 	}
 
 	@Override
-	public QueryExecutionStreaming createQueryExecution(Query query) {
+	public QueryExecution createQueryExecution(Query query) {
 		Query rewritten = SparqlViewSystem.rewrite(query, system, dialect);
 		//logger.trace("Rewritten query: " + rewritten);
 		//System.out.println("Rewritten query: " + rewritten);
-		QueryExecutionStreaming result = factory.createQueryExecution(rewritten);
+		QueryExecution result = factory.createQueryExecution(rewritten);
 
 		return result;
 	}	

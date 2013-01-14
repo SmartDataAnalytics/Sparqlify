@@ -20,10 +20,15 @@ import org.aksw.commons.util.reflect.ClassUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.ExprSubstitutorSql;
+import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /*
 class SparqlFunctionMap {
@@ -36,13 +41,12 @@ class SparqlFunctionMap {
 */
 
 /*
-interface SparqlFunctionEvaluator {
 	Expr eval(ExprList args, Object context);
 }
 */
 
 public class DatatypeSystemCustom
-	implements DatatypeSystem
+	implements TypeSystem
 {
 	private static final Logger logger = LoggerFactory.getLogger(DatatypeSystemCustom.class);
 	
@@ -92,13 +96,17 @@ public class DatatypeSystemCustom
 
 	public void registerSqlFunction(String sparqlFunctionName, XMethod method) {
 		SparqlFunctionImpl fn = getOrCreateSparqlFunction(sparqlFunctionName);
-		fn.getSqlFunctionMap().put(method.getName(), method);
+		//fn.getSqlFunctionMap().put(method.getName(), method);
+		ExprSubstitutorSql substitutor = (ExprSubstitutorSql)fn.getSubstitutor();
+		//substitutor.
+		
+		throw new RuntimeException("Not implemented");
 		
 		//sqlFunctions.put(method.getName(), method);
 	}
 	
 
-    public static  Map<XMethod, TypeDistance[]> findMethodCandidates(Collection<XMethod> candidates, CoercionSystem coercions, XClass ...typeSignature) {
+    public static  Map<XMethod, TypeDistance[]> findMethodCandidates(Collection<XMethod> candidates, CoercionSystemOld coercions, XClass ...typeSignature) {
         Map<XMethod, TypeDistance[]> bestMatches = new HashMap<XMethod, TypeDistance[]>();
         for(XMethod m : candidates) {
 
@@ -383,8 +391,9 @@ public class DatatypeSystemCustom
 
 
 	@Override
-	public Object cast(Object value, TypeToken to) {
+	public NodeValue cast(NodeValue value, TypeToken to) {
 		XClass targetType = getByName(to);
+		
 		
 		Class<?> targetClazz = targetType.getCorrespondingClass();
 		if(targetClazz == null) {
@@ -392,8 +401,26 @@ public class DatatypeSystemCustom
 			logger.warn("No class corresponding to '" + to + "' found.");
 			return null;
 		}
-		return Caster.tryCast(value, targetClazz);
+		NodeValue result = tryCast(value, targetType);
+		return result;
 	}
+	
+	
+	// This is totally hacky!
+	public NodeValue tryCast(NodeValue nodeValue, XClass targetType) {
+		Class<?> targetClazz = targetType.getClass();
+		
+		Object value = NodeValueUtils.getValue(nodeValue);
+		Object castedValue = Caster.tryCast(value, targetClazz);
+		
+		TypeMapper typeMapper = TypeMapper.getInstance();
+		RDFDatatype datatype = typeMapper.getSafeTypeByName(targetType.getName());
+		
+		Node tmp = Node.createLiteral("" + castedValue, datatype);
+		NodeValue result = NodeValue.makeNode(tmp);
+		return result;
+	}
+
 
 
 	@Override

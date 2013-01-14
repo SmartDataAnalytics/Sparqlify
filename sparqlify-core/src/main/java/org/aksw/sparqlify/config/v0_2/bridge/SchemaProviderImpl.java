@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +31,10 @@ public class SchemaProviderImpl
 	private static final Logger logger = LoggerFactory.getLogger(SchemaProvider.class);
 	
 	private Connection conn;
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 	private Map<String, String> aliasMap; // TODO Maybe this has to be a function to capture int([0-9]*) -> int
 	
-	public SchemaProviderImpl(Connection conn, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
+	public SchemaProviderImpl(Connection conn, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
 		this.conn = conn;
 		this.datatypeSystem = datatypeSystem;
 		this.aliasMap = aliasMap;
@@ -152,7 +152,7 @@ public class SchemaProviderImpl
 		return result;
 	}
 
-	public static XClass lookupDatatype(String typeName, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
+	public static XClass lookupDatatype(String typeName, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
 		String lookupName = aliasMap.get(typeName.toLowerCase());
 		
 		if(lookupName == null) {
@@ -168,7 +168,7 @@ public class SchemaProviderImpl
 	}
 
 		
-	public static Map<String, TypeToken> transformRawMap(Map<String, String> map, DatatypeSystem datatypeSystem, Map<String, String> aliasMap) {
+	public static Map<String, TypeToken> transformRawMap(Map<String, String> map, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
 		Map<String, TypeToken> result = new HashMap<String, TypeToken>();
 
 		for(Map.Entry<String, String> entry : map.entrySet()) {
@@ -179,7 +179,7 @@ public class SchemaProviderImpl
 		return result;
 	}
 	
-	public static Map<String, TypeToken> getTypes(Connection conn, String queryStr, DatatypeSystem datatypeSystem, Map<String, String> aliasMap)
+	public static Map<String, TypeToken> getTypes(Connection conn, String queryStr, TypeSystem datatypeSystem, Map<String, String> aliasMap)
 		throws Exception
 	{
 		Map<String, String> map = getRawTypes(conn, queryStr);
@@ -190,7 +190,7 @@ public class SchemaProviderImpl
 
 
 	@Override
-	public DatatypeSystem getDatatypeSystem() {
+	public TypeSystem getDatatypeSystem() {
 		return datatypeSystem;
 	}
 }

@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewQuad;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
@@ -74,7 +74,7 @@ public class CandidateViewSelectionTests {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
-		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 
 		
 		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 

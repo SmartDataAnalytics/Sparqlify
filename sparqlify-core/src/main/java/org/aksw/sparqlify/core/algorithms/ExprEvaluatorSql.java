@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 import org.aksw.sparqlify.core.datatypes.Invocable;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.expr.util.NodeValueUtils;
+
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 // NOTE This file should become the replacement for the class PushDown
 
@@ -42,12 +44,12 @@ public class ExprEvaluatorSql {
 	
 	private FunctionRegistrySql sqlFunctionRegistry;
 	
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 	
 	
 	
 	
-	public ExprEvaluatorSql(DatatypeSystem datatypeSystem, FunctionRegistrySql sqlFunctionRegistry) {
+	public ExprEvaluatorSql(TypeSystem datatypeSystem, FunctionRegistrySql sqlFunctionRegistry) {
 		this.datatypeSystem = datatypeSystem;
 		this.sqlFunctionRegistry = sqlFunctionRegistry;
 	}
@@ -93,6 +95,9 @@ public class ExprEvaluatorSql {
 				argTypes.add(arg.getDatatype());
 			}
 
+			
+			//if(true) {throw new RuntimeException("still to fix"); }
+			//SqlMethodCandidate<> method = null;
 			SqlMethodCandidate method = datatypeSystem.lookupMethod(fn.getName(), argTypes);
 			if(method == null) {
 				throw new RuntimeException("SPARQL Function " + fn.getName() + " not declared");
@@ -105,15 +110,19 @@ public class ExprEvaluatorSql {
 				for(int i = 0; i < transformedArgs.size(); ++i) {
 					SqlExpr tmp = transformedArgs.get(i);
 					SqlExprConstant c = tmp.asConstant();
-					Object value = c.getValue();
-					 
+					NodeValue nodeValue = c.getValue();
+					Object value = NodeValueUtils.getValue(nodeValue);
+					
 					argValues[i] = value; 
 				}
 				
 				
 				Object fnResult = invocable.invoke(argValues);
 				
-				result = S_Constant.create(fnResult, datatypeSystem);
+				// TODO We need to create a NodeValue from fnResult, howewer
+				// we do not know the target RDF datatype
+				throw new RuntimeException("Is this still in use?");
+				//result = S_Constant.create(fnResult, datatypeSystem);
 			} else {
 				result = fn;
 			}

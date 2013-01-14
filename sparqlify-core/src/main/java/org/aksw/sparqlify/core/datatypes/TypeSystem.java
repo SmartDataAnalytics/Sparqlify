@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.core.datatypes;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +7,8 @@ import org.aksw.commons.factory.Factory1;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
+
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
  * A class with knowlegde about the type hierarchy.
@@ -23,7 +24,7 @@ import org.aksw.sparqlify.core.TypeToken;
  * @author raven
  *
  */
-public interface DatatypeSystem {
+public interface TypeSystem {
 	
 	SparqlFunction createSparqlFunction(String name, SqlExprEvaluator evaluator);
 	
@@ -49,7 +50,7 @@ public interface DatatypeSystem {
 	
 	List<TypeToken> getDirectSuperClasses(TypeToken type);
 	
-	Object cast(Object value, TypeToken target);
+	NodeValue cast(NodeValue value, TypeToken target);
 	
 	/**
 	 *Return a factory for creating cast-expressions between the given datatypes

@@ -11,7 +11,7 @@ import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
 import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
 import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
@@ -77,7 +77,7 @@ public class FunctionDeclarationTests {
 		System.out.println(result);
 		*/
 		
-		DatatypeSystem system = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem system = SparqlifyUtils.createDefaultDatatypeSystem();
 		//SqlDatatype integer = system.getByName("integer");
 		/*
 		SqlDatatype xfloat = system.getByName("float");

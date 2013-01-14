@@ -7,7 +7,7 @@ public abstract class SqlExprFunctionBase
 	extends SqlExprBase
 	implements SqlExprFunction
 {
-	private String name;
+	protected final String name;
 	
 	public SqlExprFunctionBase(TypeToken datatype, String name) {
 		super(datatype);

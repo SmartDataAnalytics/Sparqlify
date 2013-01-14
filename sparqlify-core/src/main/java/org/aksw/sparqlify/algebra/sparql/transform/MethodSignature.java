@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO Rename to MethodTypeSignature
- * 
+ * FIXME FunctionSignature would be more concise 
  * 
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *

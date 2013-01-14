@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
@@ -1115,7 +1114,7 @@ public class MappingOpsImpl
 				TypeToken datatype = unionTypeMap.get(columnName);
 				
 				//NodeValue nullValue = new E_SqlNodeValue(NodeValue.nvNothing, datatype);
-				S_Constant nullValue = new S_Constant(datatype, null);
+				S_Constant nullValue = new S_Constant(datatype);
 				
 				unionMemberProjection.put(columnName, nullValue);
 			}

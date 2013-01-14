@@ -1,61 +1,69 @@
 package org.aksw.sparqlify.algebra.sql.exprs2;
 
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
-import org.aksw.sparqlify.core.datatypes.XClass;
 import org.openjena.atlas.io.IndentedWriter;
 
+import com.hp.hpl.jena.datatypes.TypeMapper;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
+
+/**
+ * Experimental class:
+ * Let's assume that during translation 
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ */
 public class S_Constant
 	extends SqlExprConstantBase
 {
-	private Object value;
+	public static final S_Constant TRUE = new S_Constant(NodeValue.TRUE);
+	public static final S_Constant FALSE = new S_Constant(NodeValue.FALSE);
 	
-	public static final S_Constant TRUE = new S_Constant(TypeToken.Boolean, true);
-	public static final S_Constant FALSE = new S_Constant(TypeToken.Boolean, false);
-	public static final S_Constant TYPE_ERROR = new S_Constant(TypeToken.TypeError, null);
+	public static final TypeMapper typeMapper = TypeMapper.getInstance();
+
+	// TODO I am still not sure whether type-errors should be modeled as datatypes
+	// or as exceptions being thrown during evaluation.
+	// The advantage of using datatype is, that e.g. logical operators can consider
+	// them during evaluation.
+	public static final S_Constant TYPE_ERROR = new S_Constant(NodeValue.makeNode(Node.createLiteral("type-error", typeMapper.getSafeTypeByName("http://sparqlify.org/vocab/datatyps/TypeError"))));
 	
-	public S_Constant(TypeToken datatype, Object value) {
-		super(datatype);
+	private NodeValue value;
+	
+	public S_Constant(NodeValue value) {
+		super(TypeToken.alloc(value.asNode().getLiteralDatatypeURI()));
 		this.value = value;
 	}
+	
+	// For null values
+	public S_Constant(TypeToken typeName) {
+		super(typeName);
+	}
 
-	@SuppressWarnings("unchecked")
-	public <T> T getValue() {
-		return (T)value;
+	/**
+	 * For use in logical operators: value becomes a discriminator value
+	 * 
+	 * @param typeToken
+	 * @param value
+	 */
+	@Deprecated
+	public S_Constant(TypeToken typeName, String value) {
+		super(typeName);
+		this.value = NodeValue.makeString(value);
 	}
 	
-
-	@Override
-	public String toString() {
-		return "S_Constant [value=" + value + ", getDatatype()="
-				+ getDatatype() + "]";
+	
+	public NodeValue getValue()
+	{
+		return value;
 	}
-
+	
+	
 	@Override
 	public void asString(IndentedWriter writer) {
-		writer.print("" + value + " (" + getDatatype() + ")");
-		//writer.println("Concat");
-		//writeArgs(writer);
+		writer.print(value);
 	}
 
-	
-	public static S_Constant create(Object value, DatatypeSystem datatypeSystem) {
-		//Object value = ExprUtils.getJavaObject(nv);
-		//SqlDatatype datatype = datatypeSystem.getByClass(value.getClass());
-
-		TypeToken typeName = datatypeSystem.getTokenForClass(value.getClass());
-		//XClass datatype = datatypeSystem.getByName(typeName);
-		S_Constant result = new S_Constant(typeName, value);
-		
-		return result;
-	}
-	
-
-	
-
-
-	// FIXME Following methods do not check the datatype
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -82,4 +90,12 @@ public class S_Constant
 	}
 	
 	
+	
+	/*
+	@Override
+	public <T> T getValue() {
+		Object tmp = NodeValueUtils.getValue(nodeValue);
+		T tmp = (T)
+	}
+	*/
 }

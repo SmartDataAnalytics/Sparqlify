@@ -12,7 +12,7 @@ import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
  *
  */
 class CoercionSystemImpl
-	implements CoercionSystem
+	implements CoercionSystemOld
 {
 	
 	private Map<XClass, Map<XClass, XMethod>> sourceToTargetToDecl = new HashMap<XClass, Map<XClass, XMethod>>();

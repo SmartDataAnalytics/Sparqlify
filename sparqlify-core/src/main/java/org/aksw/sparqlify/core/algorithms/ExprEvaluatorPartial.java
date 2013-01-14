@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
-
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import com.hp.hpl.jena.sparql.expr.E_Conditional;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprNotComparableException;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
@@ -51,8 +48,6 @@ public class ExprEvaluatorPartial
 	private static final Logger logger = LoggerFactory.getLogger(ExprEvaluatorPartial.class);
 	
 	private FunctionRegistry registry;
-	
-	private FunctionRegistrySql sqlRegistry;
 	
 	/**
 	 *  The transformer is called AFTER all of a functions arguments have been evaluated.
@@ -215,6 +210,13 @@ public class ExprEvaluatorPartial
 			throw new RuntimeException("Unknown expression type encountered: " + expr);
 		}
 
+		return result;
+	}
+
+
+	@Override
+	public Expr transform(Expr expr) {
+		Expr result = eval(expr, null);
 		return result;
 	}
 

@@ -10,7 +10,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
@@ -59,9 +59,9 @@ public class SqlTranslatorImpl
 {	
 	private static final Logger logger = LoggerFactory.getLogger(SqlTranslatorImpl.class);
 
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 
-	public SqlTranslatorImpl(DatatypeSystem datatypeSystem) {
+	public SqlTranslatorImpl(TypeSystem datatypeSystem) {
 		this.datatypeSystem = datatypeSystem;
 	}
 	
@@ -222,15 +222,18 @@ public class SqlTranslatorImpl
 	
 	
 	public SqlExpr translate(NodeValue expr) {
-		NodeValue nv = expr.getConstant();
-		
-
-		Object value = ExprUtils.getJavaObject(nv);
-		XClass datatype = datatypeSystem.getByClass(value.getClass());
-		
-		SqlExpr result = new S_Constant(datatype.getToken(), value);
-
+		SqlExpr result = new S_Constant(expr);
 		return result;
+//		
+//		NodeValue nv = expr.getConstant();
+//		
+//
+//		Object value = ExprUtils.getJavaObject(nv);
+//		XClass datatype = datatypeSystem.getByClass(value.getClass());
+//		
+//		SqlExpr result = new S_Constant(datatype.getToken(), value);
+//
+//		return result;
 	}
 	
 	

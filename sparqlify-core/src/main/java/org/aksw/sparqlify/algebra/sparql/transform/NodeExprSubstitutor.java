@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.apache.commons.lang.NotImplementedException;

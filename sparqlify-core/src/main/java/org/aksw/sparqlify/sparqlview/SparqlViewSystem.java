@@ -252,6 +252,8 @@ public class SparqlViewSystem
 	public static Query rewrite(Query query, SparqlViewSystem system, Dialect dialect) {
 		Op rewrittenOp = system.getApplicableViews(query);		
 		Query result = MyOpAsQuery.asQuery(rewrittenOp, dialect);
+		
+		System.out.println("Rewritten query: " + result);
 		return result;
 	}
 	
@@ -527,6 +529,7 @@ public class SparqlViewSystem
 		Op op = Algebra.compile(query);
 		op = Algebra.toQuadForm(op);		
 		
+		
 		op = ReplaceConstants.replace(op);
 		//op = FilterPlacementOptimizer.optimize(op);
 		
@@ -537,6 +540,7 @@ public class SparqlViewSystem
 			op = new OpProject(op, vars);
 		}
 		
+		System.out.println("Quad form:" + op);
 		
 		
 		//Set<OpSparqlViewPattern> result = getApplicableViews(op);
@@ -731,6 +735,11 @@ public class SparqlViewSystem
 			constraints.add(columnConstraints);
 		}
 		
+		if(constraints.isEmpty()) {
+			// Add a dummy element to look up all views in the subsequent loop
+			constraints.add(new HashMap<String, Constraint>());			
+		}
+
 
 		Set<ViewQuad> viewQuads = new HashSet<ViewQuad>();
 		for(Map<String, Constraint> columnConstraints : constraints) {

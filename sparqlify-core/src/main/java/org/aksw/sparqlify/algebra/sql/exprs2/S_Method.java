@@ -10,6 +10,8 @@ import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.openjena.atlas.io.IndentedWriter;
 
+import com.hp.hpl.jena.graph.Node;
+
 
 public class S_Method
 	extends SqlExprN
@@ -57,9 +59,10 @@ public class S_Method
 				
 				Object value = invocable.invoke(as);
 				
-				result = new S_Constant(candidate.getMethod().getSignature().getReturnType().getToken(), value);
+				throw new RuntimeException("Dammit");
+				//result = new S_Constant(candidate.getMethod().getSignature().getReturnType().getToken(), value);
 				
-				return result;
+				//return result;
 			}
 		}
 		

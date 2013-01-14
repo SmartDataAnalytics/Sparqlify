@@ -24,6 +24,24 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 public class ExprUtils {
+	public static boolean isConstantsOnly(Iterable<Expr> exprs) {
+		for(Expr expr : exprs) {
+			if(!expr.isConstant()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static boolean isConstantArgsOnly(ExprFunction fn) {
+		
+		boolean result = isConstantsOnly(fn.getArgs());
+
+		return result;
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	public static Expr andifyBalanced(Expr ... exprs) {
 		return andifyBalanced(Arrays.asList(exprs));

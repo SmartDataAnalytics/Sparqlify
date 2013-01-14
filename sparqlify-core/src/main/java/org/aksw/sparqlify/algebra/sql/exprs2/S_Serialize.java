@@ -7,6 +7,8 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.openjena.atlas.io.IndentedWriter;
 
 /**
+ * TODO: Serialization expressions should not be part of the SqlExpr hierarchy! Instead, this should be a completely separate process.
+ * 
  * An expression whose purpose is to provide a means
  * of serializing its arguments.
  * 

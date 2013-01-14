@@ -70,7 +70,7 @@ public class XClassUtils {
         return 0;
     }
 	
-	public static TypeDistance[] getTypeDistance(XClass[] a, XClass[] b, CoercionSystem coercions) {
+	public static TypeDistance[] getTypeDistance(XClass[] a, XClass[] b, CoercionSystemOld coercions) {
         int n = Math.min(a.length, b.length);
 
         TypeDistance[] result = new TypeDistance[n];
@@ -91,7 +91,7 @@ public class XClassUtils {
 	}
 
 	
-	public static TypeDistance getTypeDistance(XClass source, XClass target, CoercionSystem coercions) {
+	public static TypeDistance getTypeDistance(XClass source, XClass target, CoercionSystemOld coercions) {
 		Integer depth = getDistance(source, target);
 		
 		TypeDistance result;
@@ -106,7 +106,7 @@ public class XClassUtils {
 	}
 	
 	
-	public static List<XClass> resolve(DatatypeSystem datatypeSystem, Collection<TypeToken> typeNames) {
+	public static List<XClass> resolve(TypeSystem datatypeSystem, Collection<TypeToken> typeNames) {
 		
 		List<XClass> result = new ArrayList<XClass>(typeNames.size());
 		for(TypeToken typeName : typeNames) {
@@ -128,7 +128,7 @@ public class XClassUtils {
 		return result == Integer.MAX_VALUE ? null : result;
 	}
 
-	public static TypeDistance findCoercion(XClass source, XClass target, CoercionSystem coercions) {
+	public static TypeDistance findCoercion(XClass source, XClass target, CoercionSystemOld coercions) {
 		
 		List<XClass> open = new ArrayList<XClass>();
 		List<XClass> next = null;

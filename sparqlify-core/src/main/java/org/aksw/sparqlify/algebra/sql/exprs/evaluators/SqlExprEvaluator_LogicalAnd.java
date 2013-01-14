@@ -1,10 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
-import java.util.Arrays;
-
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SqlExprOps;
 
 /**
@@ -21,8 +18,10 @@ public class SqlExprEvaluator_LogicalAnd
 	public SqlExpr eval(SqlExpr a, SqlExpr b) {
 		SqlExpr result = SqlExprOps.logicalAnd(a, b);
 		if(result == null) {
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("AND");
-			result = new S_Serialize(TypeToken.Boolean, "AND", Arrays.asList(a, b), serializer);
+			result = new S_LogicalAnd(a, b);
+			
+			//SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("AND");
+			//result = new S_Serialize(TypeToken.Boolean, "AND", Arrays.asList(a, b), serializer);
 		}
 
 		

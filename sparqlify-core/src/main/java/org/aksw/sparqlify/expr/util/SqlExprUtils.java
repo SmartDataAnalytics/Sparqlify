@@ -3,8 +3,9 @@ package org.aksw.sparqlify.expr.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 
 // TODO Duplicate name: There is transform.SqlExprUtils
 public class SqlExprUtils {
@@ -24,6 +25,24 @@ public class SqlExprUtils {
 				getColumnsMentioned(arg, list);
 			}
 		}
+	}
+
+	
+	public static boolean isConstantsOnly(Iterable<SqlExpr> exprs) {
+		for(SqlExpr expr : exprs) {
+			if(!expr.isConstant()) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static boolean isConstantArgsOnly(SqlExprFunction fn) {
+		
+		boolean result = isConstantsOnly(fn.getArgs());
+
+		return result;
 	}
 
 }

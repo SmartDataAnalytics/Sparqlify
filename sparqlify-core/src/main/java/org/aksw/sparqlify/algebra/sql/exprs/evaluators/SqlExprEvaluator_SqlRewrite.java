@@ -7,7 +7,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Method;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +25,11 @@ public class SqlExprEvaluator_SqlRewrite
 {
 	private static final Logger logger = LoggerFactory.getLogger(SqlExprEvaluator_SqlRewrite.class);
 	
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 
 	private String functionId;
 	
-	public SqlExprEvaluator_SqlRewrite(DatatypeSystem datatypeSystem, String functionId) {
+	public SqlExprEvaluator_SqlRewrite(TypeSystem datatypeSystem, String functionId) {
 		this.datatypeSystem = datatypeSystem;
 		this.functionId = functionId;
 	}

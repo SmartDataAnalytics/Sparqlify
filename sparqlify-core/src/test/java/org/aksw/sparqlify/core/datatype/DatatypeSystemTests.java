@@ -222,14 +222,14 @@ public class DatatypeSystemTests {
 		}
 
 		
-		S_Constant a = S_Constant.create("http://ex.org/", ds);
-		System.out.println(a);
-
-		S_Constant b = S_Constant.create(1, ds);
-		System.out.println(b);
-
-		S_Constant d = S_Constant.create(3.14, ds);
-		System.out.println(d);
+//		S_Constant a = S_Constant.create("http://ex.org/", ds);
+//		System.out.println(a);
+//
+//		S_Constant b = S_Constant.create(1, ds);
+//		System.out.println(b);
+//
+//		S_Constant d = S_Constant.create(3.14, ds);
+//		System.out.println(d);
 
 		
 

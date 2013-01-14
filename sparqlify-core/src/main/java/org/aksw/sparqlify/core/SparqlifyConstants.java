@@ -51,6 +51,7 @@ public class SparqlifyConstants {
 	public static final String rdfTermLabel = "http://aksw.org/sparqlify/rdfTerm";
 	public static final String plainLiteralLabel = "http://aksw.org/sparqlify/plainLiteral";
 	public static final String typedLiteralLabel = "http://aksw.org/sparqlify/typedLiteral";
+		
 	
 	public static final String urlDecode = "http://aksw.org/sparqlify/urlDecode";
 	public static final String urlEncode = "http://aksw.org/sparqlify/urlEncode";

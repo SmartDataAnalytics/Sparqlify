@@ -11,7 +11,7 @@ import org.openjena.atlas.io.IndentedWriter;
 public abstract class SqlExprBase
 	implements SqlExpr
 {	
-	private TypeToken datatype;
+	protected final TypeToken datatype;
 
 	public SqlExprBase(TypeToken datatype) {
 		this.datatype = datatype;

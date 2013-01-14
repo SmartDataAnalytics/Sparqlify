@@ -105,7 +105,7 @@ public class XMethodImpl implements XMethod
 	}
 
 	
-	public static List<XClass> resolveList(DatatypeSystem datatypeSystem, Class<?>[] classes) {
+	public static List<XClass> resolveList(TypeSystem datatypeSystem, Class<?>[] classes) {
 		List<XClass> result = new ArrayList<XClass>(classes.length);
 		
 		for(Class<?> clazz : classes) {
@@ -117,7 +117,7 @@ public class XMethodImpl implements XMethod
 		return result;
 	}
 	
-	public static XClass resolveClass(Class<?> clazz, DatatypeSystem datatypeSystem) {
+	public static XClass resolveClass(Class<?> clazz, TypeSystem datatypeSystem) {
 		XClass result = datatypeSystem.getByClass(clazz);
 		if(result == null) {
 			throw new RuntimeException("No appropriate XClass for " + clazz);
@@ -127,7 +127,7 @@ public class XMethodImpl implements XMethod
 	}
 
 
-	public static XClass resolveClass(TypeToken typeName, DatatypeSystem datatypeSystem) {
+	public static XClass resolveClass(TypeToken typeName, TypeSystem datatypeSystem) {
 		XClass result = datatypeSystem.getByName(typeName);
 		if(result == null) {
 			throw new RuntimeException("No appropriate XClass for " + typeName);
@@ -136,7 +136,7 @@ public class XMethodImpl implements XMethod
 		return result;
 	}
 
-	public static List<XClass> resolveList(DatatypeSystem datatypeSystem, List<TypeToken> typeNames) {
+	public static List<XClass> resolveList(TypeSystem datatypeSystem, List<TypeToken> typeNames) {
 		List<XClass> result = new ArrayList<XClass>(typeNames.size());
 		
 		for(TypeToken typeName : typeNames) {
@@ -149,7 +149,7 @@ public class XMethodImpl implements XMethod
 	}
 
 	
-	public static XMethod create(DatatypeSystem datatypeSystem, String name, MethodSignature<TypeToken> signature) {
+	public static XMethod create(TypeSystem datatypeSystem, String name, MethodSignature<TypeToken> signature) {
 		XClass returnType = resolveClass(signature.getReturnType(), datatypeSystem);
 		List<XClass> argTypes = resolveList(datatypeSystem, signature.getParameterTypes());
 		
@@ -169,7 +169,7 @@ public class XMethodImpl implements XMethod
 
 
 	
-	public static XMethod createFromMethod(String name, DatatypeSystem datatypeSystem, Object object, Method method) {
+	public static XMethod createFromMethod(String name, TypeSystem datatypeSystem, Object object, Method method) {
 		
 		XClass returnType = resolveClass(method.getReturnType(), datatypeSystem);
 		List<XClass> argTypes = resolveList(datatypeSystem, method.getParameterTypes());

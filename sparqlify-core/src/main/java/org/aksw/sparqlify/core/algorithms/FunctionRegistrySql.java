@@ -11,7 +11,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
 import org.aksw.sparqlify.config.syntax.ParamType;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
@@ -25,12 +25,12 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
 public class FunctionRegistrySql {
 	private static final Logger logger = LoggerFactory.getLogger(FunctionRegistrySql.class);
 	
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 	
 	private Multimap<String, RegisteredFunction> registry = HashMultimap.create();
 	
 	
-	public FunctionRegistrySql(DatatypeSystem datatypeSystem) {
+	public FunctionRegistrySql(TypeSystem datatypeSystem) {
 		this.datatypeSystem = datatypeSystem;
 	}
 

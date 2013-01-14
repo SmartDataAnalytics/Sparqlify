@@ -34,7 +34,7 @@ import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
 import org.aksw.sparqlify.core.datatypes.XMethod;
@@ -95,7 +95,7 @@ public class SparqlifyUtils {
 	 * 
 	 * @param ds
 	 */
-	public static void initDatatypeSystem(DatatypeSystem ds) {
+	public static void initDatatypeSystem(TypeSystem ds) {
 		try {
 			_initDatatypeSystem(ds);
 		} catch (Exception e) {
@@ -103,7 +103,7 @@ public class SparqlifyUtils {
 		}
 	}
 
-	public static void _initDatatypeSystem(DatatypeSystem ds) throws SecurityException, NoSuchMethodException
+	public static void _initDatatypeSystem(TypeSystem ds) throws SecurityException, NoSuchMethodException
 	{
 		{
 			Method m = DefaultCoercions.class.getMethod("toDouble", Integer.class);
@@ -160,12 +160,12 @@ public class SparqlifyUtils {
 		*/
 		
 		
-		{
-			String[] compareSymbols = new String[]{"<=", "<", "=", ">", ">="};
-			for(String opSymbol : compareSymbols) {
-				ds.createSparqlFunction(opSymbol, new SqlExprEvaluator_Compare(opSymbol, ds));
-			}
-		}
+//		{
+//			String[] compareSymbols = new String[]{"<=", "<", "=", ">", ">="};
+//			for(String opSymbol : compareSymbols) {
+//				ds.createSparqlFunction(opSymbol, new SqlExprEvaluator_Compare(opSymbol, ds));
+//			}
+//		}
 		
 //		{
 //			//MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.String, TypeToken.String));
@@ -260,7 +260,7 @@ public class SparqlifyUtils {
 
 
 	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias) throws IOException {
-		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		
 		ViewDefinitionFactory result = createViewDefinitionFactory(conn, datatypeSystem, typeAlias);
 		
@@ -268,7 +268,7 @@ public class SparqlifyUtils {
 	}
 	
 	
-	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, DatatypeSystem datatypeSystem, Map<String, String> typeAlias) throws IOException {
+	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, TypeSystem datatypeSystem, Map<String, String> typeAlias) throws IOException {
 	
 		ConfigParser parser = new ConfigParser();
 
@@ -290,7 +290,7 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, DatatypeSystem datatypeSystem) throws SQLException, IOException {		
+	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, TypeSystem datatypeSystem) throws SQLException, IOException {		
 		
 		//DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
 		//ExprTransformer exprTransformer = new ExprTransformerMap();

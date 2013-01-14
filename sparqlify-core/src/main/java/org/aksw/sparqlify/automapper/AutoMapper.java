@@ -18,14 +18,15 @@ import org.aksw.commons.util.jdbc.ForeignKey;
 import org.aksw.commons.util.jdbc.JdbcUtils;
 import org.aksw.commons.util.jdbc.PrimaryKey;
 import org.aksw.commons.util.jdbc.Relation;
+import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
-import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -211,6 +212,7 @@ public class AutoMapper {
 		datatypeMap.put("timestamp", DatatypeSystemDefault._DATE_TIME);
 		
 		
+		Schema schema = Schema.create(getConnection());
 		
 		
 		
@@ -220,10 +222,10 @@ public class AutoMapper {
 		
 		Map<String, Relation> relations = JdbcUtils.fetchColumns(getConnection());
 		
-		Multimap<String, ForeignKey> foreignKeys = JdbcUtils.fetchForeignKeys(getConnection());
+		Multimap<String, ForeignKey> foreignKeys = schema.getForeignKeys();
 		System.out.println(foreignKeys);
 
-		Map<String, PrimaryKey> primaryKeys = JdbcUtils.fetchPrimaryKeys(getConnection());
+		Map<String, PrimaryKey> primaryKeys = schema.getPrimaryKeys();
 		System.out.println(primaryKeys);
 		
 		

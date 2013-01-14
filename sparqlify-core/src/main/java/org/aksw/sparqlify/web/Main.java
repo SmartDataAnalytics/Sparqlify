@@ -18,7 +18,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
@@ -197,7 +197,7 @@ public class Main {
 		
 		Connection conn = dataSource.getConnection();
 
-		DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");

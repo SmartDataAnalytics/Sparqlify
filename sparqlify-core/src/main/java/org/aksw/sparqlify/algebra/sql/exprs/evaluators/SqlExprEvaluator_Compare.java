@@ -1,17 +1,16 @@
 package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import org.aksw.commons.util.Pair;
+import org.aksw.commons.util.factory.Factory2;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.cast.TypeSystem;
+
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 
@@ -25,16 +24,14 @@ import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
 public class SqlExprEvaluator_Compare
 	extends SqlExprEvaluator2
 {
-	private DatatypeSystem datatypeSystem;
-	private String symbol;
+	private TypeSystem datatypeSystem;
+	private Factory2<SqlExpr> exprFactory;
 
-	private SqlFunctionSerializer serializer;
+	//private SqlFunctionSerializer serializer;
 		
-	public SqlExprEvaluator_Compare(String symbol, DatatypeSystem datatypeSystem) {
+	public SqlExprEvaluator_Compare(TypeSystem datatypeSystem, Factory2<SqlExpr> exprFactory) {
 		this.datatypeSystem = datatypeSystem;
-		this.symbol = symbol;
-
-		this.serializer = new SqlFunctionSerializerOp2(symbol);
+		this.exprFactory = exprFactory;
 	}
 	
 	@Override
@@ -56,7 +53,9 @@ public class SqlExprEvaluator_Compare
 			if(getCommonDataype(pair.getKey(), pair.getValue(), datatypeSystem) == null) {
 				return S_Constant.TYPE_ERROR;
 			} else {
-				SqlExpr result = new S_Serialize(TypeToken.Boolean, symbol, Arrays.asList(pair.getKey(), pair.getValue()), serializer);
+				SqlExpr result = exprFactory.create(pair.getKey(), pair.getValue());
+				
+				//SqlExpr result = new S_Serialize(TypeToken.Boolean, symbol, Arrays.asList(pair.getKey(), pair.getValue()), serializer);
 				//return new S_Equals(pair.getKey(), pair.getValue());
 				return result;
 			}
@@ -64,7 +63,8 @@ public class SqlExprEvaluator_Compare
 		}
 		
 		
-		SqlExpr result = new S_Serialize(TypeToken.Boolean, symbol, Arrays.asList(a, b), serializer);
+		SqlExpr result = exprFactory.create(a, b);
+		//SqlExpr result = new S_Serialize(TypeToken.Boolean, symbol, Arrays.asList(a, b), serializer);
 		return result;
 
 		
@@ -91,7 +91,7 @@ public class SqlExprEvaluator_Compare
 	
 	
 	
-	public static TypeToken getCommonDataype(SqlExpr left, SqlExpr right, DatatypeSystem system) {
+	public static TypeToken getCommonDataype(SqlExpr left, SqlExpr right, TypeSystem system) {
 		Set<TypeToken> commons = system.supremumDatatypes(left.getDatatype(), right.getDatatype());
 
 		// TODO We should probably return type error here
@@ -123,7 +123,7 @@ public class SqlExprEvaluator_Compare
 //		return value;
 //	}
 	
-	public static Pair<? extends SqlExpr, ? extends SqlExpr> resolveCast(SqlExpr left, SqlExpr right, DatatypeSystem system) {
+	public static Pair<? extends SqlExpr, ? extends SqlExpr> resolveCast(SqlExpr left, SqlExpr right, TypeSystem system) {
 		Pair<S_ColumnRef, S_Constant> pair = tryMatch(left, right);
 		if(pair == null) {
 			return Pair.create(left, right);
@@ -140,17 +140,17 @@ public class SqlExprEvaluator_Compare
 		}
 		
 		
-		Object value = pair.getValue().getValue();
+		NodeValue value = pair.getValue().getValue();
 
 		TypeToken targetType = pair.getKey().getDatatype();
-		Object castedValue = system.cast(value, targetType);
+		NodeValue castedValue = system.cast(value, targetType);
 		if(castedValue == null) {
 			return null;
 		}
 		
-		
-		return Pair.create(pair.getKey(), new S_Constant(targetType, castedValue));
-		
+		S_Constant newValue = new S_Constant(castedValue);
+		Pair<S_ColumnRef, S_Constant> result = Pair.create(pair.getKey(), newValue);
+		return result;
 	}
 	
 	public static Pair<S_ColumnRef, S_Constant> tryMatch(SqlExpr left, SqlExpr right) {

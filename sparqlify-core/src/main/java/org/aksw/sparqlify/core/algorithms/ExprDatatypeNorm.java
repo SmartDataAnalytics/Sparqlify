@@ -6,7 +6,7 @@ import java.util.Map;
 
 
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystem;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.graph.Node;
@@ -27,9 +27,9 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class ExprDatatypeNorm {
 
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 
-	public ExprDatatypeNorm(DatatypeSystem datatypeSystem) {
+	public ExprDatatypeNorm(TypeSystem datatypeSystem) {
 		this.datatypeSystem = datatypeSystem;
 	}
 	

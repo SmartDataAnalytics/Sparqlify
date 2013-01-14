@@ -10,7 +10,7 @@ public class XClassImpl
 	implements XClass
 {
 	//private String name;
-	private DatatypeSystem datatypeSystem;
+	private TypeSystem datatypeSystem;
 	private TypeToken typeToken;
 	
 	
@@ -25,7 +25,7 @@ public class XClassImpl
 	// TODO This attribute is currently not considered in equals/hashCode
 	private Class<?> correspondingClass;
 
-	public XClassImpl(DatatypeSystem datatypeSytem, TypeToken typeToken, Node xsd, Class<?> correspondingClass)
+	public XClassImpl(TypeSystem datatypeSytem, TypeToken typeToken, Node xsd, Class<?> correspondingClass)
 	{
 		this.datatypeSystem = datatypeSytem;
 		this.typeToken = typeToken;
@@ -55,7 +55,7 @@ public class XClassImpl
 		return result;
 	}
 	
-	public DatatypeSystem getDatatypeSystem() {
+	public TypeSystem getDatatypeSystem() {
 		return datatypeSystem;
 	}
 	
