@@ -1,17 +1,9 @@
 package org.aksw.sparqlify.web;
 
-import java.awt.geom.Point2D;
-import java.net.URLEncoder;
-import java.util.List;
-
 import org.aksw.commons.sparql.api.compare.QueryExecutionFactoryCompare;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreamingFactory;
 import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
-import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
-import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
-import org.aksw.sparqlify.core.QueryExecutionFactorySparqlifyDs;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;

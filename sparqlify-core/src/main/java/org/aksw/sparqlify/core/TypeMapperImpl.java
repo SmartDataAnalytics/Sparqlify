@@ -2,7 +2,7 @@ package org.aksw.sparqlify.core;
 
 
 public class TypeMapperImpl
-	implements TypeMapper
+	implements SqlTypeMapper
 {
 	@Override
 	public SqlDatatype mapType(String typeName) {

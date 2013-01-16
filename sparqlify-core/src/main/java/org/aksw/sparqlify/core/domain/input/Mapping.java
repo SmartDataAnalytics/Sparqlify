@@ -1,11 +1,6 @@
 package org.aksw.sparqlify.core.domain.input;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-
-import com.hp.hpl.jena.sparql.core.Var;
 
 
 /**

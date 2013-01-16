@@ -41,7 +41,7 @@ public class NodeValueUtils {
 		} else if(expr instanceof NodeValueGeom){
 			return ((NodeValueGeom) expr).getGeometry();
 		} else {
-			throw new RuntimeException("Unknow datatype of contsant");
+			throw new RuntimeException("Unknow datatype of constant: " + expr);
 		}
 	}
 	

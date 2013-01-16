@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.restrictions;
 
+import org.aksw.sparqlify.restriction.RdfTermType;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-import org.aksw.sparqlify.restriction.RdfTermType;
 import org.aksw.sparqlify.restriction.experiment.RestrictionManager2;
 import org.junit.Assert;
 import org.junit.Test;

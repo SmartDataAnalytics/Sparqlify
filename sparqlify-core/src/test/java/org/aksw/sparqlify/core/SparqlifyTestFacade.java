@@ -8,12 +8,12 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
-import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 

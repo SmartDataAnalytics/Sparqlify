@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewQuad;
@@ -16,7 +17,6 @@ import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;

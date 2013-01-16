@@ -15,7 +15,6 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.MultiMaps;
 import org.aksw.commons.collections.iterators.StackCartesianProductIterator;

@@ -7,7 +7,6 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 
 public class SparqlViewMain {

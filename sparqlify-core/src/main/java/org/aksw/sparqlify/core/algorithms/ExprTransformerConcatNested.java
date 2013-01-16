@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.aksw.sparqlify.trash.ExprCopy;
 
-
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;

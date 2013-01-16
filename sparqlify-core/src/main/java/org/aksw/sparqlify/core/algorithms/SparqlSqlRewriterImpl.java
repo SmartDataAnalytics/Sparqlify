@@ -1,17 +1,10 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
-import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.core.domain.input.Mapping;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
@@ -20,9 +13,6 @@ import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import antlr.StringUtils;
-
-import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.core.Var;

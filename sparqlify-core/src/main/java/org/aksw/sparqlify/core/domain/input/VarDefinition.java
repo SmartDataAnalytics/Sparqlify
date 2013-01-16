@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
-import org.openjena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

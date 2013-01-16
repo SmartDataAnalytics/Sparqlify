@@ -4,7 +4,6 @@ package cornercases;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
-import org.aksw.sparqlify.core.algorithms.VarBinding;
 import org.junit.Test;
 
 import com.hp.hpl.jena.sparql.expr.Expr;

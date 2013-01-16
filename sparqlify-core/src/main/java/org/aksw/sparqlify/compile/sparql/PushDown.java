@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
@@ -39,8 +38,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
-import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.Vocab;
 import org.aksw.sparqlify.trash.ExprArgs;

@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.core.ColRelGenerator;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.SqlNodeBinding;

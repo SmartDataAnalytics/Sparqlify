@@ -155,13 +155,30 @@ public class SqlTranslationUtils {
 	 */
 	public static Expr getLexicalValueOrExpr(Expr expr) {
 		
-		throw new RuntimeException("Not implemented yet");
+		Expr result;
+		
+		if(expr.isFunction()) {
+		
+			E_RdfTerm rdfTerm = expandRdfTerm(expr.getFunction());
+			if(rdfTerm != null) {
+				result = rdfTerm.getLexicalValue();
+			} else {
+				result = expr;
+			}
+
+		} else {
+			
+			result = expr;
+			
+		}
+		
+		//throw new RuntimeException("Not implemented yet");
 		/*
 		E_RdfTerm term = asRdfTerm(expr);
 		
 		Expr result = (term != null) ? term.getLexicalValue() : expr;
-		return result;
 		*/
+		return result;
 	}
 	
 	public static Expr getDatatypeOrExpr(Expr expr) {
@@ -958,6 +975,17 @@ public class SqlTranslationUtils {
 		transMap.put(">=", new ExprTransformerRdfTermComparator(evaluator));
 		transMap.put("<", new ExprTransformerRdfTermComparator(evaluator));
 		transMap.put("<=", new ExprTransformerRdfTermComparator(evaluator));
+		transMap.put("+", new ExprTransformerPassValue());
+		transMap.put("-", new ExprTransformerPassValue());
+		transMap.put("*", new ExprTransformerPassValue());
+		transMap.put("/", new ExprTransformerPassValue());
+		
+		
+		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerPassValue());
+		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerPassValue());
+		transMap.put(SparqlifyConstants.plainLiteralLabel, new ExprTransformerPassValue());
+		transMap.put(SparqlifyConstants.typedLiteralLabel, new ExprTransformerPassValue());
+		
 
 		
 		transMap.put("&&", new ExprTransformerLogicalAnd());

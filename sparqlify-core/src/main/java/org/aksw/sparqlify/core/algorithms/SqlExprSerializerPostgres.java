@@ -23,9 +23,14 @@ public class SqlExprSerializerPostgres
 	}
 	
 	
-	
-	
 	public String serializeConstant(Object value, TypeToken datatype) {
+		String result = serializeConstant(value, datatype);
+		return result;
+	}	
+	
+	
+	public static String serializeConstantPostgres(DatatypeToString datatypeSerializer, Object value, TypeToken datatype) {
+		
 		
 		if(datatype.equals(TypeToken.TypeError)) {
 			return "FALSE";

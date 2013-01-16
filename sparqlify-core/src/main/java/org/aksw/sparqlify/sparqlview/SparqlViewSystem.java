@@ -13,7 +13,6 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
@@ -37,9 +36,9 @@ import org.aksw.sparqlify.database.TableBuilder;
 import org.aksw.sparqlify.database.TreeIndex;
 import org.aksw.sparqlify.database.VariableConstraint;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
+import org.aksw.sparqlify.restriction.RdfTermType;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-import org.aksw.sparqlify.restriction.RdfTermType;
 import org.apache.commons.collections15.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

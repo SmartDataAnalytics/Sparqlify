@@ -6,10 +6,10 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.aksw.sparqlify.validation.LoggerCount;

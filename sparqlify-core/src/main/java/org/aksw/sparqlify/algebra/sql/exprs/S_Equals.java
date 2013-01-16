@@ -3,8 +3,8 @@ package org.aksw.sparqlify.algebra.sql.exprs;
 import java.util.Set;
 
 import org.aksw.commons.util.Pair;
-import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 
 public class S_Equals

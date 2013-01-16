@@ -10,8 +10,6 @@ import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.openjena.atlas.io.IndentedWriter;
 
-import com.hp.hpl.jena.graph.Node;
-
 
 public class S_Method
 	extends SqlExprN

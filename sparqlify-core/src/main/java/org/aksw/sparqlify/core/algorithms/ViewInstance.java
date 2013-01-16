@@ -4,16 +4,11 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
-import sparql.TwoWayBinding;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 import com.hp.hpl.jena.sparql.core.Var;
 
 

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.core.SqlDatatype;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sparql.core.Var;

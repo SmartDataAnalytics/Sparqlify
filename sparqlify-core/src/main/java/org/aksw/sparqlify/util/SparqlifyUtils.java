@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -10,9 +9,9 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
@@ -34,9 +33,9 @@ import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
-import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
 import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
+import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.aksw.sparqlify.core.datatypes.XMethodImpl;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;

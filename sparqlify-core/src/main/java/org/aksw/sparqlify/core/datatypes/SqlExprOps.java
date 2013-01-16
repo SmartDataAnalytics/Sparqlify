@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.datatypes;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 

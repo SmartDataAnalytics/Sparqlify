@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core;
 
+import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
@@ -56,6 +56,7 @@ public class SparqlifyConstants {
 	public static final String urlDecode = "http://aksw.org/sparqlify/urlDecode";
 	public static final String urlEncode = "http://aksw.org/sparqlify/urlEncode";
 	
+	public static final String numericTypeLabel = "http://aksw.org/sparqlify/numeric";
 
-    public static final NodeValue nvTypeError = NodeValue.makeNode(Node.createAnon(new AnonId("node value type error"))) ;
+    public static final NodeValue nvTypeError = NodeValue.makeNode(Node.createLiteral("type-error", TypeMapper.getInstance().getSafeTypeByName("http://sparqlify.org/vocab/datatyps/TypeError"))); //NodeValue.makeNode(Node.createAnon(new AnonId("node value type error"))) ;
 }

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
-import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
+import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 
 /**

@@ -12,7 +12,6 @@ import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
 import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
 import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.datatypes.TypeSystem;
-import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;

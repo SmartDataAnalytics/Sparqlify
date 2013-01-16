@@ -11,7 +11,6 @@ import org.aksw.commons.collections.multimaps.BiHashMultimap;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.jena.util.QuadUtils;
 
-import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;

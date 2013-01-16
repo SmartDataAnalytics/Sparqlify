@@ -2,7 +2,6 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 
 import java.util.List;
 
-
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;

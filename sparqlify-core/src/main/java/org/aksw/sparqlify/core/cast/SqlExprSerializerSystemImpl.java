@@ -10,7 +10,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
-import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
@@ -20,6 +20,10 @@ public class SqlExprSerializerSystemImpl
 	private Map<String, SqlFunctionSerializer> nameToSerializer = new HashMap<String, SqlFunctionSerializer>();
 
 	private SqlLiteralMapper sqlLiteralMapper;
+	
+	public SqlExprSerializerSystemImpl(SqlLiteralMapper sqlLiteralMapper) {
+		this.sqlLiteralMapper = sqlLiteralMapper;
+	}
 	
 	@Override
 	public void addSerializer(String functionName, SqlFunctionSerializer serializer) {

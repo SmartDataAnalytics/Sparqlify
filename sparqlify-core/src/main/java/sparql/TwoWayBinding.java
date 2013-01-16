@@ -1,21 +1,15 @@
 package sparql;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.MapUtils;
-import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.collections.multimaps.ISetMultimap;
 import org.aksw.commons.jena.util.QuadUtils;
-import org.apache.commons.lang.NotImplementedException;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Quad;

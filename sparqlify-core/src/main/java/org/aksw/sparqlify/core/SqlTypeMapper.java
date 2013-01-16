@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core;
 
 
-public interface TypeMapper {
+public interface SqlTypeMapper {
 	SqlDatatype mapType(String typeName);
 }

@@ -1,7 +1,5 @@
 package org.aksw.sparqlify.restriction;
 
-import org.aksw.sparqlify.config.lang.PrefixSet;
-
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;

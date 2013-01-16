@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.sparqlify.core.TypeToken;

@@ -17,9 +17,9 @@ import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.IndirectEquiMap;
 import org.aksw.sparqlify.database.NestedNormalForm;
+import org.aksw.sparqlify.restriction.RdfTermType;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManager;
-import org.aksw.sparqlify.restriction.RdfTermType;
 import org.apache.commons.lang.NotImplementedException;
 
 import sparql.CnfUtils;

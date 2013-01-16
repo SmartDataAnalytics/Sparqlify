@@ -4,19 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
-import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -25,7 +21,6 @@ import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
-import org.aksw.sparqlify.util.MapReader;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
@@ -36,9 +31,6 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 

@@ -12,13 +12,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-
 import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.trash.RdfViewDatabase;
 import org.aksw.sparqlify.views.transform.EmptyRewriteException;

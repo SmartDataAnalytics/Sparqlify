@@ -97,8 +97,6 @@ public class ExprEvaluatorPartial
 				newExpr = new E_Conditional(a, b, c);
 			}
 		} else {
-	
-			
 			List<Expr> evaledArgs = new ArrayList<Expr>();
 			
 			for(Expr arg : fn.getArgs()) {				
@@ -110,10 +108,10 @@ public class ExprEvaluatorPartial
 	
 				
 				Expr evaledArg = eval(arg, binding);
-	
 				
-				
-				
+				if(evaledArg == null) {
+					throw new RuntimeException("Null must not happen here");
+				}
 				
 				if(evaledArg.equals(SparqlifyConstants.nvTypeError)) {
 					return SparqlifyConstants.nvTypeError;

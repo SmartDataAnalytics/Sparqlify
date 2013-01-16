@@ -15,7 +15,7 @@ public class SparqlFunctionImpl
 	private String name;
 	private SqlExprEvaluator evaluator;
 	private ExprSubstitutorSql substitutor;
-	private MethodSignature<String> signature;
+	private MethodSignature<TypeToken> signature;
 	
 	public SparqlFunctionImpl(String name, SqlExprEvaluator evaluator) {
 		this(name, evaluator, null);
@@ -29,7 +29,7 @@ public class SparqlFunctionImpl
 		this(name, null, evaluator, substitutor);
 	}
 
-	public SparqlFunctionImpl(String name, MethodSignature<String> signature, SqlExprEvaluator evaluator, ExprSubstitutorSql substitutor) {
+	public SparqlFunctionImpl(String name, MethodSignature<TypeToken> signature, SqlExprEvaluator evaluator, ExprSubstitutorSql substitutor) {
 		this.name = name;
 		this.signature = signature;
 		this.evaluator = evaluator;

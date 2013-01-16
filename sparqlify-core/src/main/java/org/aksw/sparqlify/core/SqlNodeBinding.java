@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
@@ -32,8 +31,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlGroup;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlMyRestrict;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeUtil;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlProjection;

@@ -1,10 +1,10 @@
 package org.aksw.sparqlify.algebra.sql.exprs2;
 
+import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
@@ -26,7 +26,7 @@ public class S_Constant
 	// or as exceptions being thrown during evaluation.
 	// The advantage of using datatype is, that e.g. logical operators can consider
 	// them during evaluation.
-	public static final S_Constant TYPE_ERROR = new S_Constant(NodeValue.makeNode(Node.createLiteral("type-error", typeMapper.getSafeTypeByName("http://sparqlify.org/vocab/datatyps/TypeError"))));
+	public static final S_Constant TYPE_ERROR = new S_Constant(SparqlifyConstants.nvTypeError);
 	
 	private NodeValue value;
 	

@@ -25,6 +25,8 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
@@ -63,7 +65,7 @@ public class DatatypeSystemCustom
 	/**
 	 * Sparql function URI to SQL Method
 	 */
-	//private Multimap<String, XMethod> sqlFunctions = HashMultimap.create();
+	private Multimap<String, XMethod> sqlFunctions = HashMultimap.create();
 	private Map<String, SparqlFunctionImpl> sparqlFunctions = new HashMap<String, SparqlFunctionImpl>();
 	
 	//public getSqlFunctions
@@ -100,9 +102,9 @@ public class DatatypeSystemCustom
 		ExprSubstitutorSql substitutor = (ExprSubstitutorSql)fn.getSubstitutor();
 		//substitutor.
 		
-		throw new RuntimeException("Not implemented");
+		//throw new RuntimeException("Not implemented");
 		
-		//sqlFunctions.put(method.getName(), method);
+		sqlFunctions.put(method.getName(), method);
 	}
 	
 

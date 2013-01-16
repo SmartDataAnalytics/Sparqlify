@@ -1,9 +1,5 @@
 package org.aksw.sparqlify.algebra.sql.exprs2;
 
-import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.TypeSystem;
-import org.aksw.sparqlify.core.datatypes.XClass;
-import org.openjena.atlas.io.IndentedWriter;
 
 
 //public class S_Constant

@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.algebra.sql.exprs2;
 
-import com.hp.hpl.jena.sparql.expr.nodevalue.XSDFuncOp;
 
 public class SqlExprOps {
 

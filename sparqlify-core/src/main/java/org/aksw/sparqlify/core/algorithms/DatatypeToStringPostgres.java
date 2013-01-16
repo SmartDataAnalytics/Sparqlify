@@ -6,7 +6,7 @@ import java.util.Map;
 import org.aksw.commons.factory.Factory1;
 import org.aksw.sparqlify.core.TypeToken;
 
-class DatatypeToStringPostgres
+public class DatatypeToStringPostgres
 	implements DatatypeToString
 {
 	private Map<String, String> nameToPostgres = new HashMap<String, String>();

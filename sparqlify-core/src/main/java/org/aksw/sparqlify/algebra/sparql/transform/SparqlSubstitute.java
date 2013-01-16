@@ -2,7 +2,6 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 
 import java.util.Arrays;
 
-
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.core.SparqlifyConstants;

@@ -16,6 +16,9 @@ public interface TypeSystem
 	extends TypeResolver, SparqlFunctionProvider, DirectSuperTypeProvider<TypeToken>
 {
 	
+	CoercionSystem<TypeToken, NodeValueTransformer> getCoercionSystem();
+
+	
 	void registerSparqlFunction(SparqlFunction sparqlFunction);
 	
 	/**

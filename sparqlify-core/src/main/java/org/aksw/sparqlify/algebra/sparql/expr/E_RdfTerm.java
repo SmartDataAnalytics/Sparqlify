@@ -5,7 +5,6 @@ import java.util.List;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 
-
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
 import com.hp.hpl.jena.sparql.expr.ExprList;

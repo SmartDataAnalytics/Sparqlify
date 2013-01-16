@@ -42,6 +42,10 @@ public class TypeSystemImpl
 		this.typeMapper = TypeMapper.getInstance();
 	}
 
+	public CoercionSystem<TypeToken, NodeValueTransformer> getCoercionSystem() {
+		return coercionSystem;
+	}
+	
 	public IBiSetMultimap<TypeToken, TypeToken> getTypeHierarchy() {
 		return typeHierarchy;
 	}
@@ -103,6 +107,12 @@ public class TypeSystemImpl
 		
 		NodeValueTransformer transformer = coercionSystem.lookup(sourceTypeToken, targetTypeToken);
 
+		if(transformer == null) {
+			
+			throw new RuntimeException("No cast found for: " + value + " to " + targetTypeToken);
+			
+		}
+		
 		NodeValue result;
 		try {
 			result = transformer.transform(value);
