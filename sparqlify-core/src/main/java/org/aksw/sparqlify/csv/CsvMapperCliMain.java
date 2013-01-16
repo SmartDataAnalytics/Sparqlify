@@ -43,9 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
@@ -53,6 +52,52 @@ import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.syntax.Template;
 import com.hp.hpl.jena.sparql.util.ModelUtils;
+
+class NodeUtils {
+	public static String toNTriplesString(Node node) {
+		String result; 
+		if(node.isURI()) {
+			result = "<" + node.getURI() + ">";
+		}
+		else if(node.isLiteral()) {
+			String lex = node.getLiteralLexicalForm();
+			String lang = node.getLiteralLanguage();
+			String dt = node.getLiteralDatatypeURI();
+			
+			String encoded = lex.replace("\"", "\\\"");
+			
+			result =  "\"" + encoded + "\"";
+			
+			if(!StringUtils.isEmpty(dt)) {
+				result = result + "^^<" + dt+ ">";  
+			} else {
+				if(!lang.isEmpty()) {
+					result = result + "@" + lang;
+				}
+			}			
+		}
+		else if(node.isBlank()) {
+			result = node.getBlankNodeLabel();
+		} else {
+			throw new RuntimeException("Should not happen");
+		}
+		
+		return result;
+	}
+}
+
+class TripleUtils {
+	public static String toNTripleString(Triple triple) {
+		String s = NodeUtils.toNTriplesString(triple.getSubject());
+		String p = NodeUtils.toNTriplesString(triple.getPredicate());
+		String o = NodeUtils.toNTriplesString(triple.getObject());
+		
+		String result = s + " " + p + " " + o + " .\n";
+		
+		return result;
+	}
+}
+
 
 public class CsvMapperCliMain {
 
@@ -236,26 +281,22 @@ public class CsvMapperCliMain {
         
 
         Iterator<Triple> it = new ConstructIterator(template, rss);
+
         
-        Model result = ModelFactory.createDefaultModel();
-        
+
         while(it.hasNext()) {
         	Triple t = it.next();
         	//logger.trace("Triple: " + t);
-        	        	
-        	Statement stmt = ModelUtils.tripleToStatement(result, t);
 
-        	if(stmt == null) {
-        		// TODO: We should also print out the row of the result set where this happenend
+        	if(t.getSubject() == null || t.getPredicate() == null || t.getObject() == null) {
         		logger.warn("Omitting null statement, triple was: " + t);
-        		continue;
+        		continue;        		
         	}
-
         	
-        	result.add(stmt);
+        	String str = TripleUtils.toNTripleString(t);
+        	
+        	System.out.println(str);
         }
-        
-        result.write(System.out, "N-TRIPLES");
 		
         /*
 		System.exit(0);
