@@ -19,7 +19,8 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.datatypes.TypeSystem;
+import org.aksw.sparqlify.core.cast.NewWorldTest;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
@@ -37,7 +38,11 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
@@ -102,11 +107,11 @@ public class Main {
 		String passWord = commandLine.getOptionValue("p", "");
 
 		boolean isDump = commandLine.hasOption("D");
-		String query = commandLine.getOptionValue("Q", "");
+		String queryString = commandLine.getOptionValue("Q", "");
 		
-		boolean isQuery = !query.isEmpty();
+		boolean isQuery = !queryString.isEmpty();
 		if(!isQuery) {
-			query = null;
+			queryString = null;
 		}
 		
 		if(isDump && isQuery) {
@@ -114,7 +119,7 @@ public class Main {
 		}
 		
 		if(isDump) {
-			query = "Construct { ?s ?p ?o } { ?s ?p ?o }";
+			queryString = "Construct { ?s ?p ?o } { ?s ?p ?o }";
 		}
 		
 		
@@ -197,13 +202,14 @@ public class Main {
 		
 		Connection conn = dataSource.getConnection();
 
-		TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
 
-		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias);
+		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
 		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();
@@ -221,7 +227,7 @@ public class Main {
 
 		
 
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, datatypeSystem);
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, typeSystem);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
 
@@ -237,18 +243,23 @@ public class Main {
 		}
 		
 		
-		if(query != null) {
-//			{
-//			QueryExecution qe = qef.createQueryExecution("Select * { ?s ?p ?o }");
-//			ResultSet rs = qe.execSelect();
-//			System.out.println(ResultSetFormatter.asText(rs));
-//			}
+		if(queryString != null) {
+			Query query = QueryFactory.create(queryString); 
+			
+			if(query.isSelectType()) {
+				QueryExecution qe = qef.createQueryExecution(query);
+				ResultSet rs = qe.execSelect();
+				System.out.println(ResultSetFormatter.asText(rs));
+			}
+			else if(query.isConstructType()) {
+				QueryExecution qe = qef.createQueryExecution(queryString);
+				Model model = qe.execConstruct();
+				model.write(System.out, "N-TRIPLES");
+			}
+			else {
+				throw new RuntimeException("Query type not supported: " + queryString);
+			}
 
-//			{
-			QueryExecution qe = qef.createQueryExecution(query);
-			Model model = qe.execConstruct();
-			model.write(System.out, "N-TRIPLES");
-//			}
 			
 			return;
 		}

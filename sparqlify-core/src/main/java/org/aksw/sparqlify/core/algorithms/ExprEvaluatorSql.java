@@ -8,13 +8,11 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlValue;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.Invocable;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
-import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
-import org.aksw.sparqlify.expr.util.NodeValueUtils;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 // NOTE This file should become the replacement for the class PushDown
 
@@ -98,7 +96,8 @@ public class ExprEvaluatorSql {
 			
 			//if(true) {throw new RuntimeException("still to fix"); }
 			//SqlMethodCandidate<> method = null;
-			SqlMethodCandidate method = datatypeSystem.lookupMethod(fn.getName(), argTypes);
+			SqlMethodCandidate method = null;
+//			SqlMethodCandidate method = datatypeSystem.lookupMethod(fn.getName(), argTypes);
 			if(method == null) {
 				throw new RuntimeException("SPARQL Function " + fn.getName() + " not declared");
 			}
@@ -110,8 +109,10 @@ public class ExprEvaluatorSql {
 				for(int i = 0; i < transformedArgs.size(); ++i) {
 					SqlExpr tmp = transformedArgs.get(i);
 					SqlExprConstant c = tmp.asConstant();
-					NodeValue nodeValue = c.getValue();
-					Object value = NodeValueUtils.getValue(nodeValue);
+					//NodeValue nodeValue = c.getValue();
+					//Object value = NodeValueUtils.getValue(nodeValue);
+					SqlValue sqlValue = c.getValue();
+					Object value = sqlValue.getValue();
 					
 					argValues[i] = value; 
 				}

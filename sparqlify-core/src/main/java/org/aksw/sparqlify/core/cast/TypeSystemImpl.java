@@ -18,6 +18,7 @@ import org.aksw.sparqlify.core.datatypes.XMethod;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 
 public class TypeSystemImpl
@@ -25,6 +26,8 @@ public class TypeSystemImpl
 {
 	private TypeMapper typeMapper;
 
+	private SqlTypeMapper sqlTypeMapper;
+	
 	private Map<String, SparqlFunction> nameToSparqlFunction = new HashMap<String, SparqlFunction>();
 	private Map<String, SqlLiteralMapper> typeToLiteralMapper = new HashMap<String, SqlLiteralMapper>();
 
@@ -33,16 +36,17 @@ public class TypeSystemImpl
 	private IBiSetMultimap<TypeToken, TypeToken> typeHierarchy = new BiHashMultimap<TypeToken, TypeToken>();
 	private DirectSuperTypeProvider<TypeToken> typeHierarchyProvider = new TypeHierarchyProviderImpl(typeHierarchy);
 	
-	private CoercionSystem<TypeToken, NodeValueTransformer> coercionSystem = new CoercionSystemImpl2(this); 
-	
+	//private CoercionSystem<TypeToken, NodeValueTransformer> coercionSystem = new CoercionSystemImpl2(this); 
+	private CoercionSystem<TypeToken, SqlValueTransformer> coercionSystem = new CoercionSystemImpl3(this);
 
 	
 	public TypeSystemImpl() {
 		// By default use Jena's default TypeMapper
 		this.typeMapper = TypeMapper.getInstance();
+		this.sqlTypeMapper = new SqlTypeMapperImpl();
 	}
 
-	public CoercionSystem<TypeToken, NodeValueTransformer> getCoercionSystem() {
+	public CoercionSystem<TypeToken, SqlValueTransformer> getCoercionSystem() {
 		return coercionSystem;
 	}
 	
@@ -97,19 +101,82 @@ public class TypeSystemImpl
 		return result;
 	}
 
+	
 	@Override
-	public NodeValue cast(NodeValue value, TypeToken targetTypeToken)
+	public SqlValue convertSql(NodeValue value) //, TypeToken targetTypeToken)
 	{
+		if(!value.isLiteral()) {
+			throw new RuntimeException("Only literals allowed here, got: " + value);
+		}
 		
-		String sourceTypeName = value.asNode().getLiteralDatatypeURI();
-		TypeToken sourceTypeToken = TypeToken.alloc(sourceTypeName);
+		String datatypeUri = value.asNode().getLiteralDatatypeURI();
+		if(datatypeUri == null) {
+			datatypeUri = XSD.xstring.toString();
+		}
+
+		SqlDatatype sqlType = sqlTypeMapper.getSqlDatatype(datatypeUri);
+
+		if(sqlType == null) {
+			
+			throw new RuntimeException("No SQL conversion found for NodeValue: " + value + " ( " + datatypeUri + ")");
+			
+		}
+		
+		SqlValue result = sqlType.toSqlValue(value);
+		return result;
+	}
+
+	@Override
+	public SqlValue cast(SqlValue value, TypeToken targetTypeToken)
+	{
+		TypeToken sourceTypeToken = value.getTypeToken();
 		//TypeToken targetTypeToken = TypeToken.alloc(targetTypeName);
 		
-		NodeValueTransformer transformer = coercionSystem.lookup(sourceTypeToken, targetTypeToken);
+		SqlValueTransformer transformer = coercionSystem.lookup(sourceTypeToken, targetTypeToken);
 
 		if(transformer == null) {
 			
 			throw new RuntimeException("No cast found for: " + value + " to " + targetTypeToken);
+			
+		}
+		
+		//NodeValue result;
+		SqlValue result;
+		try {
+			result = transformer.transform(value);
+			//result = transformer.transform(value);
+		} catch (CastException e) {
+			result = null;
+		}
+
+		return result;
+	}
+
+//	@Override
+	public NodeValue cast(NodeValue value, TypeToken targetTypeToken)
+	{
+		if(!value.isLiteral()) {
+			throw new RuntimeException("Only literals allowed here, got: " + value);
+		}
+		
+		String sourceTypeName = value.asNode().getLiteralDatatypeURI();
+		TypeToken sourceTypeToken;
+		if(sourceTypeName == null) {
+			sourceTypeToken = TypeToken.String;
+		} else {
+			sourceTypeToken= TypeToken.alloc(sourceTypeName); 
+		}
+
+
+		
+		
+		//TypeToken targetTypeToken = TypeToken.alloc(targetTypeName);
+		NodeValueTransformer transformer = null;
+		//NodeValueTransformer transformer = coercionSystem.lookup(sourceTypeToken, targetTypeToken);
+
+		if(transformer == null) {
+			
+			throw new RuntimeException("No cast found for: " + value + " ( " + sourceTypeToken + ") to " + targetTypeToken);
 			
 		}
 		
@@ -124,8 +191,8 @@ public class TypeSystemImpl
 	}
 
 	//@Override
-	public NodeValueTransformer lookupCast(TypeToken sourceTypeName, TypeToken targetTypeName) {
-		NodeValueTransformer result = coercionSystem.lookup(sourceTypeName, targetTypeName);
+	public SqlValueTransformer lookupCast(TypeToken sourceTypeName, TypeToken targetTypeName) {
+		SqlValueTransformer result = coercionSystem.lookup(sourceTypeName, targetTypeName);
 		return result;
 	}
 
@@ -187,5 +254,10 @@ public class TypeSystemImpl
 	public Set<TypeToken> supremumDatatypes(TypeToken from, TypeToken to) {
 		Set<TypeToken> result = MultiMaps.getCommonParent(typeHierarchy.asMap(), from, to);
 		return result;
+	}
+
+	@Override
+	public SqlTypeMapper getSqlTypeMapper() {
+		return sqlTypeMapper;
 	}
 }

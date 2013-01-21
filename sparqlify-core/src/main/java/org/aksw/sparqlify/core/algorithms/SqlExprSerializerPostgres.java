@@ -2,11 +2,12 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.Calendar;
 
-import org.aksw.commons.factory.Factory1;
+import org.aksw.commons.util.factory.Factory1;
 import org.aksw.sparqlify.core.TypeToken;
 import org.postgis.PGgeometry;
 
 import com.hp.hpl.jena.sdb.sql.SQLUtils;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 interface DatatypeToString
 {
@@ -24,7 +25,7 @@ public class SqlExprSerializerPostgres
 	
 	
 	public String serializeConstant(Object value, TypeToken datatype) {
-		String result = serializeConstant(value, datatype);
+		String result = serializeConstantPostgres(datatypeSerializer, value, datatype);
 		return result;
 	}	
 	
@@ -43,7 +44,13 @@ public class SqlExprSerializerPostgres
 			Factory1<String> caster = datatypeSerializer.asString(datatype);
 			
 			return caster.create("NULL");
-		} else if(value instanceof String) {
+		} else if(value instanceof NodeValue) {
+			if(true) {
+				throw new RuntimeException("HACK");
+			}
+			return ((NodeValue) value).asQuotedString();
+		}
+		else if(value instanceof String) {
 			return SQLUtils.quoteStr(value.toString()); 
 		} else if(value instanceof Number) {
 			return value.toString();

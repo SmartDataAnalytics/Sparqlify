@@ -2,8 +2,8 @@ package org.aksw.sparqlify.core.interfaces;
 
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -24,5 +24,5 @@ public interface SqlTranslator {
 	//Expr translateSql(Expr sparqlExpr, Map<Var, Expr> binding);
 	
 	
-	SqlExpr translate(Expr sparqlExpr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap);
+	ExprSqlRewrite translate(Expr sparqlExpr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap);
 }

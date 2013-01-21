@@ -8,9 +8,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.TypeSystem;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 
@@ -140,10 +139,10 @@ public class SqlExprEvaluator_Compare
 		}
 		
 		
-		NodeValue value = pair.getValue().getValue();
+		SqlValue value = pair.getValue().getValue();
 
 		TypeToken targetType = pair.getKey().getDatatype();
-		NodeValue castedValue = system.cast(value, targetType);
+		SqlValue castedValue = system.cast(value, targetType);
 		if(castedValue == null) {
 			return null;
 		}

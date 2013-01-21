@@ -352,7 +352,8 @@ public class SqlTranslationUtils {
 	
 			String datatype = node.getLiteralDatatypeURI();
 			if(datatype == null || datatype.isEmpty()) {
-				type = 2;
+				System.err.println("Treating plain literals as typed ones");
+				type = 3;
 				lang = node.getLiteralLanguage();
 			} else {
 				type = 3;

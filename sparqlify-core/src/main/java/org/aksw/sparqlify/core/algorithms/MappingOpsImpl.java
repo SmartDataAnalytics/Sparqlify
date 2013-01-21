@@ -42,6 +42,7 @@ import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
+import org.aksw.sparqlify.util.SqlTranslatorImpl2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +136,7 @@ public class MappingOpsImpl
 	 * 
 	 * TODO Better separate rewrite and partial evaluation.
 	 */
-	private ExprEvaluator exprTransformer;
+	//private ExprEvaluator exprTransformer;
 	
 
 	/**
@@ -148,8 +149,8 @@ public class MappingOpsImpl
 	private ExprDatatypeNorm exprNormalizer;
 	
 
-	public MappingOpsImpl(ExprEvaluator exprTransformer, SqlTranslator sqlTranslator, ExprDatatypeNorm exprNormalizer) {//DatatypeAssigner datatypeAssigner) {
-		this.exprTransformer = exprTransformer;
+	public MappingOpsImpl(SqlTranslator sqlTranslator, ExprDatatypeNorm exprNormalizer) {//DatatypeAssigner datatypeAssigner) {
+		//this.exprTransformer = exprTransformer;
 		this.sqlTranslator = sqlTranslator;
 		this.exprNormalizer = exprNormalizer;
 		//this.exprNormalizer = new ExprDatatypeNorm(datatypeSystem)
@@ -181,23 +182,24 @@ public class MappingOpsImpl
 
 	
 
-	public static SqlExpr translateSql(RestrictedExpr restExpr, Map<String, TypeToken> typeMap, ExprEvaluator exprTransformer, SqlTranslator sqlTranslator) {
+	public static SqlExpr translateSql(RestrictedExpr restExpr, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		if(restExpr.getRestrictions().isUnsatisfiable()) {
 			//return SqlExprValue.FALSE;
 			return S_Constant.FALSE;
 		}
 
 		Expr expr = restExpr.getExpr();
-		
-		Expr transformed;
-		if(exprTransformer != null && expr.isFunction()) {
-			transformed = exprTransformer.eval(expr.getFunction(), null);
-		} else {
-			transformed = expr;
-		}
-		
-		System.out.println("Transformed: " + transformed);
-		SqlExpr result = sqlTranslator.translate(transformed, null, typeMap);
+//		
+//		Expr transformed;
+//		if(exprTransformer != null && expr.isFunction()) {
+//			transformed = exprTransformer.eval(expr.getFunction(), null);
+//		} else {
+//			transformed = expr;
+//		}
+//		
+//		System.out.println("Transformed: " + transformed);
+		ExprSqlRewrite exprRewrite = sqlTranslator.translate(expr, null, typeMap);
+		SqlExpr result = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
 		
 		return result;
 	}
@@ -222,7 +224,7 @@ public class MappingOpsImpl
 	 * 
 	 * 
 	 */
-	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, ExprEvaluator exprTransformer, SqlTranslator sqlTranslator) {
+	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		
 		
 		Set<Var> conditionVars = condition.getVarsMentioned();
@@ -235,8 +237,11 @@ public class MappingOpsImpl
 		// If the condition and the varDef have no variables in common,
 		// we still need to consider the constants, such as FALSE and TRUE.
 		if(commonVars.isEmpty()) {
-			SqlExpr sqlExpr = sqlTranslator.translate(condition, null, typeMap);
+			//SqlExpr sqlExpr = sqlTranslator.translate(condition, null, typeMap);
+			ExprSqlRewrite exprRewrite = sqlTranslator.translate(condition, null, typeMap);
+			SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
 
+			
 			//return S_Constant.TRUE;
 			return sqlExpr;
 		}
@@ -276,9 +281,12 @@ public class MappingOpsImpl
 				assignment.put(var, expr);
 			}
 						
-			Expr expr = exprTransformer.eval(condition, assignment);
+			//Expr expr = exprTransformer.eval(condition, assignment);
 			
-			SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
+			//SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
+			ExprSqlRewrite exprRewrite = sqlTranslator.translate(condition, assignment, typeMap);
+			SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
+
 			
 			if(sqlExpr.equals(S_Constant.TRUE)) {
 				return S_Constant.TRUE;
@@ -326,7 +334,7 @@ public class MappingOpsImpl
 			Collection<RestrictedExpr> a,
 			Collection<RestrictedExpr> b,
 			Map<String, TypeToken> typeMap,
-			ExprEvaluator exprTransformer,
+			//ExprEvaluator exprTransformer,
 			SqlTranslator sqlTranslator
 			)
 	{
@@ -348,7 +356,7 @@ public class MappingOpsImpl
 				
 				RestrictedExpr vdEquals = VariableDefinitionOps.equals(rexprA, rexprB);
 				
-				SqlExpr sqlExpr = translateSql(vdEquals, typeMap, exprTransformer, sqlTranslator);
+				SqlExpr sqlExpr = translateSql(vdEquals, typeMap, sqlTranslator);
 				
 				if(sqlExpr.equals(S_Constant.FALSE)) {
 					continue;
@@ -399,7 +407,7 @@ public class MappingOpsImpl
 	public static VarDefKey joinDefinitionsOnEquals(
 			Var queryVar,
 			ViewInstance viewInstance,
-			ExprEvaluator exprTransformer,
+			//ExprEvaluator exprTransformer,
 			SqlTranslator sqlTranslator
 			)
 	{
@@ -439,7 +447,7 @@ public class MappingOpsImpl
 
 			
 			// Intermediate result
-			VarDefKey tmp = joinDefinitionsOnEquals(result.definitionExprs, defs, typeMap, exprTransformer, sqlTranslator);
+			VarDefKey tmp = joinDefinitionsOnEquals(result.definitionExprs, defs, typeMap, sqlTranslator);
 			
 			//if(ExprEval.Type.FALSE == ExprEval.getDisjunctionType(tmp))
 
@@ -553,7 +561,7 @@ public class MappingOpsImpl
 			}
 
 			
-			VarDefKey ors = joinDefinitionsOnEquals(queryVar, viewInstance, exprTransformer, sqlTranslator);
+			VarDefKey ors = joinDefinitionsOnEquals(queryVar, viewInstance, sqlTranslator);
 		
 			if(ors == null) {
 
@@ -720,7 +728,7 @@ public class MappingOpsImpl
 			Collection<RestrictedExpr> defsA = a.getVarDefinition().getDefinitions(commonVar);
 			Collection<RestrictedExpr> defsB = b.getVarDefinition().getDefinitions(commonVar);
 			
-			VarDefKey tmp = joinDefinitionsOnEquals(defsA, defsB, typeMap, exprTransformer, sqlTranslator);
+			VarDefKey tmp = joinDefinitionsOnEquals(defsA, defsB, typeMap, sqlTranslator);
 
 			if(tmp == null) {
 				opResult = SqlOpEmpty.create(opJoin.getSchema());
@@ -827,7 +835,7 @@ public class MappingOpsImpl
 		for(Expr expr : exprs) {
 			
 			// Replace any variables in the expression with the variable definitions			
-			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap, exprTransformer, sqlTranslator);
+			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap, sqlTranslator);
 			if(sqlExpr.equals(S_Constant.TRUE)) {
 				continue;
 			}
@@ -1036,7 +1044,10 @@ public class MappingOpsImpl
 						
 						String columnName = e.getKey().getVarName();
 						Expr expr = e.getValue();
-						SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
+						//SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
+						ExprSqlRewrite exprRewrite = sqlTranslator.translate(expr, null, typeMap);
+						SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
+
 						
 						//map.put(e.getKey().getVarName(), expr);
 						map.put(columnName, sqlExpr);
@@ -1216,16 +1227,20 @@ public class MappingOpsImpl
 			for(RestrictedExpr restExpr : restExprs) {
 				Expr expr = restExpr.getExpr();
 				Set<Var> vars = expr.getVarsMentioned();
-				
 
-				List<Map<Var, Expr>> bindings = createBindingProduct(a.getVarDefinition(), vars);
-
-				for(Map<Var, Expr> binding : bindings) {
-					NodeExprSubstitutor substitutor = new NodeExprSubstitutor(binding);
-					
-					Expr newExpr = substitutor.transformMM(expr);
-					
-					newMap.put(var, new RestrictedExpr(newExpr, restExpr.getRestrictions()));
+				if(vars.isEmpty()) {
+					newMap.put(var, restExpr);
+				}
+				else {
+					List<Map<Var, Expr>> bindings = createBindingProduct(a.getVarDefinition(), vars);
+	
+					for(Map<Var, Expr> binding : bindings) {
+						NodeExprSubstitutor substitutor = new NodeExprSubstitutor(binding);
+						
+						Expr newExpr = substitutor.transformMM(expr);
+						
+						newMap.put(var, new RestrictedExpr(newExpr, restExpr.getRestrictions()));
+					}
 				}
 			}
 		}

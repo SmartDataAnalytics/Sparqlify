@@ -7,8 +7,8 @@ text	object
 byte	short
 short	int
 int	long
-long	decimal
-decimal	integer
+long	integer
+integer decimal
 
 unsignedByte	unsignedShort
 unsignedInt	unsignedLong

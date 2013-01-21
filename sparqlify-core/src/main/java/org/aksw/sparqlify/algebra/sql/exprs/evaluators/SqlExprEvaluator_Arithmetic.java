@@ -39,19 +39,17 @@ public class SqlExprEvaluator_Arithmetic
 	@Override
 	public SqlExpr eval(SqlExpr a, SqlExpr b) {
 		
-		if(a.isConstant()) {
-			NodeValue x = a.asConstant().getValue();
-			
-			if(b.isConstant()) {
-				NodeValue y = b.asConstant().getValue();
-				
-				XSDFuncOp.add(x, y);
-			}
-			
-			
-		}
-		
-		// TODO Auto-generated method stub
+//		if(a.isConstant()) {
+//			NodeValue x = a.asConstant().getValue();
+//			
+//			if(b.isConstant()) {
+//				NodeValue y = b.asConstant().getValue();
+//				
+//				XSDFuncOp.add(x, y);
+//			}
+//			
+//			
+//		}
 		return null;
 	}
 

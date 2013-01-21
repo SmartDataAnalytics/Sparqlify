@@ -66,7 +66,12 @@ class NodeUtils {
 			
 			String encoded = lex.replace("\"", "\\\"");
 			
-			result =  "\"" + encoded + "\"";
+			// If fields contain new lines, escape them with triple quotes
+			String quote = encoded.contains("\n")
+					? "\"\"\""
+					: "\"";
+			
+			result =  quote + encoded + quote;
 			
 			if(!StringUtils.isEmpty(dt)) {
 				result = result + "^^<" + dt+ ">";  

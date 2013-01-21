@@ -12,11 +12,41 @@ import org.aksw.sparqlify.core.datatypes.XMethod;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
+/**
+ * Purposes of the type system are storing information about the following
+ * items:
+ * 
+ * - Mapping of TypeTokens to actual SQL type names.
+ *   e.g.TypeToken.String -> text (postgres)
+ *   
+ * - SQL Model
+ *   - available SQL function signatures
+ *     e.g. boolean ST_INTERSECTS(geometry, geometry)
+ *   - type hierarchy
+ *   - coercions
+ * 
+ * - Rewrites of SPARQL functions to SQL functions
+ *   e.g. ogc:intersects(?a, ?b) -> typedLiteral(ST_INTERSECTS(?a, ?b), xsd:boolean)
+ * 
+ * - Mapping of SPARQL datatypes to SQL ones
+ *   - Thereby generation of appropriate cast expressions
+ *     e.g. ogc:WKT -> geometry
+ *     "POINT(0 0)"^^ogc:geometry -> "POINT(0 0)"::geometry 
+ * 
+ * Nodes on converting between SPARQL and SQL datatypes:
+ * 
+ * 
+ * 
+ * 
+ * 
+ * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
+ *
+ */
 public interface TypeSystem
 	extends TypeResolver, SparqlFunctionProvider, DirectSuperTypeProvider<TypeToken>
 {
 	
-	CoercionSystem<TypeToken, NodeValueTransformer> getCoercionSystem();
+	CoercionSystem<TypeToken, SqlValueTransformer> getCoercionSystem();
 
 	
 	void registerSparqlFunction(SparqlFunction sparqlFunction);
@@ -41,15 +71,22 @@ public interface TypeSystem
 	 * @return
 	 */
 	TypeMapper getTypeMapper();
+
+	SqlTypeMapper getSqlTypeMapper();
 	
 
 	/**
-	 * TODO Should this method resolve RDF as well as SQL types? 
+	 * TODO Should this method resolve RDF as well as SQL types?
+	 * TODO This XClass name sucks. SqlDatatype or SqlClass wouldn't be that
+	 * confusing  
 	 * 
 	 * @param typeName
 	 * @return
 	 */
 	//XClass resolve(String typeName);
+	//XClass
+	
+	
 	
 	/**
 	 *  
@@ -59,8 +96,13 @@ public interface TypeSystem
 	
     
     //SparqlFunction getSparqlFunction(String name);	
-	NodeValue cast(NodeValue value, TypeToken targetType);
-	
+	//NodeValue cast(NodeValue value, TypeToken targetType);
+    //NodeValue cast(NodeValue value, TypeToken targetType);
+    SqlValue cast(SqlValue value, TypeToken targetType);
+    
+    //SqlValue castSql(NodeValue value, TypeToken targetType);
+    SqlValue convertSql(NodeValue value);
+    
 	/**
 	 *Return a factory for creating cast-expressions between the given datatypes
 	 * Null if no such cast exists. 

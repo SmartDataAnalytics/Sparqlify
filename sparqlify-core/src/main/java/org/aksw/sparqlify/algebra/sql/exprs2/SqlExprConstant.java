@@ -1,11 +1,12 @@
 package org.aksw.sparqlify.algebra.sql.exprs2;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.aksw.sparqlify.core.cast.SqlValue;
 
 
 public interface SqlExprConstant
 	extends SqlExpr
 {
-	NodeValue getValue();
+	//NodeValue getValue();
+	SqlValue getValue();
 	//<T> T getValue();
 }

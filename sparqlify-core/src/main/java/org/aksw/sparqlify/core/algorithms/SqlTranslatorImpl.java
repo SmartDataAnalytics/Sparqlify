@@ -10,8 +10,9 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlValue;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
-import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ interface TranslatorSql2 {
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
+@Deprecated // Superseded by TypedExprTransformer
 public class SqlTranslatorImpl
 	implements SqlTranslator
 {	
@@ -152,7 +154,7 @@ public class SqlTranslatorImpl
 		
 		
 		for(Expr arg : fn.getArgs()) {				
-			SqlExpr evaledArg = translate(arg, binding, typeMap);
+			SqlExpr evaledArg = translateX(arg, binding, typeMap);
 			
 			// If an argument evaluated to type error, return type error
 			// TODO: Distinguish between null and type error. Currently we use nvNothing which actually corresponds to NULL
@@ -221,7 +223,8 @@ public class SqlTranslatorImpl
 	
 	
 	public SqlExpr translate(NodeValue expr) {
-		SqlExpr result = new S_Constant(expr);
+		SqlValue value = datatypeSystem.convertSql(expr); //S_Constant.create(expr); //new S_Constant(expr);
+		S_Constant result = new S_Constant(value);
 		return result;
 //		
 //		NodeValue nv = expr.getConstant();
@@ -245,7 +248,7 @@ public class SqlTranslatorImpl
 		if(binding != null) {
 			Var var = expr.asVar();
 			Expr definition = binding.get(var);
-			result = translate(definition, null, typeMap);
+			result = translateX(definition, null, typeMap);
 		} else {
 			String varName = expr.getVarName();
 			TypeToken datatype = typeMap.get(varName);
@@ -270,7 +273,12 @@ public class SqlTranslatorImpl
 	 * 
 	 * -> After makes more sense: Then we have constant folder arguments 
 	 */
-	public SqlExpr translate(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
+	public ExprSqlRewrite translate(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
+		throw new RuntimeException("");
+	}
+	
+	
+	public SqlExpr translateX(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
 		
 		//assert expr != null : "Null pointer exception";
 		if(expr == null) {
@@ -298,7 +306,7 @@ public class SqlTranslatorImpl
 			if(binding != null) {
 				Expr boundExpr = binding.get(expr.asVar());
 				if(boundExpr != null) {
-					result = translate(boundExpr, null, typeMap); // Do not forward the binding
+					result = translateX(boundExpr, null, typeMap); // Do not forward the binding
 				}
 			}
 		} else {

@@ -35,7 +35,7 @@ public class SqlOpSerializerImpl
 {
 	private static final Logger logger = LoggerFactory.getLogger(SqlOpSerializerImpl.class);
 	
-	private static SqlExprSerializer exprSerializer; //new SqlExprSerializerMySql();
+	private SqlExprSerializer exprSerializer; //new SqlExprSerializerMySql();
 	//private static SqlExprSerializer sqlExprSerializer = new SqlExprSerializerPostgres();
 	
 	
@@ -91,13 +91,13 @@ public class SqlOpSerializerImpl
 	}
 	*/
 	
-	public static String projection(Projection projection) {
+	public String projection(Projection projection) {
 		String result = projection(projection.getNames(), projection.getNameToExpr());
 		
 		return result;
 	}
 	
-	public static String projection(List<String> columnNames, Map<String, SqlExpr> map)
+	public String projection(List<String> columnNames, Map<String, SqlExpr> map)
 	{
 		//System.out.println("Project column names: " + columnNames);
 		

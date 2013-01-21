@@ -18,6 +18,10 @@ public class TypeToken
 	private static final Map<String, TypeToken> cache = new HashMap<String, TypeToken>();
 	
 	public static TypeToken alloc(String name) {
+		if(name == null) {
+			throw new NullPointerException();
+		}
+		
 		TypeToken result = cache.get(name);
 		if(result == null) {
 			result = new TypeToken(name);

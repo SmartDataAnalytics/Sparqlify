@@ -1,0 +1,17 @@
+<sparqlify-config>
+
+	<types>
+		<type></type>	
+	</types>
+
+	<type-hierarchy>
+	
+	</type-hierarchy>
+
+	<coercions>
+		<coercion from="int" to="string" bean="some-app-context-bean" class="someJavaClass" />
+
+
+	</coercions>
+
+</sparqlify-config>

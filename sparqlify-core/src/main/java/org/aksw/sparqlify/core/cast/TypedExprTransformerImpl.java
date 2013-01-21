@@ -99,13 +99,19 @@ public class TypedExprTransformerImpl
 {	
 	private static final Logger logger = LoggerFactory.getLogger(SqlTranslatorImpl.class);
 	
+	// TODO Get rid of the typeSystem here, and replace it by more fine granular
+	// objects
+	private TypeSystem typeSystem;
+	// private constantConverter
 	
-	//private TypeSystem typeSystem;
 	private SparqlFunctionProvider functionProvider;
 
-	public TypedExprTransformerImpl(SparqlFunctionProvider functionProvider) { //TypeSystem typeSystem) {
-		//this.typeSystem = typeSystem;
-		this.functionProvider = functionProvider;
+	public TypedExprTransformerImpl(TypeSystem typeSystem) { //SparqlFunctionProvider functionProvider) {
+		this.typeSystem = typeSystem;
+		this.functionProvider = typeSystem;
+		
+		//this.constantSqlConverter =
+		//this.functionProvider = functionProvider;
 	}
 	
 
@@ -166,6 +172,10 @@ public class TypedExprTransformerImpl
 			result = rewrite(expr.getFunction(), typeMap, state);
 		} else {
 			throw new RuntimeException("Should not happen: " + expr);
+		}
+		
+		if(result.equals(TypeToken.TypeError)) {
+			System.err.println("Got type error for " + expr);
 		}
 		
 		return result;
@@ -437,7 +447,9 @@ public class TypedExprTransformerImpl
 	
 	
 	public SqlExpr translate(NodeValue expr) {
-		SqlExpr result = new S_Constant(expr);
+		SqlValue sqlValue = typeSystem.convertSql(expr);
+		
+		SqlExpr result = S_Constant.create(sqlValue);
 		return result;
 	}
 	

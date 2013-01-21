@@ -48,45 +48,45 @@ import com.hp.hpl.jena.sparql.expr.Expr;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-@Deprecated
-public class TranslatorSqlImpl
-	implements SqlTranslator
-{
-	private ExprEvaluator evaluator;
-	
-	public TranslatorSqlImpl() {
-		this.evaluator = SqlTranslationUtils.createDefaultEvaluator();
-	}
-	
-	//@Override
-	public Expr translateSql(Expr expr, Map<Var, Expr> binding) {
-		
-		if(true) {
-		throw new RuntimeException("Dont use this anymore");
-		}
-		
-		
-		Expr result = evaluator.eval(expr, binding);
-		
-		/*
-		Expr pushed = PushDown.pushDownMM(tmp);
-		if(!(pushed instanceof ExprSqlBridge)) {
-			throw new RuntimeException("Failed to push down '" + expr + "'");
-		}
-		SqlExpr result = ((ExprSqlBridge)pushed).getSqlExpr();
-		*/
-		
-		return result;
-	}
-
-	@Override
-	public org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr translate(
-			Expr sparqlExpr, Map<Var, Expr> binding,
-			Map<String, TypeToken> typeMap) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-}
-
+//@Deprecated
+//public class TranslatorSqlImpl
+//	implements SqlTranslator
+//{
+//	private ExprEvaluator evaluator;
+//	
+//	public TranslatorSqlImpl() {
+//		this.evaluator = SqlTranslationUtils.createDefaultEvaluator();
+//	}
+//	
+//	//@Override
+//	public Expr translateSql(Expr expr, Map<Var, Expr> binding) {
+//		
+//		if(true) {
+//		throw new RuntimeException("Dont use this anymore");
+//		}
+//		
+//		
+//		Expr result = evaluator.eval(expr, binding);
+//		
+//		/*
+//		Expr pushed = PushDown.pushDownMM(tmp);
+//		if(!(pushed instanceof ExprSqlBridge)) {
+//			throw new RuntimeException("Failed to push down '" + expr + "'");
+//		}
+//		SqlExpr result = ((ExprSqlBridge)pushed).getSqlExpr();
+//		*/
+//		
+//		return result;
+//	}
+//
+//	@Override
+//	public org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr translate(
+//			Expr sparqlExpr, Map<Var, Expr> binding,
+//			Map<String, TypeToken> typeMap) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//}
+//
 
 

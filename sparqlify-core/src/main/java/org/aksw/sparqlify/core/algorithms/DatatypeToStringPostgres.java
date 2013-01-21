@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.commons.factory.Factory1;
+import org.aksw.commons.util.factory.Factory1;
 import org.aksw.sparqlify.core.TypeToken;
 
 public class DatatypeToStringPostgres
@@ -29,6 +29,11 @@ public class DatatypeToStringPostgres
 		// bigint nameToPostgres.put("geography", "geography");
 
 		nameToPostgres.put("timestamp", "timestamp");
+		
+		// FIXME Not sure if we really have to may every type explicitely here
+		// I guess this should be inferred from the config
+		nameToPostgres.put("int4", "int4");
+		nameToPostgres.put("text", "text");
 	}
 	
 	/**

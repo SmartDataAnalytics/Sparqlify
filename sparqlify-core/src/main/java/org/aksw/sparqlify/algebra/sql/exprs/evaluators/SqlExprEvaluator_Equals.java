@@ -8,6 +8,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
@@ -43,6 +44,7 @@ public class SqlExprEvaluator_Equals extends SqlExprEvaluator2 {
 			}
 
 			if (getCommonDataype(pair.getKey(), pair.getValue(), datatypeSystem) == null) {
+				System.out.println("No commontypes: " + pair.getKey() + "(" + pair.getKey().getDatatype() + ") --- " + pair.getValue());
 				return S_Constant.TYPE_ERROR;
 			} else {
 				// SqlExpr result = new S_Serialize(TypeToken.Boolean, "=",
@@ -129,10 +131,10 @@ public class SqlExprEvaluator_Equals extends SqlExprEvaluator2 {
 			System.out.println("ffs");
 		}
 
-		NodeValue value = pair.getValue().getValue();
+		SqlValue value = pair.getValue().getValue();
 
 		TypeToken targetType = pair.getKey().getDatatype();
-		NodeValue castedValue = system.cast(value, targetType);
+		SqlValue castedValue = system.cast(value, targetType);
 		if (castedValue == null) {
 			return null;
 		}

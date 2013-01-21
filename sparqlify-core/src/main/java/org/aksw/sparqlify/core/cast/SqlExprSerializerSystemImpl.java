@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.util.factory.Factory1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
@@ -19,9 +21,11 @@ public class SqlExprSerializerSystemImpl
 {
 	private Map<String, SqlFunctionSerializer> nameToSerializer = new HashMap<String, SqlFunctionSerializer>();
 
+	private DatatypeToStringPostgres typeSerializer;
 	private SqlLiteralMapper sqlLiteralMapper;
-	
-	public SqlExprSerializerSystemImpl(SqlLiteralMapper sqlLiteralMapper) {
+
+	public SqlExprSerializerSystemImpl(DatatypeToStringPostgres typeSerializer, SqlLiteralMapper sqlLiteralMapper) {
+		this.typeSerializer = typeSerializer;
 		this.sqlLiteralMapper = sqlLiteralMapper;
 	}
 	
@@ -36,8 +40,15 @@ public class SqlExprSerializerSystemImpl
 		if(expr.isConstant()) {
 		
 			SqlExprConstant c = expr.asConstant();
-			NodeValue nodeValue = c.getValue();
-			result = sqlLiteralMapper.serialize(nodeValue);
+			SqlValue sqlValue = c.getValue();
+			Object o = sqlValue.getValue();
+			
+			if(o == null) {
+				Factory1<String> nullSerializer = typeSerializer.asString(c.getDatatype());
+				result = nullSerializer.create("NULL");
+			} else {			
+				result = sqlLiteralMapper.serialize(sqlValue);
+			}
 		
 		} else if(expr.isFunction()) {
 
@@ -63,9 +74,13 @@ public class SqlExprSerializerSystemImpl
 			
 			// TODO Make column name serialization configurable
 			SqlExprVar v = expr.asVariable();
-			String varName = v.getVarName();
+			S_ColumnRef ref = (S_ColumnRef)v;
+
+			result = "\"" + ref.getColumnName() + "\"";
 			
-			result = "\"" + varName + "\"";
+			if(ref.getRelationAlias() != null) {
+				result = ref.getRelationAlias() + "." + result;
+			} 
 			
 		} else {
 		

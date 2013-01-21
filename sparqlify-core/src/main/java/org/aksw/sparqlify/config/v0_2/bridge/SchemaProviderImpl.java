@@ -12,10 +12,10 @@ import java.util.Map.Entry;
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.datatypes.TypeSystem;
-import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -152,32 +152,55 @@ public class SchemaProviderImpl
 		return result;
 	}
 
-	public static XClass lookupDatatype(String typeName, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
-		String lookupName = aliasMap.get(typeName.toLowerCase());
-		
-		if(lookupName == null) {
-			lookupName = typeName;
-		}
-		
-		XClass result = datatypeSystem.requireByName(lookupName);
-		if(result == null) {
-			throw new RuntimeException("Raw SQL datatype '" + typeName + "' not mapped");			
-		}
-		
-		return result;
-	}
+//	public static XClass lookupDatatype(String typeName, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
+////		throw new RuntimeException("No longer supported");
+//		System.out.println("Alias name lookup with lower case");
+//		String lookupName = aliasMap.get(typeName.toLowerCase());
+//		
+//		if(lookupName == null) {
+//			lookupName = typeName;
+//		}
+//		
+//		TypeMapper typeMaper = datatypeSystem.getTypeMapper();
+//		RDFDatatype type = typeMapper.getTypeByName(lookupName);
+//		
+//		if(type == null) {
+//			throw new RuntimeException("Raw SQL datatype '" + typeName + "' not mapped");			
+//		}
+//		
+//		return result;
+//	}
 
 		
+//	public static Map<String, TypeToken> transformRawMap(Map<String, String> map, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
+//		Map<String, TypeToken> result = new HashMap<String, TypeToken>();
+//
+//		for(Map.Entry<String, String> entry : map.entrySet()) {
+//			XClass clazz = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
+//			
+//			result.put(entry.getKey(), clazz.getToken());
+//		}
+//		return result;
+//	}
 	public static Map<String, TypeToken> transformRawMap(Map<String, String> map, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
 		Map<String, TypeToken> result = new HashMap<String, TypeToken>();
 
 		for(Map.Entry<String, String> entry : map.entrySet()) {
-			XClass clazz = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
+			// TODO Get a datatype object that can convert SQL Values between NodeValues and vice versa.
+			// Problem: Can we have a NodeValue with datatype but Null string?
 			
-			result.put(entry.getKey(), clazz.getToken());
+			
+			//XClass clazz = lookupDatatype(entry.getValue(), datatypeSystem, aliasMap);
+			//result.put(entry.getKey(), clazz.getToken());
+			
+			TypeToken typeToken = TypeToken.alloc(entry.getValue());
+			result.put(entry.getKey(), typeToken);
+
 		}
+		
 		return result;
 	}
+
 	
 	public static Map<String, TypeToken> getTypes(Connection conn, String queryStr, TypeSystem datatypeSystem, Map<String, String> aliasMap)
 		throws Exception
