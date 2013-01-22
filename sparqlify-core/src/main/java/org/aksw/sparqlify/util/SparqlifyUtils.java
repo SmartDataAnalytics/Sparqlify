@@ -7,11 +7,13 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sparql.api.cache.extra.SqlUtils;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
@@ -276,13 +278,18 @@ public class SparqlifyUtils {
 	public static DataSource createDefaultDatabase(String name) {
 		JdbcDataSource ds = new JdbcDataSource();
 		//ds.setURL("jdbc:h2:mem:" + name + ";mode=postgres");
-		ds.setURL("jdbc:h2:mem:" + name + ";MODE=PostgreSQL");
+		ds.setURL("jdbc:h2:mem:" + name + ";MODE=PostgreSQL;DB_CLOSE_DELAY=-1");
 		ds.setUser("sa");
 		ds.setPassword("sa");
 
 		return ds;
 	}
 
+	public static void shutdownH2(DataSource dataSource) throws SQLException {
+		Connection conn = dataSource.getConnection();
+		conn.createStatement().execute("SHUTDOWN");
+	}
+	
 	public static DataSource createDefaultDatabase(String name, InputStream in) throws SQLException, IOException {
 		String sqlStr = StreamUtils.toString(in);
 		
@@ -295,6 +302,16 @@ public class SparqlifyUtils {
 		Connection conn = ds.getConnection();
 		try {
 			conn.createStatement().executeUpdate(sqlStr);
+			
+			System.out.println(listTables(conn));
+			
+		} finally {
+			conn.close();
+		}
+		
+		try {
+			Connection c = ds.getConnection();
+			System.out.println(listTables(c));
 		} finally {
 			conn.close();
 		}
@@ -410,6 +427,15 @@ public class SparqlifyUtils {
 		}
 	}
 	
+	
+	public static List<String> listTables(Connection conn) throws SQLException {
+		//java.sql.ResultSet rs = conn.createStatement().executeQuery("Select name from STUDENT");
+		java.sql.ResultSet rs = conn.createStatement().executeQuery("SELECT table_name FROM information_schema.tables");
+		String query = "SELECT table_name FROM information_schema.tables";
+		List<String> result = SqlUtils.executeList(conn, query, String.class);
+		return result;
+	}
+	
 	public static QueryExecutionFactory createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
@@ -424,6 +450,7 @@ public class SparqlifyUtils {
 
 
 		Connection conn = dataSource.getConnection();
+				
 		CandidateViewSelector candidateViewSelector;
 		try {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
@@ -529,6 +556,16 @@ public class SparqlifyUtils {
 	}
 	*/
 	
+	
+	public static Node getNode(Binding binding, Var var, Node fallbackNode) {
+		Node result = binding.get(var);
+		if(result == null) {
+			result = fallbackNode;
+		}
+		return result;
+	}
+	
+	
 	public static Set<Quad> createDumpNQuads(QueryExecutionFactory qef) {
 		String queryStr = "Select ?g ?s ?p ?o { Graph ?g { ?s ?p ?o } }";
 		QueryExecution qe = qef.createQueryExecution(queryStr);
@@ -542,10 +579,10 @@ public class SparqlifyUtils {
 		Set<Quad> result = new HashSet<Quad>();
 		while(rs.hasNext()) {
 			Binding binding = rs.nextBinding();
-			Node g = binding.get(vg);
-			Node s = binding.get(vs);
-			Node p = binding.get(vp);
-			Node o = binding.get(vo);
+			Node g = getNode(binding, vg, Quad.defaultGraphNodeGenerated);
+			Node s = getNode(binding, vs, Quad.defaultGraphNodeGenerated);
+			Node p = getNode(binding, vp, Quad.defaultGraphNodeGenerated);
+			Node o = getNode(binding, vo, Quad.defaultGraphNodeGenerated);
 			
 			Quad quad = new Quad(g, s, p, o);
 			result.add(quad);

@@ -687,7 +687,9 @@ public class SqlAlgebraToString
 
     public static void _asString(SqlTable node, IndentedWriter writer)
     {
-    	writer.print(node.getTableName());
+    	String encTableName = "\"" + node.getTableName() + "\"";
+    	
+    	writer.print(encTableName);
     	writer.print(getAliasName(node));
     }
 }

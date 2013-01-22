@@ -548,7 +548,8 @@ public class SqlOpSerializerImpl
 
     public static void _serialize(SqlOpTable op, IndentedWriter writer)
     {
-    	writer.print(op.getTableName());
+    	String encTableName = "\"" + op.getTableName() + "\""; 
+    	writer.print(encTableName);
     	writer.print(getAliasNameNotNull(op));
     }
 

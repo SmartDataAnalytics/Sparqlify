@@ -172,6 +172,8 @@ public class R2rmlTests {
 		
 		Set<Quad> actual = SparqlifyUtils.createDumpNQuads(qef);
 
+		SparqlifyUtils.shutdownH2(ds);
+
 		Set<Quad> excessive = Sets.difference(actual, expected);
 		Set<Quad> missing = Sets.difference(expected, actual);
 		
