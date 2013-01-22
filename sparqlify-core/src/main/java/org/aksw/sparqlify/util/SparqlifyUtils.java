@@ -302,19 +302,16 @@ public class SparqlifyUtils {
 		Connection conn = ds.getConnection();
 		try {
 			conn.createStatement().executeUpdate(sqlStr);
-			
-			System.out.println(listTables(conn));
-			
 		} finally {
 			conn.close();
 		}
 		
-		try {
-			Connection c = ds.getConnection();
-			System.out.println(listTables(c));
-		} finally {
-			conn.close();
-		}
+//		try {
+//			Connection c = ds.getConnection();
+//			System.out.println(listTables(c));
+//		} finally {
+//			conn.close();
+//		}
 		
 		return ds;
 	}

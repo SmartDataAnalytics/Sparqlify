@@ -8,7 +8,7 @@ Create View TriplesMap1 As
     ?s foaf:name ?o .
   }
   With
-    ?s = blankNode(?Name)
+    ?s = bNode(?Name)
     ?o = plainLiteral(?Name)
   From
     Student

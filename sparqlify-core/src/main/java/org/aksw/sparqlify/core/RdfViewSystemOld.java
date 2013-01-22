@@ -28,6 +28,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
+import org.aksw.sparqlify.core.jena.functions.BNode;
 import org.aksw.sparqlify.core.jena.functions.PlainLiteral;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 import org.aksw.sparqlify.core.jena.functions.TypedLiteral;
@@ -239,6 +240,7 @@ public class RdfViewSystemOld
 	public static void initSparqlifyFunctions() {
 		FunctionRegistry.get().put(SparqlifyConstants.rdfTermLabel, RdfTerm.class);
 
+		FunctionRegistry.get().put(SparqlifyConstants.blankNodeLabel, BNode.class);
 		FunctionRegistry.get().put(SparqlifyConstants.uriLabel, Uri.class);
 		FunctionRegistry.get().put(SparqlifyConstants.plainLiteralLabel, PlainLiteral.class);
 		FunctionRegistry.get().put(SparqlifyConstants.typedLiteralLabel, TypedLiteral.class);

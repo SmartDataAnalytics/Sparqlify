@@ -6,14 +6,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
@@ -30,7 +33,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.google.common.collect.Sets;
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.graph.impl.GraphMatcher;
 import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.graph.GraphFactory;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 
 class SinkQuadsToSet
@@ -203,6 +212,124 @@ class TestBundleReader
 	}
 }
 
+class CompareUtils {
+	
+	public static Map<Node, Graph> indexAsGraphs(Collection<Quad> quads) {
+		Map<Node, Graph> result = new HashMap<Node, Graph>();
+		for(Quad q : quads) {
+			Graph graph = result.get(q.getGraph());
+			if(graph == null) {
+				graph = GraphFactory.createDefaultGraph();
+				result.put(q.getGraph(), graph);
+			}
+			
+			graph.add(q.asTriple());
+		}
+		
+		return result;
+	}
+	
+	//public Set<Quad> 
+	public static Set<Quad> alignActualQuads(Set<Quad> expected, Set<Quad> actual) {
+		Map<Node, Graph> e = indexAsGraphs(expected);
+		Map<Node, Graph> a = indexAsGraphs(actual);
+		
+		Set<Quad> result = alignActualQuads(e, a);
+		return result;
+	}
+	
+	
+	public static Set<Quad> toQuads(Node g, Graph graph) {
+		Set<Quad> result = new HashSet<Quad>();
+		ExtendedIterator<Triple> it = graph.find(null, null, null);
+		try {
+			while(it.hasNext()) {
+				Triple t = it.next();
+				
+				Quad quad = new Quad(g, t);					
+				result.add(quad);
+			}
+		} finally {
+			it.close();
+		}
+
+		return result;
+	}
+
+	public static Set<Quad> toQuads(Node g, Graph graph, Map<Node, Node> subst) {
+		Set<Quad> result = new HashSet<Quad>();
+		ExtendedIterator<Triple> it = graph.find(null, null, null);
+		try {
+			while(it.hasNext()) {
+				Triple t = it.next();
+				
+				Quad tmp = new Quad(g, t);					
+				Quad quad = QuadUtils.copySubstitute(tmp, subst);
+
+				result.add(quad);
+			}
+		} finally {
+			it.close();
+		}
+
+		return result;
+	}
+
+	
+	/**
+	 * Per graph alignment of quads.
+	 * Equivalent blank node objects in distinct graphs may be mapped differently.
+	 * Result of this method is not necessarily deterministic; see GraphMacher.match()
+	 * 
+	 * @param expected
+	 * @param actual
+	 * @return
+	 */
+	public static Set<Quad> alignActualQuads(Map<Node, Graph> expected, Map<Node, Graph> actual) {
+
+		Set<Quad> result = new HashSet<Quad>();
+		
+
+//		Set<Quad> excessiveQuads = new HashSet<Quad>();
+//		Set<Quad> missingQuads = new HashSet<Quad>();
+		
+		Set<Node> expectedGs = expected.keySet();
+		Set<Node> actualGs = actual.keySet();
+		
+		Set<Node> excessiveGs = Sets.difference(actualGs, expectedGs);
+		Set<Node> commonGs = Sets.intersection(expectedGs, actualGs);
+//		Set<Node> missingGs = Sets.difference(expectedGs, actualGs);
+
+		
+		for(Node g : excessiveGs) {
+			Graph graph = actual.get(g);
+			Set<Quad> tmp = toQuads(g, graph);
+			
+			result.addAll(tmp);
+		}
+		
+		for(Node g : commonGs) {
+			Graph expectedGraph = expected.get(g);
+			Graph actualGraph = actual.get(g);
+
+			Node[][] rawMapping = GraphMatcher.match(actualGraph, expectedGraph);
+
+			Map<Node, Node> mapping = new HashMap<Node, Node>();
+			for(int i = 0; i < rawMapping.length; ++i) {
+				Node source = rawMapping[i][0];
+				Node target = rawMapping[i][1];
+				mapping.put(source, target);
+			}
+			
+			Set<Quad> tmp = toQuads(g, actualGraph, mapping);
+			result.addAll(tmp);
+		}
+
+		return result;
+	}
+	
+}
+
 @RunWith(value = Parameterized.class)
 public class R2rmlTest {
 
@@ -265,7 +392,7 @@ public class R2rmlTest {
 	}
 
 	public Set<Quad> readNQuads(InputStream in) {
-		
+
 		SinkQuadsToSet quadSink = new SinkQuadsToSet();
 		LangNQuads parser = RiotReader.createParserNQuads(in, quadSink);
 		parser.parse();
@@ -290,7 +417,6 @@ public class R2rmlTest {
 			throws Exception
 	{
 		System.out.println("Bundle: " + bundle);
-		
 		Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
 		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
 		DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
@@ -298,11 +424,16 @@ public class R2rmlTest {
 		
 		Set<Quad> actual = SparqlifyUtils.createDumpNQuads(qef);
 
+		Set<Quad> alignedActual = CompareUtils.alignActualQuads(expected, actual);
+		
 		SparqlifyUtils.shutdownH2(ds);
 
-		Set<Quad> excessive = Sets.difference(actual, expected);
-		Set<Quad> missing = Sets.difference(expected, actual);
-		
+		Set<Quad> excessive = Sets.difference(alignedActual, expected);
+		Set<Quad> missing = Sets.difference(expected, alignedActual);
+
+		System.out.println("Expected: " + expected);
+		System.out.println("Actual  : " + alignedActual);
+
 		System.out.println("Excessive: " + excessive);
 		System.out.println("Missing: " + missing);
 		
