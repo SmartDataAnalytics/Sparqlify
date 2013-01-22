@@ -1,10 +1,13 @@
 package org.aksw.sparqlify.csv;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,20 +41,152 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.StringUtils;
 import org.h2.tools.Csv;
+import org.openjena.atlas.lib.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.bytecode.opencsv.CSVReader;
+
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.syntax.Template;
-import com.hp.hpl.jena.sparql.util.ModelUtils;
+
+/**
+ * Wraps a opencsv CSVReader as a java Reader object.
+ * User for passing the data into H2 CSV utils.
+ * 
+ * @author raven
+ *
+ */
+class ReaderCSVReader
+	extends ReaderStringBase
+{
+	private static final String newLine = "\n";
+	private static final Joiner joiner = Joiner.on("\",\"");
+
+	private CSVReader csvReader;
+	//CSVWriter writer = new CSVWriter(
+
+
+	public ReaderCSVReader(CSVReader csvReader) {
+		this.csvReader = csvReader;
+	}
+	
+	public static String encodeCell(String cell) {
+		String result = cell.replace("\"", "\\\"");
+		return result;
+	}
+	
+	public static String[] encodeCells(String[] cells) {
+		String[] result = new String[cells.length];
+		for(int i = 0; i < cells.length; ++i) {
+			String rawCell = cells[i];
+			result[i] = encodeCell(rawCell);
+		}
+		
+		return result;
+	}
+	
+	public static String createLine(String[] cells) {
+		String[] encodedCells = encodeCells(cells);
+		String result = "\"" + joiner.join(encodedCells) + "\"" + newLine;
+		return result;
+	}
+	
+	@Override
+	protected String nextString() {
+		try {
+			String[] strs = csvReader.readNext();
+			
+			String result;
+			if(strs == null) {
+				result = null;
+			} else if(strs.length == 0) {
+				result = newLine;
+			} else if(strs.length == 1) {
+				String str = strs[0];
+				if(str.isEmpty()) {
+					result = newLine;
+				} else {
+					result = createLine(strs); 
+				}
+			}
+			else {
+				result = createLine(strs);
+			}
+
+			return result;
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}		
+	}
+	
+	@Override
+	public void close() throws IOException {
+		csvReader.close();
+	}
+}
+
+
+/**
+ * AbstractBase class for turning anything that returns strings into a reader.
+ * 
+ * @author raven
+ *
+ */
+abstract class ReaderStringBase
+	extends Reader
+{	
+	private String line;
+	private int offset = 0; // set to -1 when done
+	
+	@Override
+	public int read(char[] cbuf, int off, int len)
+			throws IOException
+	{	
+		if(offset < 0) {
+			return -1;
+		}
+		
+		int initOff = off;
+		
+		while(len > 0) {
+			int lineLen = line == null ? 0 : line.length();
+			int lineAvailLen = lineLen - offset;
+
+			int readLen = Math.min(lineAvailLen, len);
+			if(readLen > 0) {
+				line.getChars(offset, offset + readLen, cbuf, off);
+				off += readLen;
+				len -= readLen;
+				lineAvailLen -= readLen;
+			}
+			
+			if(len > 0 && lineAvailLen <= 0) {
+				line = nextString();
+				if(line == null) {
+					offset = -1;
+					break;
+				}
+				offset = 0;
+			}
+		}
+		
+		int result = off - initOff;
+
+		return result;
+	}
+	
+	abstract protected String nextString();
+}
+
 
 class NodeUtils {
 	public static String toNTriplesString(Node node) {
@@ -144,6 +279,42 @@ public class CsvMapperCliMain {
 		return file;
 	}
 
+	public static boolean isNullOrVar(Node node) {
+		return node == null || node.isVariable();
+	}
+	
+	public static boolean containsNullOrVar(Triple triple) {
+		boolean s = isNullOrVar(triple.getSubject());
+		boolean p = isNullOrVar(triple.getPredicate());
+		boolean o = isNullOrVar(triple.getObject());
+		
+		boolean result = s || p || o; 
+		return result;
+	}
+	
+	public static void countVariable(Node node, Map<Var, Integer> countMap) {
+		if(node == null) {
+			MapUtils.increment(countMap, null);
+		}
+		else if(node.isVariable()) {
+			MapUtils.increment(countMap, (Var)node);
+		}
+	}
+	
+	
+	public static void show(Reader reader) {
+		BufferedReader br = new BufferedReader(reader);
+		String line;
+		try {
+			while((line = br.readLine()) != null) {
+				System.out.println(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws Exception {
 		/*
@@ -171,6 +342,8 @@ public class CsvMapperCliMain {
 		cliOptions.addOption("f", "config", true, "Input data file");
 		cliOptions.addOption("v", "config", true, "View name (only needed if config contains more than one view)");
 
+		cliOptions.addOption("d", "config", true, "CSV cell delimiter (default is ',')");
+
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
 
 		File configFile = extractFile(commandLine, "c");
@@ -178,6 +351,19 @@ public class CsvMapperCliMain {
 		File dataFile = extractFile(commandLine, "f");
 
 		String viewName = StringUtils.trim(commandLine.getOptionValue("v"));
+
+		LoggerCount loggerCount = new LoggerCount(logger);
+		
+
+		Character cellDelimiter = null;
+		String cellDelimiterStr = commandLine.getOptionValue("d", null);
+		if(!StringUtils.isEmpty(cellDelimiterStr)) {
+			if(cellDelimiterStr.length() > 1) {
+				loggerCount.error("Cell Delimiter may only be a singe character. Given argument is: '" + cellDelimiterStr + "'");
+			}
+
+			cellDelimiter = cellDelimiterStr.charAt(0);
+		}
 		
 		// Iterator<List<String>> it = getCsvIterator(dataFile, "\t");
 
@@ -188,7 +374,6 @@ public class CsvMapperCliMain {
 //
 //		}
 		
-		LoggerCount loggerCount = new LoggerCount(logger);
 
 
 		TemplateConfigParser parser = new TemplateConfigParser();
@@ -214,7 +399,18 @@ public class CsvMapperCliMain {
 		// TODO Move the method to a better place
 		RdfViewSystemOld.initSparqlifyFunctions();
 	
-		ResultSet rs = new Csv().read(dataFile.getAbsolutePath(), null, null);
+		Reader fileReader = new FileReader(dataFile);
+		
+		if(cellDelimiter != null) {
+			CSVReader csvReader = new CSVReader(fileReader, cellDelimiter);
+			fileReader = new ReaderCSVReader(csvReader);	
+		}
+				
+		//show(transReader);
+		//System.out.println("Done showing");
+		
+		//ResultSet rs = new Csv().read(dataFile.getAbsolutePath(), null, null);
+		ResultSet rs = new Csv().read(fileReader, null);
 		//ResultSetMetaData meta = rs.getMetaData();
 
 		/*
@@ -289,20 +485,45 @@ public class CsvMapperCliMain {
 
         
 
+        int totalTripleCount = 0;
+        int tripleGenCount = 0;
+        Map<Var, Integer> varCountMap = new HashMap<Var, Integer>();
         while(it.hasNext()) {
+        	++totalTripleCount;
+        	
+        	
         	Triple t = it.next();
+        	
+        	countVariable(t.getSubject(), varCountMap);
+        	countVariable(t.getPredicate(), varCountMap);
+        	countVariable(t.getObject(), varCountMap);
+        	
         	//logger.trace("Triple: " + t);
-
-        	if(t.getSubject() == null || t.getPredicate() == null || t.getObject() == null) {
-        		logger.warn("Omitting null statement, triple was: " + t);
+        	
+        	if(containsNullOrVar(t)) {
+//        		logger.warn("Omitting null statement, triple was: " + t);
         		continue;        		
         	}
+        	++tripleGenCount;
         	
         	String str = TripleUtils.toNTripleString(t);
         	
         	System.out.println(str);
         }
 		
+        int omittedTripleCount = totalTripleCount - tripleGenCount;
+        
+        System.err.println("Varible\t#Unbound");
+        for(Entry<Var, Integer> entry : varCountMap.entrySet()) {
+        	Var var = entry.getKey();
+        	Integer count = entry.getValue();
+        	
+        	System.err.println(var + ":\t" + count);
+        }
+        
+        System.err.println("Triples generated:\t" + tripleGenCount);
+        System.err.println("Potential triples omitted:\t" + omittedTripleCount);
+        System.err.println("Triples total:\t" + totalTripleCount);
         /*
 		System.exit(0);
 		
