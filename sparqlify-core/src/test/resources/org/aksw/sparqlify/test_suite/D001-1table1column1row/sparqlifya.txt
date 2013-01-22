@@ -8,7 +8,7 @@ Create View TriplesMap1 As
     ?s foaf:name ?o .
   }
   With
-    ?s = uri(concat("http://example.com/", ?name))
-    ?o = plainLiteral(?name)
+    ?s = uri(concat("http://example.com/", ?Name))
+    ?o = plainLiteral(?Name)
   From
     Student

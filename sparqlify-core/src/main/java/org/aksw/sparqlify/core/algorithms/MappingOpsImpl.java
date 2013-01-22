@@ -788,7 +788,11 @@ public class MappingOpsImpl
 		for(Var var : vars) {
 			for(RestrictedExpr def : a.getVarDefinition().getDefinitions(var)) {
 				for(Var item : def.getExpr().getVarsMentioned()) {
-					referencedColumns.add(item.getName());
+					
+					String itemName = item.getName();
+					if(!referencedColumns.contains(itemName)) {
+						referencedColumns.add(itemName);
+					}
 				}
 			}
 		}

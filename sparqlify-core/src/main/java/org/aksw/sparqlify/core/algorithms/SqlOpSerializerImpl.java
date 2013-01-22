@@ -102,7 +102,7 @@ public class SqlOpSerializerImpl
 		//System.out.println("Project column names: " + columnNames);
 		
 		// Empty projections can occur if a query response is determined by static triples
-		if(map.isEmpty()) {
+		if(columnNames.isEmpty()) {
 			return "true";
 		}
 		
@@ -210,7 +210,8 @@ public class SqlOpSerializerImpl
     	}
     	
     	// Projection
-    	writer.println(projection(op.getProjection()));
+    	String projectionStr = projection(op.getProjection());
+    	writer.println(projectionStr);
     	
     	writer.println("FROM");
 

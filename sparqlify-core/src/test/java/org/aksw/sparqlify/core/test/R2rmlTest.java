@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -13,12 +14,13 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.collections.diff.CollectionDiff;
-import org.aksw.commons.collections.diff.Diff;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.openjena.atlas.lib.Sink;
 import org.openjena.riot.RiotReader;
 import org.openjena.riot.lang.LangNQuads;
@@ -102,94 +104,17 @@ class TestBundle {
 }
 
 
-public class R2rmlTests {
-
-	private Logger logger = LoggerFactory.getLogger(R2rmlTests.class);
-	
-	private Comparator<Resource> resourceComparator = new ResourceComparator();
-	
-	private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+class TestBundleReader
+{
+	private static final Logger logger = LoggerFactory.getLogger(R2rmlTest.class);	
+	private static final Comparator<Resource> resourceComparator = new ResourceComparator();	
+	private static final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 	
 	private String spyBasePath = "/org/aksw/sparqlify/test_suite/";
 	private String r2rmlBasePath = "/org/w3c/r2rml/test_suite/";
 
-	public R2rmlTests() {
-	}
-
-	@Test
-	public void runTests() throws Exception {
-
-		List<TestBundle> bundles = process();
-		
-		System.out.println("Final: " + bundles);
-		
-		
-		runBundles(bundles);
-	}
-
 	
-	public void runBundles(List<TestBundle> bundles)
-			throws Exception
-	{
-		for(TestBundle bundle : bundles) {
-			runBundle(bundle);
-		}
-	}
-
-
-	
-	public Set<Quad> readNQuads(InputStream in) {
-		
-		SinkQuadsToSet quadSink = new SinkQuadsToSet();
-		LangNQuads parser = RiotReader.createParserNQuads(in, quadSink);
-		parser.parse();
-
-		Set<Quad> result = quadSink.getQuads();
-		return result;
-	}
-
-	/**
-	 * - Create database from resource
-	 * - Create SparqlSqlRewriterSparqlify from resource 
-	 * - Load nquads file from resource (how?)
-	 * 
-	 * 
-	 * - Run dump on the rewriter (just create a set of quads)
-	 * - Compare the results
-	 * 
-	 * @param bundle
-	 * @throws IOException 
-	 */
-	public void runBundle(TestBundle bundle)
-			throws Exception
-	{
-		System.out.println("Bundle: " + bundle);
-		
-		Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
-		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
-		DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
-		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
-		
-		Set<Quad> actual = SparqlifyUtils.createDumpNQuads(qef);
-
-		SparqlifyUtils.shutdownH2(ds);
-
-		Set<Quad> excessive = Sets.difference(actual, expected);
-		Set<Quad> missing = Sets.difference(expected, actual);
-		
-		System.out.println("Excessive: " + excessive);
-		System.out.println("Missing: " + missing);
-		
-		
-		System.out.println("---------------------------------");
-		//String StreamUtils.toStringSafe();
-		//ConfigP
-		
-		
-	}
-
-
-	public List<TestBundle> process() throws IOException {
+	public List<TestBundle> getTestBundles() throws IOException {
 		List<TestBundle> result = new ArrayList<TestBundle>();
 	
 		Resource[] resources = resolver.getResources(r2rmlBasePath + "*");
@@ -274,6 +199,118 @@ public class R2rmlTests {
 		//System.out.println(createRes.getURI());
 		//System.out.println(createRes.getFilename());
 		//System.out.println("create exists? " + createRes.exists());
+		
+	}
+}
+
+@RunWith(value = Parameterized.class)
+public class R2rmlTest {
+
+	private Logger logger = LoggerFactory.getLogger(R2rmlTest.class);
+	
+	//private Comparator<Resource> resourceComparator = new ResourceComparator();	
+	//private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+	private TestBundle testBundle;
+	
+	
+	public R2rmlTest(TestBundle testBundle) {
+		this.testBundle = testBundle;
+	}
+	
+	@Parameters
+	public static Collection<Object[]> data()
+			throws IOException
+	{	
+		TestBundleReader testBundleReader = new TestBundleReader();
+		List<TestBundle> testBundles = testBundleReader.getTestBundles();
+		
+		Object data[][] = new Object[testBundles.size()][1];
+		
+		
+		for(int i = 0; i < testBundles.size(); ++i) {
+			data[i][0] = testBundles.get(i);
+		}
+
+		Collection<Object[]> result = Arrays.asList(data); 
+		
+		return result;
+	}
+
+//	@Test
+//	public void runTests() throws Exception {
+//
+//		List<TestBundle> bundles = process();
+//		
+//		System.out.println("Final: " + bundles);
+//		
+//		
+//		runBundles(bundles);
+//	}
+//
+//	
+//	public void runBundles(List<TestBundle> bundles)
+//			throws Exception
+//	{
+//		for(TestBundle bundle : bundles) {
+//			runBundle(bundle);
+//		}
+//	}
+
+
+	@Test
+	public void runBundle()
+			throws Exception
+	{
+		runBundle(testBundle);
+	}
+
+	public Set<Quad> readNQuads(InputStream in) {
+		
+		SinkQuadsToSet quadSink = new SinkQuadsToSet();
+		LangNQuads parser = RiotReader.createParserNQuads(in, quadSink);
+		parser.parse();
+
+		Set<Quad> result = quadSink.getQuads();
+		return result;
+	}
+
+	/**
+	 * - Create database from resource
+	 * - Create SparqlSqlRewriterSparqlify from resource 
+	 * - Load nquads file from resource (how?)
+	 * 
+	 * 
+	 * - Run dump on the rewriter (just create a set of quads)
+	 * - Compare the results
+	 * 
+	 * @param bundle
+	 * @throws IOException 
+	 */
+	public void runBundle(TestBundle bundle)
+			throws Exception
+	{
+		System.out.println("Bundle: " + bundle);
+		
+		Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
+		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
+		DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
+		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
+		
+		Set<Quad> actual = SparqlifyUtils.createDumpNQuads(qef);
+
+		SparqlifyUtils.shutdownH2(ds);
+
+		Set<Quad> excessive = Sets.difference(actual, expected);
+		Set<Quad> missing = Sets.difference(expected, actual);
+		
+		System.out.println("Excessive: " + excessive);
+		System.out.println("Missing: " + missing);
+		
+		
+		System.out.println("---------------------------------");
+		//String StreamUtils.toStringSafe();
+		//ConfigP
+		
 		
 	}
 }
