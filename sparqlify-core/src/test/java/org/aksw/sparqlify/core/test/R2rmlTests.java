@@ -1,9 +1,7 @@
 package org.aksw.sparqlify.core.test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -13,6 +11,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.sql.DataSource;
+
+import org.aksw.commons.collections.diff.CollectionDiff;
+import org.aksw.commons.collections.diff.Diff;
+import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.junit.Test;
 import org.openjena.atlas.lib.Sink;
 import org.openjena.riot.RiotReader;
@@ -22,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.core.Quad;
 
 
@@ -111,7 +117,7 @@ public class R2rmlTests {
 	}
 
 	@Test
-	public void runTests() throws IOException {
+	public void runTests() throws Exception {
 
 		List<TestBundle> bundles = process();
 		
@@ -123,7 +129,7 @@ public class R2rmlTests {
 
 	
 	public void runBundles(List<TestBundle> bundles)
-			throws IOException
+			throws Exception
 	{
 		for(TestBundle bundle : bundles) {
 			runBundle(bundle);
@@ -155,14 +161,27 @@ public class R2rmlTests {
 	 * @throws IOException 
 	 */
 	public void runBundle(TestBundle bundle)
-			throws IOException
+			throws Exception
 	{
 		System.out.println("Bundle: " + bundle);
 		
-		Set<Quad> quads = readNQuads(bundle.getExpected().getInputStream());
+		Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
+		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
+		DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
+		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
 		
-		System.out.println("Quads: " + quads);
+		Set<Quad> actual = SparqlifyUtils.createDumpNQuads(qef);
+
+		Set<Quad> excessive = Sets.difference(actual, expected);
+		Set<Quad> missing = Sets.difference(expected, actual);
 		
+		System.out.println("Excessive: " + excessive);
+		System.out.println("Missing: " + missing);
+		
+		
+		System.out.println("---------------------------------");
+		//String StreamUtils.toStringSafe();
+		//ConfigP
 		
 		
 	}

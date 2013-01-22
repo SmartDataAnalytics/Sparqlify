@@ -46,8 +46,12 @@ public class SchemaProviderImpl
 
 		//Set<String> tableNameCache = JdbcUtils.fetchRelationNames(conn);
 
+		
+		// TODD We might have to escape table names...
+		String escTableName = "\"" + tableName + "\"";
+		
 		// FIXME Use database metadata for fetching schemas of tables
-		Schema result = createSchemaForQueryString("SELECT * FROM " + tableName);
+		Schema result = createSchemaForQueryString("SELECT * FROM " + escTableName);
 
 		return result;
 	}
