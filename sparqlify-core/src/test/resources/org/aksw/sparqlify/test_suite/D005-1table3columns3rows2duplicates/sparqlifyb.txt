@@ -1,0 +1,25 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+// Note: There is no special "@base" construct in Sparqlify-ML as there is in Turtle
+// The workaround is to simple use a namespace prefix 
+Prefix base: <http://example.com/base/>
+Prefix ious: <http://example.com/base/IOUs#>
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a base:IOUs ;
+      ious:fname ?fn ;
+      ious:lname ?ln ;
+      ious:amount ?a .
+  }
+  With
+    ?s  = bNode(concat(?fname, "_", ?lname))
+    ?fn = plainLiteral(?fname)
+    ?ln = plainLiteral(?lname)
+    ?a  = typedLiteral(?amount, xsd:double) // Maybe introduce an "auto" keyword / URI for the dataype
+  From
+    IOUs

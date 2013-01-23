@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
+import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,9 @@ public class IteratorResultSetSparqlifyBinding
 {
 	private static final Logger logger = LoggerFactory.getLogger(IteratorResultSetSparqlifyBinding.class);
 	
+	// Canonicalize values, e.g. 20.0 -> 2.0e1
+	private CanonicalizeLiteral canonicalizer = CanonicalizeLiteral.get();
+
 	private ResultSet rs;
 	private Multimap<Var, VarDef> sparqlVarMap;
 	
@@ -165,8 +169,11 @@ public class IteratorResultSetSparqlifyBinding
 				logger.trace("Null node for variable " + entry.getKey() + " - Might be undesired.");
 				//throw new RuntimeException("Null node for variable " + entry.getKey() + " - Should not happen.");
 			} else {
-			
-				result.add((Var)entry.getKey(), resultValue);
+				
+				//result.add((Var)entry.getKey(), resultValue);
+
+				Node canonResultValue = canonicalizer.convert(resultValue);
+				result.add((Var)entry.getKey(), canonResultValue);
 			}
 		}
 	

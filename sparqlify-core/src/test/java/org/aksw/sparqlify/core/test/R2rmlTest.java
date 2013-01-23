@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import junit.framework.Assert;
+
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -27,19 +29,24 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openjena.atlas.lib.Sink;
 import org.openjena.riot.RiotReader;
 import org.openjena.riot.lang.LangNQuads;
+import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.google.common.collect.Sets;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.GraphMatcher;
 import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.graph.GraphFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 
 class SinkQuadsToSet
@@ -315,12 +322,17 @@ class CompareUtils {
 			Node[][] rawMapping = GraphMatcher.match(actualGraph, expectedGraph);
 
 			Map<Node, Node> mapping = new HashMap<Node, Node>();
-			for(int i = 0; i < rawMapping.length; ++i) {
-				Node source = rawMapping[i][0];
-				Node target = rawMapping[i][1];
-				mapping.put(source, target);
+			if(rawMapping != null) {
+				for(int i = 0; i < rawMapping.length; ++i) {
+					Node source = rawMapping[i][0];
+					Node target = rawMapping[i][1];
+					mapping.put(source, target);
+				}
 			}
-			
+			else {
+				//logger.warn("Could not establish a mapping between the graphs")
+			}
+						
 			Set<Quad> tmp = toQuads(g, actualGraph, mapping);
 			result.addAll(tmp);
 		}
@@ -333,7 +345,7 @@ class CompareUtils {
 @RunWith(value = Parameterized.class)
 public class R2rmlTest {
 
-	private Logger logger = LoggerFactory.getLogger(R2rmlTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(R2rmlTest.class);
 	
 	//private Comparator<Resource> resourceComparator = new ResourceComparator();	
 	//private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -350,6 +362,13 @@ public class R2rmlTest {
 	{	
 		TestBundleReader testBundleReader = new TestBundleReader();
 		List<TestBundle> testBundles = testBundleReader.getTestBundles();
+		
+		logger.debug(testBundles.size() + " test cases detected.");
+		
+		for(int i = 0; i < testBundles.size(); ++i) {
+			TestBundle testBundle = testBundles.get(i);
+			logger.trace("Test Case #" + i + ": " + testBundle);
+		}
 		
 		Object data[][] = new Object[testBundles.size()][1];
 		
@@ -383,11 +402,27 @@ public class R2rmlTest {
 //		}
 //	}
 
+	
+	// This test is more about experimenting with Jena in order to find out how to canonicalize values
+//	@Test
+//	public void runCanonicalizerTest() {
+//		RDFDatatype dt = TypeMapper.getInstance().getTypeByName(XSD.xdouble.toString());
+//		
+//		Node a = Node.createLiteral("20.0e0", dt);
+//		Node b = Node.createLiteral("2.0e1", dt);
+//		
+//		CanonicalizeLiteral canon = CanonicalizeLiteral.get();
+//
+//		a = canon.convert(a);
+//		b = canon.convert(b);
+//		
+//		Assert.assertEquals(a, b);
+//	}
 
 	@Test
 	public void runBundle()
 			throws Exception
-	{
+	{		
 		runBundle(testBundle);
 	}
 
@@ -416,7 +451,9 @@ public class R2rmlTest {
 	public void runBundle(TestBundle bundle)
 			throws Exception
 	{
-		System.out.println("Bundle: " + bundle);
+		System.out.println("---------------------------------");
+		System.out.println("Start of Bundle: " + bundle);
+
 		Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
 		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
 		DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
@@ -431,14 +468,18 @@ public class R2rmlTest {
 		Set<Quad> excessive = Sets.difference(alignedActual, expected);
 		Set<Quad> missing = Sets.difference(expected, alignedActual);
 
-		System.out.println("Expected: " + expected);
-		System.out.println("Actual  : " + alignedActual);
+		System.out.println("Expected : " + expected);
+		System.out.println("Actual   : " + alignedActual);
 
 		System.out.println("Excessive: " + excessive);
-		System.out.println("Missing: " + missing);
+		System.out.println("Missing  : " + missing);
 		
 		
-		System.out.println("---------------------------------");
+		Assert.assertEquals(expected, alignedActual);
+
+		System.out.println();
+		System.out.println();
+		System.out.println();
 		//String StreamUtils.toStringSafe();
 		//ConfigP
 		

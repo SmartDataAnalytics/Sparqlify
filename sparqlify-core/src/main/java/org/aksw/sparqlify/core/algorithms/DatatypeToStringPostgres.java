@@ -34,6 +34,8 @@ public class DatatypeToStringPostgres
 		// I guess this should be inferred from the config
 		nameToPostgres.put("int4", "int4");
 		nameToPostgres.put("text", "text");
+		nameToPostgres.put("VARCHAR", "VARCHAR");
+		nameToPostgres.put("DOUBLE", "DOUBLE");
 	}
 	
 	/**

@@ -1,0 +1,22 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/>
+
+/**
+ * NOTE: This mapping does not have a defined result because of the literal subject.
+ * See: http://www.w3.org/TR/2012/NOTE-rdb2rdf-test-cases-20120814/#R2RMLTC0004b
+ */
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a ex:Student ;
+      foaf:name ?n .
+  }
+  With
+    ?s = plainLiteral(?StudentId)
+    ?n = plainLiteral(?Student)
+  From
+    [[SELECT CONCAT('Student' || "Student") AS "StudentId", "Student" FROM "Student_Sport"]]
+

@@ -12,6 +12,7 @@ import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.aksw.sparqlify.core.MakeExprPermissive;
 import org.aksw.sparqlify.core.MakeNodeValue;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,9 @@ public class IteratorResultSetSparqlifyBinding
 	extends SinglePrefetchIterator<Binding>
 {
 	private static final Logger logger = LoggerFactory.getLogger(IteratorResultSetSparqlifyBinding.class);
+	
+	// Canonicalize values, e.g. 20.0 -> 2.0e1
+	private CanonicalizeLiteral canonicalizer = CanonicalizeLiteral.get();
 	
 	private ResultSet rs;
 	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
@@ -168,7 +172,10 @@ public class IteratorResultSetSparqlifyBinding
 				//throw new RuntimeException("Null node for variable " + entry.getKey() + " - Should not happen.");
 			} else {
 			
-				result.add((Var)entry.getKey(), resultValue);
+				//result.add((Var)entry.getKey(), resultValue);
+
+				Node canonResultValue = canonicalizer.convert(resultValue);
+				result.add((Var)entry.getKey(), canonResultValue);
 			}
 		}
 
