@@ -18,6 +18,7 @@ import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.core.ConstraintContainer;
 import org.aksw.sparqlify.core.RdfView;
 import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -107,9 +108,10 @@ public class AntlrTest {
 		//File file = new File("data/wortschatz.sparqlify");
 		//InputStream in = new FileInputStream(file);
 
-		//CharStream cs = new ANTLRInputStream(in);
+		InputStream in = AntlrTest.class.getResourceAsStream("/sparqlifya.txt");
+		CharStream cs = new ANTLRInputStream(in);
 		//CharStream csFile = new ANTLRFileStream("data/test.sparqlify");
-		CharStream csFile = new ANTLRFileStream("data/wortschatz.sparqlify");
+		//CharStream csFile = new ANTLRFileStream("data/wortschatz.sparqlify");
 		
 		//Node.createURI("").
 		//new E_IRI(expr);
@@ -117,7 +119,7 @@ public class AntlrTest {
 		String str = "?s ?p ?o . ";
 		CharStream csStr = new ANTLRStringStream(str);
 		
-		CharStream cs = csFile;
+		//CharStream cs = csFile;
 		//NotImplementedException
 		
 		SparqlifyConfigLexer lexer = new SparqlifyConfigLexer(cs);

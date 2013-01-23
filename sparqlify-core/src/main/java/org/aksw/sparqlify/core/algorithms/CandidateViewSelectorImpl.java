@@ -341,8 +341,7 @@ public class CandidateViewSelectorImpl
 						break;
 					}
 				}
-				
-				if(node.isVariable()) {
+				else if(node.isVariable()) {
 					
 					Var var = (Var)node;
 					Collection<RestrictedExpr> restExprs = normalized.getMapping().getVarDefinition().getDefinitions(var);

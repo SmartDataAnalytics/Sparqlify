@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.Constraint;
@@ -18,12 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.E_StrConcat;
@@ -203,8 +202,8 @@ public class PubbyConfigFactory {
 		Set<String> result = new HashSet<String>();
 		
 		Set<Node> nodes = new HashSet<Node>();
-		for(Triple triple : viewDef.getConstructPattern()) {
-			nodes.add(triple.getSubject());
+		for(Quad quad : viewDef.getConstructPattern()) {
+			nodes.add(quad.getSubject());
 		}
 
 		for(Node node : nodes) {

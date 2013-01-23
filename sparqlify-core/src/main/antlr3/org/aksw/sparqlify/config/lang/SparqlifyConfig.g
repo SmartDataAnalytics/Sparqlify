@@ -69,6 +69,7 @@ GROUP_GRAPH_PATTERN;
 ARG_LIST;
 EXPRESSION_LIST;
 CONSTRUCT_TRIPLES;
+CONSTRUCT_QUADS;
 PROPERTY_LIST;
 COLLECTION;
 TRIPLE;
@@ -91,6 +92,7 @@ PARAM_TYPE;
 PARAM_TYPE_LIST;
 FUNCTION_TEMPLATE;
 
+GRAPH_TOKEN
 
 TODO;
 }
@@ -292,8 +294,8 @@ viewTemplateDefStmt
     ;
 
 viewTemplateDef
-	: constructTemplate varBindingPart?
-		-> ^(VIEW_TEMPLATE_DEFINITION constructTemplate varBindingPart?)
+	: constructTemplateQuads varBindingPart?
+		-> ^(VIEW_TEMPLATE_DEFINITION constructTemplateQuads varBindingPart?)
 	;
 
 
@@ -533,7 +535,7 @@ quads
     ;
     
 quadsNotTriples
-    : GRAPH varOrIRIref OPEN_CURLY_BRACE triplesTemplate? CLOSE_CURLY_BRACE -> ^(GRAPH varOrIRIref triplesTemplate?)
+    : GRAPH varOrIRIref OPEN_CURLY_BRACE triplesTemplate? CLOSE_CURLY_BRACE -> ^(GRAPH_TOKEN varOrIRIref triplesTemplate?)
     ;
     
 triplesTemplate
@@ -613,6 +615,12 @@ expressionList
     : ( OPEN_BRACE expression CLOSE_BRACE ) -> ^(EXPRESSION_LIST expression)
     ;	
 */
+
+
+constructTemplateQuads
+    : quadPattern -> ^(CONSTRUCT_QUADS quadPattern)
+    ;
+
 
 constructTemplate
     : OPEN_CURLY_BRACE constructTriples? CLOSE_CURLY_BRACE -> ^(CONSTRUCT_TRIPLES constructTriples?)

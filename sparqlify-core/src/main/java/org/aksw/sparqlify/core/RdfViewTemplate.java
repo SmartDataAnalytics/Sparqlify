@@ -20,7 +20,6 @@ import com.hp.hpl.jena.sparql.engine.binding.BindingHashMap;
 import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.syntax.Template;
 
 /**
  * A view template consists of the construct pattern
@@ -51,17 +50,17 @@ public class RdfViewTemplate {
 		return RdfViewTemplate.create(definition.getConstructTemplate(), definition.getVarBindings());
 	}
 
-	public static RdfViewTemplate create(Template template, List<Expr> bindings)
+	public static RdfViewTemplate create(QuadPattern quadPattern, List<Expr> bindings)
 	{
 		// NOTE Macro expansion should occur before the creation of a view template...
 		//      ... I think.
 
-		QuadPattern quadPattern = new QuadPattern();
-
-		for(Triple triple : template.getTriples()) {
-			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));
-		}
-		
+//		QuadPattern quadPattern = new QuadPattern();
+//
+//		for(Triple triple : template.getTriples()) {
+//			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));
+//		}
+//		
 		Map<Node, Expr> bindingMap = new HashMap<Node, Expr>();
 		
 		for(Expr expr : bindings) {

@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +23,7 @@ import junit.framework.Assert;
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,24 +32,20 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openjena.atlas.lib.Sink;
 import org.openjena.riot.RiotReader;
 import org.openjena.riot.lang.LangNQuads;
-import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.GraphMatcher;
 import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.graph.GraphFactory;
+import com.hp.hpl.jena.sparql.util.NodeComparator;
+import com.hp.hpl.jena.sparql.util.TripleComparator;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 
 class SinkQuadsToSet
@@ -220,26 +219,12 @@ class TestBundleReader
 }
 
 class CompareUtils {
-	
-	public static Map<Node, Graph> indexAsGraphs(Collection<Quad> quads) {
-		Map<Node, Graph> result = new HashMap<Node, Graph>();
-		for(Quad q : quads) {
-			Graph graph = result.get(q.getGraph());
-			if(graph == null) {
-				graph = GraphFactory.createDefaultGraph();
-				result.put(q.getGraph(), graph);
-			}
-			
-			graph.add(q.asTriple());
-		}
-		
-		return result;
-	}
+
 	
 	//public Set<Quad> 
 	public static Set<Quad> alignActualQuads(Set<Quad> expected, Set<Quad> actual) {
-		Map<Node, Graph> e = indexAsGraphs(expected);
-		Map<Node, Graph> a = indexAsGraphs(actual);
+		Map<Node, Graph> e = QuadPatternUtils.indexAsGraphs(expected);
+		Map<Node, Graph> a = QuadPatternUtils.indexAsGraphs(actual);
 		
 		Set<Quad> result = alignActualQuads(e, a);
 		return result;

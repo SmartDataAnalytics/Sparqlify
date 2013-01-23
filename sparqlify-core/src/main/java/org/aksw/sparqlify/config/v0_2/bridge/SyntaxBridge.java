@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -59,8 +58,8 @@ public class SyntaxBridge {
 		
 		QuadPattern template = new QuadPattern();
 		
-		for(Triple triple : viewDefinition.getConstructPattern().getList()) {
-			Quad quad = new Quad(Quad.defaultGraphNodeGenerated, triple);
+		for(Quad quad : viewDefinition.getConstructPattern().getList()) {
+			//Quad quad = new Quad(Quad.defaultGraphNodeGenerated, triple);
 			
 			template.add(quad);
 		}

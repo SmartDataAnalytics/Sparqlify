@@ -37,6 +37,7 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
@@ -314,7 +315,7 @@ public class AutoMapper {
 			viewDefinition.addVarDef(mainVar, mainVarDef);
 			
 			Node classUri = Node.createURI(prefix + StringUtils.toUpperCamelCase(relation.getName()));
-			viewDefinition.getConstructPattern().add(new Triple(mainVar, RDF.type.asNode(), classUri));
+			viewDefinition.getConstructPattern().add(new Quad(null, new Triple(mainVar, RDF.type.asNode(), classUri)));
 
 		
 			// Create Uris that join according to the FK
@@ -334,7 +335,9 @@ public class AutoMapper {
 
 				Node property = Node.createURI(prefix + StringUtils.toLowerCamelCase(fk.getTarget().getTableName())); 
 				
-				viewDefinition.getConstructPattern().add(new Triple(mainVar, property, targetVar));
+				Triple triple = new Triple(mainVar, property, targetVar);
+				Quad quad = new Quad(Quad.defaultGraphNodeGenerated, triple);
+				viewDefinition.getConstructPattern().add(quad);
 				
 			}
 			
@@ -367,7 +370,9 @@ public class AutoMapper {
 				// FIXME Encode name
 				Node property = Node.createURI(prefix + column.getName());
 				
-				viewDefinition.getConstructPattern().add(new Triple(mainVar, property, var));
+				Triple triple = new Triple(mainVar, property, var);
+				Quad quad = new Quad(Quad.defaultGraphNodeGenerated, triple);
+				viewDefinition.getConstructPattern().add(quad);
 			}
 						
 			

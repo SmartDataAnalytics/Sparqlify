@@ -43,6 +43,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import com.hp.hpl.jena.datatypes.*;
     import org.aksw.sparqlify.algebra.sparql.expr.*;
 	import com.hp.hpl.jena.rdf.model.AnonId;    
+	import org.aksw.sparqlify.util.*;
 
     import java.util.Collection;
     import java.util.List;
@@ -128,7 +129,18 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
         return t.toString();
     }
 
-
+/*
+    void addAsQuad(QuadPattern qp, Template template, Node g) {
+        if(g == null) {
+            g = Quad.defaultGraphNodeGenerated;
+        }
+        
+        for(Triple t : template.getTriples()) {
+            Quad quad = new Quad(g, t);
+            qp.add(quad);
+        }
+    }
+*/
     public E_Function createFunction(String label, Expr ... args) {
         ExprList exprs = new ExprList();
         for(Expr arg : args) {
@@ -194,7 +206,7 @@ functionSignature returns [FunctionSignature value]
     ;
 
 paramTypeList returns [ParamTypeList value]
-	@init { value = new ParamTypeList(); }
+	@init { $value = new ParamTypeList(); }
     : ^(PARAM_TYPE_LIST (a=paramType {$value.add($a.value);})+)
     | ^(PARAM_TYPE_LIST nil)	
     ;
@@ -217,9 +229,8 @@ namedViewTemplateDefinition returns [NamedViewTemplateDefinition value]
 	;
 	
 viewTemplateDefinition returns [ViewTemplateDefinition value]
-	: ^(VIEW_TEMPLATE_DEFINITION a=constructTemplate b=varBindings?) {$value = new ViewTemplateDefinition($a.value, $b.value);}
+	: ^(VIEW_TEMPLATE_DEFINITION a=constructTemplateQuads b=varBindings?) {$value = new ViewTemplateDefinition($a.value, $b.value);}
 	;
-
 
 viewDefinition returns [ ViewDefinition value ]
 	: ^(VIEW_DEFINITION a=NAME b=viewTemplateDefinition d=varConstraints? c=sqlRelation?) { $value = new ViewDefinition($a.text, $b.value, $c.value, $d.value); }
@@ -267,7 +278,7 @@ prefixVarConstraint returns [PrefixConstraint value]
     ;
 
 stringList returns [List<String> value]
-	@init { value = new ArrayList<String>(); }
+	@init {$value = new ArrayList<String>();}
     : ^(STRING_LIST (a=string {value.add($a.value); })+)
     ;
 
@@ -462,20 +473,29 @@ graphRefAll
     : graphRef | DEFAULT | NAMED | ALL
     ;
 
-quadPattern
-    : quads
+quadPattern returns [QuadPattern value]
+    : a=quads{$value = $a.value;}
     ;
     
-quads
-    : triplesTemplate? ( quadsNotTriples triplesTemplate? )*
+quads returns [QuadPattern value]
+    @init{$value = new QuadPattern();}
+    : (a=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern($a.value));})? ( quadsNotTriples[$value] (c=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern($c.value));})? )*
     ;
     
-quadsNotTriples
-    : ^(GRAPH varOrIRIref triplesTemplate?)
+quadsNotTriples [QuadPattern value] //returns [QuadPattern value]
+    //@init{$value = new QuadPattern()}
+    : ^(GRAPH_TOKEN a=varOrIRIref b=triplesTemplate?) {$value.addAll(QuadPatternUtils.toQuadPattern($a.value, $b.value));}
     ;
-    
-triplesTemplate
-    : ^(TRIPLES_TEMPLATE triplesSameSubject[null]*)
+
+/*
+triplesTemplate returns [BasicPattern value]
+    @init {$value = new BasicPattern();}
+    : ^(TRIPLES_TEMPLATE triplesSameSubject[$value]*)
+    ;
+*/
+
+triplesTemplate returns [BasicPattern value]
+    : ^(TRIPLES_TEMPLATE a=triples {$value = $a.value;})
     ;
     	
 groupGraphPattern
@@ -552,22 +572,43 @@ expressionList returns [ExprList value]
     ;	
 
 
-constructTemplate returns[Template value]
-    : ^(CONSTRUCT_TRIPLES a=constructTriples) { $value = new Template(BasicPattern.wrap($a.value)); }
+/*
+constructTemplateEx returns[QuadPattern value]
+	@init { $value = QuadPattern(); }
+	: a=constructTemplate {addAsQuad($value, $a, null);}
+    | ^(GRAPH b=varOrIriRef a=constructTemplate {addAsQuad($value, $a, $b);}
+    ;
+*/  
+
+constructTemplateQuads returns[QuadPattern value]
+    : ^(CONSTRUCT_QUADS a=quadPattern) {$value = $a.value;}
     ;
 
-constructTriples returns [List<Triple> value]
-	@init { $value = new ArrayList<Triple>(); }
+
+constructTemplate returns[Template value]
+    //: ^(CONSTRUCT_TRIPLES a=constructTriples) { $value = new Template(BasicPattern.wrap($a.value)); }
+    : ^(CONSTRUCT_TRIPLES a=constructTriples) {$value = new Template($a.value);}
+    ;
+
+
+constructTriples returns [BasicPattern value]
+    : a=triples {$value = $a.value;}
+    ;
+    
+//TODO Insert Basic Pattern rule
+
+triples returns [BasicPattern value]
+	@init {$value = new BasicPattern();}
 	: triple[value]+
     ;
 
-triple[List<Triple> triples]
+triple[BasicPattern triples]
     : ^(TRIPLE ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples])) {$triples.add(new Triple($a.value, $b.value, $c.value)); }
 	;
 
 
 // TODO: Do we need this rule?
-triplesSameSubject[List<Triple> value]
+triplesSameSubject[BasicPattern value]
     : TODO //(^(TRIPLE objectList[value]))+
     ;
 
@@ -575,7 +616,7 @@ triplesSameSubject[List<Triple> value]
 
 
 // Object list is actually just a a single triple
-objectList[List<Triple> triples]
+objectList[BasicPattern triples]
 	: ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples]) {$triples.add(new Triple($a.value, $b.value, $c.value)); System.out.println("Created triple: " + $triples); }
 	;
 
@@ -594,7 +635,7 @@ constructTriples
     : triplesSameSubject[null]+
     ;
 
-triplesSameSubject[List<Triple> value]
+triplesSameSubject[BasicPattern value]
     : ^(TRIPLE $t=objectList { $value.add($t); })
 //    | ^(TRIPLE triplesSameSubject[value] triplesSameSubject[value]?)
     ;
@@ -612,7 +653,7 @@ verb returns [ Node value ]
     | path		  { if(true) { throw new NotImplementedException(); } }
     ;
 
-triplesSameSubjectPath [List<Triple> value]
+triplesSameSubjectPath [BasicPattern value]
     : ^(TRIPLE objectList[value])
     | ^(TRIPLE triplesSameSubjectPath[value])
     ;
@@ -652,12 +693,12 @@ pathOneInPropertySet
     : INVERSE? ( iriRef | A )
     ;
 	
-triplesNode[List<Triple> triples] returns [Node value]
+triplesNode[BasicPattern triples] returns [Node value]
     : ^(COLLECTION graphNode[triples]+)
     | ^(TRIPLE objectList[triples])
     ;
 
-graphNode[List<Triple> triples] returns [Node value]
+graphNode[BasicPattern triples] returns [Node value]
     : a = varOrTerm {$value = $a.value;}
     | triplesNode[triples]
     ;

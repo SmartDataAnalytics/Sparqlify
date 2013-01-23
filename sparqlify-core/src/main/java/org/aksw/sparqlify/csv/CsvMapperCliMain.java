@@ -32,6 +32,7 @@ import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
 import org.aksw.sparqlify.core.IteratorResultSetSparqlifyBinding;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
+import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.HttpSparqlEndpoint;
 import org.apache.commons.cli.CommandLine;
@@ -52,6 +53,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.sparql.core.BasicPattern;
+import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -476,7 +479,13 @@ public class CsvMapperCliMain {
 		
 
         // insertPrefixesInto(result) ;
-        Template template = view.getConstructTemplate();
+        //Template template = view.getConstructTemplate();
+        
+		QuadPattern quadPattern = view.getConstructTemplate();
+        
+		BasicPattern bgp = QuadPatternUtils.toBasicPattern(quadPattern);
+		Template template = new Template(bgp);
+		
         
         //System.out.println(template.getTriples());
         

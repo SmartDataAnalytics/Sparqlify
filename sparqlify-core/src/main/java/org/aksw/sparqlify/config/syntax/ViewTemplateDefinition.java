@@ -3,7 +3,9 @@ package org.aksw.sparqlify.config.syntax;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.sparql.core.BasicPattern;
+import org.aksw.sparqlify.util.QuadPatternUtils;
+
+import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -14,7 +16,7 @@ public class ViewTemplateDefinition {
 	//private static final Log
 	//private String name;
 	
-	private Template constructTemplate;
+	private QuadPattern constructTemplate;
 	
 	// FIXME: Replace with Map<Var, Expr>
 	private List<Expr> varBindings;
@@ -27,14 +29,21 @@ public class ViewTemplateDefinition {
 	}*/
 	
 	public ViewTemplateDefinition() {
-		this.constructTemplate = new Template(new BasicPattern());
+		this.constructTemplate = new QuadPattern(); //new Template(new BasicPattern());
 		this.varBindings = new ArrayList<Expr>();
 	}
+
+	public ViewTemplateDefinition(Template template, List<Expr> varBindings) {
+		//this.name = name;
+		
+		this.constructTemplate = QuadPatternUtils.toQuadPattern(template.getBGP());
+		this.varBindings = varBindings;
+	}
 	
-	public ViewTemplateDefinition(Template constructTemplate, List<Expr> varBindings) {
+	public ViewTemplateDefinition(QuadPattern constructTemplate, List<Expr> varBindings) {
 		//this.name = name;
 		this.constructTemplate = constructTemplate;
-		this.varBindings = varBindings;
+		this.varBindings = varBindings == null ? new ArrayList<Expr>() : varBindings;
 	}
 	
 	/*
@@ -44,10 +53,10 @@ public class ViewTemplateDefinition {
 	}
 	*/
 	
-	public Template getConstructTemplate() {
+	public QuadPattern getConstructTemplate() {
 		return constructTemplate;
 	}
-	public void setConstructTemplate(Template constructTemplate) {
+	public void setConstructTemplate(QuadPattern constructTemplate) {
 		this.constructTemplate = constructTemplate;
 	}
 	public List<Expr> getVarBindings() {

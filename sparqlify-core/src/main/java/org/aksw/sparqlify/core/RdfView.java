@@ -28,7 +28,6 @@ import sparql.FilterUtils;
 import sparql.PatternUtils;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.Syntax;
@@ -43,7 +42,6 @@ import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.graph.NodeTransform;
-import com.hp.hpl.jena.sparql.syntax.Template;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -227,17 +225,17 @@ public class RdfView
 	 * @param relation
 	 * @return
 	 */
-	public static RdfView create(String name, Template template, ExprList filters, List<Expr> bindings, List<Constraint> rawConstraints, Relation relation)
+	public static RdfView create(String name, QuadPattern quadPattern, ExprList filters, List<Expr> bindings, List<Constraint> rawConstraints, Relation relation)
 	{
 		if(bindings == null) {
 			bindings = new ArrayList<Expr>();
 		}
 		
-		QuadPattern quadPattern = new QuadPattern();
-
-		for(Triple triple : template.getTriples()) {
-			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));
-		}
+//		QuadPattern quadPattern = new QuadPattern();
+//
+//		for(Triple triple : template.getTriples()) {
+//			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));
+//		}
 		
 		Map<Node, Expr> bindingMap = new HashMap<Node, Expr>();
 		

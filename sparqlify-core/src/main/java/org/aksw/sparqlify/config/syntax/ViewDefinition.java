@@ -2,15 +2,20 @@ package org.aksw.sparqlify.config.syntax;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.Constraint;
+import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.openjena.atlas.io.IndentedWriter;
 import org.openjena.riot.system.PrefixMap;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
+import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -105,11 +110,38 @@ public class ViewDefinition {
 		out.println("Construct {");
 		
 		out.incIndent();
-		for(Triple triple : getViewTemplateDefinition().getConstructTemplate().getBGP().getList()) {
-			out.println(toNTripleString(triple, null));
-			//ModelUtils.
-			//out.println(triple);
+		
+		QuadPattern template = getViewTemplateDefinition().getConstructTemplate(); 
+		Map<Node, Set<Triple>> map = QuadPatternUtils.indexSorted(template);
+		
+		for(Entry<Node, Set<Triple>> entry : map.entrySet()) {
+			Node g = entry.getKey();
+			Set<Triple> triples = entry.getValue();
+			
+			boolean isDefaultGraph = Quad.defaultGraphNodeGenerated.equals(g);
+
+			if(!isDefaultGraph) {
+				out.println("GRAPH " + g + " {");
+				out.incIndent();
+			}
+			
+			for(Triple triple : triples) {
+				String triplesStr = toNTripleString(triple, null);
+				out.println(triplesStr);
+			}
+			
+			if(!isDefaultGraph) {
+				out.decIndent();
+				out.println("}");
+			}
 		}
+		
+		
+//		for(Triple triple : getViewTemplateDefinition().getConstructTemplate().getBGP().getList()) {
+//			out.println(toNTripleString(triple, null));
+//			//ModelUtils.
+//			//out.println(triple);
+//		}
 		/*
 		Model model = ModelFactory.createDefaultModel();
 		for(Triple triple : getViewTemplateDefinition().getConstructTemplate().getBGP().getList()) {
@@ -194,7 +226,7 @@ public class ViewDefinition {
 	
 	
 	// Convenience method
-	public BasicPattern getConstructPattern() {
-		return this.viewTemplateDefinition.getConstructTemplate().getBGP();
+	public QuadPattern getConstructPattern() {
+		return this.viewTemplateDefinition.getConstructTemplate();
 	}
 }
