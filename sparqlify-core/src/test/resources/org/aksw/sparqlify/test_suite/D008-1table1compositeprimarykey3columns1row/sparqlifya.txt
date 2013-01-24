@@ -1,0 +1,29 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/>
+
+Prefix spy: <http://aksw.org/sparqlify/>
+
+// TODO urlEncode currently not supported anymore
+Create View TriplesMap1 As
+  Construct {
+    Graph ?g {
+      ?s
+        rdf:type foaf:Person ;
+        ex:id ?i ;
+        foaf:name ?n ;
+        ex:Sport ?sp
+    }
+  }
+  With
+    ?g = uri(concat("http://example.com/graph/Student/", ?ID, "/", spy:urlEncode(?Name)))
+    ?s = uri(concat("http://example.com/Student/", ?ID, "/", spy:urlEncode(?Name)))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?n = plainLiteral(?Name)
+    ?sp = plainLiteral(?Sport)
+  From
+    Student
+ 

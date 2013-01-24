@@ -15,8 +15,13 @@ public class UrlEncode extends FunctionBase1 {
 	@Override
 	public NodeValue exec(NodeValue v) {
 		try {
-			return NodeValue
-					.makeString(URLEncoder.encode(v.getString(), "UTF8"));
+			String str = v.getString();
+			String encoded = URLEncoder.encode(str, "UTF8");
+			String tmp = encoded.replace("+", "%20"); 
+
+			NodeValue result = NodeValue
+					.makeString(tmp);
+			return result;
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Unexpected exception", e);
 			return null;
