@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.cast;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDBaseNumericType;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -227,8 +225,8 @@ public class NewWorldTest {
 		TypeMapper tm = TypeMapper.getInstance();
 		String xxx = "http://mytype.org/foo/bar";
 
-		RDFDatatype inner = new XSDBaseNumericType("int", BigInteger.class);
-		RDFDatatype i = new RDFDatatypeCustomUri("int", inner);
+//		RDFDatatype inner = new XSDBaseNumericType("int", BigInteger.class);
+//		RDFDatatype i = new RDFDatatypeCustomUri("int", inner);
 
 		
 		SqlTypeMapper stm = typeSystem.getSqlTypeMapper();
@@ -239,7 +237,7 @@ public class NewWorldTest {
 		// RDFDatatype i = new XSDBaseNumericType(TypeToken.Int.toString(),
 		// BigInteger.class);
 
-		tm.registerDatatype(i);
+//		tm.registerDatatype(i);
 
 		CoercionSystemImpl3 cs = (CoercionSystemImpl3) typeSystem
 				.getCoercionSystem();

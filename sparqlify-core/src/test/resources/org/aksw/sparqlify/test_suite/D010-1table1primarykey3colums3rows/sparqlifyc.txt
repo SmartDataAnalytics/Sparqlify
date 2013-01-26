@@ -1,0 +1,18 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Prefix spy: <http://aksw.org/sparqlify/>
+
+
+Create View TriplesMap1 As
+  Construct {
+	?s ex:code ?o
+  }
+  With
+    ?s = uri(concat("http://example.com/", ?"Country Code", "/", spy:urlEncode(?Name)))
+    ?o = plainLiteral(concat("{{{ ", ?"ISO 3166", " }}}"))
+  From
+    "Country Info"

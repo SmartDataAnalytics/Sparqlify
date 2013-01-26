@@ -1,0 +1,43 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+//@base <http://example.com/base/> .
+
+Create View TriplesMap1 As
+  Construct {
+    Graph <http://example.com/graph/students> {
+      ?s a <http://example.com/ontology/Student> .
+      ?s <http://example.com/ontology/practises> ?o
+    }
+    Graph <http://example.com/graph/students> {
+      ?s foaf:name ?n
+    }
+    Graph <http://example.com/graph/practise> {
+      ?s <http://example.com/ontology/practises> ?o
+    }
+  }
+  With
+    ?s = uri(concat("http://example.com/resource/student_", ?ID))
+    ?n = plainLiteral(?Name)
+    ?o = uri(concat("http://example.com/resource/sport_", ?Sport))
+    // TODO Reference rr:join
+    //?sp = ref TriplesMaps2.?s On this.?Sport = that.?ID) 
+  From
+    Student
+
+Create View TriplesMap2 As
+  Construct {
+    Graph <http://example.com/graph/sports> {
+      ?s
+        a <http://example.com/ontology/Sport> ;
+        rdfs:label ?n
+    }
+  }
+  With
+    ?s = uri(concat("http://example.com/resource/sport_", ?ID))
+    ?n = plainLiteral(?Name)
+  From
+    Sport
+

@@ -310,6 +310,7 @@ macroStmt
 relationRef
     : a=SQL_QUERY -> ^(SQL_RELATION SQL_QUERY[$a])
     | a=NAME -> ^(SQL_RELATION SQL_TABLE[$a])
+    | a=STRING_LITERAL2 -> ^(SQL_RELATION SQL_TABLE[$a])
     ;
 
 
@@ -735,6 +736,7 @@ varOrIRIref
 var
     : v=VAR1 -> ^(VAR[$v])
     | v=VAR2 -> ^(VAR[$v])
+    | v=VAR3 -> ^(VAR[$v])
 //    | v=VAR2 -> ^(VAR $v) 
     ;
 
@@ -1224,11 +1226,19 @@ PNAME_LN : a=PNAME_NS b=PN_LOCAL { setText($a.text + $b.text); };
     
 BLANK_NODE_LABEL : '_:' t=PN_LOCAL { setText($t.text); };
 
-VAR1 : QUESTION_MARK v=VARNAME { setText($v.text); };
+//VAR1 : QUESTION_MARK v=VARNAME { setText($v.text); };
 
-VAR2 : '$' v=VARNAME { setText($v.text); };
+//VAR2 : '$' v=VARNAME { setText($v.text); };
+
+VAR1 : VAR_HEAD v=VARNAME { setText($v.text); };
+
+VAR2 : VAR_HEAD v=STRING_LITERAL1 {setText($v.text.substring(1, $v.text.length()-1));};
+
+VAR3 : VAR_HEAD v=STRING_LITERAL2 {setText($v.text.substring(1, $v.text.length()-1));};
 
 
+fragment
+VAR_HEAD : (QUESTION_MARK | '$') ;
 
 NAME : PN_CHARS_U NAME_SUFFIX ;
 

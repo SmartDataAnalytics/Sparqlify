@@ -37,6 +37,7 @@ public class DatatypeToStringPostgres
 		nameToPostgres.put("VARCHAR", "VARCHAR");
 		nameToPostgres.put("DOUBLE", "DOUBLE");
 		nameToPostgres.put("INTEGER", "INTEGER");
+		nameToPostgres.put("BIGINT", "BIGINT");
 	}
 	
 	/**
