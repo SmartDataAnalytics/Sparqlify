@@ -99,7 +99,7 @@ public class IteratorResultSetSparqlifyBinding
 			
 			
 			// FIXME We also add bindings that enable us to reference the columns by their index
-			// However, we indexes and column-names are in the same namespace here, so there might be clashes
+			// However, indexes and column-names are in the same namespace here, so there might be clashes
 			Var indexVar = Var.alloc("" + i);
 			binding.add(indexVar, node);
 			
@@ -116,6 +116,13 @@ public class IteratorResultSetSparqlifyBinding
 		
 		for(Entry<Var, Collection<RestrictedExpr>> entry : sparqlVarMap.asMap().entrySet()) {
 			
+			Var bindingVar = entry.getKey();
+			Collection<RestrictedExpr> candidateExprs = entry.getValue();
+			
+			if(bindingVar.getName().equals("o")) {
+				System.out.println("BindingVar o ");
+			}
+			
 			//RDFNode rdfNode = null;
 			NodeValue value = null;
 			//Node value = Node.NULL;
@@ -123,7 +130,7 @@ public class IteratorResultSetSparqlifyBinding
 			// We distinguish on how to create a varible by the columns that are used
 			// We use the most specific rdfTerm constructor
 			Set<Var> usedVars = new HashSet<Var>();
-			for(RestrictedExpr def : entry.getValue()) {
+			for(RestrictedExpr def : candidateExprs) {
 	
 				Expr expr = def.getExpr();
 				
@@ -131,10 +138,11 @@ public class IteratorResultSetSparqlifyBinding
 				// Check if all variables are bound
 				// Null columns may appear on left joins
 				boolean allBound = true;
-				for(Var var : expr.getVarsMentioned()) {
+				Set<Var> exprVars = expr.getVarsMentioned();
+				for(Var var : exprVars) {
 					if(!binding.contains(var)) {
 						allBound = false;
-						continue;
+						break;
 					}
 				}
 				
@@ -145,9 +153,9 @@ public class IteratorResultSetSparqlifyBinding
 						if(usedVars.containsAll(expr.getVarsMentioned())) {
 							continue;
 						} else if(usedVars.equals(expr.getVarsMentioned())) {
-							throw new RuntimeException("Multiple expressions binding the variable (ambiguity) " + entry.getKey() + ": " + entry.getValue());							
+							throw new RuntimeException("Multiple expressions binding the variable (ambiguity) " + bindingVar + ": " + entry.getValue());							
 						} else if(!expr.getVarsMentioned().containsAll(usedVars)) {
-							throw new RuntimeException("Multiple expressions binding the variable (overlap) " + entry.getKey() + ": " + entry.getValue());
+							throw new RuntimeException("Multiple expressions binding the variable (overlap) " + bindingVar + ": " + entry.getValue());
 						}
 					}
 					
@@ -168,14 +176,14 @@ public class IteratorResultSetSparqlifyBinding
 			Node resultValue = value == null ? null : value.asNode();
 			
 			if(resultValue == null) {
-				logger.trace("Null node for variable " + entry.getKey() + " - Might be undesired.");
+				logger.trace("Null node for variable " + bindingVar + " - Might be undesired.");
 				//throw new RuntimeException("Null node for variable " + entry.getKey() + " - Should not happen.");
 			} else {
 			
 				//result.add((Var)entry.getKey(), resultValue);
 
 				Node canonResultValue = canonicalizer.convert(resultValue);
-				result.add((Var)entry.getKey(), canonResultValue);
+				result.add(bindingVar, canonResultValue);
 			}
 		}
 

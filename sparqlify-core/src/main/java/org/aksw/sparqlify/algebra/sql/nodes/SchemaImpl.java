@@ -2,8 +2,10 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.aksw.sparqlify.core.TypeToken;
 
@@ -23,6 +25,7 @@ public class SchemaImpl
 {
 	private List<String> names;
 	private Map<String, TypeToken> nameToType;
+	private Set<String> nullableNames;
 
 	/**
 	 * An empty schema without any columns.
@@ -31,14 +34,20 @@ public class SchemaImpl
 	 * 
 	 */
 	public SchemaImpl() {
-		this.names = new ArrayList<String>();
-		this.nameToType = new HashMap<String, TypeToken>();
+		this(new ArrayList<String>(), new HashMap<String, TypeToken>(), new HashSet<String>());
 	}
 	
 	public SchemaImpl(List<String> names, Map<String, TypeToken> nameToType) {
+		this(names, nameToType, new HashSet<String>());
+	}
+
+	public SchemaImpl(List<String> names, Map<String, TypeToken> nameToType, Set<String> nullableNames) {
 		this.names = names;
 		this.nameToType = nameToType;
+		this.nullableNames = nullableNames;
 	}
+	
+	
 	
 	public static SchemaImpl create(List<String> names, Map<String, TypeToken> nameToType) {
 		return new SchemaImpl(names, nameToType);
@@ -131,6 +140,18 @@ public class SchemaImpl
 			return false;
 		return true;
 	}
+
+	@Override
+	public boolean isNullable(String columnName) {
+		boolean result = nullableNames.contains(columnName);
+		return result;
+	}
+
+//	@Override
+//	public boolean isNullable(boolean assumption) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 
 	
 }

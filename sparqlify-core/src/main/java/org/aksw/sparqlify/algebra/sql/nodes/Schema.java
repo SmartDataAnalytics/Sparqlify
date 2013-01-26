@@ -14,4 +14,7 @@ public interface Schema {
 	
 	List<String> getColumnNames();
 	Map<String, TypeToken> getTypeMap();
+	
+	boolean isNullable(String columnName);
+	//boolean isNullable(boolean assumption);
 }

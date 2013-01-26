@@ -22,6 +22,7 @@ import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1Prefix;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -375,9 +376,13 @@ public class SparqlifyUtils {
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1("NOT");
 			result.addSerializer("logicalNot", serializer);
-	
 		}
-	
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("IS NOT NULL");
+			result.addSerializer("isNotNull", serializer);
+		}
+
 		return result;
 	}
 	

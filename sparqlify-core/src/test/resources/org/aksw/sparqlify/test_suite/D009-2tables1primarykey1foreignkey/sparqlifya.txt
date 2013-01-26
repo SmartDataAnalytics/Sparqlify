@@ -1,0 +1,33 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+//@base <http://example.com/base/> .
+
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?n ;
+      <http://example.com/ontology/practises> ?p
+  }
+  With
+    ?s = uri(concat("http://example.com/resource/student_", ?ID))
+    ?n = plainLiteral(?Name)
+    //?p = TriplesMap2.?s On this.?Sport = that.?ID
+    ?p = uri(concat("http://example.com/resource/sport_", ?Sport))
+  From
+    Student        
+	//[[Select a."ID", a. From "Student" a JOIN "Sport" b ON (b."ID" = a."Sport")]]
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s rdfs:label ?l
+  }
+  With
+    ?s = uri(concat("http://example.com/resource/sport_", ?ID))
+    ?l = plainLiteral(?Name)
+  From
+    Sport

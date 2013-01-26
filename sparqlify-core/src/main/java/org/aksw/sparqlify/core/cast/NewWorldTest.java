@@ -14,6 +14,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalA
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
@@ -340,9 +341,13 @@ public class NewWorldTest {
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(
 					"AND");
 			serializerSystem.addSerializer("logicalAnd", serializer);
-
 		}
 
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("IS NOT NULL");
+			serializerSystem.addSerializer("isNotNull", serializer);
+		}
+		
 		{
 			MethodSignature<TypeToken> sig = MethodSignature.create(false,
 					TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean);

@@ -17,6 +17,20 @@ import com.hp.hpl.jena.sparql.util.NodeComparator;
 import com.hp.hpl.jena.sparql.util.TripleComparator;
 
 public class QuadPatternUtils {
+	
+	public static QuadPattern create(Iterable<Quad> quads) {
+		QuadPattern result = new QuadPattern();
+		for(Quad quad : quads) {
+			result.add(quad);
+		}
+		
+		
+		
+		return result;
+	}
+	
+	//public static QuadPattern
+	
 	public static QuadPattern toQuadPattern(BasicPattern basicPattern) {
 		return toQuadPattern(Quad.defaultGraphNodeGenerated, basicPattern);
 	}

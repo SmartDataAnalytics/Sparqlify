@@ -6,6 +6,7 @@ Prefix activity: <http://example.com/activity/>
 Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 //@base <http://example.com/base/>
 
+Prefix spy: <http://aksw.org/sparqlify/>
 
 Create View TriplesMap2 As
   Construct {
@@ -23,12 +24,14 @@ Create View TriplesMap1 As
       rdf:type foaf:Person ;
       ex:id ?i ;
       foaf:name ?n ;
-      ex:Sport 
+      ex:Sport ?sp
   }
   With
-    ?s = uri(concat("http://example.com/Student/", ?ID, "/", urlEncode(?Name)))
+    ?s = uri(concat("http://example.com/Student/", ?ID, "/", spy:urlEncode(?Name)))
     ?i = typedLiteral(?ID, xsd:integer)
     ?n = plainLiteral(?Name)
+    ?sp = uri(concat("http://example.com/", ?Sport))
+    // TODO references ?sp = TriplesMap2.?s ON this.?person_id = that.?id
   From
     Student
 		

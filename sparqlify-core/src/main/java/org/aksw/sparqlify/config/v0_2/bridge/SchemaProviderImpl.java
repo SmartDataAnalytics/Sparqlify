@@ -5,9 +5,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
@@ -16,6 +18,24 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+class BasicTableInfo {
+	private Map<String, String> rawTypeMap;
+	private Set<String> nullableColumns;
+	
+	public BasicTableInfo(Map<String, String> rawTypeMap, Set<String> nullableColumns) {
+		this.rawTypeMap = rawTypeMap;
+		this.nullableColumns = nullableColumns;
+	}
+
+	public Map<String, String> getRawTypeMap() {
+		return rawTypeMap;
+	}
+
+	public Set<String> getNullableColumns() {
+		return nullableColumns;
+	}
+}
 
 
 /**
@@ -66,24 +86,31 @@ public class SchemaProviderImpl
 			queryString += " LIMIT 1";
 		}
 
-		Map<String, TypeToken> typeMap = null;
+		//Map<String, TypeToken> typeMap = null;
+		BasicTableInfo tableInfo;
 		
 		try {
-			typeMap = SchemaProviderImpl.getTypes(conn, queryString, datatypeSystem, aliasMap);
+			tableInfo = getRawTypes(conn, queryString);
+			
+			//typeMap = SchemaProviderImpl.getTypes(conn, queryString, datatypeSystem, aliasMap);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
+		Map<String, String> rawTypeMap = tableInfo.getRawTypeMap();
+		Set<String> nullableColumns = tableInfo.getNullableColumns();
 		
+		Map<String, TypeToken> typeMap = getTypes(rawTypeMap, datatypeSystem, rawTypeMap); 
+
 		for(Entry<String, TypeToken> entry : typeMap.entrySet()) {
 			logger.info(entry.getKey() + " -> " + entry.getValue());
 		}
-		
 		
 		// FIXME Preserve order of column names
 		List<String> columnNames = new ArrayList<String>(typeMap.keySet());
 		
 		
-		Schema result = new SchemaImpl(columnNames, typeMap);
+		Schema result = new SchemaImpl(columnNames, typeMap, nullableColumns);
 		
 		return result;
 	}
@@ -123,25 +150,32 @@ public class SchemaProviderImpl
 	*/
 
 
-	public static Map<String, String> getRawTypes(Connection conn, String queryStr)
+	public static BasicTableInfo getRawTypes(Connection conn, String queryStr)
 			throws Exception
 	{
+		Map<String, String> rawTypeMap = new HashMap<String,String>();
+		Set<String> nullableColumns = new HashSet<String>();
 		
 		
-		Map<String, String> result = new HashMap<String,String>();
 		ResultSet rs = conn.createStatement().executeQuery(queryStr);
 	
 		try {
 			ResultSetMetaData meta = rs.getMetaData();
 			
 			for(int i = 1; i <= meta.getColumnCount(); ++i) {
-				String name = meta.getColumnName(i);
+				String name = meta.getColumnLabel(i);
+				int isNullable = meta.isNullable(i);
+				
+				if(isNullable != ResultSetMetaData.columnNoNulls) {
+					nullableColumns.add(name);
+				}
+				
 				//int type = meta.getColumnType(i);
 				
 				String typeName = meta.getColumnTypeName(i);
 				//System.out.println("TypeName: " + typeName);
 			
-				result.put(name, typeName);
+				rawTypeMap.put(name, typeName);
 			}
 		} finally {
 			rs.close();
@@ -153,6 +187,7 @@ public class SchemaProviderImpl
 		System.out.println(SqlDatatypeString.getInstance().hashCode());
 		*/
 
+		BasicTableInfo result = new BasicTableInfo(rawTypeMap, nullableColumns); 
 		return result;
 	}
 
@@ -206,11 +241,9 @@ public class SchemaProviderImpl
 	}
 
 	
-	public static Map<String, TypeToken> getTypes(Connection conn, String queryStr, TypeSystem datatypeSystem, Map<String, String> aliasMap)
-		throws Exception
+	public static Map<String, TypeToken> getTypes(Map<String, String> rawTypeMap, TypeSystem datatypeSystem, Map<String, String> aliasMap)
 	{
-		Map<String, String> map = getRawTypes(conn, queryStr);
-		Map<String, TypeToken> result = transformRawMap(map, datatypeSystem, aliasMap);
+		Map<String, TypeToken> result = transformRawMap(rawTypeMap, datatypeSystem, aliasMap);
 		return result;
 	}
 
