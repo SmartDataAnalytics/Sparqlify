@@ -1,0 +1,18 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?o ;
+      ex:amount ?a
+  }
+  With
+    ?s = bNode(concat(?fname, "_", ?lname, "_", ?amount))
+    ?o = plainLiteral(concat(?fname, " ", ?lname))
+    ?a = typedLiteral(?amount, xsd:double)
+  From
+    IOUs

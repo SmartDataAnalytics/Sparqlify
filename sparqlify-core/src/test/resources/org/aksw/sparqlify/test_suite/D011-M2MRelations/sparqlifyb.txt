@@ -1,0 +1,43 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Create TriplesMap1 As
+  Construct {
+    ?s
+      ex:firstName ?fn ;
+      ex:lastName ?ln
+  }
+  With
+    ?s = uri(concat("http://example.com/student/", ?ID))
+    ?fn = plainLiteral(?FirstName)
+    ?ln = plainLiteral(?LastName) 
+  From
+    Student
+    
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      ex:id ?i ;
+      ex:description ?d 
+  }
+  With
+    ?s = uri(concat("http://example.com/sport/", ?ID))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?d = plainLiteral(?Description)
+  From
+    Sport
+
+Create View LinkMap_1_2 As
+  Construct {
+    ?s ex:plays ?o
+  }
+  With
+    ?s = uri(concat("http://example.com/student/", ?ID_Student))
+    ?o = uri(concat("http://example.com/sport/", ?ID_Sport))
+  From
+    Student_Sport
+   
+   
