@@ -1,0 +1,91 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix ex: <http://example.com/ns#>
+Prefix emp: <http://example.com/emp#>
+Prefix dept: <http://example.com/dept#>
+Prefix likes: <http://example.com/likes#>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      dept:deptno ?d ;
+      dept:name ?n ;
+      dept:location ?l ;
+      dept:COMPANY "EXAMPLE Corporation"
+  }
+  With
+    ?s = bNode(?deptId)
+    ?d = typedLiteral(?deptno, xsd:integer)
+    ?n = plainLiteral(?dname)
+    ?l = plainLiteral(?loc)
+  From [[
+       SELECT ('Department' || "deptno") AS "deptId"
+            , "deptno"
+            , "dname"
+            , "loc"
+       FROM "DEPT"
+  ]]
+/*
+TODO Inverse Expression support 
+    rr:subjectMap [ rr:column "deptId"; rr:termType rr:BlankNode;
+                    rr:inverseExpression "{\"deptno\"} = substr({deptId},length('Department')+1)" ];
+*/
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      emp:jobtype ?j ; 
+      rdf:type ?j ;
+      emp:emptype ?e ;
+      rdf:type ?e ;
+      emp:empno ?eno ;
+      emp:name ?en ;
+      emp:job ?ej ;
+      emp:deptNum ?dno ;
+      emp:etype ?et ;
+      //emp:c_ref_deptno ?ref
+  }
+  With
+    ?s = uri(?empURI)
+    ?j = uri(?jobTypeURI)
+    ?e = uri(?empTypeURI)
+    ?eno = typedLiteral(?empno, xsd:integer)
+    ?en = plainLiteral(?ename)
+    ?ej = plainLiteral(?job)
+    ?dno = typedLiteral(?deptno, xsd:integer)
+    ?et = plainLiteral(?etype)
+    //?ref = bNode(?deptno)
+  From [[
+       SELECT ('http://example.com/emp/' || "empno") AS "empURI"
+            , "empno"
+            , "ename"
+            , ('http://example.com/emp/job/'|| "job") AS "jobTypeURI"
+            , "job"
+            , "deptno"
+            , ('http://example.com/emp/etype/'|| "etype") AS "empTypeURI"
+            , "etype"
+            , ('http://example.com/graph/'|| "job" || '/' || "etype") AS "graphURI"
+       FROM "EMP" 
+  ]]
+
+// TODO Add Ref Support
+Create View TODO_Add_Ref_Support
+  As Construct{
+    ?s emp:c_ref_deptno ?o
+  }
+  With
+    ?s = uri(?empURI)
+    ?o = bNode(?deptId)
+  From [[
+       SELECT
+         ('http://example.com/emp/' || "a"."empno") AS "empURI",
+         ('Department' || "b"."deptno") AS "deptId"
+       FROM
+         "EMP" "a"
+         JOIN "DEPT" "b" ON ("b"."deptno" = "a"."deptno")
+  ]]
+
