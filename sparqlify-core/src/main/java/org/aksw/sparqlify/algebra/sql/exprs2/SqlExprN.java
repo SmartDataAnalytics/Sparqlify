@@ -47,6 +47,31 @@ public abstract class SqlExprN
 		writer.print(")");
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((args == null) ? 0 : args.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SqlExprN other = (SqlExprN) obj;
+		if (args == null) {
+			if (other.args != null)
+				return false;
+		} else if (!args.equals(other.args))
+			return false;
+		return true;
+	}
+
 
 	/*
 	@Override
@@ -67,4 +92,6 @@ public abstract class SqlExprN
 	public void visit(SqlExprVisitor visitor) {
 		// visitor.visit(this) ;
 	}*/
+	
+	
 }

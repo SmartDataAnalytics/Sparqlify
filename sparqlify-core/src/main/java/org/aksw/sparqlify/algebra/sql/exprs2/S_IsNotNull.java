@@ -22,8 +22,13 @@ public class S_IsNotNull
 		return result;
 	}
 	
+	
+	
+	
 	public static S_IsNotNull create(SqlExpr a) {
 		return new S_IsNotNull(a);
 	}
 
+	
+	
 }
