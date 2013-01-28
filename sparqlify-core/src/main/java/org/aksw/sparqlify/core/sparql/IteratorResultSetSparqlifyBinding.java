@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -182,7 +183,28 @@ public class IteratorResultSetSparqlifyBinding
 			
 				//result.add((Var)entry.getKey(), resultValue);
 
+				boolean isDatatypeCanonicalization = false;
+				
 				Node canonResultValue = canonicalizer.convert(resultValue);
+				//System.out.println("Canonicalization: " + resultValue + " -> " + canonResultValue);
+				if(!isDatatypeCanonicalization) {
+					
+					if(canonResultValue.isLiteral()) {
+						String lex = canonResultValue.getLiteralLexicalForm();
+						
+						if(resultValue.isLiteral()) {
+							RDFDatatype originalType = resultValue.getLiteralDatatype();
+							//String typeUri = resultValue.getLiteralDatatypeURI();
+							canonResultValue = Node.createLiteral(lex, originalType);
+						} else {
+							throw new RuntimeException("Should not happen: Non-literal canonicalized to literal: " + resultValue + " became " + canonResultValue);
+						}
+
+						
+					}
+					
+				}
+				
 				result.add(bindingVar, canonResultValue);
 			}
 		}

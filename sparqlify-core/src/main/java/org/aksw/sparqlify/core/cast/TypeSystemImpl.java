@@ -15,8 +15,11 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.datatypes.XMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -24,6 +27,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
 public class TypeSystemImpl
 	implements TypeSystem
 {
+	private static final Logger logger = LoggerFactory.getLogger(TypeSystemImpl.class);
+	
 	private TypeMapper typeMapper;
 
 	private SqlTypeMapper sqlTypeMapper;
@@ -105,6 +110,14 @@ public class TypeSystemImpl
 	@Override
 	public SqlValue convertSql(NodeValue value) //, TypeToken targetTypeToken)
 	{
+		if(value.hasNode()) {
+			Node node = value.asNode();
+			if(node.isURI()) {
+				logger.warn("FIXME Replacing URI with string - this should be validated when loading views");
+				value = NodeValue.makeString(node.getURI());
+			}
+		}
+		
 		if(!value.isLiteral()) {
 			throw new RuntimeException("Only literals allowed here, got: " + value);
 		}

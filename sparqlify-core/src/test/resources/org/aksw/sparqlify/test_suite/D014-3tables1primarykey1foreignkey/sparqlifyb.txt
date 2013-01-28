@@ -7,7 +7,6 @@ Prefix likes: <http://example.com/likes#>
 Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 //@base <http://example.com/base/> .
 
-
 Create View TriplesMap1 As
   Construct {
     ?s

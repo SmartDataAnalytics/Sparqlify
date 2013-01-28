@@ -38,7 +38,7 @@ Create View TriplesMap2 As
   Construct {
     ?s
       emp:jobtype ?j ;
-      rdf:type ?jt ;
+      rdf:type ?j ;
       emp:emptype ?et ;
       rdf:type ?et ;
       emp:empno ?eno ;
