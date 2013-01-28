@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.apache.commons.lang.NotImplementedException;
 import org.h2.jdbc.JdbcClob;
@@ -29,6 +30,13 @@ public class MakeNodeValue
 		return (NodeValue)MultiMethod.invokeStatic(MakeNodeValue.class, "_makeNodeValue", o);
 	}
 
+	public static NodeValue _makeNodeValue(byte[] bytes) {
+		String str = StringUtils.bytesToHexString(bytes);
+		String uc = str.toUpperCase();
+		NodeValue result = NodeValue.makeString(uc);
+		return result;
+	}
+	
 	public static NodeValue _makeNodeValue(BigDecimal o) {
 		return NodeValue.makeDecimal(o);
 	}

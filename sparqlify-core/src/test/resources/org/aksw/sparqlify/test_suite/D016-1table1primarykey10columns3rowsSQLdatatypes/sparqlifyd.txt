@@ -1,0 +1,18 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:paid ?pia
+  }
+  With
+    ?s = uri(concat("http://example.com/Patient", ?ID))
+    ?pia = typedLiteral(?PaidInAdvance, xsd:boolean) 
+  From
+	Patient

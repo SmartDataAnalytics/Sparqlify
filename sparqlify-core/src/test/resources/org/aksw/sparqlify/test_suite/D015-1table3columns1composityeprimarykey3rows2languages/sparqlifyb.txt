@@ -1,0 +1,32 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s rdfs:label 
+  }
+  With
+    ?s = uri(concat("http://example.com/", ?Code))
+    ?o = plainLiteral(?Name, "english")
+  From [[
+                       SELECT "Code", "Name", "Lan"
+                       FROM "Country"
+					   WHERE "Lan" = 'EN';
+  ]]
+	
+Create View TriplesMap2 As
+  Construct {
+    ?s rdfs:label ?o
+  }
+  With
+    ?s = uri(concat("http://example.com/", ?Code))
+    ?o = plainLiteral(?Name, "spanish")
+  From [[
+                       SELECT "Code", "Name", "Lan"
+                       FROM "Country"
+					   WHERE "Lan" = 'ES';
+  ]]

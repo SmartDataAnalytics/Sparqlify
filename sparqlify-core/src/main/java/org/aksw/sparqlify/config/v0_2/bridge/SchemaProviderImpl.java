@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
@@ -79,6 +80,9 @@ public class SchemaProviderImpl
 	
 	public Schema createSchemaForQueryString(String queryString) {
 
+		//String queryString = normalizeQueryString(rawQueryString);
+		
+		
 		logger.info("Retrieving schema for query: " + queryString);
 		
 		logger.warn("Using ugly hack for adding a limit");

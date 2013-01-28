@@ -1,8 +1,10 @@
 package org.aksw.sparqlify.core.sparql;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -91,9 +94,30 @@ public class IteratorResultSetSparqlifyBinding
 			String colName = meta.getColumnLabel(i);
 			Object colValue = rs.getObject(i);
 
-			NodeValue nodeValue = MakeNodeValue.makeNodeValue(colValue);
+			// TODO: Make datatype serialization configurable
+			NodeValue nodeValue;
+			if(colValue instanceof Date) {
+				String tmp = colValue.toString();
+				nodeValue = NodeValue.makeDate(tmp); 
+			}
+			else if(colValue instanceof Timestamp) {
+				String tmp = colValue.toString();
+				String val = tmp.replace(' ', 'T');
+				nodeValue = NodeValue.makeDateTime(val);
+			} else {
+				nodeValue = MakeNodeValue.makeNodeValue(colValue);
+			}
+			
 			if(nodeValue == null) {
 				continue;
+			}
+			
+			if(nodeValue.isDateTime()) {
+				XSDDateTime val = nodeValue.getDateTime();
+				String str = val.timeLexicalForm();
+				String b = val.toString();
+
+				System.out.println("foo");
 			}
 			
 			Node node = nodeValue.asNode();
@@ -120,9 +144,9 @@ public class IteratorResultSetSparqlifyBinding
 			Var bindingVar = entry.getKey();
 			Collection<RestrictedExpr> candidateExprs = entry.getValue();
 			
-			if(bindingVar.getName().equals("o")) {
-				System.out.println("BindingVar o ");
-			}
+//			if(bindingVar.getName().equals("o")) {
+//				System.out.println("BindingVar o ");
+//			}
 			
 			//RDFNode rdfNode = null;
 			NodeValue value = null;
@@ -194,8 +218,11 @@ public class IteratorResultSetSparqlifyBinding
 						
 						if(resultValue.isLiteral()) {
 							RDFDatatype originalType = resultValue.getLiteralDatatype();
+
+							if(originalType != null) {
 							//String typeUri = resultValue.getLiteralDatatypeURI();
-							canonResultValue = Node.createLiteral(lex, originalType);
+								canonResultValue = Node.createLiteral(lex, originalType);
+							}
 						} else {
 							throw new RuntimeException("Should not happen: Non-literal canonicalized to literal: " + resultValue + " became " + canonResultValue);
 						}

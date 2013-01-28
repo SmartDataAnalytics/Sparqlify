@@ -2,6 +2,7 @@ package org.aksw.sparqlify.config.v0_2.bridge;
 
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -51,6 +52,17 @@ public class SyntaxBridge {
 	public SchemaProvider getSchemaProvider() {
 		return schemaProvider;
 	}
+
+	// Remove trailing whitespaces and semicolons
+	public static String normalizeQueryString(String queryString) {
+		Pattern pattern = Pattern.compile("(\\s|;)+$", Pattern.MULTILINE);
+		String result = pattern.matcher(queryString).replaceAll("");
+		//String result = queryString.replaceAll(, "");
+		
+		
+		return result;
+	}
+
 	
 	public org.aksw.sparqlify.core.domain.input.ViewDefinition create(ViewDefinition viewDefinition) {
 		
@@ -104,7 +116,8 @@ public class SyntaxBridge {
 
 		} else if(relation instanceof QueryString) {
 
-			String queryString = ((QueryString)relation).getQueryString();
+			String rawQueryString = ((QueryString)relation).getQueryString();
+			String queryString = normalizeQueryString(rawQueryString);
 			Schema schema = schemaProvider.createSchemaForQueryString(queryString);
 			sqlOp = new SqlOpQuery(schema, queryString);
 

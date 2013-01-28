@@ -38,6 +38,11 @@ public class DatatypeToStringPostgres
 		nameToPostgres.put("DOUBLE", "DOUBLE");
 		nameToPostgres.put("INTEGER", "INTEGER");
 		nameToPostgres.put("BIGINT", "BIGINT");
+		nameToPostgres.put("REAL", "REAL");
+		nameToPostgres.put("TIMESTAMP", "TIMESTAMP");
+		nameToPostgres.put("DATE", "DATE");
+		nameToPostgres.put("BOOLEAN", "BOOLEAN");
+		nameToPostgres.put("VARBINARY", "VARBINARY");
 	}
 	
 	/**

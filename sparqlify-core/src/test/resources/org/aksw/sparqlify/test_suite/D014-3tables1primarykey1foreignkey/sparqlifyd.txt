@@ -1,0 +1,23 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix ex: <http://example.com/ns#>
+Prefix emp: <http://example.com/emp#>
+Prefix dept: <http://example.com/dept#>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Create View TriplesMap4 As
+  Construct {
+    ?s ex:role ?o
+  }
+  With
+    ?s = uri(concat("http://data.example.com/employee/", ?empno))
+    ?o = uri(concat("http://data.example.com/roles/", ?ROLE))
+  From [[
+        SELECT "EMP".*, (CASE "job"
+            WHEN 'CLERK' THEN 'general-office'
+            WHEN 'NIGHTGUARD' THEN 'security'
+            WHEN 'ENGINEER' THEN 'engineering'
+        END) AS ROLE FROM "EMP"
+  ]]
+
