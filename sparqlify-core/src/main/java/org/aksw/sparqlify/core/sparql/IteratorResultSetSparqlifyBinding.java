@@ -94,6 +94,8 @@ public class IteratorResultSetSparqlifyBinding
 			String colName = meta.getColumnLabel(i);
 			Object colValue = rs.getObject(i);
 
+			System.out.println(colValue == null ? "null" : colValue.getClass());
+			
 			// TODO: Make datatype serialization configurable
 			NodeValue nodeValue;
 			if(colValue instanceof Date) {

@@ -1,0 +1,42 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix base: <http://example.com/base/>
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?o
+  }
+  With
+    ?s = uri(?FirstName)
+    ?o = plainLiteral(?FirstName)
+  From [[ 
+                       SELECT "ID", "FirstName", "LastName" 
+                       FROM "Employee"
+                       WHERE "ID" < 30 AND "FirstName" LIKE '%://%'
+  ]]
+
+
+/**
+ * IMHO the concept of magically prepending non-URI cell values with a base URI when generating URIs
+ * is somewhat flawed, but oh well ...
+ * 
+ * TODO Implementation wise this is no problem: just add
+ * "(NOT) LIKE '%://%'" to every SQL selection
+ * 
+ * 
+ *
+ */
+Create View TriplesMap1_ex As
+  Construct {
+    ?s foaf:name ?o
+  }
+  With
+    ?s = uri(concat("http://example.com/base/", ?FirstName))
+    ?o = plainLiteral(?FirstName)
+  From [[ 
+                       SELECT "ID", "FirstName", "LastName" 
+                       FROM "Employee"
+                       WHERE "ID" < 30 AND "FirstName" NOT LIKE '%://%'
+  ]]

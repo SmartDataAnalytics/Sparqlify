@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
@@ -158,6 +157,8 @@ public class SchemaProviderImpl
 			throws Exception
 	{
 		Map<String, String> rawTypeMap = new HashMap<String,String>();
+		// TODO We need full column metadata after all I guess
+		//Map<String, Integer> paddingMap = new HashMap<String, String>();
 		Set<String> nullableColumns = new HashSet<String>();
 		
 		
@@ -177,6 +178,7 @@ public class SchemaProviderImpl
 				//int type = meta.getColumnType(i);
 				
 				String typeName = meta.getColumnTypeName(i);
+				int displaySize = meta.getColumnDisplaySize(i);
 				//System.out.println("TypeName: " + typeName);
 			
 				rawTypeMap.put(name, typeName);

@@ -43,6 +43,7 @@ public class DatatypeToStringPostgres
 		nameToPostgres.put("DATE", "DATE");
 		nameToPostgres.put("BOOLEAN", "BOOLEAN");
 		nameToPostgres.put("VARBINARY", "VARBINARY");
+		nameToPostgres.put("CHAR", "CHAR");
 	}
 	
 	/**
