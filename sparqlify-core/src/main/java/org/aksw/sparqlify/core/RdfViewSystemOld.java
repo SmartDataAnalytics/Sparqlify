@@ -31,6 +31,7 @@ import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.core.jena.functions.BNode;
 import org.aksw.sparqlify.core.jena.functions.PlainLiteral;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
+import org.aksw.sparqlify.core.jena.functions.RightPad;
 import org.aksw.sparqlify.core.jena.functions.TypedLiteral;
 import org.aksw.sparqlify.core.jena.functions.Uri;
 import org.aksw.sparqlify.core.jena.functions.UrlDecode;
@@ -244,12 +245,13 @@ public class RdfViewSystemOld
 		FunctionRegistry.get().put(SparqlifyConstants.uriLabel, Uri.class);
 		FunctionRegistry.get().put(SparqlifyConstants.plainLiteralLabel, PlainLiteral.class);
 		FunctionRegistry.get().put(SparqlifyConstants.typedLiteralLabel, TypedLiteral.class);
-
 		
 		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlDecode", UrlDecode.class);
 
 		// Jena does not yet seem to have this strangely named encode_for_uri function
 		FunctionRegistry.get().put("http://aksw.org/sparqlify/urlEncode", UrlEncode.class);		
+
+		FunctionRegistry.get().put(SparqlifyConstants.rightPadLabel, RightPad.class);
 	}
 	
 	/**

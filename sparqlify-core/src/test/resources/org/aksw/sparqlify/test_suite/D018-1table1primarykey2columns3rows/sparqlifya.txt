@@ -4,6 +4,8 @@ Prefix ex: <http://example.com/>
 Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 //@base <http://example.com/base/> .
 
+Prefix spy: <http://aksw.org/sparqlify/>
+
 Create View TriplesMap1 As
   Construct {
     ?s
@@ -14,6 +16,9 @@ Create View TriplesMap1 As
   With
     ?s = uri(concat("http://example.com/", ?ID))
     ?id = typedLiteral(?ID, xsd:integer)
-    ?n = plainLiteral(?Name)
+    
+    // TODO Automatically add the rightPad expression on char datatype
+    // on effective view generation step
+    ?n = plainLiteral(spy:rightPad(?Name, 15))
   From
     Student

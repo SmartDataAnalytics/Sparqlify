@@ -178,7 +178,7 @@ public class SchemaProviderImpl
 				//int type = meta.getColumnType(i);
 				
 				String typeName = meta.getColumnTypeName(i);
-				int displaySize = meta.getColumnDisplaySize(i);
+				//int displaySize = meta.getColumnDisplaySize(i);
 				//System.out.println("TypeName: " + typeName);
 			
 				rawTypeMap.put(name, typeName);

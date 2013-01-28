@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.aksw.sparqlify.core.MakeExprPermissive;
 import org.aksw.sparqlify.core.MakeNodeValue;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.apache.commons.lang.StringUtils;
 import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,15 @@ public class IteratorResultSetSparqlifyBinding
 	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
 	private Multimap<Var, RestrictedExpr> sparqlVarMap;
 	
+	
+	public static boolean isCharType(String typeName) {
+		String tmp = typeName.toLowerCase();
+		
+		Set<String> charNames = new HashSet<String>(Arrays.asList("char"));
+		
+		boolean result = charNames.contains(tmp);
+		return result;
+	}
 	
 	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
 	{
@@ -94,10 +105,26 @@ public class IteratorResultSetSparqlifyBinding
 			String colName = meta.getColumnLabel(i);
 			Object colValue = rs.getObject(i);
 
-			//System.out.println(colValue == null ? "null" : colValue.getClass());
-			
-			// TODO: Make datatype serialization configurable
 			NodeValue nodeValue;
+
+			// NOTE Char right padding is handled as a special expression (similar to urlEncode)
+//			String colType = meta.getColumnTypeName(i);
+//			
+//			//System.out.println(colValue == null ? "null" : colValue.getClass());
+//			
+//			// TODO: Make datatype serialization configurable
+//			if(isCharType(colType)) {
+//				if(colValue == null) {
+//					nodeValue = null;
+//				} else {
+//					int displaySize = meta.getPrecision(i);
+//					int scale = meta.getScale(i);
+//					String tmp = "" + colValue;
+//					String v = StringUtils.rightPad(tmp, displaySize);
+//					nodeValue = NodeValue.makeString(v);
+//				}
+//			}
+//			else
 			if(colValue instanceof Date) {
 				String tmp = colValue.toString();
 				nodeValue = NodeValue.makeDate(tmp); 

@@ -12,6 +12,21 @@ public class NodeValueUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(NodeValueUtils.class);
 	
+	public static int getInteger(NodeValue expr) {
+		int result;
+		if(expr.isInteger()) {
+			result = expr.getInteger().intValue();
+		}
+		else if(expr.isDecimal()) {
+			result = expr.getDecimal().intValue();
+		}
+		else {
+			throw new RuntimeException("Not an integer value: " + expr);
+		}
+		
+		return result;
+	}
+	
 	public static Object getValue(NodeValue expr) {
 		if(expr == null) {
 			return NodeValue.nvNothing;
