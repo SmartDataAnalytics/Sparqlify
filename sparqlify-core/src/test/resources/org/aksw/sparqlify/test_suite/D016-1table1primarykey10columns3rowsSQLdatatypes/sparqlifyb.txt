@@ -5,7 +5,7 @@ Prefix ex: <http://example.com/>
 Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 //@base <http://example.com/base/> .
 
-Create TriplesMap1 As
+Create View TriplesMap1 As
   Construct {
     ?s
       rdf:type foaf:Person ;
