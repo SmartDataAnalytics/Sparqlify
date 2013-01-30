@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.HttpSparqlEndpoint;
+import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -46,6 +48,7 @@ import org.openjena.atlas.lib.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.base.Joiner;
@@ -125,6 +128,7 @@ class ReaderCSVReader
 				result = createLine(strs);
 			}
 
+			System.out.println(result);
 			return result;
 		} catch(Exception e) {
 			throw new RuntimeException(e);
@@ -235,7 +239,7 @@ class TripleUtils {
 		String p = NodeUtils.toNTriplesString(triple.getPredicate());
 		String o = NodeUtils.toNTriplesString(triple.getObject());
 		
-		String result = s + " " + p + " " + o + " .\n";
+		String result = s + " " + p + " " + o + " .";
 		
 		return result;
 	}
@@ -318,6 +322,25 @@ public class CsvMapperCliMain {
 		}
 	}
 	
+	
+	public static TemplateConfig readTemplateConfig(InputStream in, Logger loggerCount)
+			throws IOException, RecognitionException
+	{
+		TemplateConfigParser parser = new TemplateConfigParser();
+
+		TemplateConfig config;
+		try {
+			config = parser.parse(in, loggerCount);
+		} finally {
+			in.close();
+		}
+		
+		return config;
+	}
+	
+	
+	
+	
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws Exception {
 		/*
@@ -363,57 +386,129 @@ public class CsvMapperCliMain {
 		if(!StringUtils.isEmpty(cellDelimiterStr)) {
 			if(cellDelimiterStr.length() > 1) {
 				loggerCount.error("Cell Delimiter may only be a singe character. Given argument is: '" + cellDelimiterStr + "'");
+				printHelpAndExit(1);
 			}
 
 			cellDelimiter = cellDelimiterStr.charAt(0);
 		}
-		
-		// Iterator<List<String>> it = getCsvIterator(dataFile, "\t");
-
-//		while (it.hasNext()) {
-//			List<String> line = it.next();
-//
-//			System.out.println(line);
-//
-//		}
-		
-
-
-		TemplateConfigParser parser = new TemplateConfigParser();
 
 		InputStream in = new FileInputStream(configFile);
 		TemplateConfig config;
 		try {
-			config = parser.parse(in, loggerCount);
+			config = readTemplateConfig(in, loggerCount);
 		} finally {
 			in.close();
 		}
 
 		
 		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
-		
+
 		if(loggerCount.getErrorCount() > 0) {
 			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
 		}
 
+		List<NamedViewTemplateDefinition> views = config.getDefinitions();
+		
+		if(views.isEmpty()) {
+			logger.warn("No view definitions found");
+		}
+		
+		
+		// Index the views by name
+		Map<String, NamedViewTemplateDefinition> viewIndex = indexViews(views, loggerCount);
+		ViewTemplateDefinition view;
+		
+		view = pickView(viewIndex, viewName);
+//		if(view == null) {
+//			logger.error("View '" + viewName + "' not found in config file");
+//			System.exit(1);
+//		}
+		
+		Reader fileReader = new FileReader(dataFile);
+		//convertCsvToRdf(fileReader, view);
+		
+		ResultSet resultSet = createResultSetFromCsv(fileReader, cellDelimiter, null);
+
+		TripleIteratorTracking trackingIt = createTripleIterator(resultSet, view);
+		
+
+		writeTriples(System.out, trackingIt);
+		writeSummary(System.err, trackingIt.getState());
+		
+		
+		//convertCsvToRdf(resultSet, view);
+	}
+	
+	
+	public static Map<String, NamedViewTemplateDefinition> indexViews(List<NamedViewTemplateDefinition> views, Logger loggerCount) {
+		
+		// Index the views by name
+		Map<String, NamedViewTemplateDefinition> nameToView = new HashMap<String, NamedViewTemplateDefinition>();
+		for(NamedViewTemplateDefinition view : views) {
+			String name = view.getName();
+			
+			if(nameToView.containsKey(name)) {
+				loggerCount.warn("Omitting duplicate view definition: " + name);
+			}
+			
+			nameToView.put(name, view);
+		}
+		
+		return nameToView;
+	}
+	
+	public static ViewTemplateDefinition pickView(Map<String, NamedViewTemplateDefinition> index, String viewName)
+	{
+		ViewTemplateDefinition view = null;
+		if(StringUtils.isEmpty(viewName)) {
+			if(index.size() == 1) {
+				view = index.values().iterator().next();
+			} else {
+				throw new RuntimeException("Multiple views exist. Please specify which one to use");
+				//logger.error("Multiple views present in config file; please specify which to use");
+				//printHelpAndExit(1);
+			}
+		} else {
+			view = index.get(viewName);
+			if(view == null) {
+				throw new RuntimeException("View '" + viewName + "' not found");
+//				//logger.error("View '" + viewName + "' not found in config file");
+//				//System.exit(1);
+//
+			}
+		}
+
+		return view;
+	}
+	
+	
+	public static ResultSet createResultSetFromCsv(Reader reader, Character cellDelimiter, Character quoteCharacter)
+			throws IOException
+	{
+		if(cellDelimiter != null || quoteCharacter != null) {
+			char cellDelim = cellDelimiter == null ? CSVParser.DEFAULT_SEPARATOR : cellDelimiter;
+			char quoteChar = quoteCharacter == null ? CSVParser.DEFAULT_QUOTE_CHARACTER : quoteCharacter;
+			
+			
+			CSVReader csvReader = new CSVReader(reader, cellDelim, quoteChar);
+			reader = new ReaderCSVReader(csvReader);	
+		}
+		
+		Csv csv = new Csv();
+		//csv.setEscapeCharacter('/');
+		ResultSet result = csv.read(reader, null);
+		return result;
+	}
+	
+	public static TripleIteratorTracking createTripleIterator(ResultSet rs, ViewTemplateDefinition view) {
+
+		
 	
 		//System.out.println("Test here");
 
 		// TODO Move the method to a better place
 		RdfViewSystemOld.initSparqlifyFunctions();
 	
-		Reader fileReader = new FileReader(dataFile);
-		
-		if(cellDelimiter != null) {
-			CSVReader csvReader = new CSVReader(fileReader, cellDelimiter);
-			fileReader = new ReaderCSVReader(csvReader);	
-		}
-				
-		//show(transReader);
-		//System.out.println("Done showing");
-		
-		//ResultSet rs = new Csv().read(dataFile.getAbsolutePath(), null, null);
-		ResultSet rs = new Csv().read(fileReader, null);
 		//ResultSetMetaData meta = rs.getMetaData();
 
 		/*
@@ -422,40 +517,8 @@ public class CsvMapperCliMain {
 		}
 		*/
 
-		List<NamedViewTemplateDefinition> views = config.getDefinitions();
+
 		
-		if(views.isEmpty()) {
-			logger.warn("No view definitions found");
-		}
-		
-		// Index the views by name
-		Map<String, NamedViewTemplateDefinition> nameToView = new HashMap<String, NamedViewTemplateDefinition>();
-		for(NamedViewTemplateDefinition view : views) {
-			String name = view.getName();
-			
-			if(nameToView.containsKey(name)) {
-				logger.warn("Omitting duplicate view definition: " + name);
-			}
-			
-			nameToView.put(name, view);
-		}
-		
-		
-		ViewTemplateDefinition view = null;
-		if(StringUtils.isEmpty(viewName)) {
-			if(views.size() == 1) {
-				view = views.get(0);
-			} else {
-				logger.error("Multiple views present in config file; please specify which to use");
-				printHelpAndExit(1);
-			}
-		} else {
-			view = nameToView.get(viewName);
-			if(view == null) {
-				logger.error("View '" + viewName + "' not found in config file");
-				System.exit(1);
-			}
-		}
 		
 		VarExprList varExprs = view.getVarExprList();
 		
@@ -491,35 +554,17 @@ public class CsvMapperCliMain {
         
 
         Iterator<Triple> it = new ConstructIterator(template, rss);
-
         
-
-        int totalTripleCount = 0;
-        int tripleGenCount = 0;
-        Map<Var, Integer> varCountMap = new HashMap<Var, Integer>();
-        while(it.hasNext()) {
-        	++totalTripleCount;
-        	
-        	
-        	Triple t = it.next();
-        	
-        	countVariable(t.getSubject(), varCountMap);
-        	countVariable(t.getPredicate(), varCountMap);
-        	countVariable(t.getObject(), varCountMap);
-        	
-        	//logger.trace("Triple: " + t);
-        	
-        	if(containsNullOrVar(t)) {
-//        		logger.warn("Omitting null statement, triple was: " + t);
-        		continue;        		
-        	}
-        	++tripleGenCount;
-        	
-        	String str = TripleUtils.toNTripleString(t);
-        	
-        	System.out.println(str);
-        }
-		
+        TripleIteratorTracking result = new TripleIteratorTracking(it);
+        
+        return result;
+	}
+    
+	public static void writeSummary(PrintStream out, TripleIteratorState state) {
+	
+        int totalTripleCount = state.getTotalTripleCount();
+        int tripleGenCount = state.getTripleGenCount();
+        Map<Var, Integer> varCountMap = state.getVarCountMap();
         int omittedTripleCount = totalTripleCount - tripleGenCount;
         
         System.err.println("Varible\t#Unbound");
@@ -533,6 +578,18 @@ public class CsvMapperCliMain {
         System.err.println("Triples generated:\t" + tripleGenCount);
         System.err.println("Potential triples omitted:\t" + omittedTripleCount);
         System.err.println("Triples total:\t" + totalTripleCount);
+	}
+	
+	public static void writeTriples(PrintStream out, Iterator<Triple> it) {
+        
+        while(it.hasNext()) {
+
+        	Triple t = it.next();
+        	String str = TripleUtils.toNTripleString(t);
+        	
+        	out.println(str);
+        }
+		
         /*
 		System.exit(0);
 		
@@ -546,6 +603,7 @@ public class CsvMapperCliMain {
 		}*/
 
 	}
+
 
 	public static Iterator<List<String>> getCsvIterator(File file,
 			String columnSeparator) throws FileNotFoundException {
