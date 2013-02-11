@@ -44,6 +44,9 @@ public class DatatypeToStringPostgres
 		nameToPostgres.put("BOOLEAN", "BOOLEAN");
 		nameToPostgres.put("VARBINARY", "VARBINARY");
 		nameToPostgres.put("CHAR", "CHAR");
+		
+		
+		//nameToPostgres.put("bpchar", "BPCHAR");
 	}
 	
 	/**
@@ -63,10 +66,14 @@ public class DatatypeToStringPostgres
 			};
 		}*/
 
-		final String result = nameToPostgres.get(datatype.getName());
-		if(result == null) {
-			throw new RuntimeException("No string representation for " + datatype.getName());
+		String tmp = nameToPostgres.get(datatype.getName());
+		if(tmp == null) {
+			tmp = datatype.getName();
+			System.err.println("WARNING: Datatype not checked for db support");
+			//throw new RuntimeException("No string representation for " + datatype.getName());
 		}
+		
+		final String result = tmp;
 		//return result;
 
 		

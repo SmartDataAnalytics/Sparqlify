@@ -3,10 +3,10 @@ package exp.cornercases;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.HashMultimap;
@@ -23,6 +23,7 @@ public class VarDefinitionTest {
 	 * 
 	 */
 	@Test
+	@Ignore
 	public void testRename() {
 		
 		Var v1 = Var.alloc("s");

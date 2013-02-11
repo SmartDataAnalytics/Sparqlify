@@ -100,7 +100,7 @@ class TestBundleReader
 //			
 //			System.out.println("    " + m.getFilename());
 			
-			TestBundle bundle = new TestBundle(create, m, expected, manifest);
+			TestBundle bundle = new TestBundle(r.getFilename(), create, m, expected, manifest);
 			result.add(bundle);
 		}
 		

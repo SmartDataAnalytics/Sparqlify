@@ -29,7 +29,7 @@ import com.talis.rdfwriters.json.JSONJenaWriter;
  * @author raven
  * 
  */
-class SparqlFormatterUtils {
+public class SparqlFormatterUtils {
 	public static final Logger logger = LoggerFactory.getLogger(SparqlFormatterUtils.class);
 	
 	public static Model triplesToModel(Iterator<Triple> iterator) {

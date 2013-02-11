@@ -7,6 +7,7 @@ import org.aksw.sparqlify.core.algorithms.ViewInstance;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 
+import com.hp.hpl.jena.query.SortCondition;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
@@ -55,4 +56,6 @@ public interface MappingOps {
 	Mapping groupBy(Mapping a, VarExprList groupVars, List<ExprAggregator> aggregators);
 
 	Mapping extend(Mapping a, VarDefinition varDef);
+	
+	Mapping order(Mapping a, List<SortCondition> sortConditions);
 }

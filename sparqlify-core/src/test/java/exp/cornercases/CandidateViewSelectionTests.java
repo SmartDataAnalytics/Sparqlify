@@ -70,7 +70,7 @@ public class CandidateViewSelectionTests {
 	}
 	
 	
-	@Test
+	//@Test
 	public void test2() throws Exception {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		

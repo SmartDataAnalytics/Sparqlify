@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -382,6 +383,18 @@ public class SparqlifyUtils {
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("IS NOT NULL");
 			result.addSerializer("isNotNull", serializer);
 		}
+		
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {
+				@Override
+				public String serialize(List<String> args) {
+					return "COUNT(*)";
+				}
+			};
+			
+			result.addSerializer("org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount", serializer);
+		}
+
 
 		return result;
 	}
@@ -433,6 +446,14 @@ public class SparqlifyUtils {
 		} finally {
 			in.close();
 		}
+	}
+	
+	public static Config createConfig(String str, Logger logger) throws IOException, RecognitionException {
+		InputStream in = new ByteArrayInputStream(str.getBytes());
+		
+		Config result = readConfig(in, logger);
+		
+		return result;
 	}
 	
 	

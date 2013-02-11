@@ -40,7 +40,7 @@ public class MappingOpsImplTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MappingOpsImplTest.class);
 
-	@Test
+	//@Test
 	public void creationTest() throws RecognitionException, SQLException, IOException {
 
 		RdfViewSystemOld.initSparqlifyFunctions();

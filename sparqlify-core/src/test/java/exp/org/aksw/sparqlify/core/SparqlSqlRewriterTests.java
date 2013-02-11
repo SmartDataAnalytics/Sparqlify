@@ -44,7 +44,7 @@ public class SparqlSqlRewriterTests {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	@Test
+	//@Test
 	public void nestedOptionalsTest() throws RecognitionException, SQLException, IOException {
 		
 		SparqlifyTestFacade facade = SparqlifyTestFacade.createWithTestDb();

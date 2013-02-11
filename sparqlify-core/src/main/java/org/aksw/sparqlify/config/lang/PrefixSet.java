@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.aksw.commons.util.strings.StringUtils;
-import org.junit.Assert;
 
 /**
  * TODO Switch to a trie data structure
@@ -101,9 +100,9 @@ public class PrefixSet
 		x.getSet().add("cccde");
 
 		
-		
-		Assert.assertTrue(x.containsPrefixOf("cccd"));
-		Assert.assertTrue(x.isPrefixForItem("bb"));
+		//TODO Creata JUNIT Test case
+		//Assert.assertTrue(x.containsPrefixOf("cccd"));
+		//Assert.assertTrue(x.isPrefixForItem("bb"));
 	}
 
 	public void removeAll(Collection<String> ps) {

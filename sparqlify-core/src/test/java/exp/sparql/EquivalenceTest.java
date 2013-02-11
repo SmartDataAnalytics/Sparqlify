@@ -92,7 +92,8 @@ public class EquivalenceTest
 	}
 
 
-	@Test
+	//@Test
+	//@Ignore
 	public void differentLengthA()
 	{
 		eval("Select * { ?a <http://knows> ?b . }",

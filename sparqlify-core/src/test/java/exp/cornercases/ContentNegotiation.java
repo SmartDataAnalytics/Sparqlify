@@ -31,21 +31,21 @@ public class ContentNegotiation {
         StreamUtils.copyThenClose(test.openStream(), System.out);
 	}
 	
-	@Test
+	//@Test
 	public void testJson()
 		throws Exception
 	{
 		test("application/json");
 	}
 	
-	@Test
+	//@Test
 	public void testPlain()
 		throws Exception
 	{
 		test("text/plain");
 	}
 
-	@Test
+	//@Test
 	public void testRdfXml()
 		throws Exception
 	{

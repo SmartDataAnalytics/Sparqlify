@@ -3,6 +3,7 @@ package exp.cornercases;
 import org.aksw.sparqlify.restriction.Prefix;
 import org.aksw.sparqlify.restriction.experiment.PrefixSet;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PrefixSetTest {
@@ -13,6 +14,7 @@ public class PrefixSetTest {
 	 * 
 	 */
 	@Test(expected=Throwable.class)
+	@Ignore
 	public void test1() {
 		PrefixSet set = new PrefixSet(new Prefix("http://"));
 		Prefix ex1 = new Prefix("http://ex.org/foo");
@@ -22,6 +24,7 @@ public class PrefixSetTest {
 	}
 
 	@Test
+	@Ignore
 	public void test2() {
 		PrefixSet set = new PrefixSet(new Prefix("http://"));
 		Prefix ex1 = new Prefix("http://ex.org/foo");

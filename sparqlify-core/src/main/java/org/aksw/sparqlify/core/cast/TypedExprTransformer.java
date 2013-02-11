@@ -9,6 +9,7 @@ import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import com.hp.hpl.jena.sparql.expr.Expr;
 
 public interface TypedExprTransformer {
+	@Deprecated // I think
 	SqlExpr translate(Expr sparqlExpr, Map<String, TypeToken> typeMap);
 	
 	ExprSqlRewrite rewrite(Expr expr, Map<String, TypeToken> typeMap);

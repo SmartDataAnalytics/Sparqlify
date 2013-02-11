@@ -83,8 +83,9 @@ public class S_Constant
 	@Deprecated
 	public S_Constant(TypeToken typeName, String value) {
 		super(typeName);
+		this.value = new SqlValue(typeName, value);
 //		this.value = NodeValue.makeString(value);
-		throw new RuntimeException("Deprecated");
+		//throw new RuntimeException("Deprecated");
 	}
 	
 	

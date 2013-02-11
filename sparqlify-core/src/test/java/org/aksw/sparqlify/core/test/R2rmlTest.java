@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.sql.DataSource;
 
@@ -27,25 +25,29 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.util.NodeComparator;
-import com.hp.hpl.jena.sparql.util.TripleComparator;
 
 
-@RunWith(value = Parameterized.class)
+@RunWith(Parameterized.class)
 public class R2rmlTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(R2rmlTest.class);
 	
 	//private Comparator<Resource> resourceComparator = new ResourceComparator();	
 	//private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+	private String name;
 	private TestBundle testBundle;
 	
 	
-	public R2rmlTest(TestBundle testBundle) {
+	public R2rmlTest(String name, TestBundle testBundle) {
+		this.name = name;
 		this.testBundle = testBundle;
 	}
 	
-	@Parameters
+	public String getName() {
+		return name;
+	}
+	
+	@Parameters(name = "Sparqlify R2RML Test {index}: {0}")
 	public static Collection<Object[]> data()
 			throws IOException
 	{
@@ -59,11 +61,13 @@ public class R2rmlTest {
 			logger.trace("Test Case #" + i + ": " + testBundle);
 		}
 		
-		Object data[][] = new Object[testBundles.size()][1];
+		Object data[][] = new Object[testBundles.size()][2];
 		
 		
 		for(int i = 0; i < testBundles.size(); ++i) {
-			data[i][0] = testBundles.get(i);
+			TestBundle testBundle = testBundles.get(i);
+			data[i][0] = testBundle.getName();
+			data[i][1] = testBundles.get(i);
 		}
 
 		Collection<Object[]> result = Arrays.asList(data); 

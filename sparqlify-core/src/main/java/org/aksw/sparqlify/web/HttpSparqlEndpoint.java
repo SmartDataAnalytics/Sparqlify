@@ -1,10 +1,8 @@
 package org.aksw.sparqlify.web;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -12,7 +10,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -22,30 +20,6 @@ import org.springframework.stereotype.Component;
 
 import com.hp.hpl.jena.sparql.engine.http.HttpParams;
 
-
-class StreamingOutputString 
-	implements StreamingOutput {
-
-	String str;
-	
-	public StreamingOutputString(String str) {
-		this.str = str;
-	}
-	
-	@Override
-	public void write(OutputStream output) throws IOException,
-			WebApplicationException {
-		PrintStream out = new PrintStream(output);
-		
-		out.println(str);
-		out.flush();
-	}
-	
-	public static StreamingOutputString create(String str) {
-		return new StreamingOutputString(str);
-	}
-	
-}
 
 /**
  * Jersey resource for exposing a SparqlEndpoint based on a QueryExecutionFactory
@@ -78,8 +52,18 @@ public class HttpSparqlEndpoint {
 	//protected QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
 	public static QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
 	
-	
+
+	// No-arg constructor
+	// used for injecting the QueryExecutionFactory via Spring
 	public HttpSparqlEndpoint() {
+		
+	}
+
+	public HttpSparqlEndpoint(@Context ServletContext context) {
+		QueryExecutionFactory<QueryExecutionStreaming> qef = (QueryExecutionFactory)context.getAttribute("queryExecutionFactory");
+		
+		this.queryExecutionFactory = qef;
+		
 		init();
 	}
 	
@@ -153,8 +137,8 @@ public class HttpSparqlEndpoint {
 	*/
 
 	
-	@GET
 	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@GET
 	@Produces(MediaType.APPLICATION_XML)
 	public StreamingOutput executeQueryXml(@QueryParam("query") String queryString)
 			throws Exception {
@@ -166,10 +150,9 @@ public class HttpSparqlEndpoint {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
 	}
 
-	
+	//@Produces(MediaType.APPLICATION_XML)
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	//@Produces(MediaType.APPLICATION_XML)
 	public StreamingOutput executeQueryXmlPost(@FormParam("query") String queryString)
 			throws Exception {
 
@@ -179,28 +162,6 @@ public class HttpSparqlEndpoint {
 		
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
 	}
-
-	
-	/*
-	@GET
-	public Response executeQueryXml(@Context HttpContext hc, @QueryParam("query") String queryString, @QueryParam("format") String format)
-			throws Exception {
-
-		hc.getResponse().getHttpHeaders().put("Content-Type", SparqlFormatterUtils.FORMAT_Json);
-		
-		if(queryString == null) {
-			hc.getResponse().getOutputStream()
-			return StreamingOutputString.create("<error>No query specified. Append '?query=&lt;your SPARQL query&gt;'</error>");
-		}
-		
-		if(format != null) {
-			return processQuery(queryString, SparqlFormatterUtils.FORMAT_Json);	
-		}
-		
-		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
-	}
-	*/
-	
 
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, "application/sparql-results+json"})
@@ -216,12 +177,11 @@ public class HttpSparqlEndpoint {
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_Json);
 	}
-
 	
-	@GET
-	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(HttpParams.contentTypeRDFXML)
 	//@Produces("application/rdf+xml")
+	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@GET
+	@Produces(HttpParams.contentTypeRDFXML)
 	public StreamingOutput executeQueryRdfXml(@QueryParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_RdfXml);
@@ -236,9 +196,6 @@ public class HttpSparqlEndpoint {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_RdfXml);
 	}
 
-
-	
-	
 	@GET
 	@Produces("application/sparql-results+xml")
 	public StreamingOutput executeQueryResultSetXml(@QueryParam("query") String queryString)
@@ -252,9 +209,7 @@ public class HttpSparqlEndpoint {
 	public StreamingOutput executeQueryResultSetXmlPost(@FormParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
-	}
-
-	
+	}	
 	
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
@@ -292,4 +247,26 @@ public class HttpSparqlEndpoint {
 	   return makeCORS(req, _corsHeaders);
 	}
 	*/
+	
+	
+	/*
+	@GET
+	public Response executeQueryXml(@Context HttpContext hc, @QueryParam("query") String queryString, @QueryParam("format") String format)
+			throws Exception {
+
+		hc.getResponse().getHttpHeaders().put("Content-Type", SparqlFormatterUtils.FORMAT_Json);
+		
+		if(queryString == null) {
+			hc.getResponse().getOutputStream()
+			return StreamingOutputString.create("<error>No query specified. Append '?query=&lt;your SPARQL query&gt;'</error>");
+		}
+		
+		if(format != null) {
+			return processQuery(queryString, SparqlFormatterUtils.FORMAT_Json);	
+		}
+		
+		return processQuery(queryString, SparqlFormatterUtils.FORMAT_XML);
+	}
+	*/
+	
 }

@@ -292,6 +292,8 @@ public class Main {
 
 		Server server = new Server(port);
 		ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+
+		context.getServletContext().setAttribute("queryExecutionFactory", qef);		
 		context.addServlet(sh, "/*");		
 
 		server.start();

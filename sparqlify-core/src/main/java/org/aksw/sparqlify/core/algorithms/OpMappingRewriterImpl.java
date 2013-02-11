@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.SortCondition;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpAssign;
 import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
@@ -22,6 +23,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
 import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
+import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
@@ -202,6 +204,15 @@ public class OpMappingRewriterImpl
 		return result;
 	}
 
+	public Mapping rewrite(OpOrder op) {
+		Mapping a = rewrite(op.getSubOp());
+		
+		List<SortCondition> sortConditions = op.getConditions();
+		Mapping result = ops.order(a, sortConditions);
+		
+		return result;
+	}
+
 	
 	/**
 	 * The aggregators need to be wrapped with an appropriate term ctor.
@@ -268,6 +279,9 @@ public class OpMappingRewriterImpl
 		}
 		else if (op instanceof OpAssign) {
 			result = rewrite((OpAssign)op);
+		}
+		else if (op instanceof OpOrder) {
+			result = rewrite((OpOrder)op);
 		}
 		/*
 		else if(op instanceof OpNull) {

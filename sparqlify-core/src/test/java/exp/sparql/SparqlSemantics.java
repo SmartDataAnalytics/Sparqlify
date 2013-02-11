@@ -12,7 +12,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class SparqlSemantics
 {
-	@Test
+	//@Test
 	public void testInteger()
 	{
 		Model model = ModelFactory.createDefaultModel();
