@@ -324,6 +324,7 @@ public class CandidateViewSelectorImpl
 			for(int i = 0; i < 4; ++i) {
 				Node node = QuadUtils.getNode(quad, i);
 
+				// This check is only performed prior to the object position
 				if(i == 3) {
 					RdfTermType type = getType(node, varRestrictions);					
 					switch(type) {
@@ -341,7 +342,8 @@ public class CandidateViewSelectorImpl
 						break;
 					}
 				}
-				else if(node.isVariable()) {
+				
+				if(node.isVariable()) {
 					
 					Var var = (Var)node;
 					Collection<RestrictedExpr> restExprs = normalized.getMapping().getVarDefinition().getDefinitions(var);
@@ -597,7 +599,7 @@ public class CandidateViewSelectorImpl
 				}
 				*/
 				
-				Var var = (Var)QuadUtils.getNode(quad, i);
+				Var var = (Var)n;
 				
 				RestrictionImpl r = clause.getRestriction(var);
 				termRestriction[i] = r;

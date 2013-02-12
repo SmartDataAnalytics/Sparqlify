@@ -32,6 +32,13 @@ class IndexCandidate {
 		this.constraints = constraints;
 		this.childIndex = childIndex;
 	}
+
+	@Override
+	public String toString() {
+		return "IndexCandidate [node=" + node + ", columnDepth=" + columnDepth
+				+ ", nodeDepth=" + nodeDepth + ", childIndex=" + childIndex
+				+ ", child=" + child + ", constraints=" + constraints + "]";
+	}
 }
 
 
@@ -208,6 +215,12 @@ class TrieMap<K, V>
 
 
 
+/**
+ * Checks whether the columns of a row satisfy a set of constraints
+ * 
+ * @author raven
+ *
+ */
 class RowRechecker
 // implements Filter<List<Object>>
 {
@@ -319,7 +332,8 @@ public class IndexCollection<T>
 		}
 		
 		
-		return execute(bestMatch, bestCandidate, rechecker);
+		Collection<List<Object>> result = execute(bestMatch, bestCandidate, rechecker);
+		return result;
 	}
 	
 

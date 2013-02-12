@@ -306,4 +306,9 @@ public class TreeIndex
 		
 		return index;
 	}
+
+	@Override
+	public String toString() {
+		return "TreeIndex [root=" + root + ", store=" + store + "]";
+	}
 }

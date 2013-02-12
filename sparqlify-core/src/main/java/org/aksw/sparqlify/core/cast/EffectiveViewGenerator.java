@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -79,6 +80,8 @@ import com.hp.hpl.jena.sparql.expr.Expr;
  * 
  * @author raven
  *
+ *
+ * TODO Combine view ViewRefactor class
  */
 public class EffectiveViewGenerator {
 
@@ -112,6 +115,14 @@ public class EffectiveViewGenerator {
 		
 		return result;
 	}
+	
+	public List<ViewDefinition> transformDummy(ViewDefinition viewDef) {
+		
+		Collection<ViewDefinition> tmp = Collections.singleton(viewDef);
+		List<ViewDefinition> result = new ArrayList<ViewDefinition>(tmp);
+		return result;
+	}
+	
 	
 	public List<ViewDefinition> transform(ViewDefinition viewDef) {
 		List<ViewDefinition> result = new ArrayList<ViewDefinition>();

@@ -250,7 +250,9 @@ public class TableImpl<T>
 	@Override
 	public Collection<List<Object>> select(Map<String, Constraint> constraints) {
 		// TODO This is a hack passing the columns
-		return indexes.get(constraints, this.getColumns());
+		IndexMap<String, Column> cols = this.getColumns();
+		Collection<List<Object>> result = indexes.get(constraints, cols);
+		return result;
 	}
 
 	@Override
