@@ -141,13 +141,13 @@ public class IteratorResultSetSparqlifyBinding
 				continue;
 			}
 			
-			if(nodeValue.isDateTime()) {
-				XSDDateTime val = nodeValue.getDateTime();
-				String str = val.timeLexicalForm();
-				String b = val.toString();
-
-				System.out.println("foo");
-			}
+//			if(nodeValue.isDateTime()) {
+//				XSDDateTime val = nodeValue.getDateTime();
+//				String str = val.timeLexicalForm();
+//				String b = val.toString();
+//
+//				System.out.println("foo");
+//			}
 			
 			Node node = nodeValue.asNode();
 			

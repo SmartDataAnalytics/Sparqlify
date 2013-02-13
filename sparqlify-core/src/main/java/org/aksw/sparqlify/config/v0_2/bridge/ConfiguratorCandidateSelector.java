@@ -10,7 +10,7 @@ import org.aksw.sparqlify.validation.Validation;
 import org.slf4j.Logger;
 
 public class ConfiguratorCandidateSelector {
-		
+	
 	// Post-process incoming view definitions, such as adding ... IS NOT NULL constraints.
 	private static EffectiveViewGenerator effectiveViewGenerator = new EffectiveViewGenerator();
 	
@@ -34,7 +34,7 @@ public class ConfiguratorCandidateSelector {
 			
 			for(org.aksw.sparqlify.core.domain.input.ViewDefinition effectiveViewDef : effectiveViewDefs) {
 				
-				System.out.println("Effective View\n" + effectiveViewDef);
+				//System.out.println("Effective View\n" + effectiveViewDef);
 				
 				
 				candidateSelector.addView(effectiveViewDef);				

@@ -12,7 +12,7 @@ public class SqlFunctionSerializerOp2
 
 	@Override
 	public String serialize(String a, String b) {
-		String result = a + " " + opSymbol + " " + b;
+		String result = "(" + a + " " + opSymbol + " " + b + ")";
 		return result;
 	}
 }

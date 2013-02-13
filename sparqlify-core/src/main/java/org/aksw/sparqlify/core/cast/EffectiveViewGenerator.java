@@ -18,12 +18,13 @@ import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.SqlExprUtils;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.util.QuadPatternUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -84,6 +85,8 @@ import com.hp.hpl.jena.sparql.expr.Expr;
  * TODO Combine view ViewRefactor class
  */
 public class EffectiveViewGenerator {
+	
+	private static final Logger logger = LoggerFactory.getLogger(EffectiveViewGenerator.class);
 
 	/**
 	 * FIXME Improve this method
@@ -278,11 +281,12 @@ public class EffectiveViewGenerator {
 			Set<Var> notNullVars = new HashSet<Var>();
 			//Collection<Clause>()
 
-			Set<Collection<SqlExpr>> ors = new HashSet<Collection<SqlExpr>>();
+			//x Set<Collection<SqlExpr>> ors = new HashSet<Collection<SqlExpr>>();
+			Set<SqlExpr> ands = new HashSet<SqlExpr>();
 			for(Var nullVar : nullables) {
 				Collection<RestrictedExpr> restExprs = newVarDef.getDefinitions(nullVar);
 
-				Set<SqlExpr> ands = new HashSet<SqlExpr>();
+				
 				for(RestrictedExpr restExpr : restExprs) {
 					Expr expr = restExpr.getExpr();
 					
@@ -290,10 +294,11 @@ public class EffectiveViewGenerator {
 					ands.addAll(conds);
 				}
 
-				ors.add(ands);
+				//x ors.add(ands);
 			}
 			
-			List<SqlExpr> conds = SqlExprUtils.toDnf(ors);
+			//xList<SqlExpr> conds = SqlExprUtils.toDnf(ors);
+			List<SqlExpr> conds = new ArrayList<SqlExpr>(ands);
 			
 			
 //			for(RestrictedExpr restExpr : restExprs) {
@@ -314,6 +319,10 @@ public class EffectiveViewGenerator {
 			
 			ViewDefinition newViewDef = new ViewDefinition(newName, newTemplate, null, newMapping, viewDef);
 			result.add(newViewDef);
+		}
+		
+		for(ViewDefinition viewDefinition : result) {
+			logger.debug("Effective View:\n" + viewDefinition);
 		}
 		
 		return result;

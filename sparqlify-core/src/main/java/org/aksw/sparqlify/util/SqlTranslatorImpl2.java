@@ -10,6 +10,8 @@ import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.TypedExprTransformer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -17,6 +19,8 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 public class SqlTranslatorImpl2
 	implements SqlTranslator
 {
+	private static final Logger logger = LoggerFactory.getLogger(SqlTranslatorImpl2.class);
+	
 	private ExprEvaluator exprTransformer;
 	private ExprBindingSubstitutor exprBindingSubstitutor;
 	private TypedExprTransformer typedExprTransformer;
@@ -51,7 +55,7 @@ public class SqlTranslatorImpl2
 		//System.out.println("[ExprRewrite Phase 2]: " + e2);
 
 		ExprSqlRewrite e3 = typedExprTransformer.rewrite(e2, typeMap);
-		System.out.println("[ExprRewrite Phase 3]: " + e3);
+		logger.debug("[ExprRewrite Phase 3]: " + e3);
 
 		return e3;
 	}

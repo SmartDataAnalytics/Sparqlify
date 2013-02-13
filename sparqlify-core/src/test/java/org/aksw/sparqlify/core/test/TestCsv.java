@@ -17,6 +17,7 @@ import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
 import org.aksw.sparqlify.csv.CsvMapperCliMain;
 import org.aksw.sparqlify.csv.TripleIteratorTracking;
 import org.aksw.sparqlify.validation.LoggerCount;
+import org.aksw.sparqlify.web.SparqlFormatterUtils;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,7 +120,7 @@ public class TestCsv {
 		
 		 
 		TripleIteratorTracking it = CsvMapperCliMain.createTripleIterator(rs, view);
-		CsvMapperCliMain.writeTriples(System.out, it);
+		SparqlFormatterUtils.writeText(System.out, it);
 		
 		//CsvMapperCliMain. convertCsvToRdf(rs, view);
 		

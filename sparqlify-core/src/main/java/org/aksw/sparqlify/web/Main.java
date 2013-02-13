@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
@@ -24,6 +25,7 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.csv.SinkNTriples;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
@@ -34,16 +36,17 @@ import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.openjena.atlas.lib.Sink;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
@@ -252,9 +255,10 @@ public class Main {
 				System.out.println(ResultSetFormatter.asText(rs));
 			}
 			else if(query.isConstructType()) {
-				QueryExecution qe = qef.createQueryExecution(queryString);
-				Model model = qe.execConstruct();
-				model.write(System.out, "N-TRIPLES");
+				QueryExecutionStreaming qe = (QueryExecutionStreaming)qef.createQueryExecution(queryString);
+				Iterator<Triple> it = qe.execConstructStreaming();
+				SparqlFormatterUtils.writeText(System.out, it);
+				//model.write(System.out, "N-TRIPLES");
 			}
 			else {
 				throw new RuntimeException("Query type not supported: " + queryString);

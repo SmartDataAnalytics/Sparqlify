@@ -28,6 +28,8 @@ import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
@@ -174,6 +176,8 @@ class NodeValueTransformerInteger implements NodeValueTransformer {
  */
 public class NewWorldTest {
 
+	private static final Logger logger = LoggerFactory.getLogger(NewWorldTest.class);
+	
 	public static TypeSystem createDefaultDatatypeSystem() {
 
 		// String basePath = "src/main/resources";
@@ -448,18 +452,18 @@ public class NewWorldTest {
 		// typeMap.put("foo", TypeToken.Double);
 		// typeMap.put("foo", TypeToken.Double);
 
-		System.out.println("[ExprRewrite Phase 0]: " + e0);
+		logger.debug("[ExprRewrite Phase 0]: " + e0);
 
 		Expr e1 = exprBindingSubstitutor.substitute(e0, binding);
-		System.out.println("[ExprRewrite Phase 1]: " + e1);
+		logger.debug("[ExprRewrite Phase 1]: " + e1);
 
 		Expr e2 = exprTransformer.transform(e1);
-		System.out.println("[ExprRewrite Phase 2]: " + e2);
+		logger.debug("[ExprRewrite Phase 2]: " + e2);
 
 		// This step should must be generalized to return an SqlExprRewrite
 
 		ExprSqlRewrite e3 = typedExprTransformer.rewrite(e2, typeMap);
-		System.out.println("[ExprRewrite Phase 3]: " + e3);
+		logger.debug("[ExprRewrite Phase 3]: " + e3);
 
 		Expr et = e3.getExpr();
 		if (et instanceof ExprSqlBridge) {
@@ -469,12 +473,12 @@ public class NewWorldTest {
 			SqlExpr ex = bridge.getSqlExpr();
 
 			String e4 = serializerSystem.serialize(ex);
-			System.out.println("[ExprRewrite Phase 4]: " + e4);
+			logger.debug("[ExprRewrite Phase 4]: " + e4);
 		} else {
 
-			System.out.println("Done rewriting: ");
-			System.out.println(et);
-			System.out.println(e3.getProjection());
+			logger.debug("Done rewriting: ");
+			logger.debug("" + et);
+			logger.debug("" + e3.getProjection());
 
 		}
 

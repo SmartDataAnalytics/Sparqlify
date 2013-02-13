@@ -1,0 +1,33 @@
+/**
+ * Test because of problems with null objects appearing on rating2.
+ *
+ * Sparqlify configuration for the Berlin Sparql Benchmark (BSBM)
+ *
+ * Changelog:
+ *    0.1 (current) Initial version
+ *
+ * @author Claus Stadler
+ *
+ */
+
+Prefix spy:<http://aksw.org/sparqlify/>
+
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix foaf:<http://xmlns.com/foaf/0.1/>
+Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rev:<http://purl.org/stuff/rev#>
+Prefix bsbm:<http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/>
+Prefix bsbm-inst:<http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/>
+
+
+Create View view_review As
+  Construct {
+    ?s bsbm:rating2    ?rating2 .
+  }
+  With
+    ?s           = uri(concat(bsbm-inst:dataFromRatingSite, ?publisher, "/Review", ?nr))
+    ?rating2     = typedLiteral(?rating2, xsd:int)
+  From
+    [[SELECT *, upper(language) lang FROM review]]

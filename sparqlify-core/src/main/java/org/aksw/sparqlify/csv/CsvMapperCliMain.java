@@ -36,6 +36,7 @@ import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.HttpSparqlEndpoint;
+import org.aksw.sparqlify.web.SparqlFormatterUtils;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -192,57 +193,6 @@ abstract class ReaderStringBase
 	}
 	
 	abstract protected String nextString();
-}
-
-
-class NodeUtils {
-	public static String toNTriplesString(Node node) {
-		String result; 
-		if(node.isURI()) {
-			result = "<" + node.getURI() + ">";
-		}
-		else if(node.isLiteral()) {
-			String lex = node.getLiteralLexicalForm();
-			String lang = node.getLiteralLanguage();
-			String dt = node.getLiteralDatatypeURI();
-			
-			String encoded = lex.replace("\"", "\\\"");
-			
-			// If fields contain new lines, escape them with triple quotes
-			String quote = encoded.contains("\n")
-					? "\"\"\""
-					: "\"";
-			
-			result =  quote + encoded + quote;
-			
-			if(!StringUtils.isEmpty(dt)) {
-				result = result + "^^<" + dt+ ">";  
-			} else {
-				if(!lang.isEmpty()) {
-					result = result + "@" + lang;
-				}
-			}			
-		}
-		else if(node.isBlank()) {
-			result = node.getBlankNodeLabel();
-		} else {
-			throw new RuntimeException("Should not happen");
-		}
-		
-		return result;
-	}
-}
-
-class TripleUtils {
-	public static String toNTripleString(Triple triple) {
-		String s = NodeUtils.toNTriplesString(triple.getSubject());
-		String p = NodeUtils.toNTriplesString(triple.getPredicate());
-		String o = NodeUtils.toNTriplesString(triple.getObject());
-		
-		String result = s + " " + p + " " + o + " .";
-		
-		return result;
-	}
 }
 
 
@@ -432,7 +382,8 @@ public class CsvMapperCliMain {
 		TripleIteratorTracking trackingIt = createTripleIterator(resultSet, view);
 		
 
-		writeTriples(System.out, trackingIt);
+		//writeTriples(System.out, trackingIt);
+		SparqlFormatterUtils.writeText(System.out, trackingIt);
 		writeSummary(System.err, trackingIt.getState());
 		
 		
@@ -580,15 +531,15 @@ public class CsvMapperCliMain {
         System.err.println("Triples total:\t" + totalTripleCount);
 	}
 	
-	public static void writeTriples(PrintStream out, Iterator<Triple> it) {
-        
-        while(it.hasNext()) {
-
-        	Triple t = it.next();
-        	String str = TripleUtils.toNTripleString(t);
-        	
-        	out.println(str);
-        }
+//	public static void writeTriples(PrintStream out, Iterator<Triple> it) {
+//        
+//        while(it.hasNext()) {
+//
+//        	Triple t = it.next();
+//        	String str = TripleUtils.toNTripleString(t);
+//        	
+//        	out.println(str);
+//        }
 		
         /*
 		System.exit(0);
@@ -601,8 +552,8 @@ public class CsvMapperCliMain {
 			VarExprList vel = x.getVarExprList();
 			System.out.println(vel);
 		}*/
-
-	}
+//
+//	}
 
 
 	public static Iterator<List<String>> getCsvIterator(File file,
