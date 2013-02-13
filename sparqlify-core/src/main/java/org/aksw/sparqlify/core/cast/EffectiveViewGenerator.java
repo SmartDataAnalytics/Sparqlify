@@ -124,6 +124,16 @@ public class EffectiveViewGenerator {
 	}
 	
 	
+	/**
+	 * Adds "columnName" IS NOT NULL constraints to the view definitions according to the schema.
+	 * 
+	 * Note: Optimization of expressions such as (?x IS NOT NULL) AND (?x = 1) -> (?x = 1)
+	 * have to happen at a later stage. 
+	 * 
+	 * 
+	 * @param viewDef
+	 * @return
+	 */
 	public List<ViewDefinition> transform(ViewDefinition viewDef) {
 		List<ViewDefinition> result = new ArrayList<ViewDefinition>();
 
@@ -181,6 +191,12 @@ public class EffectiveViewGenerator {
 			for(Var columnVar : columnVars) {
 
 				String columnName = columnVar.getName();
+				
+				if(!schema.isNullable(columnName)) {
+					continue;
+				}
+				
+				
 				TypeToken typeToken = sqlOp.getSchema().getColumnType(columnName);
 				//TypeToken typeToken = schema.getColumnType(varName);
 				

@@ -1,0 +1,63 @@
+/**
+ * Sparqlify configuration for the Berlin Sparql Benchmark (BSBM)
+ *
+ * Changelog:
+ *    0.1 (current) Initial version
+ *
+ * @author Claus Stadler
+ *
+ */
+
+Prefix spy:<http://aksw.org/sparqlify/>
+
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix foaf:<http://xmlns.com/foaf/0.1/>
+Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rev:<http://purl.org/stuff/rev#>
+Prefix bsbm:<http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/>
+Prefix bsbm-inst:<http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/>
+
+
+
+Create View view_producer As
+  Construct {
+    ?s a bsbm:Producer .    
+    ?s rdfs:label      ?label .
+    ?s foaf:homepage   ?homepage .
+  }
+  With
+    ?s           = uri(concat(bsbm-inst:dataFromProducer, ?nr, "/Producer", ?nr))
+    ?label       = plainLiteral(?label)
+    ?homepage    = uri(?homepage)
+  From
+    producer
+
+
+/*
+Create View view_vendor As
+  Construct {
+    ?s a bsbm:Vendor .
+    ?s foaf:homepage   ?homepage .    
+    ?s bsbm:country    ?country .
+  }
+  With
+    ?s           = uri(concat(bsbm-inst:dataFromVendor, ?nr, "/Vendor", ?nr))
+    ?label       = plainLiteral(?label)
+    ?homepage    = uri(?homepage)
+    ?country     = uri(concat("http://downlode.org/rdf/iso-3166/countries#", ?country))
+  From
+    vendor
+*/
+
+Create View view_offer As
+  Construct {
+    ?s a bsbm:Offer .
+    ?s dc:date         ?publishDate .
+  }
+  With
+    ?s           = uri(concat(bsbm-inst:dataFromVendor, ?publisher, "/Offer", ?nr))
+    ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
+  From
+    offer

@@ -370,7 +370,8 @@ public class CandidateViewSelectorImpl
 					collections.add(Collections.singleton(node.getLiteralLexicalForm()));
 					*/
 				} else {
-					throw new RuntimeException("Should not happen");
+					// FIXME We ignore deriving constraints for literals here
+					//throw new RuntimeException("Should not happen");
 				}
 			}
 

@@ -1148,13 +1148,15 @@ public class MappingOpsImpl
 				
 				for(RestrictedExpr def : exprsForVar) {
 				
-					Map<String, TypeToken> columnToDatatype = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
+					Map<String, TypeToken> typeMap = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
 					//Integer hash = ExprStructuralHash.hash(def.getExpr(), columnToDatatype);
 					
-					Expr datatypeNorm = exprNormalizer.normalize(def.getExpr(), columnToDatatype);
+					Expr expr = def.getExpr();
+					Expr datatypeNorm = exprNormalizer.normalize(expr, typeMap);
 					String hash = datatypeNorm.toString();
+					logger.debug("Cluster for [" + expr + "] is [" + hash + "]");
 					
-					cluster.put(hash, new ArgExpr(def.getExpr(), index));
+					cluster.put(hash, new ArgExpr(expr, index));
 				}				
 			}
 			
@@ -1323,6 +1325,7 @@ public class MappingOpsImpl
 		Mapping result = new Mapping(varDefinition, newUnion);
 		
 
+		logger.info("Union of mappings:\n" + result);
 		return result;
 	}
 

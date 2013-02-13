@@ -314,5 +314,36 @@ public class RestrictionSetImpl
 			? "true"
 			: (restrictions.isEmpty()) ? "false" : restrictions.toString();
 	}
+
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((restrictions == null) ? 0 : restrictions.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RestrictionSetImpl other = (RestrictionSetImpl) obj;
+		if (restrictions == null) {
+			if (other.restrictions != null)
+				return false;
+		} else if (!restrictions.equals(other.restrictions))
+			return false;
+		return true;
+	}
+	
+	
+	
 }
 

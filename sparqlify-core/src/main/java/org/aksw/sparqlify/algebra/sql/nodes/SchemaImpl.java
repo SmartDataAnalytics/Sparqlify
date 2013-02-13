@@ -42,14 +42,25 @@ public class SchemaImpl
 	}
 
 	public SchemaImpl(List<String> names, Map<String, TypeToken> nameToType, Set<String> nullableNames) {
+		validateNames(names);
+		
 		this.names = names;
 		this.nameToType = nameToType;
 		this.nullableNames = nullableNames;
 	}
 	
 	
+	public static void validateNames(List<String> names) {
+		Set<String> n = new HashSet<String>(names);
+		if(n.size() != names.size()) {
+			throw new RuntimeException("Multiple column names: " + names);
+		}
+		
+	}
 	
 	public static SchemaImpl create(List<String> names, Map<String, TypeToken> nameToType) {
+		validateNames(names);
+		
 		return new SchemaImpl(names, nameToType);
 	}
 	

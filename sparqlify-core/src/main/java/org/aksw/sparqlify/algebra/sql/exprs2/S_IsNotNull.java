@@ -12,8 +12,10 @@ public class S_IsNotNull
 	
 	@Override
 	public void asString(IndentedWriter writer) {
-		writer.print("isNotNull");
+		writer.print("(");
 		writeArgs(writer);
+		writer.print(" IS NOT NULL");
+		writer.print(")");
 	}
 
 	@Override

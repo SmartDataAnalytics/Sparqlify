@@ -30,6 +30,9 @@ public class Projection {
 	
 	public void add(Projection other) {
 		names.addAll(other.getNames());
+		
+		SchemaImpl.validateNames(names);
+		
 		nameToExpr.putAll(other.getNameToExpr());
 	}
 	
@@ -49,6 +52,8 @@ public class Projection {
 		// TODO assert that there is no overlap in the column names
 		
 		this.names.addAll(other.getNames());
+		SchemaImpl.validateNames(names);
+		
 		this.nameToExpr.putAll(other.getNameToExpr());
 	}
 	
