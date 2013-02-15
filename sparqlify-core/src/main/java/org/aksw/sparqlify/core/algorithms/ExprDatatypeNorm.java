@@ -75,7 +75,7 @@ public class ExprDatatypeNorm {
 	public ExprVar normalize(ExprVar expr, Map<String, TypeToken> typeMap) {
 		TypeToken datatype = typeMap.get(expr.getVarName());
 		if(datatype == null) {
-			throw new RuntimeException("No datatype information for column " + expr.getVarName());
+			throw new RuntimeException("No datatype information for column " + expr.getVarName() + "; typeMap=" + typeMap);
 		}
 		
 		return new ExprVar(datatype.getName());

@@ -27,6 +27,10 @@ public class Projection {
 		this.nameToExpr = nameToExpr;
 	}
 	
+	public boolean isEmpty() {
+		boolean result = names.isEmpty();
+		return result;
+	}
 	
 	public void add(Projection other) {
 		names.addAll(other.getNames());

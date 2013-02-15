@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
@@ -68,6 +67,49 @@ import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
 import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
+
+class GeneratorBlacklist
+	implements Generator 
+{
+	private Generator generator;
+	private Collection<String> blacklist;
+	
+	public GeneratorBlacklist(Generator generator, Collection<String> blacklist) {
+		this.generator = generator;
+		this.blacklist = blacklist;
+	}
+
+	@Override
+	public String next() {
+		String result;
+		do {
+			
+			result = generator.next();
+			
+		} while(blacklist.contains(result));
+		
+		return result;
+	}
+
+	@Override
+	public String current() {
+		String result = generator.current();
+		return result;
+	}
+	
+	
+	public static GeneratorBlacklist create(String base, Collection<String> blacklist) {
+		Generator generator = Gensym.create(base);
+		GeneratorBlacklist result = create(generator, blacklist);
+		return result;
+	}
+	
+	public static GeneratorBlacklist create(Generator generator, Collection<String> blacklist) {
+		GeneratorBlacklist result = new GeneratorBlacklist(generator, blacklist);
+		return result;
+	}
+
+}
 
 class SqlExprContext {
 	private Map<Var, Expr> assignment;
@@ -1072,6 +1114,13 @@ public class MappingOpsImpl
 			return result;
 		}
 		
+		// Create a column blacklist so that we do not end up extending member projections with column
+		// names that they already have
+		Set<String> columnNameBlacklist = new HashSet<String>();
+		for(Mapping member : members) {
+			List<String> memberColumnNames = member.getSqlOp().getSchema().getColumnNames();
+			columnNameBlacklist.addAll(memberColumnNames);
+		}
 
 		//List<Mapping> members = rawMembers;
 		
@@ -1081,7 +1130,8 @@ public class MappingOpsImpl
 		 *     PostgreSQL works fine with lower case aliases,
 		 *     H2 fails with them
 		 */
-		Generator aliasGen = Gensym.create("C");
+		//Generator aliasGen = Gensym.create("C");
+		Generator aliasGen = GeneratorBlacklist.create("C", columnNameBlacklist);
 
 		
 		if(members.size() == 1) {
@@ -1298,11 +1348,13 @@ public class MappingOpsImpl
 				
 				unionMemberProjection.put(columnName, nullValue);
 			}
-
-			Projection finalMemberProjection = new Projection(unionColumnOrder, unionMemberProjection);
 			
 			// We first extend the original projection with the new expressions and renames
-			SqlOpExtend extend = SqlOpExtend.create(member.getSqlOp(), finalMemberProjection); //, datatypeAssigner);
+			Projection finalMemberProjection = new Projection(unionColumnOrder, unionMemberProjection);
+
+			SqlOpExtend extend = SqlOpExtend.create(member.getSqlOp(), finalMemberProjection);
+			
+						
 			
 			// And afterwards limit the columns of each member to only those of the union
 			SqlOpProject opProject = SqlOpProject.create(extend, unionColumnOrder);
