@@ -67,6 +67,7 @@ public class E_RdfTerm
 		return super.getArgs().get(3);
 	}
 
+	
     @Override
     public boolean isConstant() 
     {

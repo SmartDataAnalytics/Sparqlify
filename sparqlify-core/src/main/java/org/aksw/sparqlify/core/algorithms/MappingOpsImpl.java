@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
@@ -35,13 +36,17 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1084,6 +1089,107 @@ public class MappingOpsImpl
 		return result;
 	}
 
+	public static List<Mapping> removeEmptyMembers(List<Mapping> mappings) {
+		List<Mapping> result = new ArrayList<Mapping>(mappings.size());
+		for(Mapping mapping : mappings) {
+			if(!mapping.isEmpty()) {
+				result.add(mapping);
+			}
+		}
+		return result;
+	}
+
+	public static List<Mapping> pushConstants(List<Mapping> mappings) {
+		List<Mapping> result = new ArrayList<Mapping>(mappings.size());
+		for(Mapping mapping : mappings) {
+			Mapping newMapping = pushConstants(mapping);
+			
+			result.add(newMapping);
+		}
+		return result;
+	}
+
+	public static Mapping pushConstants(Mapping mapping) {
+		VarDefinition varDef = mapping.getVarDefinition();
+		//Multimap<Var, RestrictedExpr> map = varDef.getMap();
+		
+
+		Set<String> columnNameBlacklist = new HashSet<String>(mapping.getSqlOp().getSchema().getColumnNames());
+		Generator aliasGen = GeneratorBlacklist.create("C", columnNameBlacklist);
+
+		Projection projection = new Projection();
+
+		
+		VarDefinition newVarDef = new VarDefinition();
+		
+		for(Entry<Var, Collection<RestrictedExpr>> entry : varDef.getMap().asMap().entrySet()) {
+			
+			Var var = entry.getKey();
+			Collection<RestrictedExpr> restExprs = entry.getValue();
+			
+			
+			for(RestrictedExpr restExpr : restExprs) {
+				
+				Expr newExpr;
+				
+				Expr expr = restExpr.getExpr();
+				
+				E_RdfTerm rdfTerm = SqlTranslationUtils.expandRdfTerm(expr); 
+				boolean isConstantArgsOnly = ExprUtils.isConstantArgsOnly(rdfTerm);
+				
+				if(isConstantArgsOnly) {
+					NodeValue constant = expr.eval(null, null); //expr.getConstant();
+					
+					String alias = aliasGen.next();
+					
+					// TODO Get the proper SQL literal for the constant
+					String str = "" + NodeValueUtils.getValue(constant);
+					S_Constant sqlExpr = new S_Constant(new SqlValue(TypeToken.String, str));
+					projection.put(alias, sqlExpr);
+					
+					ExprVar exprVar = new ExprVar(alias);
+
+
+					ExprList exprs = new ExprList();
+					List<Expr> args = rdfTerm.getArgs();
+					for(int j = 0; j < args.size(); ++j) {
+												
+						Expr e;
+						if(j == 1) {
+							e = exprVar;
+						} else {
+							e = args.get(j);
+						}						
+					
+						exprs.add(e);
+					}
+					newExpr = ExprCopy.getInstance().copy(expr, exprs);
+					
+				}
+				else {
+					newExpr = expr;
+				}
+				
+				RestrictedExpr newRestExpr = new RestrictedExpr(newExpr, restExpr.getRestrictions());
+				
+				newVarDef.getMap().put(var, newRestExpr);
+			}
+		}
+
+		Mapping result;
+		if(projection.isEmpty()) {
+			result = mapping;
+		} else {
+			SqlOp sqlOp = mapping.getSqlOp();
+			
+			SqlOp newSqlOp = SqlOpExtend.create(sqlOp, projection);
+			
+			result = new Mapping(newVarDef, newSqlOp);
+		}
+	
+		return result;
+	}
+	
 	/**
 	 * 
 	 * [    null,  h: int, i: string,   null ]
@@ -1097,22 +1203,19 @@ public class MappingOpsImpl
 	 * ?s -> [c1: string, c2: int] with expr foo and restriction bar.
 	 * 
 	 */
-	public Mapping union(List<Mapping> rawMembers) {
-		/*
-		 * Remove all members that do not yield results 
-		 */
-		List<Mapping> members = new ArrayList<Mapping>(rawMembers.size());
-		for(Mapping rawMember : rawMembers) {
-			if(!rawMember.isEmpty()) {
-				members.add(rawMember);
-			}
-		}
+	public Mapping union(List<Mapping> members) {
 
-		
+		//Remove all members that do not yield results 		
+		members = removeEmptyMembers(members);
+
 		if(members.isEmpty()) {
 			Mapping result = createEmptyMapping();
 			return result;
 		}
+
+		// Make any constants part of the sql table
+		members = pushConstants(members);
+		
 		
 		// Create a column blacklist so that we do not end up extending member projections with column
 		// names that they already have
@@ -1139,7 +1242,6 @@ public class MappingOpsImpl
 			Mapping result = members.get(0);
 			return result;			
 		}
- 
 		
 		
 		//public Mapping union(List<Mapping> members) {
@@ -1166,6 +1268,83 @@ public class MappingOpsImpl
 			}
 		}
 
+		
+		
+		
+		
+		//Map<Var, RestrictedExpr> varToConstant = new HashMap<Var, RestrictedExpr>();
+		Set<Var> constantVars = new HashSet<Var>();
+		for(Entry<Var, Collection<Integer>> entry : varToMembers.asMap().entrySet()) {
+			Var var = entry.getKey();
+						
+			for (int index : entry.getValue()) {
+				Mapping member = members.get(index);
+				
+				Collection<RestrictedExpr> exprsForVar = member.getVarDefinition().getDefinitions(var);
+				
+
+				for(RestrictedExpr def : exprsForVar) {
+					if(def.getExpr().isConstant()) {
+						//varConstant.add(var);
+						//varToConstant.put(var, def);
+						constantVars.add(var);
+					}			
+				}
+			}
+		}
+		
+		NodeValue nullNode = NodeValue.makeString("should not appear anywhere");
+//
+//		
+//		// For each var that maps to a constant, add a NULL mapping for
+//		// every union member which does not define the variable as a constant
+//		for(Entry<Var, TermDef> entry : varToConstant.entrySet()) {
+//			Var var = entry.getKey();
+//			TermDef baseTermDef = entry.getValue();
+//			
+//			for (int i = 0; i < sqlNodes.size(); ++i) {
+//				SqlNode sqlNode = sqlNodes.get(i);
+//				
+//				Multimap<Var, TermDef> varDefs = sqlNode.getSparqlVarToExprs();
+//				
+//				boolean hasConstant = false;
+//				for(TermDef termDef : varDefs.get(var)) {
+//					if(termDef.getExpr().isConstant()) {
+//						hasConstant = true;
+//						continue;
+//					}
+//				}
+//				
+//				if(!hasConstant) {
+//					ExprList exprs = new ExprList();
+//					List<Expr> args = baseTermDef.getExpr().getFunction().getArgs();
+//					//System.out.println("Args: " + args.size());
+//					for(int j = 0; j < args.size(); ++j) {
+//						Expr expr = j == 1 ? NodeValue.makeString(""): args.get(j);
+//						
+//						exprs.add(expr);
+//					}
+//					
+//					Expr newExpr = ExprCopy.getInstance().copy(baseTermDef.getExpr(), exprs); 
+//					
+//					varToSqlNode.put((Var)var, i);
+//					varDefs.put(var, new TermDef(newExpr));
+//				}				
+//			}
+//		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		// If a variable maps to a constant, than the mapping does not apply to any union member
 		// that does not define the constant.
@@ -1194,6 +1373,14 @@ public class MappingOpsImpl
 			for (int index : memberIndexes) {
 				Mapping member = members.get(index);
 
+//								
+//				if(exprsForVar.isEmpty()) {
+//					// If a variable is not defined in a member, make sure that it is not a constant
+//					if(constantVars.contains(var)) {
+//						exprsForVar.add(new RestrictedExpr(nullNode));
+//					}
+//				}
+				
 				Collection<RestrictedExpr> exprsForVar = member.getVarDefinition().getDefinitions(var);
 				
 				for(RestrictedExpr def : exprsForVar) {
@@ -1205,9 +1392,14 @@ public class MappingOpsImpl
 					Expr datatypeNorm = exprNormalizer.normalize(expr, typeMap);
 					String hash = datatypeNorm.toString();
 					logger.debug("Cluster for [" + expr + "] is [" + hash + "]");
+
+					
+//					if(expr.isConstant()) {
+//						
+//					}
 					
 					cluster.put(hash, new ArgExpr(expr, index));
-				}				
+				}
 			}
 			
 		
