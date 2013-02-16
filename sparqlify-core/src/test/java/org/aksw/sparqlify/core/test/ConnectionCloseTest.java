@@ -66,7 +66,7 @@ public class ConnectionCloseTest {
 		
 		Thread t = new Thread(loop);
 		t.start();
-		t.join(10000); // wait 10 seconds
+		t.join(20000); // wait 20 seconds
 
 		
 		Assert.assertFalse(t.isAlive());
