@@ -242,7 +242,38 @@ public class SparqlifyUtils {
 //	}
 //	
 //
-//	//public Connection 
+//	//public Connection
+	public static void initTestDatabase(DataSource ds) throws SQLException {
+		Connection conn = ds.getConnection();
+		try {
+			initTestDatabase(conn);
+		}
+		finally {
+			conn.close();
+		}		
+	}
+	
+	public static void initTestDatabase(Connection conn) throws SQLException {
+		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person_to_dept;");
+		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS dept;");
+		conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person;");
+		
+		
+		conn.createStatement().executeUpdate("CREATE TABLE person (id INT PRIMARY KEY, name VARCHAR, age INT)");
+		conn.createStatement().executeUpdate("CREATE TABLE dept (id INT PRIMARY KEY , name VARCHAR)");
+		conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT, UNIQUE(person_id, dept_id))");
+	
+		conn.createStatement().executeUpdate("INSERT INTO person VALUES (1, 'Anne', 20)");
+		conn.createStatement().executeUpdate("INSERT INTO person VALUES (2, 'Bob', 22)");
+	
+		conn.createStatement().executeUpdate("INSERT INTO dept VALUES (5, 'Research')");
+		conn.createStatement().executeUpdate("INSERT INTO dept VALUES (6, 'Marketing')");
+		
+		conn.createStatement().executeUpdate("INSERT INTO person_to_dept VALUES (1, 5)");
+		conn.createStatement().executeUpdate("INSERT INTO person_to_dept VALUES (2, 6)");
+	}
+	
+
 	public static DataSource createTestDatabase() throws SQLException {
 		/*
 		 * Database setup
@@ -254,30 +285,7 @@ public class SparqlifyUtils {
 //		ds.setPassword("sa");
 
 		DataSource ds = createDefaultDatabase("testdb");
-		
-		Connection conn = ds.getConnection();
-		try {
-			conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person_to_dept;");
-			conn.createStatement().executeUpdate("DROP TABLE IF EXISTS dept;");
-			conn.createStatement().executeUpdate("DROP TABLE IF EXISTS person;");
-			
-			
-			conn.createStatement().executeUpdate("CREATE TABLE person (id INT PRIMARY KEY, name VARCHAR, age INT)");
-			conn.createStatement().executeUpdate("CREATE TABLE dept (id INT PRIMARY KEY , name VARCHAR)");
-			conn.createStatement().executeUpdate("CREATE TABLE person_to_dept (person_id INT, dept_id INT, UNIQUE(person_id, dept_id))");
-		
-			conn.createStatement().executeUpdate("INSERT INTO person VALUES (1, 'Anne', 20)");
-			conn.createStatement().executeUpdate("INSERT INTO person VALUES (2, 'Bob', 22)");
-		
-			conn.createStatement().executeUpdate("INSERT INTO dept VALUES (5, 'Research')");
-			conn.createStatement().executeUpdate("INSERT INTO dept VALUES (6, 'Marketing')");
-			
-			conn.createStatement().executeUpdate("INSERT INTO person_to_dept VALUES (1, 5)");
-			conn.createStatement().executeUpdate("INSERT INTO person_to_dept VALUES (2, 6)");
-		}
-		finally {
-			conn.close();
-		}
+		initTestDatabase(ds);
 		
 		return ds;
 	}

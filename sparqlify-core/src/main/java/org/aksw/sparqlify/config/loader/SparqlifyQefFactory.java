@@ -1,24 +1,10 @@
 package org.aksw.sparqlify.config.loader;
 
-import java.sql.Connection;
-
 import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
-import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
-import org.aksw.sparqlify.config.lang.ConfiguratorRdfViewSystem;
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.core.QueryExecutionFactorySparqlifyDs;
-import org.aksw.sparqlify.core.RdfViewSystem;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.database.RdfViewSystem2;
 import org.aksw.sparqlify.util.SparqlifyUtils;
-import org.aksw.sparqlify.validation.LoggerCount;
-import org.aksw.sparqlify.web.SparqlFormatterUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class SparqlifyQefFactory {
@@ -28,7 +14,7 @@ public class SparqlifyQefFactory {
 	private Long maxQueryExecutionTime = null;
 	private Long maxResultSetRowCount = null;
 	
-	private static Logger logger = LoggerFactory.getLogger(SparqlifyQefFactory.class);
+	//private static Logger logger = LoggerFactory.getLogger(SparqlifyQefFactory.class);
 	
 	public SparqlifyQefFactory() {
 	}

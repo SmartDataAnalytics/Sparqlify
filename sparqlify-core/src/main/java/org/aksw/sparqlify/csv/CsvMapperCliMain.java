@@ -26,14 +26,14 @@ import jxl.read.biff.BiffException;
 import org.aksw.commons.sparql.api.core.ConstructIterator;
 import org.aksw.commons.sparql.api.core.ResultSetClosable;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
-import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
-import org.aksw.sparqlify.core.IteratorResultSetSparqlifyBinding;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.sparql.IteratorResultSetSparqlifyBinding;
 import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.HttpSparqlEndpoint;
@@ -479,14 +479,14 @@ public class CsvMapperCliMain {
 			vars.add(var.getName());
 		}
 		
-		Multimap<Var, VarDef> sparqlVarMap = HashMultimap.create();
+		Multimap<Var, RestrictedExpr> sparqlVarMap = HashMultimap.create();
 		for(Entry<Var, Expr> entry : varExprs.getExprs().entrySet()) {
 			
 			Expr e = SparqlSubstitute.substituteExpr(entry.getValue());
 			//Expr e = FunctionExpander.transform(ex);
 			//System.out.println(e);
 			
-			sparqlVarMap.put(entry.getKey(), new VarDef(e));
+			sparqlVarMap.put(entry.getKey(), new RestrictedExpr(e));
 		}
 		
 		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap, 1, "rowId");

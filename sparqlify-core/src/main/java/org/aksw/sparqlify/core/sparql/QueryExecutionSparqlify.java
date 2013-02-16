@@ -1,32 +1,17 @@
 package org.aksw.sparqlify.core.sparql;
 
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionAdapter;
 import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
 import org.aksw.commons.sparql.api.core.ResultSetClosable;
-import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterNullIterator;
 
 // TODO Replace with class from AKSW commons
 /*
@@ -119,8 +104,8 @@ class QueryExecutionAdapter
 	
 }
 */
-
-class QueryExecutionTimeout
+/*
+public class QueryExecutionTimeout
 	extends QueryExecutionAdapter
 {
 	protected QueryExecutionTimeoutHelper timeoutHelper = new QueryExecutionTimeoutHelper(this);
@@ -146,182 +131,8 @@ class QueryExecutionTimeout
 		timeoutHelper.setTimeout(timeout1, timeout2);
 	}
 }
+*/
 
-
-
-class QueryExecutionSelect
-	extends QueryExecutionAdapter //Timeout//Decorator // TODO Replace with QueryExecutionAdapter
-{
-	private static final Logger logger = LoggerFactory.getLogger(QueryExecutionSelect.class);
-	
-	private SparqlSqlRewriter rewriter;
-	private Connection conn;
-	private Query query;
-
-	private Statement stmt;
-	
-	private ResultSet rs;
-
-	
-	public QueryExecutionSelect(SparqlSqlRewriter rewriter, Connection conn, Query query) {
-		this.rewriter = rewriter;
-		this.conn = conn;
-		this.query = query;
-	}
-	
-	public ResultSet execSelect() {
-		try {
-			return _execSelect();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	public static void write(PrintStream out, Map<?, ?> map)
-	{
-		for(Entry<?, ?> entry : map.entrySet()) {
-			out.println(entry.getKey() + ": " + entry.getValue());
-		}
-	}
-
-	public static String spaces(int n) {
-		String result = "";
-		for(int i = 0; i < n; ++i) {
-			result += " ";
-		}
-		return result;
-	}
-	
-	public static <K, V >void write(PrintStream out, Multimap<K, V> map)
-	{
-		for(Entry<K, Collection<V>> entry : map.asMap().entrySet()) {
-			
-			boolean keyPrint = false;
-			String key = entry.getKey() == null ? "(null)" : entry.getKey().toString();
-			
-			String sp = spaces(key.length());
-			
-
-			for(V value : entry.getValue()) {
-				if(!keyPrint) {				
-					out.println(key + ": " + value);
-					keyPrint = true;
-				} else {
-					out.println(sp + "  " + value);
-				}
-			}
-			
-			if(!keyPrint) {
-				out.println(key + ": (empty)");
-			}
-		}
-	}
-
-	
-	// For streaming large result sets with postgres, it seems to only option is to set
-	// the fetch size
-	private static Statement createStatement(Connection conn)
-			throws SQLException
-	{
-		Statement stmt = conn.createStatement();
-		stmt.setFetchSize(50000);
-		
-		return stmt;
-	}
-	
-	private ResultSet createEmptyResultSet() {
-		List<String> vars = new ArrayList<String>();
-		for(Var v : query.getProjectVars()) {
-			vars.add(v.getName());
-		}
-		return com.hp.hpl.jena.query.ResultSetFactory.create(new QueryIterNullIterator(null), vars);
-	}
-	
-	public ResultSet _execSelect() throws SQLException {
-		/*
-		if (!query.isSelectType()) {
-			throw new RuntimeException("SELECT query expected. Got: ["
-					+ query.toString() + "]");
-		}
-		*/
-		
-		SparqlSqlRewrite rewrite = rewriter.rewrite(query); 
-
-		/*
-		if(logger.isInfoEnabled()) {
-			logger.info("Final sparql var mapping:");
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			PrintStream ps = new PrintStream(baos);
-			write(ps, sqlNode.getSparqlVarToExprs());
-			
-			logger.info(baos.toString());
-		}
-		*/
-
-		/*
-		boolean enableCostChecking = false;		
-		if(enableCostChecking) {
-		
-			double cost = RdfViewDatabase.getCostPostgres(conn, sqlQuery);
-	
-			if (cost > 4000) {
-				System.out.println("TODO abort due to high query cost: " + cost);
-				//System.out.println("Aborted due to high query cost: " + cost);
-				//return null;
-			}
-	
-			logger.debug("Query cost ok (" + cost + ")");
-			} else {
-				logger.info("Cost estimates disabled.");
-			}
-		
-		synchronized(this) {
-			// Statements may be cancelled asynchronously
-			 *  
-
-		} */
-		stmt = createStatement(conn);
-
-		//timeoutHelper.startExecutionTimer();
-
-		String queryString = rewrite.isEmptyResult() ? null : rewrite.getSqlQueryString();
-		
-		rs = ResultSetFactory.create(
-				stmt, queryString,
-				rewrite.getVarDefinition().getMap(), rewrite.getProjectionOrder());
-
-		return rs;
-	}
-	
-	
-	@Override
-	public void abort() {
-		synchronized(this) {
-			if(stmt != null) {
-				try {
-					stmt.cancel();
-					close();
-				} catch(Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-	}
-	
-	@Override
-	public void close() {
-		synchronized(this) {
-			if(stmt != null) {
-				try {
-					stmt.close();
-				} catch(Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-	}
-	
-}
 
 public class QueryExecutionSparqlify
 	extends QueryExecutionBaseSelect
@@ -353,7 +164,9 @@ public class QueryExecutionSparqlify
 
 	@Override
 	protected QueryExecutionStreaming executeCoreSelectX(Query dummy) {
-		return new QueryExecutionSelect(rewriter, conn, dummy);
+		// TODO This object hardly closes the connection again....
+		QueryExecutionStreaming result = new QueryExecutionSelect(rewriter, conn, dummy, false);
+		return result;
 	}
 	
 	
@@ -396,15 +209,19 @@ public class QueryExecutionSparqlify
 
 	@Override
 	public void close() {
+		super.close();
+
 		if(this.closeConnWhenDone) {
 			try {
+				System.out.println("Closed connection: [" + conn + "]");
 				conn.close();
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
 		}
-	}	
 
+	}	
+//
 	/*
 	protected ResultSet executeSelectImpl(Query query) throws SQLException {
 		/*

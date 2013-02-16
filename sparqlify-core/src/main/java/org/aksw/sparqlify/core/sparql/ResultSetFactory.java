@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core.sparql;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,7 +29,7 @@ public class ResultSetFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ResultSetSparqlify create(Statement stmt, String sqlQuery, Multimap<Var, RestrictedExpr> sparqlVarMap, List<Var> projectionVars)
+	public static ResultSetSparqlify create(Connection conn, Statement stmt, String sqlQuery, Multimap<Var, RestrictedExpr> sparqlVarMap, List<Var> projectionVars)
 		throws SQLException
 	{
 		List<String> resultVars = new ArrayList<String>();
@@ -58,6 +59,8 @@ public class ResultSetFactory {
 			it = Iterators.emptyIterator(); 
 		} else {
 			ResultSet rs = stmt.executeQuery(sqlQuery);
+			conn.commit();
+			
 			it = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);
 		}
 		

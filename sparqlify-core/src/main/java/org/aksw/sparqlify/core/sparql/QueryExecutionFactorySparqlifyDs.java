@@ -42,20 +42,24 @@ public class QueryExecutionFactorySparqlifyDs
 		
 		Connection conn = null;
 		try {
-			conn = dataSource.getConnection();
+			conn = dataSource.getConnection();			
+			System.out.println("Opened connection: [" + conn + "]");
+
 			// Turning off auto commit is a prerequisite for streaming result sets
 			// (at least on PostgreSQL)
 			conn.setAutoCommit(false);
 
 			QueryExecutionStreaming result = new QueryExecutionSparqlify(rewriter, conn, true, query, this);
 			
-			conn.commit();
+			//conn.commit();
 			
 			return result;
 		} catch (SQLException e) {
+			// If something goes wrong in the iterator creation, close the connection again
 			if(conn != null) {
 				try {
 					conn.rollback();
+					conn.close();
 				} catch(SQLException f) {
 					throw new RuntimeException(f);
 				}

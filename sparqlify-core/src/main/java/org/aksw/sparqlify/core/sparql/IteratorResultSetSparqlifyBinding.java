@@ -15,14 +15,12 @@ import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.aksw.sparqlify.core.MakeExprPermissive;
 import org.aksw.sparqlify.core.MakeNodeValue;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
-import org.apache.commons.lang.StringUtils;
 import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
@@ -46,6 +44,10 @@ public class IteratorResultSetSparqlifyBinding
 	private Multimap<Var, RestrictedExpr> sparqlVarMap;
 	
 	
+	private long nextRowId;
+	private Var rowIdVar;
+
+	
 	public static boolean isCharType(String typeName) {
 		String tmp = typeName.toLowerCase();
 		
@@ -54,31 +56,46 @@ public class IteratorResultSetSparqlifyBinding
 		boolean result = charNames.contains(tmp);
 		return result;
 	}
-	
+
 	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
+	{
+		this(rs, sparqlVarMap, 0, null);
+	}
+
+
+	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap, long nextRowId, String rowIdName)
 	{
 		this.rs = rs;
 		this.sparqlVarMap = sparqlVarMap;
-		
-//		ResultSetMetaData meta;
-//		try {
-//			rs.next();
-//			System.out.println("h__4: " + rs.getObject("h__4"));
-//			System.out.println("AGE: " + rs.getObject("AGE"));
-//			
-//			
-//			meta = rs.getMetaData();
-//			for(int i = 1; i <= meta.getColumnCount(); ++i) {
-//				String colName = meta.getColumnName(i);
-//				
-//				System.out.println("Column [" + i + "]: " + colName);
-//			}
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
+		this.nextRowId = nextRowId;
+		this.rowIdVar = rowIdName == null ? null : Var.alloc(rowIdName);
 	}
+
+	
+//	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
+//	{
+//		this.rs = rs;
+//		this.sparqlVarMap = sparqlVarMap;
+//		
+////		ResultSetMetaData meta;
+////		try {
+////			rs.next();
+////			System.out.println("h__4: " + rs.getObject("h__4"));
+////			System.out.println("AGE: " + rs.getObject("AGE"));
+////			
+////			
+////			meta = rs.getMetaData();
+////			for(int i = 1; i <= meta.getColumnCount(); ++i) {
+////				String colName = meta.getColumnName(i);
+////				
+////				System.out.println("Column [" + i + "]: " + colName);
+////			}
+////		} catch (SQLException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+//
+//	}
 	
 
 	@Override
@@ -163,6 +180,17 @@ public class IteratorResultSetSparqlifyBinding
 			}
 		}
 		
+
+		
+		// Additional "virtual" columns
+		// FIXME Ideally this should be part of a class "ResultSetExtend" that extends a result set with additional columns
+		if(rowIdVar != null) {
+			long rowId = nextRowId++;
+			Node node = NodeValue.makeInteger(rowId).asNode();
+			
+			binding.add(rowIdVar, node);
+		}
+
 		
 		boolean debugMode = true;
 		
@@ -268,7 +296,8 @@ public class IteratorResultSetSparqlifyBinding
 		return result;
 	}
 	
-	
+
+	@Override
 	public void close()
 	{
 		if(rs != null) {

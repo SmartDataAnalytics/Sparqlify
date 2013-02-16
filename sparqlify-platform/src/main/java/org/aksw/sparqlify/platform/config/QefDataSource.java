@@ -65,7 +65,9 @@ public class QefDataSource implements DataSource {
 						+ "> . " : "<" + resourceURI + "> <"
 						+ property.getURI() + "> ?x . ")
 				+ "FILTER (isBlank(?x)) }";
-		return execDescribeQuery(query);
+		
+		Model result = execDescribeQuery(query);
+		return result;
 	}
 
 

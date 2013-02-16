@@ -182,8 +182,8 @@ public class Main {
 		cpConfig.setPassword(dbconf.getPassword());
 		*/
 		
-		cpConfig.setMinConnectionsPerPartition(5);
-		cpConfig.setMaxConnectionsPerPartition(20);
+		cpConfig.setMinConnectionsPerPartition(1);
+		cpConfig.setMaxConnectionsPerPartition(3);
 //		cpConfig.setMinConnectionsPerPartition(1);
 //		cpConfig.setMaxConnectionsPerPartition(1);
 		
