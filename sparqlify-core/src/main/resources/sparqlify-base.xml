@@ -1,8 +1,12 @@
-<sparqlify-config>
+<sparqlifyConfig>
 
-	<types>
-		<type></type>	
-	</types>
+	<typeAliases>
+		<typeAlias></typeAlias>
+	</typeAliases>
+
+	<typeMaps>
+		<typemap from="http://www.w3.org/2001/XMLSchema#int" to="int" /> 	
+	</typeMaps>
 
 	<type-hierarchy>
 	
@@ -14,4 +18,4 @@
 
 	</coercions>
 
-</sparqlify-config>
+</sparqlifyConfig>
