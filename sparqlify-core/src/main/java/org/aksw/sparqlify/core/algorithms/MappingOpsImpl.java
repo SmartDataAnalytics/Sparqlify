@@ -73,49 +73,6 @@ import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 
-class GeneratorBlacklist
-	implements Generator 
-{
-	private Generator generator;
-	private Collection<String> blacklist;
-	
-	public GeneratorBlacklist(Generator generator, Collection<String> blacklist) {
-		this.generator = generator;
-		this.blacklist = blacklist;
-	}
-
-	@Override
-	public String next() {
-		String result;
-		do {
-			
-			result = generator.next();
-			
-		} while(blacklist.contains(result));
-		
-		return result;
-	}
-
-	@Override
-	public String current() {
-		String result = generator.current();
-		return result;
-	}
-	
-	
-	public static GeneratorBlacklist create(String base, Collection<String> blacklist) {
-		Generator generator = Gensym.create(base);
-		GeneratorBlacklist result = create(generator, blacklist);
-		return result;
-	}
-	
-	public static GeneratorBlacklist create(Generator generator, Collection<String> blacklist) {
-		GeneratorBlacklist result = new GeneratorBlacklist(generator, blacklist);
-		return result;
-	}
-
-}
-
 class SqlExprContext {
 	private Map<Var, Expr> assignment;
 	private SqlExpr sqlExpr;

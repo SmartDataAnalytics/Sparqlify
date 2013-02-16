@@ -12,122 +12,117 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import org.aksw.commons.sparql.api.core.QueryExecutionAdapter;
 import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
+import org.aksw.commons.sparql.api.core.ResultSetClosable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.trash.RdfViewDatabase;
 import org.aksw.sparqlify.views.transform.EmptyRewriteException;
 import org.aksw.sparqlify.views.transform.ViewRewriter;
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.iterator.QueryIterNullIterator;
-import com.hp.hpl.jena.sparql.util.Context;
-import com.hp.hpl.jena.util.FileManager;
 
 // TODO Replace with class from AKSW commons
-class QueryExecutionAdapter
-	implements QueryExecution
-{
-	@Override
-	public void setFileManager(FileManager fm) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public void setInitialBinding(QuerySolution binding) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Dataset getDataset() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Context getContext() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public ResultSet execSelect() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Model execConstruct() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Model execConstruct(Model model) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Model execDescribe() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Model execDescribe(Model model) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public boolean execAsk() {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public void abort() {
-	}
-
-	@Override
-	public void close() {
-	}
-
-	@Override
-	public void setTimeout(long timeout, TimeUnit timeoutUnits) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public void setTimeout(long timeout) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
-			TimeUnit timeUnit2) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public void setTimeout(long timeout1, long timeout2) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public Query getQuery() {
-		throw new NotImplementedException();
-	}
-	
-}
+//class QueryExecutionAdapter
+//	implements QueryExecution
+//{
+//	@Override
+//	public void setFileManager(FileManager fm) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public void setInitialBinding(QuerySolution binding) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Dataset getDataset() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Context getContext() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public ResultSet execSelect() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Model execConstruct() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Model execConstruct(Model model) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Model execDescribe() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Model execDescribe(Model model) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public boolean execAsk() {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public void abort() {
+//	}
+//
+//	@Override
+//	public void close() {
+//	}
+//
+//	@Override
+//	public void setTimeout(long timeout, TimeUnit timeoutUnits) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public void setTimeout(long timeout) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
+//			TimeUnit timeUnit2) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public void setTimeout(long timeout1, long timeout2) {
+//		throw new NotImplementedException();
+//	}
+//
+//	@Override
+//	public Query getQuery() {
+//		throw new NotImplementedException();
+//	}
+//	
+//}
 
 class QueryExecutionTimeout
 	extends QueryExecutionAdapter
@@ -368,7 +363,7 @@ public class QueryExecutionSparqlify
 	//private Query query;
 	
 	// subFactory is needed for DESCRIBE queries right now
-	public QueryExecutionSparqlify(RdfViewSystem system, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory<QueryExecutionStreaming> subFactory) {
+	public QueryExecutionSparqlify(RdfViewSystem system, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory subFactory) {
 		super(query, subFactory);
 		this.system = system;
 		this.conn = conn;
@@ -388,17 +383,17 @@ public class QueryExecutionSparqlify
 
 
 	@Override
-	protected QueryExecution executeCoreSelectX(Query dummy) {
+	protected QueryExecutionStreaming executeCoreSelectX(Query dummy) {
 		return new QueryExecutionSelect(system, conn, dummy);
 	}
 	
 	
 	@Override
-	protected ResultSet executeCoreSelect(Query query) {
+	protected ResultSetClosable executeCoreSelect(Query query) {
 		timeoutHelper.startExecutionTimer();
 		
 		try {
-			ResultSet result = super.executeCoreSelect(query);
+			ResultSetClosable result = super.executeCoreSelect(query);
 			
 			return result;
 			

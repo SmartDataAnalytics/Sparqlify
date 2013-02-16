@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 import javax.ws.rs.core.Context;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.core.spi.component.ComponentContext;
@@ -16,10 +15,10 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 
 //@Provider
 public class QueryExecutionFactoryStreamingProvider
-	extends AbstractHttpContextInjectable<QueryExecutionFactory<QueryExecutionStreaming>>
+	extends AbstractHttpContextInjectable<QueryExecutionFactory>
 	implements InjectableProvider<Context, Type>
 {
-	public static QueryExecutionFactory<QueryExecutionStreaming> qeFactory;
+	public static QueryExecutionFactory qeFactory;
 	
 	/*
 	public QueryExecutionFactoryStreamingProvider(QueryExecutionFactory<QueryExecutionStreaming> qeFactory) {
@@ -27,7 +26,7 @@ public class QueryExecutionFactoryStreamingProvider
 	}*/
 
     @Override
-    public Injectable<QueryExecutionFactory<QueryExecutionStreaming>> getInjectable(ComponentContext ic, Context a, Type c) {
+    public Injectable<QueryExecutionFactory> getInjectable(ComponentContext ic, Context a, Type c) {
     	return this;
     }
 
@@ -37,12 +36,12 @@ public class QueryExecutionFactoryStreamingProvider
     }
     
     @Override
-    public QueryExecutionFactory<QueryExecutionStreaming> getValue() {
+    public QueryExecutionFactory getValue() {
     	return qeFactory;
     }
     
     @Override
-    public QueryExecutionFactory<QueryExecutionStreaming> getValue(HttpContext c) {
+    public QueryExecutionFactory getValue(HttpContext c) {
     	//return qeFactory;
     	return getValue();
     }

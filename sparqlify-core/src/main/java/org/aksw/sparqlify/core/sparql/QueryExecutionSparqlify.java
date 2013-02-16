@@ -11,29 +11,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import org.aksw.commons.sparql.api.core.QueryExecutionAdapter;
 import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
+import org.aksw.commons.sparql.api.core.ResultSetClosable;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.iterator.QueryIterNullIterator;
-import com.hp.hpl.jena.sparql.util.Context;
-import com.hp.hpl.jena.util.FileManager;
 
 // TODO Replace with class from AKSW commons
+/*
 class QueryExecutionAdapter
 	implements QueryExecution
 {
@@ -122,6 +118,7 @@ class QueryExecutionAdapter
 	}
 	
 }
+*/
 
 class QueryExecutionTimeout
 	extends QueryExecutionAdapter
@@ -335,7 +332,7 @@ public class QueryExecutionSparqlify
 	//private Query query;
 	
 	// subFactory is needed for DESCRIBE queries right now
-	public QueryExecutionSparqlify(SparqlSqlRewriter rewriter, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory<QueryExecutionStreaming> subFactory) {
+	public QueryExecutionSparqlify(SparqlSqlRewriter rewriter, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory subFactory) {
 		super(query, subFactory);
 		this.rewriter = rewriter;
 		this.conn = conn;
@@ -355,17 +352,17 @@ public class QueryExecutionSparqlify
 
 
 	@Override
-	protected QueryExecution executeCoreSelectX(Query dummy) {
+	protected QueryExecutionStreaming executeCoreSelectX(Query dummy) {
 		return new QueryExecutionSelect(rewriter, conn, dummy);
 	}
 	
 	
 	@Override
-	protected ResultSet executeCoreSelect(Query query) {
+	protected ResultSetClosable executeCoreSelect(Query query) {
 		timeoutHelper.startExecutionTimer();
 		
 		try {
-			ResultSet result = super.executeCoreSelect(query);
+			ResultSetClosable result = super.executeCoreSelect(query);
 			
 			return result;
 			

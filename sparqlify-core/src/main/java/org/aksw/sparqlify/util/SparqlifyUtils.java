@@ -16,7 +16,6 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.cache.extra.SqlUtils;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
 import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.commons.util.MapReader;
@@ -496,7 +495,7 @@ public class SparqlifyUtils {
 
 		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, typeSystem);
 
-		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
 		if(maxQueryExecutionTime != null) {
 			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);

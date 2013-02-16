@@ -25,7 +25,6 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
-import org.aksw.sparqlify.csv.SinkNTriples;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
@@ -36,7 +35,6 @@ import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.openjena.atlas.lib.Sink;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,7 +233,7 @@ public class Main {
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
 
 		
-		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
 		if(maxQueryExecutionTime != null) {
 			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);

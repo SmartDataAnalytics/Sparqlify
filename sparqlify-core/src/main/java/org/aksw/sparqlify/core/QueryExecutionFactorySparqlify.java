@@ -8,7 +8,7 @@ import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import com.hp.hpl.jena.query.Query;
 
 public class QueryExecutionFactorySparqlify
-	extends QueryExecutionFactoryBackQuery<QueryExecutionStreaming>
+	extends QueryExecutionFactoryBackQuery
 {
 	private RdfViewSystem system;
 	private Connection conn;

@@ -92,7 +92,7 @@ class QueryExecutionStreamingWrapper
 }
 
 class QueryExecutionFactoryStreamingWrapper
-	implements QueryExecutionFactory<QueryExecutionStreaming>
+	implements QueryExecutionFactory
 {
 	private QueryExecutionFactory delegate;
 	
@@ -254,9 +254,9 @@ public class MainConstructView {
 		SparqlViewSystem system = new SparqlViewSystem();
 		ConfiguratorConstructViewSystem.configure(config, system);
 
-		QueryExecutionFactory<QueryExecutionStreaming> backend = new QueryExecutionFactoryStreamingWrapper(new QueryExecutionFactoryHttp(serviceStr));
+		QueryExecutionFactory backend = new QueryExecutionFactoryStreamingWrapper(new QueryExecutionFactoryHttp(serviceStr));
 
-		QueryExecutionFactory<QueryExecutionStreaming> qef = new QueryExecutionFactorySparqlView(backend, system, dialect);
+		QueryExecutionFactory qef = new QueryExecutionFactorySparqlView(backend, system, dialect);
 		
 		/*
 		if(maxQueryExecutionTime != null) {

@@ -20,7 +20,7 @@ import com.hp.hpl.jena.query.Query;
  *
  */
 public class QueryExecutionFactorySparqlifyDs
-	extends QueryExecutionFactoryBackQuery<QueryExecutionStreaming>
+	extends QueryExecutionFactoryBackQuery
 {
 	private static final Logger logger = LoggerFactory.getLogger(QueryExecutionFactorySparqlifyDs.class);
 	

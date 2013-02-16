@@ -2,11 +2,11 @@ package org.aksw.sparqlify.sparqlview;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
+import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
 
 public class QueryExecutionFactorySparqlView
 	extends QueryExecutionFactoryBackQuery
@@ -34,11 +34,11 @@ public class QueryExecutionFactorySparqlView
 	}
 
 	@Override
-	public QueryExecution createQueryExecution(Query query) {
+	public QueryExecutionStreaming createQueryExecution(Query query) {
 		Query rewritten = SparqlViewSystem.rewrite(query, system, dialect);
 		//logger.trace("Rewritten query: " + rewritten);
 		//System.out.println("Rewritten query: " + rewritten);
-		QueryExecution result = factory.createQueryExecution(rewritten);
+		QueryExecutionStreaming result = factory.createQueryExecution(rewritten);
 
 		return result;
 	}	

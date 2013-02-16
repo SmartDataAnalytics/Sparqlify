@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.springframework.stereotype.Component;
 
 import com.hp.hpl.jena.sparql.engine.http.HttpParams;
@@ -50,7 +49,7 @@ public class HttpSparqlEndpoint {
 	
 	//@Context
 	//protected QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
-	public static QueryExecutionFactory<QueryExecutionStreaming> sparqler = null;
+	public static QueryExecutionFactory sparqler = null;
 	
 
 	// No-arg constructor
@@ -60,7 +59,7 @@ public class HttpSparqlEndpoint {
 	}
 
 	public HttpSparqlEndpoint(@Context ServletContext context) {
-		QueryExecutionFactory<QueryExecutionStreaming> qef = (QueryExecutionFactory)context.getAttribute("queryExecutionFactory");
+		QueryExecutionFactory qef = (QueryExecutionFactory)context.getAttribute("queryExecutionFactory");
 		
 		this.queryExecutionFactory = qef;
 		
@@ -72,7 +71,7 @@ public class HttpSparqlEndpoint {
 	}
 	
 	
-	public QueryExecutionFactory<QueryExecutionStreaming> getSparqler() throws Exception {
+	public QueryExecutionFactory getSparqler() throws Exception {
 		if(sparqler == null) {
 			sparqler = queryExecutionFactory;
 		}

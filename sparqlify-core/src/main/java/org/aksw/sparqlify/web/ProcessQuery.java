@@ -40,7 +40,7 @@ public class ProcessQuery {
 		};
 	}
 
-	public static StreamingOutput processQuery(String queryString, String format, QueryExecutionFactory<QueryExecutionStreaming> qeFactory)
+	public static StreamingOutput processQuery(String queryString, String format, QueryExecutionFactory qeFactory)
 			throws Exception {
 		Query query = QueryFactory.create(queryString);
 
