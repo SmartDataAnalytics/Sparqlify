@@ -166,7 +166,7 @@ public class QueryExecutionSelect
 
 		} */
 		stmt = createStatement(conn);
-		System.out.println("My connection: " + conn + " Query is " + query);
+		logger.debug("My connection: " + conn + " Query is " + query);
 		
 		//timeoutHelper.startExecutionTimer();
 

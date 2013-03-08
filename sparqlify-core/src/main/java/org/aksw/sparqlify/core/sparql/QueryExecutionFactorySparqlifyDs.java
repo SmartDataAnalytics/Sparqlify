@@ -43,7 +43,7 @@ public class QueryExecutionFactorySparqlifyDs
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();			
-			System.out.println("Opened connection: [" + conn + "]");
+			logger.debug("Opened connection: [" + conn + "]");
 
 			// Turning off auto commit is a prerequisite for streaming result sets
 			// (at least on PostgreSQL)
