@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core.sparql;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -39,6 +40,7 @@ public class IteratorResultSetSparqlifyBinding
 	// Canonicalize values, e.g. 20.0 -> 2.0e1
 	private CanonicalizeLiteral canonicalizer = CanonicalizeLiteral.get();
 	
+	private Connection conn;
 	private ResultSet rs;
 	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
 	private Multimap<Var, RestrictedExpr> sparqlVarMap;
@@ -57,14 +59,15 @@ public class IteratorResultSetSparqlifyBinding
 		return result;
 	}
 
-	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
+	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
 	{
-		this(rs, sparqlVarMap, 0, null);
+		this(conn, rs, sparqlVarMap, 0, null);
 	}
 
 
-	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap, long nextRowId, String rowIdName)
+	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap, long nextRowId, String rowIdName)
 	{
+		this.conn = conn;
 		this.rs = rs;
 		this.sparqlVarMap = sparqlVarMap;
 		this.nextRowId = nextRowId;
@@ -303,6 +306,15 @@ public class IteratorResultSetSparqlifyBinding
 		if(rs != null) {
 			try {
 				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		if(conn != null) {
+			try {
+				conn.commit();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

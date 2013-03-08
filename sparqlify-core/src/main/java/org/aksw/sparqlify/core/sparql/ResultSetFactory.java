@@ -59,9 +59,10 @@ public class ResultSetFactory {
 			it = Iterators.emptyIterator(); 
 		} else {
 			ResultSet rs = stmt.executeQuery(sqlQuery);
-			conn.commit();
+			// Note: We commit AFTER closing the result set
+			// Result sets may not be stable after commit
 			
-			it = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap);
+			it = new IteratorResultSetSparqlifyBinding(conn, rs, sparqlVarMap);
 		}
 		
 		ResultSetSparqlify result = new ResultSetSparqlify(it, resultVars, 0);

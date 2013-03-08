@@ -489,7 +489,7 @@ public class CsvMapperCliMain {
 			sparqlVarMap.put(entry.getKey(), new RestrictedExpr(e));
 		}
 		
-		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(rs, sparqlVarMap, 1, "rowId");
+		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(null, rs, sparqlVarMap, 1, "rowId");
 		ResultSetSparqlify rss = new ResultSetSparqlify(itBinding, vars, 0);
 		
 
