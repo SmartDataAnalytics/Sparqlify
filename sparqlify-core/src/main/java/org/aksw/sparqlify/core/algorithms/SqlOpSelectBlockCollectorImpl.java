@@ -112,6 +112,14 @@ public class SqlOpSelectBlockCollectorImpl
 	private static Generator aliasGenerator = Gensym.create("a");
 	
 	
+	/**
+	 * Turn an SqlOp into an OpSqlSelectBlock.
+	 * Exception is SqlOpUnion, which does not need to be wrapped as such block.
+	 * 
+	 * 
+	 * @param sqlOp
+	 * @return
+	 */
 	public static SqlOp _makeSelect(SqlOp sqlOp) {
 		SqlOp result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp);
 		
@@ -134,7 +142,7 @@ public class SqlOpSelectBlockCollectorImpl
 
 		return result;
 	}
-
+	
 
 	public static SqlOp makeSelect(SqlOpGroupBy op) {
 		SqlOp newOp = _makeSelect(op.getSubOp());
@@ -325,15 +333,11 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 	
-	
-	public static SqlOp makeSelect(SqlOpJoin op) {
-
-		JoinContext context = collectJoins(op);
-		
+	public static SqlOpSelectBlock contextToBlock(Schema schema, JoinContext context) {
 		SqlOpSelectBlock block = SqlOpSelectBlock.create();
 		
 		/*
-		JoinContext left = _collectJoins(op.getLeft());
+		JoinContext left = _$s(op.getLeft());
 		JoinContext right = _collectJoins(op.getRight());
 		
 		SqlOpJoin join = SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
@@ -349,12 +353,21 @@ public class SqlOpSelectBlockCollectorImpl
 		 */
 
 		block.setSubOp(context.getOp());
-		block.setSchema(op.getSchema());
+		//block.setSchema(op.getSchema());
+		block.setSchema(schema);
 		block.getProjection().add(context.getProjection());
 		block.getConditions().addAll(context.getConditions());
 		
 		return block;
+		
+	}
+	
+	public static SqlOp makeSelect(SqlOpJoin op) {
 
+		JoinContext context = collectJoins(op);
+		SqlOpSelectBlock block = contextToBlock(op.getSchema(), context);
+
+		return block;
 	}
 
 
@@ -445,25 +458,26 @@ public class SqlOpSelectBlockCollectorImpl
 	 */
 	public static JoinContext collectJoins(SqlOpRename op) {
 
-//		JoinContext result;
-//		
-//		if(op.getSubOp() instanceof SqlOpUnionN) {
-//			SqlOp tmpOp = _makeSelect(op);
-//			tmpOp = requireSelectBlock(tmpOp);
-//			
-//			result = new JoinContext(tmpOp);
-//
-//		} else {
-//		
-//			result = _collectJoins(op.getSubOp());
-//			
-//		}
-//		result.getProjection().renameAll(op.getRename());
+		JoinContext result;
 
-		JoinContext result = _collectJoins(op.getSubOp());		
-		result.getProjection().renameAll(op.getRename());
+		boolean useCodeThatCausesConflictsOnDuplicateNames = false;
 
-		
+		if (useCodeThatCausesConflictsOnDuplicateNames) {
+			// FIXME: Can be removed it seems; the other part seems to be working now
+			result = _collectJoins(op.getSubOp());		
+			result.getProjection().renameAll(op.getRename());
+		} else {
+			// Create a sub select
+			JoinContext context = _collectJoins(op.getSubOp());
+			context.getProjection().renameAll(op.getRename());
+			SqlOpSelectBlock selectBlock = contextToBlock(op.getSchema(), context); 
+			
+			String aliasName = aliasGenerator.next();
+			selectBlock.setAliasName(aliasName);
+			
+			result = new JoinContextJoin(selectBlock);		
+		}
+
 		return result;
 	}
 

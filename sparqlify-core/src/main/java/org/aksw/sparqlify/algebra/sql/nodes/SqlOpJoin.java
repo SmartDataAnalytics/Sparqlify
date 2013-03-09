@@ -46,7 +46,7 @@ public class SqlOpJoin
 		typeMap.putAll(b.getTypeMap());
 		
 		
-		Schema result= new SchemaImpl(names, typeMap);
+		Schema result = new SchemaImpl(names, typeMap);
 
 		return result;
 	}

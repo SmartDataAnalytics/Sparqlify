@@ -460,7 +460,7 @@ public class SqlOpSerializerImpl
 
 
     	//boolean isSubSelect = node instanceof SqlSelectBlock || node instanceof SqlUnionN;
-    	boolean isSubSelect = op instanceof SqlOpUnionN;
+    	boolean isSubSelect = op instanceof SqlOpSelectBlock || op instanceof SqlOpUnionN;
     	
     	if(isSubSelect) {
     		writer.println("(");

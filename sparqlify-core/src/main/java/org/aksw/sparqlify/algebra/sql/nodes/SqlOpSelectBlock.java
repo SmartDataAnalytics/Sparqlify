@@ -19,6 +19,12 @@ import com.hp.hpl.jena.sdb.shared.SDBInternalError;
  * The sql generation process is to generate SqlSelectBlock from the
  * algebra, which are then turned into strings.
  * 
+ * 
+ * TODO: What is the difference between schema and projection???
+ * It seems as if I used schema for the subOp, whereas projection is a collection of changes to it
+ * If this is the case, the concept is flawed:
+ * The schema should be the one of this op's result set.
+ * 
  * @author raven
  *
  *

@@ -193,7 +193,7 @@ public class NewWorldTest {
 			Map<String, String> typeMap = MapReader
 					.readFromResource("/type-map.h2.tsv");
 
-			// TODO HACK Do not add types programatically 
+			// TODO HACK Do not add types programmatically 
 			typeMap.put("INTEGER", "int");
 			
 			typeHierarchy.putAll(typeMap);
@@ -249,7 +249,10 @@ public class NewWorldTest {
 
 		cs.registerCoercion(TypeToken.alloc(XSD.integer.toString()),
 				TypeToken.Int, new SqlValueTransformerInteger());
-		
+
+		cs.registerCoercion(TypeToken.String, TypeToken.alloc("int8"),
+				new SqlValueTransformerInteger());
+
 		cs.registerCoercion(TypeToken.String, TypeToken.alloc("int4"),
 				new SqlValueTransformerInteger());
 
