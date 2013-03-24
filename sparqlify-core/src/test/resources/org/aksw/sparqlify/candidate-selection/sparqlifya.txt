@@ -1,0 +1,43 @@
+Prefix ex: <http://example.org/>
+
+
+Create View pupil As
+  Construct {
+      ?a a ex:Pupil .
+      ?a ex:knows ?b .
+      ?b a ex:Pupil .
+  }
+  With
+    ?a = uri(concat(ex:pupil, '/', ?a))
+    ?b = uri(concat(ex:pupil, '/', ?b))
+  From
+     knows_pupil
+
+
+Create View students As
+  Construct {
+      ?a a ex:Student .
+      ?a ex:knows ?b .
+      ?b a ex:Student .
+  }
+  With
+    ?a = uri(concat(ex:student, '/', ?a))
+    ?b = uri(concat(ex:student, '/', ?b))
+  From
+     knows_student
+     
+     
+Create View profs As
+  Construct {
+      ?a a ex:Prof .
+      ?a ex:knows ?b .
+      ?b a ex:Prof .
+  }
+  With
+    ?a = uri(concat(ex:prof, '/', ?a))
+    ?b = uri(concat(ex:prof, '/', ?a))
+  From
+     knows_prof
+
+        
+    

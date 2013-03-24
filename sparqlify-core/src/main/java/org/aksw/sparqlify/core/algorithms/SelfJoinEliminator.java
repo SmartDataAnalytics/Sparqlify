@@ -60,9 +60,9 @@ public class SelfJoinEliminator {
 			backB = backT;
 		}
 		
-		System.out.println("BackA: " + backA);
-		System.out.println("BackB: " + backB);
-		System.out.println("---");
+//		System.out.println("BackA: " + backA);
+//		System.out.println("BackB: " + backB);
+//		System.out.println("---");
 
 		// Now check if each parent variable in backA maps to the same
 		// query variables as in backB

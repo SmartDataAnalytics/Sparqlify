@@ -46,13 +46,14 @@ public class ViewDefinitionNormalizer {
 		}
 		
 		String prefix = derivePrefix(expr);
-		if(prefix != null) {
+		if(RdfTermType.URI.equals(type) && prefix != null) {
 			PrefixSet ps = new PrefixSet(prefix);
 			rs.stateUriPrefixes(ps);
 		}
 
 		if(rs.isUnsatisfiable()) {
 			System.err.println("Unsatisfiable restriction detected: " + restExpr);
+			throw new RuntimeException("Unsatisfiable restriction detected: " + restExpr);
 		}
 		
 		RestrictedExpr result = new RestrictedExpr(expr, rs);

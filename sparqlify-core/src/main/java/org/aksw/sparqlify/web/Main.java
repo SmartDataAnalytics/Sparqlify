@@ -23,6 +23,7 @@ import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.util.SparqlifyUtils;
@@ -213,7 +214,9 @@ public class Main {
 		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
-		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl();
+		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
+
+		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl(opMappingRewriter);
 
 		
 		//RdfViewSystem system = new RdfViewSystem2();
@@ -228,7 +231,7 @@ public class Main {
 
 		
 
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, typeSystem);
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
 

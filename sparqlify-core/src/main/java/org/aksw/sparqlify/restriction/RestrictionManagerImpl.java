@@ -21,6 +21,7 @@ import sparql.CnfUtils;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.engine.binding.BindingHashMap;
 import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -32,7 +33,18 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
+
+
 /**
+ * This class combines two concepts:
+ * - <i>Construction of expressions</i> 
+ * - <i>Binding variables</i> to values (thus constraining the set of possible values for variables)
+ *
+ * Furthermore, we can distinguish between bindings inferred from expressions,
+ * such as (?p = rdf:type) -> (?p -> rdf:type)
+ * 
+ * and bindings stated by the user
+ * 
  * A monotone container for assigning constraints to expressions.
  * A constraint that has been added cannot be removed anymore.
  *
@@ -76,7 +88,7 @@ public class RestrictionManagerImpl implements RestrictionManager {
 
 	private NestedNormalForm cnf;
 
-	
+
 	// TODO I want to get rid of this ExprIndex instance
 	// I rather want to have a set of dnfs managed here
 	// The question is how to combine that with the parent lookup (can we avoid copying everything?)
@@ -387,6 +399,21 @@ public class RestrictionManagerImpl implements RestrictionManager {
 		
 	}
 	
+	public void collectRestrictions(Map<Var, RestrictionImpl> result) {
+		if(parent != null) {
+			parent.collectRestrictions(result);
+		}
+		
+		result.putAll(this.restrictions);
+	}
+	
+	public Map<Var, RestrictionImpl> getRestrictions() {
+		Map<Var, RestrictionImpl> result = new HashMap<Var, RestrictionImpl>();
+		collectRestrictions(result);
+		
+		return result;		
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.aksw.sparqlify.database.IRestrictionManager#getRestriction(com.hp.hpl.jena.sparql.expr.Expr)
 	 */
@@ -643,6 +670,18 @@ public class RestrictionManagerImpl implements RestrictionManager {
 		throw new NotImplementedException();
 	}
 	
+
+	public Map<Var, Node> getBindings() {
+		Map<Var, Node> result = new HashMap<Var, Node>();
+		
+		RestrictionManagerImpl current = this;
+		while(current != null) {
+			result.putAll(current.binding);
+			current = current.parent;
+		}
+		
+		return result;		
+	}
 
 	public Set<Var> getVariables() {
 		Set<Var> result = new HashSet<Var>();

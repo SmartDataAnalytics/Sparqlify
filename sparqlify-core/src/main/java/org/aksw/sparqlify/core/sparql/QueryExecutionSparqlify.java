@@ -10,6 +10,8 @@ import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
 import org.aksw.commons.sparql.api.core.ResultSetClosable;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 
@@ -137,6 +139,8 @@ public class QueryExecutionTimeout
 public class QueryExecutionSparqlify
 	extends QueryExecutionBaseSelect
 {
+	public static Logger logger = LoggerFactory.getLogger(QueryExecutionSparqlify.class);
+	
 	private SparqlSqlRewriter rewriter;
 	private Connection conn;
 	private boolean closeConnWhenDone;
@@ -213,7 +217,7 @@ public class QueryExecutionSparqlify
 
 		if(this.closeConnWhenDone) {
 			try {
-				System.out.println("Closed connection: [" + conn + "]");
+				logger.trace("Closed connection: [" + conn + "]");
 				conn.close();
 			} catch (SQLException e) {
 				throw new RuntimeException(e);

@@ -804,7 +804,7 @@ public class MappingOpsImpl
 				newName = gen.next();
 				if(namesA.contains(newName)) {
 
-					System.err.println("FIXME Have to generate another column name - should be prevented");
+					logger.trace("FIXME Have to generate another column name - should be prevented");
 					continue;
 				}
 				

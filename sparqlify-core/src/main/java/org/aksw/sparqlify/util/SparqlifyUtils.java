@@ -471,6 +471,20 @@ public class SparqlifyUtils {
 		List<String> result = SqlUtils.executeList(conn, query, String.class);
 		return result;
 	}
+
+	public static OpMappingRewriter createDefaultOpMappingRewriter(TypeSystem typeSystem) {
+		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
+		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, exprTransformer);
+		
+		
+		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();
+				
+		
+		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
+		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+
+		return opMappingRewriter;
+	}
 	
 	public static QueryExecutionFactory createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();
@@ -486,13 +500,27 @@ public class SparqlifyUtils {
 
 
 		Connection conn = dataSource.getConnection();
+
+		
+/*		
+		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
+		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, exprTransformer);
+		
+		
+		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();
 				
+		
+		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
+		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+*/
+		OpMappingRewriter opMappingRewriter = createDefaultOpMappingRewriter(typeSystem);
+		
 		CandidateViewSelector candidateViewSelector;
 		try {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
-			candidateViewSelector = new CandidateViewSelectorImpl();
+			candidateViewSelector = new CandidateViewSelectorImpl(opMappingRewriter);
 
 		
 			//	RdfViewSystem system = new RdfViewSystem2();
@@ -501,7 +529,7 @@ public class SparqlifyUtils {
 			conn.close();
 		}
 
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, typeSystem);
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
 
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
@@ -525,7 +553,7 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, TypeSystem datatypeSystem) throws SQLException, IOException {		
+	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {		
 		
 		//DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
 		//ExprTransformer exprTransformer = new ExprTransformerMap();
@@ -533,16 +561,6 @@ public class SparqlifyUtils {
 		// Eliminates rdf terms from Expr (this is datatype independent)		
 		
 		//TypedExprTransformer sqlTranslatorTmp = new TypedExprTransformerImpl(datatypeSystem);
-		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
-		
-		SqlTranslator sqlTranslator = createSqlRewriter(datatypeSystem, exprTransformer);
-		
-		
-		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();
-				
-		
-		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
-		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		
 		//SqlExprSerializer exprSerializer = new SqlExprSerializerPostgres(); //null /* da */);
 		

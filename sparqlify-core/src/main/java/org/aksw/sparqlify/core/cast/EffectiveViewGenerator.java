@@ -138,7 +138,15 @@ public class EffectiveViewGenerator {
 	 * @return
 	 */
 	public List<ViewDefinition> transform(ViewDefinition viewDef) {
+		
 		List<ViewDefinition> result = new ArrayList<ViewDefinition>();
+
+		boolean disableNullableTransform = false;
+		if(disableNullableTransform) {
+			result.add(viewDef);
+			return result;
+		}
+		
 
 		Mapping mapping = viewDef.getMapping();
 		VarDefinition varDef = mapping.getVarDefinition();

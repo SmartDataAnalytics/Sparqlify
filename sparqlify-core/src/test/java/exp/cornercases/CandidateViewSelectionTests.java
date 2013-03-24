@@ -17,6 +17,7 @@ import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
@@ -54,8 +55,10 @@ public class CandidateViewSelectionTests {
 
 		System.out.println("VD: " + coreVd);
 		
+		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
 		
-		CandidateViewSelector system = new CandidateViewSelectorImpl();		
+		CandidateViewSelector system = new CandidateViewSelectorImpl(opMappingRewriter);		
 		system.addView(coreVd);
 		
 		
@@ -92,8 +95,8 @@ public class CandidateViewSelectionTests {
 		ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
 
 		
-		
-		CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl();
+		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(datatypeSystem);
+		CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl(opMappingRewriter);
 		candidateSelector.addView(personView);
 		candidateSelector.addView(deptView);
 		candidateSelector.addView(personToDeptView);

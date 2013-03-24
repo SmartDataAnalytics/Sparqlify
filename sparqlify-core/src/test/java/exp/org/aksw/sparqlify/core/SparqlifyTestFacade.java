@@ -10,9 +10,12 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.cast.NewWorldTest;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
@@ -74,9 +77,11 @@ public class SparqlifyTestFacade {
 		
 		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
-		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl();
+		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
+		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(opMappingRewriter);
 
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, vdFactory.getDatatypeSystem());
+		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, opMappingRewriter, vdFactory.getDatatypeSystem());
 	
 		SparqlifyTestFacade result = new SparqlifyTestFacade(vdFactory, cvs, rewriter);
 			

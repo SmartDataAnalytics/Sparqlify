@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -16,13 +17,16 @@ import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
+import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.Constraint;
 import org.aksw.sparqlify.database.EqualsConstraint;
@@ -139,7 +143,18 @@ public class CandidateViewSelectorImpl
 	PrefixIndex<Object> idxTest;
 	private Set<ViewDefinition> views = new HashSet<ViewDefinition>();
 	
-	public CandidateViewSelectorImpl() {
+	private OpMappingRewriter opMappingRewriter;// = new OpMappingRewriterImpl(new MappingOps)
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param opMappingRewriter May be null. If given, we can do rewrites during the SQL generation to prune empty result mappings early. 
+	 */
+	public CandidateViewSelectorImpl(OpMappingRewriter opMappingRewriter) {
+		
+		this.opMappingRewriter = opMappingRewriter;
+		
 		TableBuilder<Object> builder = new TableBuilder<Object>();
 		builder.addColumn("g_prefix", String.class);
 		builder.addColumn("s_prefix", String.class);
@@ -292,12 +307,20 @@ public class CandidateViewSelectorImpl
 		//RestrictionManagerImpl restrictions = new RestrictionManagerImpl();
 		//view.setRestrictions(restrictions);
 
-		ViewDefinition normalized = viewDefinitionNormalizer.normalize(view);		
+		ViewDefinition normalized = viewDefinitionNormalizer.normalize(view);
+		
+		
+		logger.debug("Normalized view:\n" + normalized);
+		
+		
 		RestrictionManagerImpl varRestrictions = normalized.getVarRestrictions();
 		
 		this.views.add(normalized);
 
-
+		
+		//System.out.println("Normalized view:\n" + normalized + "\n");
+		//System.out.println();
+		
 		//derivePrefixConstraints(view);
 		
 		// Index the pattern constraints
@@ -562,12 +585,15 @@ public class CandidateViewSelectorImpl
 		for(Set<Quad> quads : nToQuads.values()) {
 			order.addAll(quads);
 		}
-			
+		
+		
+		//System.out.println("Candidate order: " + StringUtils.itemPerLine(order));
 		
 		//System.out.println("Order:\n" + Joiner.on("\n").join(order));
-		
 		Set<ViewQuad> viewQuads = quadToCandidates.get(order.get(0));
 		getApplicableViewsRec2(0, order, viewQuads, quadToCandidates, restrictions, null, result);
+		
+		
 		
 		return result; 
 	}
@@ -575,7 +601,22 @@ public class CandidateViewSelectorImpl
 	
 	private static final String[] columnNames = new String[]{"g_prefix", "s_prefix", "p_prefix", "o_prefix"};
 
+	
+	/**
+	 * TODO: This method is far from optimal performance right now:
+	 * We need to consider prefix-set-restrictions of the variables during the lookup in order to rule
+	 * out returning to many view-quad candidates.
+	 * 
+	 * @param quad
+	 * @param restrictions
+	 * @return
+	 */
 	public Set<ViewQuad> findCandidates(Quad quad, RestrictionManagerImpl restrictions) {
+		
+//		System.out.println("Looking for candidates:");
+//		System.out.println("Quad: " + quad);
+//		System.out.println("Restrictions: " + restrictions);
+		
 		
 		//Multimap<Quad, ViewQuad> quadToView = HashMultimap.create();
 		
@@ -584,8 +625,21 @@ public class CandidateViewSelectorImpl
 		Set<Var> quadVars = QuadUtils.getVarsMentioned(quad);
 		Set<Clause> dnf = restrictions.getEffectiveDnf(quadVars);
 		
-		// TODO Get clauses by var
+
 		RestrictionImpl[] termRestriction = new RestrictionImpl[4];
+
+		// Get the restrictions for the variables
+		for(int i = 0; i < 4; ++i) {
+			Node n = QuadUtils.getNode(quad, i);
+			
+			Var var = (Var)n;
+			
+			RestrictionImpl r = restrictions.getRestriction(var);
+			termRestriction[i] = r;
+		}
+		
+		logger.debug("Term restrictions for " + quad + ":\n" + StringUtils.itemPerLine(termRestriction));
+		
 		for(Clause clause : dnf) {
 			Map<String, Constraint> columnConstraints = new HashMap<String, Constraint>();
 			
@@ -602,14 +656,27 @@ public class CandidateViewSelectorImpl
 				
 				Var var = (Var)n;
 				
-				RestrictionImpl r = clause.getRestriction(var);
-				termRestriction[i] = r;
+				RestrictionImpl r;
+				
+				RestrictionImpl clauseRest = clause.getRestriction(var);
+				RestrictionImpl bindRest = termRestriction[i];
+				
+				if(bindRest == null) {
+					r = clauseRest;
+				} else if(clauseRest != null) {
+					r = bindRest.clone();
+					r.stateRestriction(clauseRest);
+				} else {
+					r = null;
+				}
+				
 				
 				if(r == null) {
 					continue;
 				}
+				termRestriction[i] = r;
 				
-				if(r.getType().equals(RdfTermType.URI) && r.hasConstant()) {
+				if(r.getRdfTermTypes().contains(RdfTermType.URI) && r.hasConstant()) {
 					String columnName = columnNames[i];
 
 					columnConstraints.put(columnName, new IsPrefixOfConstraint(r.getNode().getURI()));
@@ -640,10 +707,12 @@ public class CandidateViewSelectorImpl
 			constraints.add(new HashMap<String, Constraint>());			
 		}
 		
+		//System.out.println("[Constraints] " + constraints);
 		for(Map<String, Constraint> columnConstraints : constraints) {
 		
 			Collection<List<Object>> rows = table.select(columnConstraints);
 
+			//System.out.println("    [Row]" + rows.size() + " rows for " + columnConstraints);
 			/*
 			System.out.println("BEGIN");
 			System.out.println("Constraints: " + columnConstraints);
@@ -657,6 +726,60 @@ public class CandidateViewSelectorImpl
 				viewQuads.add(viewQuad);
 			}
 		}
+
+		
+		// Finally: Cross check the viewQuads against the namespace prefixes
+		int filterCount = 0;
+		Iterator<ViewQuad> itViewQuad = viewQuads.iterator();
+		while(itViewQuad.hasNext()) {
+			ViewQuad viewQuad = itViewQuad.next();
+
+			Quad q = viewQuad.getQuad();
+			boolean isUnsatisfiable = false;
+			for(int i = 0; i < 4; ++i) {
+				RestrictionImpl queryRest = termRestriction[i];
+				
+				Node n = QuadUtils.getNode(q, i);
+				
+
+				RestrictionImpl viewRest;
+				if(n.isVariable()) {
+					Var var = (Var)n;
+					viewRest = viewQuad.getView().getVarRestrictions().getRestriction(var);	
+				} else if(n.isURI()) {
+					viewRest = new RestrictionImpl();
+					viewRest.stateNode(n);
+				} else {
+					viewRest = null;
+					//throw new RuntimeException("FIXME ME handle this case");
+				}
+				 
+				if(viewRest == null || queryRest == null) {
+					continue;
+				}
+				
+				RestrictionImpl tmp = viewRest.clone();
+				tmp.stateRestriction(queryRest);
+				
+				if(tmp.isUnsatisfiable()) {
+					isUnsatisfiable = true;
+					break;
+				}
+			}
+
+			if(isUnsatisfiable) {
+				//System.out.println("Filtered: " + viewQuad);
+				++filterCount;
+				itViewQuad.remove();
+			}
+		}
+		
+		
+		logger.debug(viewQuads.size() + " candidates remaining. " + filterCount + " filtered");
+		
+		//System.out.println("Total results: " + viewQuads.size());
+		//logger.debug(StringUtils.itemPerLine(viewQuads));
+		//logger.info("--------------------------------");
 		
 		return viewQuads;		
 	}
@@ -737,6 +860,9 @@ public class CandidateViewSelectorImpl
 
 		Quad queryQuad = quadOrder.get(index);
 
+		
+		//System.out.println("Query Quad" + queryQuad + ": " + candidates.size());
+
 		/*
 		System.out.println(index + " " + queryQuad);
 		for(ViewQuad viewQuad : viewQuads) {
@@ -748,11 +874,11 @@ public class CandidateViewSelectorImpl
 		//Set<ViewQuad> viewQuads = candidates.get(queryQuad);
 		
 
-		int subId = 0;
+		//int subId = 0;
 		for(ViewQuad viewQuad : viewQuads) {
-			++subId;
+			//++subId;
 
-			String viewName = viewQuad.getView().getName();
+			//String viewName = viewQuad.getView().getName();
 			
 			/*
 			if(viewName.equals("view_nodes")) {
@@ -818,11 +944,19 @@ public class CandidateViewSelectorImpl
 				continue;
 			}
 			
+			//System.out.println("SubRestrictions: " + subRestrictions.getRestrictions().size());
+			
 			
 			// TODO The restriction manager supersedes the two way binding
 			// But changing that is a bit of work
 			VarBinding binding = VarBinding.create(queryQuad, viewQuad.getQuad());//VarBinding.getVarMappingTwoWay(queryQuad, viewQuad.getQuad());
-
+			if(binding == null) {
+				// FIXME Not sure if we need to skip on null (-> unsatisfiable) or
+				// whether we need to do some handling
+				//System.out.println("Null binding");
+				throw new RuntimeException("Null binding");
+				//continue;
+			}
 					
 			// Try to join this instance with the candidates of the other quads 
 			int instanceId = index;
@@ -877,6 +1011,20 @@ public class CandidateViewSelectorImpl
 			
 			NestedStack<ViewInstance> nextInstances = new NestedStack<ViewInstance>(instances, instance);
 
+			boolean enablePruningMappingRewrite = true;
+			if(enablePruningMappingRewrite && opMappingRewriter != null) {
+			
+				List<ViewInstance> viewInstance = nextInstances.asList();
+				ViewInstanceJoin join = new ViewInstanceJoin(viewInstance, restrictions);
+				OpViewInstanceJoin op = new OpViewInstanceJoin(join);
+				
+				//OpMappingRewriter opMappingRewriter;
+				Mapping mapping = opMappingRewriter.rewrite(op);
+				if(mapping.isEmpty()) {
+					return;
+				}
+			}
+			
 			if(isRecursionEnd) {
 				//System.out.println("QuadPattern candidate: " + getCandidateNames(nextInstances));
 				/*
@@ -898,14 +1046,22 @@ public class CandidateViewSelectorImpl
 				// We have reached the end!
 				// Yield another view conjunction
 				
+//				System.out.println("Current candidate result size: " + result.size());
+				//System.out.println(viewConjunction);
+				//System.out.println("ViewNames: " + viewConjunction.getViewNames());
+				
 				continue;
 				
 			} else {
+				
+				//logger.debug("subRestrictions:\n" + StringUtils.itemPerLine(subRestrictions.getRestrictions().entrySet()));
+				
 			
 				Quad nextQuad = quadOrder.get(nextIndex);
 				
 				// With the new restriction do a lookup for the next quad
 				Set<ViewQuad> nextCandidates = findCandidates(nextQuad, subRestrictions);
+				//System.out.println("Candidates found: " + nextCandidates.size() + " restrictions:\n" + subRestrictions.getRestrictions().size());
 				
 				getApplicableViewsRec2(nextIndex, quadOrder, nextCandidates, candidates, subRestrictions, nextInstances, result);
 			}
