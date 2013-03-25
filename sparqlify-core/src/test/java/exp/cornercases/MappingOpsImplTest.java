@@ -13,11 +13,13 @@ import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
@@ -76,9 +78,10 @@ public class MappingOpsImplTest {
 		ViewDefinition personAndAgeView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t ; ex:age ?a } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) ?a = typedLiteral(?AGE, xsd:int) From person");
 		
 		
-		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
-
-		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl(opMappingRewriter);		
+		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		
+		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl(mappingOps);		
 		//candidateViewSelector.addView(personView);
 		candidateViewSelector.addView(deptView);
 		//candidateViewSelector.addView(personToDeptView);
@@ -169,6 +172,7 @@ public class MappingOpsImplTest {
 //		String sqlQueryString = serializer.serialize(block);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
+		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 

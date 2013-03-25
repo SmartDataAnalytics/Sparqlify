@@ -54,6 +54,10 @@ public class OpMappingRewriterImpl
 	public OpMappingRewriterImpl(MappingOps ops) {
 		this.ops = ops;
 	}
+	
+	public MappingOps getMappingOps() {
+		return this.ops;
+	}
 
 	public Mapping rewrite(OpViewInstanceJoin op) {
 		Collection<ViewInstance> vis = op.getJoin().getViewInstances();

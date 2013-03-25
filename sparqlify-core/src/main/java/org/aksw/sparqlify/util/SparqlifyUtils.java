@@ -478,8 +478,9 @@ public class SparqlifyUtils {
 		List<String> result = SqlUtils.executeList(conn, query, String.class);
 		return result;
 	}
-
-	public static OpMappingRewriter createDefaultOpMappingRewriter(TypeSystem typeSystem) {
+	
+	
+	public static MappingOps createDefaultMappingOps(TypeSystem typeSystem) {
 		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
 		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, exprTransformer);
 		
@@ -488,6 +489,13 @@ public class SparqlifyUtils {
 				
 		
 		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
+		
+		return mappingOps;
+	}
+
+	public static OpMappingRewriter createDefaultOpMappingRewriter(TypeSystem typeSystem) {
+		MappingOps mappingOps = createDefaultMappingOps(typeSystem);
+		
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 
 		return opMappingRewriter;
@@ -520,14 +528,17 @@ public class SparqlifyUtils {
 		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 */
-		OpMappingRewriter opMappingRewriter = createDefaultOpMappingRewriter(typeSystem);
-		
+		//OpMappingRewriter opMappingRewriter = createDefaultOpMappingRewriter(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
+
 		CandidateViewSelector candidateViewSelector;
 		try {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
-			candidateViewSelector = new CandidateViewSelectorImpl(opMappingRewriter);
+			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps);
 
 		
 			//	RdfViewSystem system = new RdfViewSystem2();

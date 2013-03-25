@@ -26,6 +26,7 @@ import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.Constraint;
@@ -143,7 +144,8 @@ public class CandidateViewSelectorImpl
 	PrefixIndex<Object> idxTest;
 	private Set<ViewDefinition> views = new HashSet<ViewDefinition>();
 	
-	private OpMappingRewriter opMappingRewriter;// = new OpMappingRewriterImpl(new MappingOps)
+	//private OpMappingRewriter opMappingRewriter;// = new OpMappingRewriterImpl(new MappingOps)
+	private MappingOps mappingOps;
 	
 	
 	/**
@@ -151,9 +153,9 @@ public class CandidateViewSelectorImpl
 	 * 
 	 * @param opMappingRewriter May be null. If given, we can do rewrites during the SQL generation to prune empty result mappings early. 
 	 */
-	public CandidateViewSelectorImpl(OpMappingRewriter opMappingRewriter) {
+	public CandidateViewSelectorImpl(MappingOps mappingOps) {
 		
-		this.opMappingRewriter = opMappingRewriter;
+		this.mappingOps = mappingOps;
 		
 		TableBuilder<Object> builder = new TableBuilder<Object>();
 		builder.addColumn("g_prefix", String.class);
@@ -591,7 +593,7 @@ public class CandidateViewSelectorImpl
 		
 		//System.out.println("Order:\n" + Joiner.on("\n").join(order));
 		Set<ViewQuad> viewQuads = quadToCandidates.get(order.get(0));
-		getApplicableViewsRec2(0, order, viewQuads, quadToCandidates, restrictions, null, result);
+		getApplicableViewsRec2(0, order, viewQuads, quadToCandidates, restrictions, null, result, null);
 		
 		
 		
@@ -839,7 +841,7 @@ public class CandidateViewSelectorImpl
 	 * @param restrictions
 	 * @param result
 	 */
-	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManagerImpl restrictions, NestedStack<ViewInstance> instances, List<ViewInstanceJoin> result)
+	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManagerImpl restrictions, NestedStack<ViewInstance> instances, List<ViewInstanceJoin> result, Mapping baseMapping)
 	{
 		List<String> debug = Arrays.asList("view_nodes", "node_tags_resource_kv"); // "view_lgd_relation_specific_resources");
 		List<String> viewNames = new ArrayList<String>();		
@@ -1011,16 +1013,20 @@ public class CandidateViewSelectorImpl
 			
 			NestedStack<ViewInstance> nextInstances = new NestedStack<ViewInstance>(instances, instance);
 
+			Mapping nextMapping = null;
+
 			boolean enablePruningMappingRewrite = true;
-			if(enablePruningMappingRewrite && opMappingRewriter != null) {
-			
-				List<ViewInstance> viewInstance = nextInstances.asList();
-				ViewInstanceJoin join = new ViewInstanceJoin(viewInstance, restrictions);
-				OpViewInstanceJoin op = new OpViewInstanceJoin(join);
+			if(enablePruningMappingRewrite && mappingOps != null) {
+
+				Mapping mapping = mappingOps.createMapping(instance);
 				
-				//OpMappingRewriter opMappingRewriter;
-				Mapping mapping = opMappingRewriter.rewrite(op);
-				if(mapping.isEmpty()) {
+				if(baseMapping == null) {
+					nextMapping = mapping;
+				} else {
+					nextMapping = mappingOps.join(baseMapping, mapping);
+				}
+				
+				if(nextMapping.isEmpty()) {
 					continue;
 				}
 			}
@@ -1063,7 +1069,7 @@ public class CandidateViewSelectorImpl
 				Set<ViewQuad> nextCandidates = findCandidates(nextQuad, subRestrictions);
 				//System.out.println("Candidates found: " + nextCandidates.size() + " restrictions:\n" + subRestrictions.getRestrictions().size());
 				
-				getApplicableViewsRec2(nextIndex, quadOrder, nextCandidates, candidates, subRestrictions, nextInstances, result);
+				getApplicableViewsRec2(nextIndex, quadOrder, nextCandidates, candidates, subRestrictions, nextInstances, result, nextMapping);
 			}
 		}
 		

@@ -17,12 +17,12 @@ import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
@@ -56,9 +56,10 @@ public class CandidateViewSelectionTests {
 		System.out.println("VD: " + coreVd);
 		
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
-		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
+		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
 		
-		CandidateViewSelector system = new CandidateViewSelectorImpl(opMappingRewriter);		
+		CandidateViewSelector system = new CandidateViewSelectorImpl(mappingOps);		
 		system.addView(coreVd);
 		
 		
@@ -95,8 +96,9 @@ public class CandidateViewSelectionTests {
 		ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
 
 		
-		OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(datatypeSystem);
-		CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl(opMappingRewriter);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(datatypeSystem);
+		
+		CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl(mappingOps);		
 		candidateSelector.addView(personView);
 		candidateSelector.addView(deptView);
 		candidateSelector.addView(personToDeptView);
