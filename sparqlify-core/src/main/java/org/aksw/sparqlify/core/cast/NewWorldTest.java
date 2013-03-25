@@ -16,10 +16,13 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPassThrough;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
+import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
@@ -132,7 +135,13 @@ class SqlValueTransformerInteger
 		//TypeMapper tm = TypeMapper.getInstance();
 
 		//String typeName = TypeToken.Int.toString();
-		Integer v = Integer.parseInt(str);
+		Integer v;
+		try {
+			v = Integer.parseInt(str);
+		} catch(NumberFormatException e) {
+			throw new CastException("Could not cast " + str + " to integer");
+		}
+		
 		
 		SqlValue result = new SqlValue(TypeToken.Int, v);
 		// String typeName = XSD.integer.toString();
@@ -379,6 +388,22 @@ public class NewWorldTest {
 			serializerSystem.addSerializer("logicalNot", serializer);
 		}
 
+
+		// urlEncode
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.String, TypeToken.String);
+			//SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalNot();
+			SqlExprEvaluator evaluator = null;
+
+			SparqlFunction f = new SparqlFunctionImpl(SparqlifyConstants.urlEncode, sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+			//SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
+			//serializerSystem.addSerializer(SparqlifyConstants.urlEncode, serializer);
+		}
+		
+		
+		
 		// {
 		// MethodSignature<String> sig = MethodSignature.create(false,
 		// SparqlifyConstants.numericTypeLabel,

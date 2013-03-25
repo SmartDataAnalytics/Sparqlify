@@ -1,6 +1,12 @@
 package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
-
+/**
+ * 
+ * Pattern: (opSymbol arg1)
+ * 
+ * @author raven
+ *
+ */
 public class SqlFunctionSerializerOp1
 	extends SqlFunctionSerializerBase1
 {

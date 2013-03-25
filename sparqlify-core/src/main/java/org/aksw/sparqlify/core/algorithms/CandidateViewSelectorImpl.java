@@ -638,7 +638,7 @@ public class CandidateViewSelectorImpl
 			termRestriction[i] = r;
 		}
 		
-		logger.debug("Term restrictions for " + quad + ":\n" + StringUtils.itemPerLine(termRestriction));
+		logger.debug("\nTerm restrictions for " + quad + ":\n" + StringUtils.itemPerLine(termRestriction));
 		
 		for(Clause clause : dnf) {
 			Map<String, Constraint> columnConstraints = new HashMap<String, Constraint>();
@@ -774,14 +774,14 @@ public class CandidateViewSelectorImpl
 			}
 		}
 		
-		
-		logger.debug(viewQuads.size() + " candidates remaining. " + filterCount + " filtered");
+		int total = viewQuads.size() + filterCount;
+		logger.debug(viewQuads.size() + " of " + total + " candidates remaining (" + filterCount + " filtered)");
 		
 		//System.out.println("Total results: " + viewQuads.size());
 		//logger.debug(StringUtils.itemPerLine(viewQuads));
 		//logger.info("--------------------------------");
 		
-		return viewQuads;		
+		return viewQuads;
 	}
 
 	
@@ -1021,7 +1021,7 @@ public class CandidateViewSelectorImpl
 				//OpMappingRewriter opMappingRewriter;
 				Mapping mapping = opMappingRewriter.rewrite(op);
 				if(mapping.isEmpty()) {
-					return;
+					continue;
 				}
 			}
 			

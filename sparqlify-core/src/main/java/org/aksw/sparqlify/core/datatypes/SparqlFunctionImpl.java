@@ -74,6 +74,7 @@ public class SparqlFunctionImpl
 
 	@Override
 	public MethodSignature<TypeToken> getSignature() {
-		throw new RuntimeException("Not implemented");
+		return signature;
+		//throw new RuntimeException("Not implemented");
 	}
 }

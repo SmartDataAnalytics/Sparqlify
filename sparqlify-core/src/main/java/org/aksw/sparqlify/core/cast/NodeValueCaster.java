@@ -6,7 +6,13 @@ package org.aksw.sparqlify.core.cast;
 class CastException
 	extends Exception
 {
+	CastException() {
+		super();
+	}
 	
+	CastException(String message) {
+		super(message);
+	}
 }
 
 
