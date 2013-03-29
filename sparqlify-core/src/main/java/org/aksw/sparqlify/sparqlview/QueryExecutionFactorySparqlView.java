@@ -22,10 +22,10 @@ public class QueryExecutionFactorySparqlView
 	
 	private QueryExecutionFactory factory;
 	//private SparqlViewSystem system;
-	private CandidateViewSelector candidateViewSelector;
+	private CandidateViewSelector<SparqlView> candidateViewSelector;
 	private Dialect dialect;
 	
-	public QueryExecutionFactorySparqlView(QueryExecutionFactory factory, CandidateViewSelector candidateViewSelector, Dialect dialect) {
+	public QueryExecutionFactorySparqlView(QueryExecutionFactory factory, CandidateViewSelector<SparqlView> candidateViewSelector, Dialect dialect) {
 		this.factory = factory;
 		this.candidateViewSelector = candidateViewSelector;
 		this.dialect = dialect;

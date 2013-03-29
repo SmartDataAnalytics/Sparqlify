@@ -24,6 +24,7 @@ import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
@@ -137,6 +138,7 @@ class UnsatisfiabilityException
 {
 	
 }
+
 
 
 /**
@@ -305,7 +307,8 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			}
 			
 		};
-			
+		
+		
 		MetaIndexFactory factory = new PrefixIndexMetaFactory(prefixExtractor);
 		//MetaIndexFactory factory = new PatriciaAccessorFactory(prefixExtractor);
 		
@@ -531,15 +534,20 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				if(node.isVariable()) {
 					
 					Var var = (Var)node;
-					Collection<RestrictedExpr> restExprs = normalized.getVarDefinition().getDefinitions(var);
-					
+
 					PrefixSet p = null;
-					for(RestrictedExpr restExpr : restExprs) {
-						PrefixSet tmp = restExpr.getRestrictions().getUriPrefixes();
-						if(p == null) {
-							p = tmp;
-						} else {
-							p.addAll(tmp);
+					VarDefinition varDefinition = normalized.getVarDefinition();
+					
+					if(varDefinition != null) {
+						Collection<RestrictedExpr> restExprs = varDefinition.getDefinitions(var);
+						
+						for(RestrictedExpr restExpr : restExprs) {
+							PrefixSet tmp = restExpr.getRestrictions().getUriPrefixes();
+							if(p == null) {
+								p = tmp;
+							} else {
+								p.addAll(tmp);
+							}
 						}
 					}
 					

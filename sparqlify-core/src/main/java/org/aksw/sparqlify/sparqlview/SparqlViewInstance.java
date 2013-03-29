@@ -27,7 +27,7 @@ import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 public class SparqlViewInstance
-	extends ViewInstance
+	extends ViewInstanceOld
 {
 	private SparqlView instance; // The substituted view	
 	private SparqlView parent; // The view this instance was created from

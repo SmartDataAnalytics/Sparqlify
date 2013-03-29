@@ -13,7 +13,7 @@ import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 
 
-public class ViewInstance {
+public class ViewInstanceOld {
 	protected Quad queryQuad; // The quad in the query this view was originally instanced for
 	protected Quad viewQuad;  // The quad in the parent view that originally matched
 	
@@ -36,7 +36,7 @@ public class ViewInstance {
 	}
 	*/
 	
-	public ViewInstance(Quad queryQuad, Quad viewQuad, int instanceId, int subId, TwoWayBinding binding)
+	public ViewInstanceOld(Quad queryQuad, Quad viewQuad, int instanceId, int subId, TwoWayBinding binding)
 	{
 		super();
 		this.queryQuad = queryQuad;

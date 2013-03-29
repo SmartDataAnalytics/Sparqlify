@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.commons.collections.multimaps.IBiSetMultimap;
+import org.aksw.sparqlify.core.algorithms.VarBinding;
+import org.aksw.sparqlify.core.algorithms.ViewInstance;
+import org.aksw.sparqlify.core.algorithms.ViewInstanceJoin;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
@@ -32,9 +36,9 @@ import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 public class OpSparqlViewPattern
 	extends OpExt
 {
-	private SparqlViewConjunction conjunction;
+	private ViewInstanceJoin<SparqlView> conjunction;
 
-	public OpSparqlViewPattern(SparqlViewConjunction conjunction) {
+	public OpSparqlViewPattern(ViewInstanceJoin<SparqlView> conjunction) {
 		super(OpSparqlViewPattern.class.getSimpleName());
 		this.conjunction = conjunction;
 	}
@@ -45,7 +49,7 @@ public class OpSparqlViewPattern
 		this.conjunction = new ArrayList<RdfViewConjunction>();
 	}*/
 
-	public SparqlViewConjunction getConjunction() {
+	public ViewInstanceJoin<SparqlView> getConjunction() {
 		return conjunction;
 	}
 
@@ -53,14 +57,14 @@ public class OpSparqlViewPattern
 	public Op effectiveOp() {
 		Op a = null;
 		Op b = null;
-		for(SparqlViewInstance instance : conjunction.getViewBindings()) {
-			b = instance.getParent().getOp(); 
+		for(ViewInstance<SparqlView> instance : conjunction.getViewInstances()) {
+			b = instance.getViewDefinition().getOp();
 			
 			//Map<Node, N>
 			//Map<Var, Collection<Var>> viewToQueryVar = conjunction.getCompleteBinding().getEquiMap().getEquivalences().getInverse().asMap();
 			//instance.getRenamer()
 			
-			Map<Node, Node> renamer = new HashMap<Node, Node>();
+			Map<Var, Var> renamer = new HashMap<Var, Var>();
 			
 			// TODO I think we don't need constraints here???
 			Set<Expr> constraints = new HashSet<Expr>();
@@ -68,9 +72,15 @@ public class OpSparqlViewPattern
 			// The same view variable might server multiple query variables
 			SetMultimap<Var, Var> extraProjection = HashMultimap.create();
 			
-			SetMultimap<Var, Var> src = instance.getQueryToParentBinding();
-			SetMultimap<Var, Var> dest = HashMultimap.create();
-			Multimaps.invertFrom(src, dest);
+			//Multimap<Var, Var> src = instance.getVarDefinition();
+			
+			VarBinding varBinding = instance.getBinding();
+			
+			//SetMultimap<Var, Var> src = instance.getQueryToParentBinding();
+			//SetMultimap<Var, Var> dest = HashMultimap.create();
+			IBiSetMultimap<Var, Var> dest = varBinding.getViewVarToQueryVars();
+			
+			//Multimaps.invertFrom(src, dest);
 			
 			for(Entry<Var, Collection<Var>> entry : dest.asMap().entrySet()) {
 				
@@ -90,14 +100,15 @@ public class OpSparqlViewPattern
 				renamer.put(entry.getKey(), x);
 			}
 			
-			SparqlView renamed = instance.getParent().copySubstitute(renamer); //NodeTransformLib.transform(renamer, op);
+			SparqlView renamed = instance.getViewDefinition().copyRenameVars(renamer); //NodeTransformLib.transform(renamer, op);
 
 			b = renamed.getOp();
 			
 			//Op
 			VarExprList veList = new VarExprList();
 
-			Map<Var, Node> keyToValue = instance.getBinding().getEquiMap().getKeyToValue();
+			
+			Map<Var, Node> keyToValue = varBinding.getQueryVarToConstant();
 			
 			if(!extraProjection.isEmpty() || !keyToValue.isEmpty()) {
 				//b = OpFilter.filter(new ExprList(new ArrayList<Expr>(constraints)), b);
@@ -113,11 +124,16 @@ public class OpSparqlViewPattern
 						System.out.println("[Hack] Discarding default graph URI constraint, although it might affect a SPARQL variable in non-graph position");
 						continue;
 					}*/
-					
-					veList.add(entry.getKey(), NodeValue.makeNode(entry.getValue()));
+					Node node = entry.getValue();
+					if(node != null) {
+						veList.add(entry.getKey(), NodeValue.makeNode(node));
+					}
+					//veList.add(entry.getKey(), NodeValue.makeNode(entry.getValue()));
 				}
 				
-				b = OpExtend.extend(b, veList);
+				if(!veList.isEmpty()) {
+					b = OpExtend.extend(b, veList);
+				}
 			}
 			
 			//System.out.println(renamed);

@@ -115,6 +115,11 @@ public class ViewInstance<T extends IViewDef> {
 		return viewDefinition.getVarDefinition();
 	}
 
+	/*
+	public T getViewDefinition() {
+		return viewDefinition;
+	}
+	*/
 	
 	
 	/**

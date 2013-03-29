@@ -101,35 +101,6 @@ public class SparqlView
 	}
 	
 	
-	public SparqlView copySubstitute(Map<Node, Node> map)
-	{
-		if(true) {
-			throw new RuntimeException("Should be unused");
-		}
-		
-		ExprList tmpFilter = new ExprList();
-		
-		NodeTransform rename = new RenamerNodes(map);
-		for(Expr expr : constraints) {
-			tmpFilter.add(expr.applyNodeTransform(rename));
-		}
-				
-		
-		BindingMap bindingMap = new BindingHashMap();
-		for(Entry<Node, Node> entry : map.entrySet()) {
-			bindingMap.add((Var)entry.getKey(), entry.getValue());
-		}
-		
-		RenamerNodes renamer = new RenamerNodes(map);
-		Op renamedOp = NodeTransformLib.transform(renamer, op);
-		
-		SparqlView result = new SparqlView(name, QuadUtils.copySubstitute(template, map),
-				constraints.copySubstitute(bindingMap),
-				null, // FIXME: varDefinition.copyRenameVars(map),
-				renamedOp);
-		
-		return result;
-	}
 	
 	public String getName() 
 	{
@@ -184,7 +155,7 @@ public class SparqlView
 			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));	
 		} 
 		
-		SparqlView result = new SparqlView(name, quadPattern, new VarDefinition(), new ExprList(), op);
+		SparqlView result = new SparqlView(name, quadPattern, new ExprList(), new VarDefinition(), op);
 		return result;
 	}
 	
@@ -344,7 +315,7 @@ public class SparqlView
 	}
 
 
-	public SparqlView(String name, QuadPattern template, VarDefinition varDefinition, ExprList constraints, Op op)
+	public SparqlView(String name, QuadPattern template, ExprList constraints, VarDefinition varDefinition, Op op)
 	{
 		super();
 		this.name = name;
@@ -354,6 +325,7 @@ public class SparqlView
 		this.op = op;
 	}
 
+	/*
 	public SparqlView(String name, QuadPattern template, ExprList constraints, VarDefinition varDefinition,
 			Op sqlExpr)
 	{
@@ -364,7 +336,7 @@ public class SparqlView
 		//this.template = new RdfViewTemplate(quadPattern, binding);
 		this.constraints = constraints;
 	}
-
+*/
 	
 
 	@Deprecated
@@ -429,27 +401,59 @@ public class SparqlView
 
 	@Override
 	public QuadPattern getTemplate() {
-		// TODO Auto-generated method stub
-		return null;
+		return template;
 	}
 
+	
+	private RestrictionManagerImpl varRestrictions = new RestrictionManagerImpl();
+	
 	@Override
 	public RestrictionManagerImpl getVarRestrictions() {
-		// TODO Auto-generated method stub
-		return null;
+		return varRestrictions;
+		//throw new RuntimeException("Not implemented");
 	}
 
 	@Override
 	public VarDefinition getVarDefinition() {
-		// TODO Auto-generated method stub
-		return null;
+		return varDefinition;
+	}
+	
+	@Deprecated
+	public SparqlView copySubstitute(Map<Node, Node> renamer) {
+		throw new RuntimeException("not there anymore");
 	}
 
 	@Override
-	public IViewDef copyRenameVars(Map<Var, Var> oldToNew) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public SparqlView copyRenameVars(Map<Var, Var> oldToNew) {
+		
+		
+		Map<Node, Node> map = new HashMap<Node, Node>();
+		for(Entry<Var, Var> entry : oldToNew.entrySet()) {
+			map.put(entry.getKey(), entry.getValue());
+		}
+		
+		ExprList tmpFilter = new ExprList();
+		
+		NodeTransform rename = new RenamerNodes(map);
+		for(Expr expr : constraints) {
+			tmpFilter.add(expr.applyNodeTransform(rename));
+		}
+				
+		
+		BindingMap bindingMap = new BindingHashMap();
+		for(Entry<Node, Node> entry : map.entrySet()) {
+			bindingMap.add((Var)entry.getKey(), entry.getValue());
+		}
+		
+		RenamerNodes renamer = new RenamerNodes(map);
+		Op renamedOp = NodeTransformLib.transform(renamer, op);
+		
+		SparqlView result = new SparqlView(name, QuadUtils.copySubstitute(template, map),
+				constraints.copySubstitute(bindingMap),
+				null, // FIXME: varDefinition.copyRenameVars(map),
+				renamedOp);
+		
+		return result;	}
 
 	
 	

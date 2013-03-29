@@ -454,6 +454,13 @@ public class MyOpAsQuery
         public void visit(OpExt opExt)
         {
             Op op = opExt.effectiveOp() ;
+            
+            
+            if(op == null) {
+            	throw new RuntimeException("Effective Op is null for: " + opExt.getClass());
+            	
+            }
+            
 //            // This does not work in all cases.
             op.visit(this) ;
             //throw new ARQNotImplemented("OpExt") ;

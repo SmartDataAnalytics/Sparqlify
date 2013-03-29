@@ -1,6 +1,8 @@
 package org.aksw.sparqlify.sparqlview;
 
 import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
+import org.aksw.sparqlify.config.lang.ConfigParser;
+import org.aksw.sparqlify.config.lang.SparqlifyConfigParser;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorRestructify;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
@@ -30,11 +32,10 @@ public class SparqlViewMain {
 		//system.addView(SparqlView.create("MyView", QueryFactory.create("Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/> Construct { ?s a ft:LabeledThing . } { ?s <"  + RDFS.label + "> ?x }", Syntax.syntaxSPARQL_11)));
 		
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
 		CandidateViewSelector<SparqlView> candidateViewSelector = new CandidateViewSelectorRestructify(); 
 
-		
-		candidateViewSelector.addView(SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o . } { Graph ?g { ?s ?p ?o } Filter(?g != <http://fp7-pp.publicdata.eu/> ) }", Syntax.syntaxSPARQL_11)));
+		SparqlView sparqlView = SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o } { Graph ?g { ?s ?p ?o } Filter(?g != <http://fp7-pp.publicdata.euu/>  && ?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }", Syntax.syntaxSPARQL_11));
+		candidateViewSelector.addView(sparqlView);
 		//system.addView(SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o . } { Graph ?g { ?s ?p ?o } Filter(?g != <http://ns.ontowiki.net/SysBase/> ) }", Syntax.syntaxSPARQL_11)));
 		
 		QueryExecutionFactoryHttp qef = new QueryExecutionFactoryHttp("http://localhost:8810/sparql");
@@ -42,10 +43,18 @@ public class SparqlViewMain {
 		QueryExecutionFactorySparqlView sv = new QueryExecutionFactorySparqlView(qef, candidateViewSelector, Dialect.VIRTUOSO);
 		
 		//QueryExecution qe = sv.createQueryExecution("Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/> Select Distinct ?t { ?s a ?t . }");
-		QueryExecution qe = sv.createQueryExecution("select distinct ?g { graph ?g { ?s ?p ?o }}");
+		QueryExecution qe = sv.createQueryExecution("select distinct ?g { graph ?g { ?s ?p ?o . }}");
 
 		ResultSet rs = qe.execSelect();
 		ResultSetFormatter.out(System.out, rs);
 		
 	}
+	
+	/*
+	public static void parseView(String string) {
+		ConfigParser parser = new ConfigParser();
+		SparqlifyConfigParser parser = new SparqlifyConfigParser(input);
+		parser.constructTemplateQuads()
+	}*/
+	
 }

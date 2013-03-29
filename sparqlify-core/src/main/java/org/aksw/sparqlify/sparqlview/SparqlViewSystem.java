@@ -1006,6 +1006,8 @@ public class SparqlViewSystem
 		
 	public Op getApplicableViews(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
+		throw new RuntimeException("Dont use this class anymore");
+		/*
 		List<SparqlViewConjunction> conjunctions = getApplicableViewsBase(op, restrictions);
 		
 		OpDisjunction result = OpDisjunction.create();
@@ -1016,6 +1018,8 @@ public class SparqlViewSystem
 		}
 		
 		return result;
+		*/
+		//return null;
 		
 		//return new OpRdfUnionViewPattern(conjunctions);
 	}
