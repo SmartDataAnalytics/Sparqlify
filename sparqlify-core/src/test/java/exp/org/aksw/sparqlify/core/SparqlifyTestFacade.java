@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
@@ -83,7 +84,7 @@ public class SparqlifyTestFacade {
 		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
 		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
+		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 
 		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, opMappingRewriter, vdFactory.getDatatypeSystem());
 	

@@ -256,7 +256,7 @@ public class MainConstructView {
 
 		QueryExecutionFactory backend = new QueryExecutionFactoryStreamingWrapper(new QueryExecutionFactoryHttp(serviceStr));
 
-		QueryExecutionFactory qef = new QueryExecutionFactorySparqlView(backend, system, dialect);
+		QueryExecutionFactory qef = null; //new QueryExecutionFactorySparqlView(backend, system, dialect);
 		
 		/*
 		if(maxQueryExecutionTime != null) {

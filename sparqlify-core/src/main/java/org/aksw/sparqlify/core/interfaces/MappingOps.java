@@ -6,6 +6,7 @@ import java.util.Map;
 import org.aksw.sparqlify.core.algorithms.ViewInstance;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
 import com.hp.hpl.jena.query.SortCondition;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -20,7 +21,7 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
  *
  */
 public interface MappingOps {
-	Mapping createMapping(ViewInstance viewInstance);
+	Mapping createMapping(ViewInstance<ViewDefinition> viewInstance);
 	
 	/**
 	 * Creates a new mapping with all column references

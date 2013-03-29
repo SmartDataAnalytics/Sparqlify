@@ -10,12 +10,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.config.lang.Constraint;
-import org.aksw.sparqlify.core.RdfViewTemplate;
+import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.trash.RenamerNodes;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
@@ -44,7 +47,6 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.graph.NodeTransform;
 import com.hp.hpl.jena.sparql.graph.NodeTransformLib;
-import com.hp.hpl.jena.sparql.syntax.Template;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -63,12 +65,16 @@ import com.hp.hpl.jena.vocabulary.XSD;
  *
  */
 public class SparqlView
-	implements View
+	//implements View
+	implements IViewDef
 {
 	private static final Logger logger = LoggerFactory.getLogger(SparqlView.class);
 	
 	private String name;
-	private RdfViewTemplate template;
+	//private RdfViewTemplate template;
+	private QuadPattern template;
+	private VarDefinition varDefinition;
+	
 	private ExprList constraints;	
 	private RestrictionManagerImpl restrictions;
 	
@@ -88,7 +94,7 @@ public class SparqlView
 	{
 		Set<Var> result = new HashSet<Var>();
 		
-		result.addAll(template.getVarsMentioned());
+		result.addAll(QuadUtils.getVarsMentioned(template));
 		result.addAll(GetVarsMentioned.getVarsMentioned(op));
 		
 		return result;
@@ -97,6 +103,10 @@ public class SparqlView
 	
 	public SparqlView copySubstitute(Map<Node, Node> map)
 	{
+		if(true) {
+			throw new RuntimeException("Should be unused");
+		}
+		
 		ExprList tmpFilter = new ExprList();
 		
 		NodeTransform rename = new RenamerNodes(map);
@@ -113,8 +123,9 @@ public class SparqlView
 		RenamerNodes renamer = new RenamerNodes(map);
 		Op renamedOp = NodeTransformLib.transform(renamer, op);
 		
-		SparqlView result = new SparqlView(name, template.copySubstitute(map),
+		SparqlView result = new SparqlView(name, QuadUtils.copySubstitute(template, map),
 				constraints.copySubstitute(bindingMap),
+				null, // FIXME: varDefinition.copyRenameVars(map),
 				renamedOp);
 		
 		return result;
@@ -173,7 +184,7 @@ public class SparqlView
 			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));	
 		} 
 		
-		SparqlView result = new SparqlView(name, new RdfViewTemplate(quadPattern, new HashMap<Node, Expr>()), new ExprList(), op);
+		SparqlView result = new SparqlView(name, quadPattern, new VarDefinition(), new ExprList(), op);
 		return result;
 	}
 	
@@ -199,20 +210,22 @@ public class SparqlView
 	 * @param relation
 	 * @return
 	 */
-	public static SparqlView create(String name, Template template, ExprList filters, List<Expr> bindings, List<Constraint> rawConstraints, Op op)
+	public static SparqlView create(String name, QuadPattern template, ExprList filters, List<Expr> bindings, List<Constraint> rawConstraints, Op op)
 	{
 		if(bindings == null) {
 			bindings = new ArrayList<Expr>();
 		}
-		
+	
+		/*
 		QuadPattern quadPattern = new QuadPattern();
-
-		for(Triple triple : template.getTriples()) {
-			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));
+		for(Quad quad : template) {
+			//quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));
 		}
+		*/
 		
-		Map<Node, Expr> bindingMap = new HashMap<Node, Expr>();
+		//Map<Node, Expr> bindingMap = new HashMap<Node, Expr>();
 		
+		VarDefinition varDefinition = new VarDefinition();
 		for(Expr expr : bindings) {
 			if(!(expr instanceof E_Equals)) {
 				throw new RuntimeException("Binding expr must have form ?var = ... --- instead got: " + expr);
@@ -225,8 +238,11 @@ public class SparqlView
 			Expr definition = expr.getFunction().getArg(2);
 			definition = SparqlSubstitute.substituteExpr(definition);
 			
+			RestrictedExpr restExpr = new RestrictedExpr(definition);
+			
 			Var var = expr.getFunction().getArg(1).asVar();
-			bindingMap.put(var, definition);
+			//bindingMap.put(var, definition);
+			varDefinition.getMap().put(var, restExpr);
 		}
 		
 		
@@ -254,7 +270,7 @@ public class SparqlView
 		}
 */
 		
-		return new SparqlView(name, quadPattern, constraints, bindingMap, op);
+		return new SparqlView(name, template, constraints, varDefinition, op);
 	}
 
 	
@@ -289,8 +305,8 @@ public class SparqlView
 		//PatternUtils.
 		
 		
-		Map<Node, Expr> binding = new HashMap<Node, Expr>();
-		
+		//Map<Node, Expr> binding = new HashMap<Node, Expr>();
+		VarDefinition varDefinition = new VarDefinition();
 		for(String bindingStr : bindingStrs) {
 			Expr expr = ExprUtils.parse(bindingStr, defaultPrefixMapping);
 			
@@ -305,10 +321,12 @@ public class SparqlView
 			Expr definition = expr.getFunction().getArg(2);
 			definition = SparqlSubstitute.substituteExpr(definition);
 
+			RestrictedExpr restExpr = new RestrictedExpr(definition);
 			
 			
 			Var var = expr.getFunction().getArg(1).asVar();
-			binding.put(var, definition);
+			//binding.put(var, definition);
+			varDefinition.getMap().put(var, restExpr);
 		}
 		
 		
@@ -322,25 +340,28 @@ public class SparqlView
 		}
 		
 		ExprList constraints = FilterUtils.collectExprs(op, new ExprList());
-		return new SparqlView(name, quadPattern, constraints, binding, op);
+		return new SparqlView(name, quadPattern, constraints, varDefinition, op);
 	}
 
 
-	public SparqlView(String name, RdfViewTemplate template, ExprList constraints, Op op)
+	public SparqlView(String name, QuadPattern template, VarDefinition varDefinition, ExprList constraints, Op op)
 	{
 		super();
 		this.name = name;
 		this.template = template;
+		this.varDefinition = varDefinition;
 		this.constraints = constraints;
 		this.op = op;
 	}
 
-	public SparqlView(String name, QuadPattern quadPattern, ExprList constraints, Map<Node, Expr> binding,
+	public SparqlView(String name, QuadPattern template, ExprList constraints, VarDefinition varDefinition,
 			Op sqlExpr)
 	{
 		super();
 		this.name = name;
-		this.template = new RdfViewTemplate(quadPattern, binding);
+		this.template = template;
+		this.varDefinition = varDefinition;
+		//this.template = new RdfViewTemplate(quadPattern, binding);
 		this.constraints = constraints;
 	}
 
@@ -349,13 +370,15 @@ public class SparqlView
 	@Deprecated
 	public QuadPattern getQuadPattern()
 	{
-		return template.getQuadPattern();
+		return template;
 	}
 
 	@Deprecated
 	public Map<Node, Expr> getBinding()
 	{
-		return template.getBinding();
+		throw new RuntimeException("deprecated and removed");
+		//return template.getBinding();
+		//return null;
 	}
 	
 	
@@ -402,6 +425,30 @@ public class SparqlView
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public QuadPattern getTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RestrictionManagerImpl getVarRestrictions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public VarDefinition getVarDefinition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IViewDef copyRenameVars(Map<Var, Var> oldToNew) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

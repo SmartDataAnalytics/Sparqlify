@@ -21,8 +21,10 @@ import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
@@ -221,7 +223,7 @@ public class Main {
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		
 		
-		CandidateViewSelector candidateViewSelector = new CandidateViewSelectorImpl(mappingOps);
+		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 
 		
 		//RdfViewSystem system = new RdfViewSystem2();

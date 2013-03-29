@@ -139,6 +139,11 @@ public class VarDefinition
 		
 		return result;
 	}
+
+	public VarDefinition copySubstitute(Map<Var, Expr> map) {
+		VarDefinition result = VarDefinition.copySubstitute(this, map);
+		return result;
+	}
 	
 	public static VarDefinition copySubstitute(VarDefinition varDef, Map<Var, Expr> map) {
 		

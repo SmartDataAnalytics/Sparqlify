@@ -1,21 +1,21 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.core.interfaces.IViewDef;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 
-public class ViewQuad<T extends IViewDef> {
-	private T view;
+public class ViewQuadOld {
+	private ViewDefinition view;
 	private Quad quad;
 	
 	// TODO Maybe another field for some constraints
 	
-	public ViewQuad(T view, Quad quad) {
+	public ViewQuadOld(ViewDefinition view, Quad quad) {
 		this.view = view;
 		this.quad = quad;
 	}
 
-	public T getView() {
+	public ViewDefinition getView() {
 		return view;
 	}
 
@@ -40,7 +40,7 @@ public class ViewQuad<T extends IViewDef> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ViewQuad other = (ViewQuad) obj;
+		ViewQuadOld other = (ViewQuadOld) obj;
 		if (quad == null) {
 			if (other.quad != null)
 				return false;

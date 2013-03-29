@@ -25,8 +25,7 @@ import org.aksw.sparqlify.core.ReplaceConstants;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
-import org.aksw.sparqlify.core.interfaces.IViewDef;
+import org.aksw.sparqlify.core.interfaces.CandidateViewSelectorOld;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.Constraint;
@@ -83,201 +82,22 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
 
 
 
-class ConstraintContext
-{
-	private ConstraintContext parent;
-	
-	// 
-}
 
-
-class Context {
-	
-}
-
-
-class NestedStack<T>
-{
-	private NestedStack<T> parent;	
-	private T value;
-
-	public NestedStack(NestedStack<T> parent, T value) {
-		super();
-		this.parent = parent;
-		this.value = value;
-	}
-	
-	public NestedStack<T> getParent() {
-		return parent;
-	}
-
-	public T getValue() {
-		return value;
-	}
-	
-	
-	public List<T> asList() {
-		List<T> result = new ArrayList<T>();
-		
-		NestedStack<T> current = this;
-		while(current != null) {
-			result.add(current.getValue());
-			current = current.parent;
-		}
-		
-		Collections.reverse(result);
-		
-		return result;
-	}
-}
-
-
-class UnsatisfiabilityException
-	extends Exception
-{
-	
-}
-
-
-/**
- * The candidate selector for RDB-RDF
- * @author raven
- *
- * @param <T>
- */
-public class CandidateViewSelectorImpl
-	extends CandidateViewSelectorBase<ViewDefinition, Mapping>
-{
-	private static final Logger logger = LoggerFactory.getLogger(CandidateViewSelectorImpl.class);
-	
-	//private OpMappingRewriter opMappingRewriter;// = new OpMappingRewriterImpl(new MappingOps)
-	private MappingOps mappingOps;
-	
-	private ViewDefinitionNormalizer<ViewDefinition> viewDefinitionNormalizer;
-	
-	public CandidateViewSelectorImpl() {
-		this(null);
-		
-		logger.warn("No mappingOps provided. This means that view candidates cannot be pruned efficently which is most likely not what you want!!!");
-	}
-	
-	public CandidateViewSelectorImpl(MappingOps mappingOps) {
-		this(mappingOps, new ViewDefinitionNormalizerImpl());
-	}
-	
-	public CandidateViewSelectorImpl(MappingOps mappingOps, ViewDefinitionNormalizer<ViewDefinition> viewDefinitionNormalizer) {
-		//super(viewDefinitionNormalizer);
-		
-		this.viewDefinitionNormalizer = viewDefinitionNormalizer;
-		this.mappingOps = mappingOps;
-	}
-
-	@Override
-	public ViewDefinition normalizeView(ViewDefinition view) {
-		ViewDefinition normalized = viewDefinitionNormalizer.normalize(view);
-
-		logger.debug("Normalized view:\n" + normalized);
-		
-		return normalized;
-	}
-
-		
-	/**
-	 * Create a new context based on the baseContext and the current candidate viewInstance
-	 * 
-	 * if null is returned, the candidateViewInstance becomes rejected, otherwise, the new context
-	 * will be passed to this function together with all sub candidate viewInstances.
-	 * 
-	 * @return
-	 */
-	@Override 
-	public Mapping createContext(Mapping baseMapping, ViewInstance<ViewDefinition> viewInstance)
-		throws UnsatisfiabilityException
-	{
-		Mapping nextMapping = null;
-		boolean enablePruningMappingRewrite = true;
-		if(enablePruningMappingRewrite && mappingOps != null) {
-
-			Mapping mapping = mappingOps.createMapping(viewInstance);
-			
-			if(baseMapping == null) {
-				nextMapping = mapping;
-			} else {
-				nextMapping = mappingOps.join(baseMapping, mapping);
-			}
-			
-			if(nextMapping.isEmpty()) {
-				throw new UnsatisfiabilityException();
-			}
-		}
-
-		return nextMapping;
-	}
-	
-	/*
-	@Override
-	public ViewInstanceJoin createUnionItem(List<ViewInstance<ViewDefinition>> viewInstances, RestrictionManagerImpl subRestrictions) {
-		ViewInstanceJoin viewConjunction = new ViewInstanceJoin(viewInstances, subRestrictions);
-
-		// remove self joins
-		SelfJoinEliminator.merge(viewConjunction);
-
-		//result.add(viewConjunction);
-		return viewConjunction;
-	}
-	*/
-	
-	@Override
-	public Op createOp(List<ViewInstanceJoin<ViewDefinition>> conjunctions) {
-		
-		
-		for(ViewInstanceJoin<ViewDefinition> conjunction : conjunctions) {
-			SelfJoinEliminator.merge(conjunction);
-		}
-		
-		
-		OpDisjunction result = OpDisjunction.create();
-		
-		for(ViewInstanceJoin<ViewDefinition> item : conjunctions) {
-			Op tmp = new OpViewInstanceJoin(item);
-			result.add(tmp);
-		}
-		
-		return result;
-	}
-	
-}
-
-
-class CandidateViewInstanceSelector
-{
-	
-}
-
-
-/**
- * 
- * @author raven
- *
- * @param <T> The ViewDefinition type. Must inherit from IViewDef
- * @param <I> Type for result items - i.e. when the recursion reaches its end, it gives the list of found view candidates to a function that can transform it into an object of type I
- * @param <C> Context type used during recursion when looking for view candidates for quad patterns. Intended to track custom information for unsatisfiability determination.
- */
-abstract class CandidateViewSelectorBase<T extends IViewDef, C>
-	implements CandidateViewSelector<T>
+public class CandidateViewSelectorImplUseTheGenericImplInstead
+	implements CandidateViewSelectorOld
 {
 
 	
-	private Logger logger = LoggerFactory.getLogger(CandidateViewSelectorImpl.class);
+	private Logger logger = LoggerFactory.getLogger(CandidateViewSelectorImplUseTheGenericImplInstead.class);
 	
 	private int viewId = 1;
 	private Table<Object> table;
 	
 	PrefixIndex<Object> idxTest;
-	private Set<T> views = new HashSet<T>();
-
-	//private ViewDefinitionNormalizer<T> viewDefinitionNormalizer;
+	private Set<ViewDefinition> views = new HashSet<ViewDefinition>();
 	
+	//private OpMappingRewriter opMappingRewriter;// = new OpMappingRewriterImpl(new MappingOps)
+	private MappingOps mappingOps;
 	
 	
 	/**
@@ -285,8 +105,10 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * 
 	 * @param opMappingRewriter May be null. If given, we can do rewrites during the SQL generation to prune empty result mappings early. 
 	 */
-	public CandidateViewSelectorBase() {
-				
+	public CandidateViewSelectorImplUseTheGenericImplInstead(MappingOps mappingOps) {
+		
+		this.mappingOps = mappingOps;
+		
 		TableBuilder<Object> builder = new TableBuilder<Object>();
 		builder.addColumn("g_prefix", String.class);
 		builder.addColumn("s_prefix", String.class);
@@ -329,32 +151,10 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		*/
 
 	}
-
-	/*
-	 * Abstract methods
-	 */
-	//public abstract I createUnionItem(List<ViewInstance<T>> list, RestrictionManagerImpl restrictions);
-	public abstract Op createOp(List<ViewInstanceJoin<T>> viewInstances);
-
-	
-	/**
-	 * Optionally override this method to track custom information during the recursion of candidate selection of quad patterns
-	 * 
-	 * 
-	 * @param baseContext
-	 * @param viewInstance
-	 * @return
-	 * @throws UnsatisfiabilityException
-	 */
-	public C createContext(C baseContext, ViewInstance<T> viewInstance)
-			throws UnsatisfiabilityException
-	{
-		return baseContext;
-	}
-
 	
 	
-	public void addView(T viewDef) {
+	
+	public void addView(ViewDefinition viewDef) {
 		//Validation.validateView(view);
 		
 		++viewId;
@@ -366,7 +166,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		}
 		
 
-		T copy = (T)viewDef.copyRenameVars(oldToNew);
+		ViewDefinition copy = viewDef.copyRenameVars(oldToNew);
 
 		
 		/*
@@ -379,7 +179,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		VarDefinition varDef = view.getMapping().getVarDefinition().copyRenameVars(oldToNew);
 		
 		Mapping m = new Mapping(varDef, view.getMapping().getSqlOp());
-		T copy = new T(view.getName(), view.getTemplate(), view.getViewReferences(), m, view);
+		ViewDefinition copy = new ViewDefinition(view.getName(), view.getTemplate(), view.getViewReferences(), m, view);
 		*/
 		
 		// Rename the variables in the view to make them globally unique
@@ -392,7 +192,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 	//@Override
 	/*
-	public void addView(T view) {
+	public void addView(ViewDefinition view) {
 
 		//Validation.validateView(view);
 		
@@ -404,7 +204,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			rename.put(var, Var.alloc("view" + viewId + "_" + var.getName()));
 		}
 		
-		T copy = view.copySubstitute(rename);
+		ViewDefinition copy = view.copySubstitute(rename);
 		
 		// Rename the variables in the view to make them globally unique
 		//logger.trace("Renamed variables of view: " + copy);
@@ -450,29 +250,21 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	
 	
 	
-	//private ViewDefinitionNormalizer viewDefinitionNormalizer = new ViewDefinitionNormalizer();
-	
-	/**
-	 * Override this function to transform the view before actually indexing it
-	 * 
-	 * @param view
-	 * @return
-	 */
-	public T normalizeView(T view) {
-		return view;
-	}
-	
+	private ViewDefinitionNormalizer<ViewDefinition> viewDefinitionNormalizer = new ViewDefinitionNormalizerImpl();
 	
 	/**
 	 * 
 	 * @param view
 	 */
-	private void index(T view) {
+	private void index(ViewDefinition view) {
 
 		//RestrictionManagerImpl restrictions = new RestrictionManagerImpl();
 		//view.setRestrictions(restrictions);
 
-		T normalized = normalizeView(view);
+		ViewDefinition normalized = viewDefinitionNormalizer.normalize(view);
+		
+		
+		logger.debug("Normalized view:\n" + normalized);
 		
 		
 		RestrictionManagerImpl varRestrictions = normalized.getVarRestrictions();
@@ -531,7 +323,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				if(node.isVariable()) {
 					
 					Var var = (Var)node;
-					Collection<RestrictedExpr> restExprs = normalized.getVarDefinition().getDefinitions(var);
+					Collection<RestrictedExpr> restExprs = normalized.getMapping().getVarDefinition().getDefinitions(var);
 					
 					PrefixSet p = null;
 					for(RestrictedExpr restExpr : restExprs) {
@@ -560,7 +352,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				}
 			}
 
-			ViewQuad<T> viewQuad = new ViewQuad<T>(normalized, quad);
+			ViewQuad viewQuad = new ViewQuad(normalized, quad);
 			CartesianProduct<Object> cartesian = new CartesianProduct<Object>(collections);
 			for(List<Object> item : cartesian) {
 				List<Object> row = new ArrayList<Object>(item);
@@ -730,17 +522,17 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * such as 'aaaa' = prefix
 	 * 'aaaaa$' = constant
 	 */
-	public List<ViewInstanceJoin<T>> getApplicableViewsBase(OpQuadPattern op, RestrictionManagerImpl restrictions)
+	public List<ViewInstanceJoin> getApplicableViewsBase(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
-		List<ViewInstanceJoin<T>> result = new ArrayList<ViewInstanceJoin<T>>();
+		List<ViewInstanceJoin> result = new ArrayList<ViewInstanceJoin>();
 		
 		QuadPattern queryQuads = op.getPattern(); //PatternUtils.collectQuads(op);
 		//RestrictionManager restrictions = new RestrictionManager(exprs);
 		
-		Pair<NavigableMap<Integer, Set<Quad>>, Map<Quad, Set<ViewQuad<T>>>> candidates = findQuadWithFewestViewCandidates(queryQuads, restrictions);
+		Pair<NavigableMap<Integer, Set<Quad>>, Map<Quad, Set<ViewQuad>>> candidates = findQuadWithFewestViewCandidates(queryQuads, restrictions);
 
 		NavigableMap<Integer, Set<Quad>> nToQuads = candidates.getKey();
-		Map<Quad, Set<ViewQuad<T>>> quadToCandidates = candidates.getValue();
+		Map<Quad, Set<ViewQuad>> quadToCandidates = candidates.getValue();
 		
 		
 		List<Quad> order = new ArrayList<Quad>();
@@ -752,7 +544,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		//System.out.println("Candidate order: " + StringUtils.itemPerLine(order));
 		
 		//System.out.println("Order:\n" + Joiner.on("\n").join(order));
-		Set<ViewQuad<T>> viewQuads = quadToCandidates.get(order.get(0));
+		Set<ViewQuad> viewQuads = quadToCandidates.get(order.get(0));
 		getApplicableViewsRec2(0, order, viewQuads, quadToCandidates, restrictions, null, result, null);
 		
 		
@@ -773,7 +565,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * @param restrictions
 	 * @return
 	 */
-	public Set<ViewQuad<T>> findCandidates(Quad quad, RestrictionManagerImpl restrictions) {
+	public Set<ViewQuad> findCandidates(Quad quad, RestrictionManagerImpl restrictions) {
 		
 //		System.out.println("Looking for candidates:");
 //		System.out.println("Quad: " + quad);
@@ -863,7 +655,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		}
 		
 
-		Set<ViewQuad<T>> viewQuads = new HashSet<ViewQuad<T>>();
+		Set<ViewQuad> viewQuads = new HashSet<ViewQuad>();
 		if(constraints.isEmpty()) {
 			// Add a dummy element to look up all views in the subsequent loop
 			constraints.add(new HashMap<String, Constraint>());			
@@ -884,7 +676,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			
 			for(List<Object> row : rows) {
 				// The view is the last element of the list
-				ViewQuad<T> viewQuad = (ViewQuad<T>)row.get(row.size() - 1);
+				ViewQuad viewQuad = (ViewQuad)row.get(row.size() - 1);
 				viewQuads.add(viewQuad);
 			}
 		}
@@ -892,9 +684,9 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 		// Finally: Cross check the viewQuads against the namespace prefixes
 		int filterCount = 0;
-		Iterator<ViewQuad<T>> itViewQuad = viewQuads.iterator();
+		Iterator<ViewQuad> itViewQuad = viewQuads.iterator();
 		while(itViewQuad.hasNext()) {
-			ViewQuad<T> viewQuad = itViewQuad.next();
+			ViewQuad viewQuad = itViewQuad.next();
 
 			Quad q = viewQuad.getQuad();
 			boolean isUnsatisfiable = false;
@@ -947,13 +739,13 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	}
 
 	
-	public Pair<NavigableMap<Integer, Set<Quad>>, Map<Quad, Set<ViewQuad<T>>>> findQuadWithFewestViewCandidates(QuadPattern queryQuads, RestrictionManagerImpl restrictions)
+	public Pair<NavigableMap<Integer, Set<Quad>>, Map<Quad, Set<ViewQuad>>> findQuadWithFewestViewCandidates(QuadPattern queryQuads, RestrictionManagerImpl restrictions)
 	{
 		//Map<Integer, Map<Quad, Set<ViewQuad>>> quadToView = new TreeMap<Integer, Map<Quad, Set<ViewQuad>>>();
 				
 		NavigableMap<Integer, Set<Quad>> nToQuads = new TreeMap<Integer, Set<Quad>>();
 
-		Map<Quad, Set<ViewQuad<T>>> quadToCandidates = new HashMap<Quad, Set<ViewQuad<T>>>();
+		Map<Quad, Set<ViewQuad>> quadToCandidates = new HashMap<Quad, Set<ViewQuad>>();
 		
 		
 		for(Quad quad : queryQuads) {
@@ -961,7 +753,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				continue;
 			}
 			
-			Set<ViewQuad<T>> viewQuads = findCandidates(quad, restrictions);
+			Set<ViewQuad> viewQuads = findCandidates(quad, restrictions);
 
 			
 			int n = viewQuads.size();
@@ -980,97 +772,16 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	}
 
 
-	public static <T extends IViewDef> List<String> getCandidateNames(NestedStack<ViewInstance<T>> instances) {
+	public static List<String> getCandidateNames(NestedStack<ViewInstance> instances) {
 		List<String> viewNames = new ArrayList<String>();		
 		if(instances != null) {
-			for(ViewInstance<T> instance : instances.asList()) {
+			for(ViewInstance instance : instances.asList()) {
 				viewNames.add(instance.getViewDefinition().getName());
 			}
 		}
 		
 		return viewNames;
 	}
-	
-	
-	/**
-	 * Checks whether the view quad is consistent with the current constraints
-	 * 
-	 * @param restrictions
-	 * @param queryQuad
-	 * @param viewQuad
-	 * @return
-	 */
-	public static <T extends IViewDef> ViewInstance<T> createViewInstance(RestrictionManagerImpl subRestrictions, Quad queryQuad, ViewQuad<T> viewQuad) {
-
-		
-		// Restrictions that are intrinsic to the view definition
-		RestrictionManagerImpl viewRestrictions = viewQuad.getView().getVarRestrictions();
-
-		// Only the restrictions that apply to this quad
-		//RestrictionManagerImpl mapRestrictions = new RestrictionManagerImpl();
-		
-		if(viewRestrictions == null) {
-			throw new NullPointerException();
-		}
-
-		for(int i = 0; i < 4; ++i) {
-			Var queryVar = (Var)QuadUtils.getNode(queryQuad, i);
-			Node viewNode = QuadUtils.getNode(viewQuad.getQuad(), i);
-
-			
-			if(viewNode.isVariable()) {
-				Var viewVar = (Var)viewNode;
-				
-				RestrictionImpl viewRs = viewRestrictions.getRestriction(viewVar);
-				if(viewRs != null) {
-					subRestrictions.stateRestriction(queryVar, viewRs);
-				}
-				
-				if(subRestrictions.isUnsatisfiable()) {
-					break;
-				}
-
-				//subRestrictions.stateEqual(queryVar, viewVar);
-
-				if(subRestrictions.isUnsatisfiable()) {
-					break;
-				}					
-			} else {
-				subRestrictions.stateNode(queryVar, viewNode);
-			}
-
-			if(subRestrictions.isUnsatisfiable()) {
-				break;
-			}
-		}
-		
-		if(subRestrictions.isUnsatisfiable()) {
-			return null;
-		}
-		
-		//System.out.println("SubRestrictions: " + subRestrictions.getRestrictions().size());
-		
-		
-		// TODO The restriction manager supersedes the two way binding
-		// But changing that is a bit of work
-		VarBinding binding = VarBinding.create(queryQuad, viewQuad.getQuad());//VarBinding.getVarMappingTwoWay(queryQuad, viewQuad.getQuad());
-		if(binding == null) {
-			// FIXME Not sure if we need to skip on null (-> unsatisfiable) or
-			// whether we need to do some handling
-			//System.out.println("Null binding");
-			throw new RuntimeException("Null binding");
-			//continue;
-		}
-				
-		// Try to join this instance with the candidates of the other quads 
-		//int instanceId = index;
-		//ViewInstance instance = new ViewInstance(queryQuad, viewQuad.getQuad(), instanceId, subId, viewQuad.getView(), binding);
-		ViewInstance<T> instance = new ViewInstance<T>(viewQuad.getView(), binding);
-
-	
-		return instance;
-	}
-	
 	
 	/**
 	 * 
@@ -1082,12 +793,12 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * @param restrictions
 	 * @param result
 	 */
-	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad<T>> viewQuads, Map<Quad, Set<ViewQuad<T>>> candidates, RestrictionManagerImpl restrictions, NestedStack<ViewInstance<T>> instances, List<ViewInstanceJoin<T>> result, C baseContext) //Mapping baseMapping)
+	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad> viewQuads, Map<Quad, Set<ViewQuad>> candidates, RestrictionManagerImpl restrictions, NestedStack<ViewInstance> instances, List<ViewInstanceJoin> result, Mapping baseMapping)
 	{
-		//List<String> debug = Arrays.asList("view_nodes", "node_tags_resource_kv"); // "view_lgd_relation_specific_resources");
-		List<String> viewNames = new ArrayList<String>();
+		List<String> debug = Arrays.asList("view_nodes", "node_tags_resource_kv"); // "view_lgd_relation_specific_resources");
+		List<String> viewNames = new ArrayList<String>();		
 		if(instances != null) {
-			for(ViewInstance<T> instance : instances.asList()) {
+			for(ViewInstance instance : instances.asList()) {
 				viewNames.add(instance.getViewDefinition().getName());
 			}
 		}
@@ -1118,7 +829,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 
 		//int subId = 0;
-		for(ViewQuad<T> viewQuad : viewQuads) {
+		for(ViewQuad viewQuad : viewQuads) {
 			//++subId;
 
 			//String viewName = viewQuad.getView().getName();
@@ -1139,80 +850,73 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			*/
 
 
-//			// All restrictions that apply to this quad (even those whose variables are not bound by the quad pattern)
-//			RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
-//			
-//			// Restrictions that are intrinsic to the view definition
-//			RestrictionManagerImpl viewRestrictions = viewQuad.getView().getVarRestrictions();
-//
-//			// Only the restrictions that apply to this quad
-//			//RestrictionManagerImpl mapRestrictions = new RestrictionManagerImpl();
-//			
-//			if(viewRestrictions == null) {
-//				throw new NullPointerException();
-//			}
-//
-//			for(int i = 0; i < 4; ++i) {
-//				Var queryVar = (Var)QuadUtils.getNode(queryQuad, i);
-//				Node viewNode = QuadUtils.getNode(viewQuad.getQuad(), i);
-//
-//				
-//				if(viewNode.isVariable()) {
-//					Var viewVar = (Var)viewNode;
-//					
-//					RestrictionImpl viewRs = viewRestrictions.getRestriction(viewVar);
-//					if(viewRs != null) {
-//						subRestrictions.stateRestriction(queryVar, viewRs);
-//					}
-//					
-//					if(subRestrictions.isUnsatisfiable()) {
-//						break;
-//					}
-//
-//					//subRestrictions.stateEqual(queryVar, viewVar);
-//
-//					if(subRestrictions.isUnsatisfiable()) {
-//						break;
-//					}					
-//				} else {
-//					subRestrictions.stateNode(queryVar, viewNode);
-//				}
-//
-//				if(subRestrictions.isUnsatisfiable()) {
-//					break;
-//				}
-//			}
-//			
-//			if(subRestrictions.isUnsatisfiable()) {
-//				continue;
-//			}
-//			
-//			//System.out.println("SubRestrictions: " + subRestrictions.getRestrictions().size());
-//			
-//			
-//			// TODO The restriction manager supersedes the two way binding
-//			// But changing that is a bit of work
-//			VarBinding binding = VarBinding.create(queryQuad, viewQuad.getQuad());//VarBinding.getVarMappingTwoWay(queryQuad, viewQuad.getQuad());
-//			if(binding == null) {
-//				// FIXME Not sure if we need to skip on null (-> unsatisfiable) or
-//				// whether we need to do some handling
-//				//System.out.println("Null binding");
-//				throw new RuntimeException("Null binding");
-//				//continue;
-//			}
-//					
-//			// Try to join this instance with the candidates of the other quads 
-//			int instanceId = index;
-//			//ViewInstance instance = new ViewInstance(queryQuad, viewQuad.getQuad(), instanceId, subId, viewQuad.getView(), binding);
-//			ViewInstance instance = new ViewInstance(viewQuad.getView(), binding);
-
 			// All restrictions that apply to this quad (even those whose variables are not bound by the quad pattern)
 			RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
+			
+			// Restrictions that are intrinsic to the view definition
+			RestrictionManagerImpl viewRestrictions = viewQuad.getView().getVarRestrictions();
 
-			ViewInstance<T> viewInstance = createViewInstance(subRestrictions, queryQuad, viewQuad);
-			if(viewInstance == null) {
+			// Only the restrictions that apply to this quad
+			//RestrictionManagerImpl mapRestrictions = new RestrictionManagerImpl();
+			
+			if(viewRestrictions == null) {
+				throw new NullPointerException();
+			}
+
+			for(int i = 0; i < 4; ++i) {
+				Var queryVar = (Var)QuadUtils.getNode(queryQuad, i);
+				Node viewNode = QuadUtils.getNode(viewQuad.getQuad(), i);
+
+				
+				if(viewNode.isVariable()) {
+					Var viewVar = (Var)viewNode;
+					
+					RestrictionImpl viewRs = viewRestrictions.getRestriction(viewVar);
+					if(viewRs != null) {
+						subRestrictions.stateRestriction(queryVar, viewRs);
+					}
+					
+					if(subRestrictions.isUnsatisfiable()) {
+						break;
+					}
+
+					//subRestrictions.stateEqual(queryVar, viewVar);
+
+					if(subRestrictions.isUnsatisfiable()) {
+						break;
+					}					
+				} else {
+					subRestrictions.stateNode(queryVar, viewNode);
+				}
+
+				if(subRestrictions.isUnsatisfiable()) {
+					break;
+				}
+			}
+			
+			if(subRestrictions.isUnsatisfiable()) {
 				continue;
 			}
+			
+			//System.out.println("SubRestrictions: " + subRestrictions.getRestrictions().size());
+			
+			
+			// TODO The restriction manager supersedes the two way binding
+			// But changing that is a bit of work
+			VarBinding binding = VarBinding.create(queryQuad, viewQuad.getQuad());//VarBinding.getVarMappingTwoWay(queryQuad, viewQuad.getQuad());
+			if(binding == null) {
+				// FIXME Not sure if we need to skip on null (-> unsatisfiable) or
+				// whether we need to do some handling
+				//System.out.println("Null binding");
+				throw new RuntimeException("Null binding");
+				//continue;
+			}
+					
+			// Try to join this instance with the candidates of the other quads 
+			int instanceId = index;
+			//ViewInstance instance = new ViewInstance(queryQuad, viewQuad.getQuad(), instanceId, subId, viewQuad.getView(), binding);
+			ViewInstance instance = new ViewInstance(viewQuad.getView(), binding);
+
 
 			// Try adding the restrictions of the view to the subRestriction
 			// TODO: Use the restrictions of the view, rather than using "the inferred defining exprs"
@@ -1259,34 +963,25 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			}
 			*/
 			
-			NestedStack<ViewInstance<T>> nextInstances = new NestedStack<ViewInstance<T>>(instances, viewInstance);
+			NestedStack<ViewInstance> nextInstances = new NestedStack<ViewInstance>(instances, instance);
 
-			C nextContext;
-			try {
-				nextContext = createContext(baseContext, viewInstance);
-			} catch(UnsatisfiabilityException e) {
-				continue;
+			Mapping nextMapping = null;
+
+			boolean enablePruningMappingRewrite = true;
+			if(enablePruningMappingRewrite && mappingOps != null) {
+
+				Mapping mapping = mappingOps.createMapping(instance);
+				
+				if(baseMapping == null) {
+					nextMapping = mapping;
+				} else {
+					nextMapping = mappingOps.join(baseMapping, mapping);
+				}
+				
+				if(nextMapping.isEmpty()) {
+					continue;
+				}
 			}
-
-			
-			
-//			boolean enablePruningMappingRewrite = true;
-//			if(enablePruningMappingRewrite && mappingOps != null) {
-//
-//				Mapping mapping = mappingOps.createMapping(instance);
-//				
-//				if(baseMapping == null) {
-//					nextMapping = mapping;
-//				} else {
-//					nextMapping = mappingOps.join(baseMapping, mapping);
-//				}
-//				
-//				if(nextMapping.isEmpty()) {
-//					continue;
-//				}
-//			}
-			
-			
 			
 			if(isRecursionEnd) {
 				//System.out.println("QuadPattern candidate: " + getCandidateNames(nextInstances));
@@ -1298,17 +993,14 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 					completeBinding.addAll(item.getBinding());
 				}*/
 				
-				//I item = createUnionItem(nextInstances.asList(), subRestrictions);
-				ViewInstanceJoin<T> viewConjunction = new ViewInstanceJoin<T>(nextInstances.asList(), subRestrictions);
-				result.add(viewConjunction);
-				
+				ViewInstanceJoin viewConjunction = new ViewInstanceJoin(nextInstances.asList(), subRestrictions);
 
 				// remove self joins
-				//SelfJoinEliminator.merge(viewConjunction);
+				SelfJoinEliminator.merge(viewConjunction);
 
 				
 				
-				//result.add(viewConjunction);
+				result.add(viewConjunction);
 				// We have reached the end!
 				// Yield another view conjunction
 				
@@ -1326,10 +1018,10 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				Quad nextQuad = quadOrder.get(nextIndex);
 				
 				// With the new restriction do a lookup for the next quad
-				Set<ViewQuad<T>> nextCandidates = findCandidates(nextQuad, subRestrictions);
+				Set<ViewQuad> nextCandidates = findCandidates(nextQuad, subRestrictions);
 				//System.out.println("Candidates found: " + nextCandidates.size() + " restrictions:\n" + subRestrictions.getRestrictions().size());
 				
-				getApplicableViewsRec2(nextIndex, quadOrder, nextCandidates, candidates, subRestrictions, nextInstances, result, nextContext);
+				getApplicableViewsRec2(nextIndex, quadOrder, nextCandidates, candidates, subRestrictions, nextInstances, result, nextMapping);
 			}
 		}
 		
@@ -1346,17 +1038,14 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 	public Op getApplicableViews(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
-		List<ViewInstanceJoin<T>> conjunctions = getApplicableViewsBase(op, restrictions);
+		List<ViewInstanceJoin> conjunctions = getApplicableViewsBase(op, restrictions);
 		
-		Op result = createOp(conjunctions);
-		/*
 		OpDisjunction result = OpDisjunction.create();
 		
 		for(ViewInstanceJoin item : conjunctions) {
 			Op tmp = new OpViewInstanceJoin(item);
 			result.add(tmp);
 		}
-		*/
 		
 		return result;
 		
@@ -1370,7 +1059,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * @param list
 	 * @return
 	 */
-	public static <T extends IViewDef> boolean isSatisfiable(List<ViewInstance<T>> list)
+	public static boolean isSatisfiable(List<ViewInstance> list)
 	{
 		return true;
 	}
@@ -1730,7 +1419,7 @@ abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 
 
 	//@Override
-	public Collection<T> getViews() {
+	public Collection<ViewDefinition> getViews() {
 		return views;
 	}
 	

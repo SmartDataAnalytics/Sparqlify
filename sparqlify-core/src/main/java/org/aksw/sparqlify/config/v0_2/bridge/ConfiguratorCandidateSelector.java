@@ -15,7 +15,7 @@ public class ConfiguratorCandidateSelector {
 	private static EffectiveViewGenerator effectiveViewGenerator = new EffectiveViewGenerator();
 	
 	
-	public static void configure(Config config, SyntaxBridge bridge, CandidateViewSelector candidateSelector, Logger logger) {
+	public static void configure(Config config, SyntaxBridge bridge, CandidateViewSelector<org.aksw.sparqlify.core.domain.input.ViewDefinition> candidateSelector, Logger logger) {
 
 		
 		

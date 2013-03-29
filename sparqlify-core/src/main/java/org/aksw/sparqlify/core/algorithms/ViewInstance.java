@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
-import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.aksw.sparqlify.core.interfaces.IViewDef;
 
 import com.hp.hpl.jena.sparql.core.Var;
 
@@ -26,20 +26,20 @@ import com.hp.hpl.jena.sparql.core.Var;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class ViewInstance {
+public class ViewInstance<T extends IViewDef> {
 
 	
-	private ViewDefinition viewDefinition;
+	private T viewDefinition;
 	private VarBinding binding;
 	
 	
-	public ViewInstance(ViewDefinition viewDefinition, VarBinding binding) {
+	public ViewInstance(T viewDefinition, VarBinding binding) {
 		this.viewDefinition = viewDefinition;
 		this.binding = binding;
 	}
 	
 	
-	public ViewDefinition getViewDefinition() {
+	public T getViewDefinition() {
 		return viewDefinition;
 	}
 	
@@ -96,7 +96,7 @@ public class ViewInstance {
 	 * @return
 	 */
 	public Set<RestrictedExpr> getDefinitionsForViewVariable(Var viewVar) {		
-		Collection<RestrictedExpr> defs = viewDefinition.getMapping().getVarDefinition().getDefinitions(viewVar);
+		Collection<RestrictedExpr> defs = viewDefinition.getVarDefinition().getDefinitions(viewVar);
 		
 		Set<RestrictedExpr> result = new HashSet<RestrictedExpr>(defs);
 		return result;
@@ -112,7 +112,7 @@ public class ViewInstance {
 	 * @return
 	 */
 	public VarDefinition getVarDefinition() {		
-		return viewDefinition.getMapping().getVarDefinition();
+		return viewDefinition.getVarDefinition();
 	}
 
 	
@@ -176,7 +176,7 @@ public class ViewInstance {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ViewInstance other = (ViewInstance) obj;
+		ViewInstance<T> other = (ViewInstance<T>) obj;
 		if (binding == null) {
 			if (other.binding != null)
 				return false;

@@ -28,6 +28,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
+import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.core.jena.functions.BNode;
 import org.aksw.sparqlify.core.jena.functions.PlainLiteral;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
@@ -36,7 +37,6 @@ import org.aksw.sparqlify.core.jena.functions.TypedLiteral;
 import org.aksw.sparqlify.core.jena.functions.Uri;
 import org.aksw.sparqlify.core.jena.functions.UrlDecode;
 import org.aksw.sparqlify.core.jena.functions.UrlEncode;
-import org.aksw.sparqlify.sparqlview.View;
 import org.aksw.sparqlify.trash.RdfViewDatabase;
 import org.aksw.sparqlify.views.transform.FilterPlacementOptimizer;
 import org.aksw.sparqlify.views.transform.ViewRewriter;
@@ -274,7 +274,7 @@ public class RdfViewSystemOld
 
 
 	
-	public static BiMap<Node, Node> createVariableMappingInstance(View view, int id) {
+	public static BiMap<Node, Node> createVariableMappingInstance(RdfView view, int id) {
 		BiMap<Node, Node> result = HashBiMap.create();
 		Set<Var> vars = view.getVarsMentioned();
 		for(Var var : vars) {
@@ -286,7 +286,8 @@ public class RdfViewSystemOld
 	
 	
 	public static RdfView createViewInstance(RdfView view, int id) {
-		return view.copySubstitute(createVariableMappingInstance(view, id));		
+		throw new RuntimeException("outdated");
+		//return view.copySubstitute(createVariableMappingInstance(view, id));		
 	}
 	
 	public void addView(RdfView view) {

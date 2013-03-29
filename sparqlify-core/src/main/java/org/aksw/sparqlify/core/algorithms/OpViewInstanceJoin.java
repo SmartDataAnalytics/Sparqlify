@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
+import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.openjena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
@@ -9,17 +10,17 @@ import com.hp.hpl.jena.sparql.engine.QueryIterator;
 import com.hp.hpl.jena.sparql.serializer.SerializationContext;
 import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
 
-public class OpViewInstanceJoin
+public class OpViewInstanceJoin<T extends IViewDef>
 	extends OpExt
 {
-	private ViewInstanceJoin join;
+	private ViewInstanceJoin<T> join;
 
-	public OpViewInstanceJoin(ViewInstanceJoin join) {
+	public OpViewInstanceJoin(ViewInstanceJoin<T> join) {
 		super("view instance join");
 		this.join = join;
 	}
 
-	public ViewInstanceJoin getJoin() {
+	public ViewInstanceJoin<T> getJoin() {
 		return join;
 	}
 
@@ -57,7 +58,8 @@ public class OpViewInstanceJoin
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OpViewInstanceJoin other = (OpViewInstanceJoin) obj;
+		@SuppressWarnings("unchecked")
+		OpViewInstanceJoin<T> other = (OpViewInstanceJoin<T>) obj;
 		if (join == null) {
 			if (other.join != null)
 				return false;

@@ -43,6 +43,7 @@ import org.aksw.sparqlify.core.algorithms.SparqlSqlRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
+import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
@@ -53,6 +54,7 @@ import org.aksw.sparqlify.core.cast.SqlLiteralMapperDefault;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypedExprTransformer;
 import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
@@ -533,12 +535,12 @@ public class SparqlifyUtils {
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
 
-		CandidateViewSelector candidateViewSelector;
+		CandidateViewSelector<ViewDefinition> candidateViewSelector;
 		try {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
-			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps);
+			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 
 		
 			//	RdfViewSystem system = new RdfViewSystem2();
@@ -571,7 +573,7 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {		
+	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {		
 		
 		//DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
 		//ExprTransformer exprTransformer = new ExprTransformerMap();

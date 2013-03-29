@@ -38,7 +38,10 @@ public class SparqlViewInstance
 		super(queryQuad, viewQuad, instanceId, subId, binding);
 		
 		this.parent = parent;
-		this.renamer = RdfViewSystemOld.createVariableMappingInstance(parent, instanceId);
+		if(true) {
+			throw new RuntimeException("If we come here, we need to fix the following line");
+		}
+		//this.renamer = RdfViewSystemOld.createVariableMappingInstance(parent, instanceId);
 		
 		// TODO ugly copying
 		this.binding = binding.copySubstitute(renamer);			

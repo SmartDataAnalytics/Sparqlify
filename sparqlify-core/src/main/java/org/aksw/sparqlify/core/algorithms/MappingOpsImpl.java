@@ -40,6 +40,7 @@ import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.expr.util.ExprUtils;
@@ -571,7 +572,7 @@ public class MappingOpsImpl
 	 */
 	public static VarDefKey joinDefinitionsOnEquals(
 			Var queryVar,
-			ViewInstance viewInstance,
+			ViewInstance<ViewDefinition> viewInstance,
 			//ExprEvaluator exprTransformer,
 			SqlTranslator sqlTranslator
 			)
@@ -671,7 +672,7 @@ public class MappingOpsImpl
 		return result;
 	}
 	
-	public static Mapping createEmptyMapping(ViewInstance viewInstance) {
+	public static Mapping createEmptyMapping(ViewInstance<ViewDefinition> viewInstance) {
 		SqlOp empty = SqlOpEmpty.create(viewInstance.getViewDefinition().getMapping().getSqlOp().getSchema());
 		Mapping result = new Mapping(empty);
 		return result;
@@ -708,7 +709,7 @@ public class MappingOpsImpl
 	 * @param viewInstance
 	 * @return
 	 */
-	public Mapping createMapping(ViewInstance viewInstance) {
+	public Mapping createMapping(ViewInstance<ViewDefinition> viewInstance) {
 
 		Set<Var> queryVars = viewInstance.getBinding().getQueryVars();
 		

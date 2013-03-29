@@ -15,6 +15,7 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -35,17 +36,33 @@ public class ProcessQuery {
 				writer.write(output, obj);
 				qe.close();
 				
-				//output.flush();
+				output.flush();
 			}
 		};
 	}
 
 	public static StreamingOutput processQuery(String queryString, String format, QueryExecutionFactory qeFactory)
-			throws Exception {
-		Query query = QueryFactory.create(queryString);
-
-		QueryExecutionStreaming qe = null;
+		throws Exception
+	{
+		Query query = QueryFactory.create(queryString, Syntax.syntaxSPARQL_11);
+		StreamingOutput result = processQuery(query, format, qeFactory);
 		
+		return result;
+	}
+	
+	
+	public static StreamingOutput processQuery(Query query, String format, QueryExecutionFactory qeFactory)
+			throws Exception
+	{
+		QueryExecutionStreaming qe = qeFactory.createQueryExecution(query);
+		StreamingOutput result = processQuery(query, format, qe);
+		
+		return result;
+	}
+	
+	public static StreamingOutput processQuery(Query query, String format, QueryExecutionStreaming qe)
+			throws Exception
+	{
 		try {
 		
 			if (query.isAskType()) {
@@ -57,7 +74,6 @@ public class ProcessQuery {
 							+ format);
 				}
 	
-				qe = qeFactory.createQueryExecution(query);
 				boolean value = qe.execAsk();
 				return wrapWriter(qe, writer, value);
 	
@@ -69,7 +85,6 @@ public class ProcessQuery {
 							+ format);
 				}
 	
-				qe = qeFactory.createQueryExecution(query);
 				Iterator<Triple> it = qe.execConstructStreaming();
 				return wrapWriter(qe, writer, it);
 	
@@ -82,7 +97,6 @@ public class ProcessQuery {
 							+ format);
 				}
 	
-				qe = qeFactory.createQueryExecution(query);
 				ResultSet resultSet = qe.execSelect();
 				return wrapWriter(qe, writer, resultSet);
 	
@@ -102,7 +116,6 @@ public class ProcessQuery {
 				model.setNsPrefix("lgd-way",
 						"http://linkedgeodata.org/resource/way/");
 	
-				qe = qeFactory.createQueryExecution(query);
 				qe.execDescribe(model);
 	
 				// Tested what pubby does if there are multiple subjects
