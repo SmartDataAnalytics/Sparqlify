@@ -3,7 +3,7 @@
  */
 
 Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/>
-Prefix ogc:<http://www.opengis.net/rdf#>
+Prefix ogc:<http://www.opengis.net/ont/geosparql#>
 Prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 Prefix xsd:<http://www.w3.org/2001/XMLSchema#>

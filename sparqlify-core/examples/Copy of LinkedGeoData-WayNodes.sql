@@ -1,6 +1,6 @@
 // Prefixes
 Prefix spy:<http://aksw.org/sparqlify/>
-Prefix ogc:<http://www.opengis.net/rdf#>
+Prefix ogc:<http://www.opengis.net/ont/geosparql#>
 
 Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
 Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>

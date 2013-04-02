@@ -179,21 +179,21 @@ public class FunctionExpander {
 	private static Map<String, IFactoryN<Expr>> map = new HashMap<String, IFactoryN<Expr>>();
 	
 	static {
-		map.put("http://www.opengis.net/rdf#intersects",
+		map.put("http://www.opengis.net/ont/geosparql#intersects",
 				new IFactoryN<Expr>() {
 					@Override
 					public Expr create(ExprList args) {
 						return new E_Intersects(args.get(0), args.get(1));
 					}});
 		
-		map.put("http://www.opengis.net/rdf#geomFromText",
+		map.put("http://www.opengis.net/ont/geosparql#geomFromText",
 				new IFactoryN<Expr>() {
 					@Override
 					public Expr create(ExprList args) {
 						return new E_GeomFromText(args.get(0));
 					}});
 		
-		map.put("http://www.opengis.net/rdf#geographyFromText",
+		map.put("http://www.opengis.net/ont/geosparql#geographyFromText",
 				new IFactoryN<Expr>() {
 					@Override
 					public Expr create(ExprList args) {
