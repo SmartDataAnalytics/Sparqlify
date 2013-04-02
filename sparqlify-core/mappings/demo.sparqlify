@@ -1,5 +1,5 @@
 Prefix spy:<http://aksw.org/sparqlify/>
-Prefix ogc:<http://www.opengis.net/rdf#>
+Prefix ogc:<http://www.opengis.net/ont/geosparql#>
 
 Prefix dcterms:<http://purl.org/dc/terms/>
 Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
