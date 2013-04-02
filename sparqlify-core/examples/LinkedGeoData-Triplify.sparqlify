@@ -148,7 +148,7 @@ Create View lgd_node_geometries As
     }
     With
         ?n = spy:uri(concat(lgd-geom:node, ?id)) 
-        ?o = spy:typedLiteral(?geom, ogc:WKTLiteral)
+        ?o = spy:typedLiteral(?geom, ogc:wktLiteral)
     From
         nodes;
 
@@ -320,7 +320,7 @@ Create View lgd_ways_linestrings As
     With
 		//?w = spy:uri(concat(lgd:way, ?id))
 		?w = spy:uri(concat(lgd-geom:way, ?id))
-		?g = spy:typedLiteral(?linestring, ogc:WKTLiteral)
+		?g = spy:typedLiteral(?linestring, ogc:wktLiteral)
 	From
 		[[SELECT id, linestring FROM ways a WHERE NOT EXISTS (SELECT way_id FROM simple_polys b WHERE b.way_id = a.id)]];
     
@@ -333,7 +333,7 @@ Create View ways_polygons As
 	With
 		//?w = spy:uri(concat(lgd:way, ?way_id))
 		?w = spy:uri(concat(lgd-geom:way, ?way_id))
-		?g = spy:typedLiteral(?polygon, ogc:WKTLiteral)
+		?g = spy:typedLiteral(?polygon, ogc:wktLiteral)
 	From
 		simple_polys;
 	
