@@ -341,16 +341,16 @@ public class MainConstructView {
 				+ " " + a.y + "))";
 
 		String qs = URLEncoder
-				.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/rdf#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { ?a rdf:type lgdo:TramRoute . ?a lgdo:hasMember ?b . ?b a lgdo:TramStop . ?b rdfs:label ?l . ?b geo:geometry ?geo . Filter(ogc:intersects(?geo, ogc:geomFromText('"
+				.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/ont/geosparql#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { ?a rdf:type lgdo:TramRoute . ?a lgdo:hasMember ?b . ?b a lgdo:TramStop . ?b rdfs:label ?l . ?b geo:geometry ?geo . Filter(ogc:intersects(?geo, ogc:geomFromText('"
 						+ polygon + "'))) . } Limit 100", "UTF8");
 
 		// What happens if we search for a specific triple?
 		// qs =
-		// URLEncoder.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/rdf#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { <http://linkedgeodata.org/resource/node/123> a lgdo:TramStop .}",
+		// URLEncoder.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/ont/geosparql#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select * { <http://linkedgeodata.org/resource/node/123> a lgdo:TramStop .}",
 		// "UTF8");
 
 		// qs =
-		// URLEncoder.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/rdf#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select Distinct ?b ?l { ?a rdf:type lgdo:TramRoute . ?a lgdo:hasMember ?b . ?b a lgdo:TramStop . ?b rdfs:label ?l . ?b geo:geometry ?geo . } Limit 100",
+		// URLEncoder.encode("Prefix geo:<http://www.georss.org/georss/> Prefix ogc:<http://www.opengis.net/ont/geosparql#> Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> Prefix lgdo:<http://linkedgeodata.org/ontology/> Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Select Distinct ?b ?l { ?a rdf:type lgdo:TramRoute . ?a lgdo:hasMember ?b . ?b a lgdo:TramStop . ?b rdfs:label ?l . ?b geo:geometry ?geo . } Limit 100",
 		// "UTF8");
 		qs = URLEncoder.encode("Select * {?s ?p ?o . } Limit 10");
 
