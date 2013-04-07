@@ -34,6 +34,12 @@ public class ExprUtils {
 		return true;
 	}
 	
+	/**
+	 * Checks wtherer all arguments of the given function are constants (non-recursive).
+	 * 
+	 * @param fn The function to test
+	 * @return True if all arguments are constants, false otherwise.
+	 */
 	public static boolean isConstantArgsOnly(ExprFunction fn) {
 		
 		boolean result = isConstantsOnly(fn.getArgs());

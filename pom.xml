@@ -110,7 +110,7 @@
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr3-maven-plugin</artifactId>
-				<version>3.4</version>
+				<version>3.5</version>
 				<executions>
 					<execution>
 						<goals>
@@ -155,9 +155,9 @@
 						</systemProperty>
 					</systemProperties>
 					<reload>manual</reload>
-				<webApp>
-				      <contextPath>${platform.linkedData.contextPath}</contextPath>
-				    </webApp>
+					<webApp>
+						<contextPath>${platform.linkedData.contextPath}</contextPath>
+					</webApp>
 				</configuration>
 			</plugin>
 

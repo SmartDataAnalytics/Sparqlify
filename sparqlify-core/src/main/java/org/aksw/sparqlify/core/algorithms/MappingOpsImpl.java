@@ -36,6 +36,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlTypeMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
@@ -1067,6 +1068,17 @@ public class MappingOpsImpl
 		return result;
 	}
 
+
+	/**
+	 * Pushes all constants of a given mapping's varDefinition into the SQL.
+	 * Used for creating union's of mappings: By pushing variables into the SQL we do not
+	 * have to deal with disjoint unions (i.e. unions with discriminator columns) in order to
+	 * know which union member yields the constant. 
+	 * 
+	 * 
+	 * @param mapping The mapping to process. 
+	 * @return A new mapping with all constants pushed.
+	 */
 	public static Mapping pushConstants(Mapping mapping) {
 		VarDefinition varDef = mapping.getVarDefinition();
 		//Multimap<Var, RestrictedExpr> map = varDef.getMap();
@@ -1092,14 +1104,33 @@ public class MappingOpsImpl
 				
 				Expr expr = restExpr.getExpr();
 				
-				E_RdfTerm rdfTerm = SqlTranslationUtils.expandRdfTerm(expr); 
-				boolean isConstantArgsOnly = ExprUtils.isConstantArgsOnly(rdfTerm);
 				
+				// The intention here is to obtain the quadruple representation of RDF terms.
+				// Independent of whether it is a direct constant or a function that can be
+				// evaluated to one.
+				
+				// The following distinguishes between e.g.
+				// <http://ex.org/Amenity> and
+				// E_RdfTerm(1, "http://ex.org/Amenity", "", "")
+				E_RdfTerm rdfTerm;
+				if(expr.isConstant()) {
+					rdfTerm = SqlTranslationUtils.expandConstant(expr);
+				} else {
+					rdfTerm = SqlTranslationUtils.expandRdfTerm(expr); // Does not expand constants, hence the if statement 
+				}
+				
+				
+				// TODO THIS SEEMS BROKEN
+				boolean isConstantArgsOnly = ExprUtils.isConstantArgsOnly(rdfTerm);
 				if(isConstantArgsOnly) {
+					// Obtain the node value of the constant 
+					
 					NodeValue constant = expr.eval(null, null); //expr.getConstant();
-					
+
 					String alias = aliasGen.next();
+
 					
+
 					// TODO Get the proper SQL literal for the constant
 					String str = "" + NodeValueUtils.getValue(constant);
 					S_Constant sqlExpr = new S_Constant(new SqlValue(TypeToken.String, str));

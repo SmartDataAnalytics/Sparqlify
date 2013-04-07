@@ -9,6 +9,12 @@ import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 
 
+/**
+ * Interface for translating SPARQL expressions to SQL expressions.
+ * 
+ * @author raven
+ *
+ */
 public interface SqlTranslator {
 	/**
 	 * We use the same Expr object for translating expressions.
