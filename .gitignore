@@ -61,5 +61,4 @@ sparqlify-benchmark/sp2/run-d2r-sp2.sh
 sparqlify-benchmark/sp2/config
 
 release.properties
-.releaseBackup$
-
+pom.xml.releaseBackup

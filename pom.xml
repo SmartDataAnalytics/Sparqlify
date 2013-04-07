@@ -12,7 +12,7 @@
 
 	<modules>
 		<module>sparqlify-core</module>
-		<module>sparqlify-server</module>
+		<!-- module>sparqlify-server</module -->
 		<module>sparqlify-platform</module>
 	</modules>
 
