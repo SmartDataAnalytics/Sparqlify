@@ -69,29 +69,12 @@
 			<groupId>de.fuberlin.wiwiss</groupId>
 			<artifactId>pubby</artifactId>
 			<type>war</type>
-			<version>0.3.4-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.fuberlin.wiwiss</groupId>
 			<artifactId>pubby</artifactId>
 			<classifier>classes</classifier>
-			<version>0.3.4-SNAPSHOT</version>
-
-			<exclusions>
-				<exclusion>
-					<groupId>com.hp.hpl.jena</groupId>
-					<artifactId>jena</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.hp.hpl.jena</groupId>
-					<artifactId>iri</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.hp.hpl.jena</groupId>
-					<artifactId>arq</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 
