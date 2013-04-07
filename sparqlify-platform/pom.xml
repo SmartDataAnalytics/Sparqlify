@@ -82,7 +82,6 @@
 			<groupId>org.kurtjx.snorql</groupId>
 			<artifactId>snorql-webapp</artifactId>
 			<type>war</type>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Spring dependencies -->
