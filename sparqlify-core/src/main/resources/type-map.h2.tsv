@@ -5,6 +5,7 @@ int4	integer
 int8	integer
 integer	integer
 varchar	string
+VARCHAR string
 text	string
 text	string
 bpchar	string

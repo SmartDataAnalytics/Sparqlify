@@ -4,6 +4,7 @@ import org.aksw.sparqlify.core.TypeToken;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
+
 public class SqlDatatypeDefault
 	implements SqlDatatype
 {

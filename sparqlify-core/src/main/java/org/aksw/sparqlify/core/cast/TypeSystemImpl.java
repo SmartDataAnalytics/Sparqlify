@@ -107,6 +107,10 @@ public class TypeSystemImpl
 	}
 
 	
+	/**
+	 * Convert an RDF literal into a corresponding SQL literal
+	 * 
+	 */
 	@Override
 	public SqlValue convertSql(NodeValue value) //, TypeToken targetTypeToken)
 	{

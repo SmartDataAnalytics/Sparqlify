@@ -9,6 +9,7 @@ import org.aksw.sparqlify.core.SparqlifyConstants;
 import com.hp.hpl.jena.sparql.expr.E_Conditional;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
+import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprFunction2;
@@ -102,9 +103,25 @@ public class ExprTransformerRdfTermComparator
 		
 		Expr result;
 		
-				
+		// Condition: Either the types are equal or both are either 2 (plain) or 3 (typed literal)
 		
-		Expr eqTA = new E_Equals(a.getType(), b.getType());
+		Expr eqTmpA = new E_Equals(a.getType(), b.getType());
+		
+		Expr e =
+			new E_LogicalAnd(
+				new E_LogicalOr(
+					new E_Equals(a.getType(), NodeValue.makeDecimal(2)),
+					new E_Equals(a.getType(), NodeValue.makeDecimal(3))
+				),
+				new E_LogicalOr(
+						new E_Equals(b.getType(), NodeValue.makeDecimal(2)),
+						new E_Equals(b.getType(), NodeValue.makeDecimal(3))
+				)
+			);
+					
+				
+		Expr eqTA = new E_LogicalOr(eqTmpA, e);
+		
 		
 		E_Conditional eqT = new E_Conditional(eqTA, NodeValue.TRUE, SparqlifyConstants.nvTypeError);
 

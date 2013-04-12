@@ -7,6 +7,14 @@ import org.aksw.sparqlify.core.TypeToken;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
+/**
+ * Maps datatypeUris to SqlDatatype objects.
+ * The SqlDatatype object can map NodeValue to SqlValues.
+ * 
+ * 
+ * @author raven
+ *
+ */
 public class SqlTypeMapperImpl
 	implements SqlTypeMapper
 {

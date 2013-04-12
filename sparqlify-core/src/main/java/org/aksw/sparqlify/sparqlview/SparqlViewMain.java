@@ -34,7 +34,7 @@ public class SparqlViewMain {
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
 		CandidateViewSelector<SparqlView> candidateViewSelector = new CandidateViewSelectorRestructify(); 
 
-		SparqlView sparqlView = SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o } { Graph ?g { ?s ?p ?o } Filter(?g != <http://fp7-pp.publicdata.euu/>  && ?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }", Syntax.syntaxSPARQL_11));
+		SparqlView sparqlView = SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o } { ?s a <http://fp7-pp.publicdata.eu/ontology/Project> . ?s ?p ?o . Filter(?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }", Syntax.syntaxSPARQL_11));
 		candidateViewSelector.addView(sparqlView);
 		//system.addView(SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o . } { Graph ?g { ?s ?p ?o } Filter(?g != <http://ns.ontowiki.net/SysBase/> ) }", Syntax.syntaxSPARQL_11)));
 		
@@ -43,7 +43,7 @@ public class SparqlViewMain {
 		QueryExecutionFactorySparqlView sv = new QueryExecutionFactorySparqlView(qef, candidateViewSelector, Dialect.VIRTUOSO);
 		
 		//QueryExecution qe = sv.createQueryExecution("Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/> Select Distinct ?t { ?s a ?t . }");
-		QueryExecution qe = sv.createQueryExecution("select distinct ?g { graph ?g { ?s ?p ?o . }}");
+		QueryExecution qe = sv.createQueryExecution("select * { ?s a <http://fp7-pp.publicdata.eu/ontology/Project> . ?s ?p ?o . }");
 
 		ResultSet rs = qe.execSelect();
 		ResultSetFormatter.out(System.out, rs);

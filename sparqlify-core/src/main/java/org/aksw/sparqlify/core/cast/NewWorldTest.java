@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.util.factory.Factory2;
 import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
@@ -16,10 +18,9 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPassThrough;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
@@ -245,7 +246,9 @@ public class NewWorldTest {
 		SqlTypeMapper stm = typeSystem.getSqlTypeMapper();
 		stm.register(XSD.xstring.getURI(), new SqlDatatypeDefault(TypeToken.String, new NodeValueToObjectDefault()));
 		stm.register(XSD.xboolean.getURI(), new SqlDatatypeDefault(TypeToken.Boolean, new NodeValueToObjectDefault()));
-		
+
+		stm.register(SparqlifyConstants.nvTypeError.asNode().getLiteralDatatypeURI(), new SqlDatatypeConstant(SqlValue.TYPE_ERROR));
+
 		
 		// RDFDatatype i = new XSDBaseNumericType(TypeToken.Int.toString(),
 		// BigInteger.class);
@@ -343,6 +346,31 @@ public class NewWorldTest {
 
 		}
 
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
+
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_GreaterThan(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+
+			// As a fallback where Jena can't evaluate it, register a
+			// transformation to an SQL expression.
+			SparqlFunction f = new SparqlFunctionImpl(">", sig, evaluator, null);
+
+			typeSystem.registerSparqlFunction(f);
+
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
+			serializerSystem.addSerializer("greaterThan", serializer);
+			
+		}
+		
 		// SqlExprSerializerPostgres
 		{
 			MethodSignature<TypeToken> sig = MethodSignature.create(false,

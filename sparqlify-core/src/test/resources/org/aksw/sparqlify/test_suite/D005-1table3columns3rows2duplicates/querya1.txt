@@ -1,0 +1,6 @@
+Select * {
+  ?s ?p ?o .
+  Optional {
+    ?o ?x ?y .
+  }
+}

@@ -135,7 +135,9 @@ public class SqlExprEvaluator_Compare
 		}
 		
 		} catch(Throwable t) {
-			System.out.println("ffs");
+			// Not sure if this should happen
+			throw new RuntimeException("Should not happen", t); 
+			//System.out.println("ffs");
 		}
 		
 		

@@ -64,20 +64,28 @@ class TestBundleReader
 		Resource create = resolver.getResource(r2rPathStr + "create.sql");
 		
 		//Pattern pattern = Pattern.compile("r2rml(.*).ttl");
-		Pattern pattern = Pattern.compile("sparqlify(.*).txt");
+		Pattern smlPattern = Pattern.compile("sparqlify(.*).txt");
+		Pattern queryPattern = Pattern.compile("query(?!result)([a-z]*)([0-9]*).txt");
+		
+		// Query pattern: query{mapping-file-reference}{query-number}
+		//Pattern queryPattern = Pattern.compile("query([a-z]*)([0-9]*).txt");
+		
 		
 		//Resource[] r2rmls = resolver.getResources(testBaseSpy + "r2rml*.ttl");
-		Resource[] r2rmls = resolver.getResources(spyPathStr + "sparqlify*.txt");
+		Resource[] r2rmls = resolver.getResources(spyPathStr + "sparqlify*.txt");		
 		Arrays.sort(r2rmls, resourceComparator);
 		
 		Resource manifest = null;
+		
+
+		
 		
 		for(Resource m : r2rmls) {
 			//System.out.println("Got resource: " + m.getURI());
 			
 			String name = m.getFilename();
 			
-			Matcher matcher = pattern.matcher(name);
+			Matcher matcher = smlPattern.matcher(name);
 			boolean isFind = matcher.find();
 			if(!isFind) {
 				throw new RuntimeException("Should not happen"); // The regex pattern must match the resource pattern
@@ -86,8 +94,7 @@ class TestBundleReader
 			String subTest = matcher.group(1);
 			
 			
-			
-			// get the expected result
+			// Get the expected dump result
 			String mappingStr = r2rPathStr + "mapped" + subTest + ".nq";
 			Resource expected = resolver.getResource(mappingStr);
 			
@@ -95,12 +102,45 @@ class TestBundleReader
 				logger.warn("No expected result found for " + name + " skipping test");
 				continue;
 			}
+
+
+
+			// For each mapping may be a set of queries
+			List<QueryBundle> queryBundles = new ArrayList<QueryBundle>();
+
+			Resource[] queries = resolver.getResources(spyPathStr + "query" + subTest + "*.txt");
+			Arrays.sort(queries, resourceComparator);
+
+			for(Resource q : queries) {
+				
+				String queryName = q.getFilename();
+				
+				Matcher queryMatcher = queryPattern.matcher(queryName);
+				boolean isQueryFind = queryMatcher.find();
+				if(!isQueryFind) {
+					continue;
+				}
+				
+				//String mappingRef = matcher.group(1);
+				String queryNo = queryMatcher.group(2);
+				
+				String expectedResultStr = spyPathStr + "queryresult" + subTest + queryNo + ".txt";
+				Resource expectedResult = resolver.getResource(expectedResultStr);
+				
+				if(!expectedResult.exists()) {
+					logger.warn("No expected result found for " + name + " skipping test");
+					continue;
+				}
+				
+				QueryBundle queryBundle = new QueryBundle(q, expectedResult);
+				queryBundles.add(queryBundle);
+			}
+
 			
-//			System.out.println("        " + expected.getFilename());
-//			
+//			System.out.println("        " + expected.getFilename());			
 //			System.out.println("    " + m.getFilename());
 			
-			TestBundle bundle = new TestBundle(r.getFilename(), create, m, expected, manifest);
+			TestBundle bundle = new TestBundle(r.getFilename(), create, m, expected, manifest, queryBundles);
 			result.add(bundle);
 		}
 		

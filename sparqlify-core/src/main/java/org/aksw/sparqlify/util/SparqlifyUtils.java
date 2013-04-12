@@ -375,6 +375,11 @@ public class SparqlifyUtils {
 		}
 
 		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
+			result.addSerializer("greaterThan", serializer);
+		}
+
+		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("AND");
 			result.addSerializer("logicalAnd", serializer);
 
@@ -399,7 +404,7 @@ public class SparqlifyUtils {
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
 			result.addSerializer(SparqlifyConstants.urlEncode, serializer);
 		}
-
+		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {
 				@Override

@@ -141,7 +141,7 @@ public class ExprEvaluatorPartial
 		
 		// Check if the function's IRI is registered
 		// If not, don't try to evaluate the corresponding expression
-		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">=", "if"));
+		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">=", "if", "&&", "||", "!"));
 		
 		String fnIri = org.aksw.sparqlify.expr.util.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();			
 		if(fnIri != null && !fnIri.isEmpty()) {

@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import junit.framework.Assert;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.commons.util.StreamUtils;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.junit.Test;
@@ -24,7 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.core.Quad;
+
 
 
 @RunWith(Parameterized.class)
@@ -129,6 +137,12 @@ public class R2rmlTest {
 		return result;
 	}
 
+	
+	public void runQueryBundle(TestBundle testBundle, QueryBundle queryBundle) {
+		
+	}
+	
+	
 	/**
 	 * - Create database from resource
 	 * - Create SparqlSqlRewriterSparqlify from resource 
@@ -150,13 +164,43 @@ public class R2rmlTest {
 		Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
 		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
 		DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
-		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
 		
+		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
+
+		/**
+		 *  Run the test queries on the test database.
+		 *  TODO Factor each query test out into its own test!
+		 */
+		try {
+			for(QueryBundle queryBundle : bundle.getQueryBundles()) {
+				String queryString = StreamUtils.toString(queryBundle.getQuery().getInputStream()).trim();
+				
+				if(queryString.isEmpty()) {
+					throw new RuntimeException("Empty querystring");
+					//continue;
+				}
+				
+				String queryResult = StreamUtils.toString(queryBundle.getQuery().getInputStream());
+				
+				Query query = QueryFactory.create(queryString, Syntax.syntaxSPARQL_11);
+	
+				QueryExecution qe = qef.createQueryExecution(query);
+				if(query.isSelectType()) {
+					ResultSet rs = qe.execSelect();
+					logger.debug(ResultSetFormatter.asText(rs));
+				}
+				
+			}
+		} catch (Exception e) {
+			SparqlifyUtils.shutdownH2(ds);
+			throw e;
+		}
+				
 		Set<Quad> actual = SparqlifyUtils.createDumpNQuads(qef);
+		SparqlifyUtils.shutdownH2(ds);
 
 		Set<Quad> alignedActual = CompareUtils.alignActualQuads(expected, actual);
 		
-		SparqlifyUtils.shutdownH2(ds);
 
 		Set<Quad> excessive = Sets.difference(alignedActual, expected);
 		Set<Quad> missing = Sets.difference(expected, alignedActual);

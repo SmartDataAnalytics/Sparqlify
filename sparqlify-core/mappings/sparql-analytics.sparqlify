@@ -1,0 +1,24 @@
+Prefix spy:<http://aksw.org/sparqlify/>
+
+Prefix ex:<http://example.org/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+
+Create View Observation As
+  Construct {
+    ?s
+      a ex:Observation ;
+      rdfs:label ?l ;
+      ex:ip ?i ;
+      ex:serviceId ?si ;
+      ex:date ?d .
+  }
+  With
+    ?s = uri(concat('http://example.org/', ?id))
+    ?l = plainLiteral(?query_id)
+    ?d = typedLiteral(?ts_start, xsd:dateTime)
+    ?i = plainLiteral(?user_id)
+    ?si = uri(?service_id)
+  From
+    request;
+

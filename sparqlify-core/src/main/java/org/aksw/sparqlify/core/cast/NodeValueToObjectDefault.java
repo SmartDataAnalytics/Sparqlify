@@ -4,6 +4,21 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
+/*
+class NodeValueToConstant
+	implements NodeValueToObject
+{
+	private Object
+
+	@Override
+	public Object toObject(NodeValue nodeValue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}
+*/
+
 public class NodeValueToObjectDefault
 	implements NodeValueToObject
 {
