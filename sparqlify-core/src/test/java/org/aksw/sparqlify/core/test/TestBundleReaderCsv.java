@@ -20,7 +20,7 @@ class TestBundleReaderCsv
 	private static final Comparator<Resource> resourceComparator = new ResourceComparator();	
 	private static final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 	
-	private String testsBasePath = "/org/aksw/sparqlify/csv/";
+	private String testsBasePath = "/org/aksw/sparqlify/csv/tests/";
 
 	
 	public List<TestBundleCsv> getTestBundles() throws IOException {

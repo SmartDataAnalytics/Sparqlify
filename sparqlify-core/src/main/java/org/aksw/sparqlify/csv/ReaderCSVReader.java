@@ -2,6 +2,9 @@ package org.aksw.sparqlify.csv;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.base.Joiner;
@@ -16,6 +19,8 @@ import com.google.common.base.Joiner;
 public class ReaderCSVReader
 	extends ReaderStringBase
 {
+	//private static final Logger logger = LoggerFactory.getLogger(ReaderCSVReader.class);
+	
 	private static final String newLine = "\n";
 	private static final Joiner joiner = Joiner.on("\",\"");
 
@@ -70,7 +75,7 @@ public class ReaderCSVReader
 				result = createLine(strs);
 			}
 
-			System.out.println(result);
+			//logger.trace("Constructed line: " + result);
 			return result;
 		} catch(Exception e) {
 			throw new RuntimeException(e);

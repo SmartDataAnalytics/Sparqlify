@@ -1,0 +1,13 @@
+Prefix ex:<http://example.org/>
+Prefix fn:<http://aksw.org/sparqlify/>
+
+Create View Template DefaultView As
+  CONSTRUCT {
+      ?s
+          ex:firstName ?fn ;
+          ex:lastName ?ln .
+  }
+  With
+      ?s = uri(concat("http://example.org/", ?1))
+      ?fn = plainLiteral(?2)
+      ?ln = plainLiteral(?3)

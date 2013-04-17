@@ -5,6 +5,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
@@ -16,13 +17,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.expr.ExprVar;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class ExprTests {
 
@@ -44,6 +44,23 @@ public class ExprTests {
 		return result;
 	}
 
+	@Test
+	public void testVarWithConcat() {
+		Expr a = new E_RdfTerm(NodeValue.makeDecimal(1), new ExprVar("C_8"), NodeValue.makeString(""), NodeValue.makeString(""));
+		Expr b = ExprUtils.parse("<http://aksw.org/sparqlify/uri>(concat('http://example.com/', ?h__6, ';', ?h__1))");
+
+		Expr c = new E_Equals(a, b);
+		
+		Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>();
+		typeMap.put("C_8", TypeToken.String);
+		typeMap.put("h__6", TypeToken.String);
+		typeMap.put("h__1", TypeToken.String);
+		
+		ExprSqlRewrite val = sqlRewriter.translate(c, null, typeMap);
+		
+		System.out.println(val.getExpr());
+	}
+	
 	
 	/**
 	 * ?e = 1

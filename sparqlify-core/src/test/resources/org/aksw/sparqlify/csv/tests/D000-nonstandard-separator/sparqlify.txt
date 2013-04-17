@@ -1,0 +1,13 @@
+Prefix publicdata:<http://wiki.publicdata.eu/ontology/>
+Prefix fn:<http://aksw.org/sparqlify/>
+Create View Template DefaultView As
+  CONSTRUCT {
+      ?obs <http://wiki.publicdata.eu/ontology/Adjustment%20identifier> ?col1 .
+      ?obs <http://wiki.publicdata.eu/ontology/Adjustment%20type> ?col2 .
+      ?obs <http://wiki.publicdata.eu/ontology/Title> ?col4 .
+  }
+  With
+      ?obs = uri(concat('http://data.publicdata.eu/06a13464-5ff0-42c2-9690-4fa2eaeae37f/', ?rowId))
+      ?col1 = plainLiteral(?1)
+      ?col2 = plainLiteral(?2)
+      ?col4 = plainLiteral(?4)

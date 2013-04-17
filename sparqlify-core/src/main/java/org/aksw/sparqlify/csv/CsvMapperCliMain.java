@@ -7,10 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +36,7 @@ import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.sparql.IteratorResultSetSparqlifyBinding;
+import org.aksw.sparqlify.core.test.CsvParserConfig;
 import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.HttpSparqlEndpoint;
@@ -50,11 +53,11 @@ import org.openjena.atlas.lib.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.io.InputSupplier;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.BasicPattern;
@@ -64,6 +67,7 @@ import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.syntax.Template;
+
 
 public class CsvMapperCliMain {
 
@@ -157,7 +161,23 @@ public class CsvMapperCliMain {
 		return config;
 	}
 	
+
+	public static Character getChar(Logger logger, CommandLine commandLine, String opt)
+	{
+		Character result = null;
+		String resultStr = commandLine.getOptionValue(opt, null);
+		if(!StringUtils.isEmpty(resultStr)) {
+			if(resultStr.length() > 1) {
+				logger.error("Cell Delimiter may only be a singe character. Given argument is: '" + resultStr + "'");
+				//printHelpAndExit(1);
+				return null;
+			}
 	
+			result = resultStr.charAt(0);
+		}
+		
+		return result;
+	}
 	
 	
 	@SuppressWarnings("static-access")
@@ -186,30 +206,32 @@ public class CsvMapperCliMain {
 		cliOptions.addOption("c", "config", true, "Sparqlify config file");
 		cliOptions.addOption("f", "config", true, "Input data file");
 		cliOptions.addOption("v", "config", true, "View name (only needed if config contains more than one view)");
+		cliOptions.addOption("h", "config", false, "Use first row as headers");
 
-		cliOptions.addOption("d", "config", true, "CSV cell delimiter (default is ',')");
+		cliOptions.addOption("s", "config", true, "CSV field separator (default is ',')");
+		cliOptions.addOption("d", "config", true, "CSV field delimiter (default is '\"')");
+		cliOptions.addOption("e", "config", true, "CSV field escape delimiter (escapes the field delimiter) (default is '\\')");
 
+		
+		// TODO NULL value string -n
+		// TODO offset -t (top)
+		// TODO limit  -b (bottom)
+		
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
 
 		File configFile = extractFile(commandLine, "c");
-
 		File dataFile = extractFile(commandLine, "f");
 
 		String viewName = StringUtils.trim(commandLine.getOptionValue("v"));
 
 		LoggerCount loggerCount = new LoggerCount(logger);
-		
 
-		Character cellDelimiter = null;
-		String cellDelimiterStr = commandLine.getOptionValue("d", null);
-		if(!StringUtils.isEmpty(cellDelimiterStr)) {
-			if(cellDelimiterStr.length() > 1) {
-				loggerCount.error("Cell Delimiter may only be a singe character. Given argument is: '" + cellDelimiterStr + "'");
-				printHelpAndExit(1);
-			}
+		CsvParserConfig csvConfig = new CsvParserConfig();
+		csvConfig.setFieldDelimiter(getChar(loggerCount, commandLine, "d"));
+		csvConfig.setEscapeCharacter(getChar(loggerCount, commandLine, "e"));
+		csvConfig.setFieldSeparator(getChar(loggerCount, commandLine, "s"));
 
-			cellDelimiter = cellDelimiterStr.charAt(0);
-		}
+		boolean useFirstRowAsHeaderNames = commandLine.hasOption("h");
 
 		InputStream in = new FileInputStream(configFile);
 		TemplateConfig config;
@@ -246,8 +268,16 @@ public class CsvMapperCliMain {
 		Reader fileReader = new FileReader(dataFile);
 		//convertCsvToRdf(fileReader, view);
 		
-		ResultSet resultSet = createResultSetFromCsv(fileReader, cellDelimiter, null);
+		InputSupplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(dataFile, csvConfig);
+		
+		ResultSet resultSet = createResultSetFromCsv(csvReaderSupplier, useFirstRowAsHeaderNames, 100);
 
+		//csv.setEscapeCharacter('/');
+
+		//ResultSet resultSet = csv.read(fileReader, null);
+
+		
+		
 		TripleIteratorTracking trackingIt = createTripleIterator(resultSet, view);
 		
 
@@ -301,25 +331,61 @@ public class CsvMapperCliMain {
 		return view;
 	}
 	
-	
-	public static ResultSet createResultSetFromCsv(Reader reader, Character cellDelimiter, Character quoteCharacter)
+
+	/**
+	 * 
+	 * @param readerSupplier We need to read the file twice: Once for figuring out the column headers - and if there are none, again for the data
+	 * @param fieldSeparator
+	 * @param quoteCharacter
+	 * @return
+	 * @throws IOException
+	 */
+	public static ResultSet createResultSetFromCsv(InputSupplier<? extends CSVReader> csvReaderSupplier, boolean useHeaders, Integer sampleSize)
 			throws IOException
 	{
-		if(cellDelimiter != null || quoteCharacter != null) {
-			char cellDelim = cellDelimiter == null ? CSVParser.DEFAULT_SEPARATOR : cellDelimiter;
-			char quoteChar = quoteCharacter == null ? CSVParser.DEFAULT_QUOTE_CHARACTER : quoteCharacter;
-			
-			
-			CSVReader csvReader = new CSVReader(reader, cellDelim, quoteChar);
-			reader = new ReaderCSVReader(csvReader);	
+		sampleSize = (sampleSize == null) ? 100 : sampleSize;
+		
+		CSVReader headerReader = csvReaderSupplier.getInput();
+		List<String> columnNames = new ArrayList<String>();
+		try {
+			String row[];
+			int i = 0;
+			while((row = headerReader.readNext()) != null && (i < sampleSize)) {
+				if(i == 0 && useHeaders) {
+					columnNames.addAll(Arrays.asList(row));
+				}
+	
+				int delta = row.length - columnNames.size();
+				for(int j = 0; j < delta; ++j) {
+					columnNames.add("" + (i + j));
+				}
+				
+				++i;
+			}
+		} finally {			
+			headerReader.close();
 		}
 		
+		CSVReader dataReader = csvReaderSupplier.getInput();
+		if(useHeaders) {
+			// Skip header row
+			dataReader.readNext();
+		}
+		
+		Reader reader = new ReaderCSVReader(dataReader);
+		
 		Csv csv = new Csv();
-		//csv.setEscapeCharacter('/');
-		ResultSet result = csv.read(reader, null);
+		csv.setEscapeCharacter('\\');
+				
+		String[] colNames = columnNames.toArray(new String[0]); 
+		ResultSet result = csv.read(reader, colNames);
+		
+		logger.debug("Detected column names: " + columnNames);
+		
 		return result;
 	}
 	
+
 	public static TripleIteratorTracking createTripleIterator(ResultSet rs, ViewTemplateDefinition view) {
 
 		

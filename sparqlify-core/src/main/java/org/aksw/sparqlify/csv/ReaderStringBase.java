@@ -52,5 +52,5 @@ public abstract class ReaderStringBase
 		return result;
 	}
 	
-	abstract protected String nextString();
+	abstract protected String nextString() throws IOException;
 }
