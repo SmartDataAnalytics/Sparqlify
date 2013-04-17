@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.sql.ResultSet;
@@ -100,7 +99,7 @@ public class CsvMapperCliMain {
 		File file = new File(filename);
 		if (!file.exists()) {
 			logger.error("File given as argument for option " + optionLabel
-					+ " does not exist: " + filename);
+					+ " does not exist: " + file.getAbsolutePath());
 
 			printHelpAndExit(-1);
 		}
@@ -160,21 +159,62 @@ public class CsvMapperCliMain {
 		return config;
 	}
 	
+	
+	public static Character parseChar(String str) {
+		Character result;
+		
+		str = str.trim();
+
+		if(str.startsWith("\\")) {
+			String charValue = str.substring(1);
+			int val = Integer.parseInt(charValue);
+			
+			if(val < 0 || val > Character.MAX_VALUE) {
+				throw new RuntimeException("Character value must be in the range 0-" + (int)Character.MAX_VALUE);
+			}
+			result = (char)val;
+		}
+		
+		else if(str.startsWith("0x")) {
+
+			String hex = str.substring(2);
+			int val = 0;
+		    for (int i = 0; i < hex.length(); ++i) {
+		        String s = hex.substring(i, i + 1);
+		        char part = (char)Integer.parseInt(s, 16);
+		        val <<= 4;
+		        val |= part;
+				if(val < 0 || val > Character.MAX_VALUE) {
+
+					throw new RuntimeException("Character must be in the range 0x0-0x" + Integer.toHexString(Character.MAX_VALUE));
+				}
+		    }
+		    
+		    result = (char)val;
+		}
+		
+		else if(str.length() > 1) {
+			throw new RuntimeException("Only a singe character allowed.");
+		}
+		else {
+			result = str.charAt(0);
+		}
+	
+		return result;		
+	}
 
 	public static Character getChar(Logger logger, CommandLine commandLine, String opt)
 	{
 		Character result = null;
 		String resultStr = commandLine.getOptionValue(opt, null);
 		if(!StringUtils.isEmpty(resultStr)) {
-			if(resultStr.length() > 1) {
-				logger.error("Cell Delimiter may only be a singe character. Given argument is: '" + resultStr + "'");
-				//printHelpAndExit(1);
-				return null;
+			try {
+				result = parseChar(resultStr);
+			} catch(Exception e) {
+				logger.error("Error parsing command line argument -" + opt + " " + resultStr + ": " + e.getClass().getSimpleName() + " for " + e.getMessage());
 			}
-	
-			result = resultStr.charAt(0);
 		}
-		
+
 		return result;
 	}
 	
