@@ -16,6 +16,7 @@ import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
 import org.aksw.sparqlify.csv.CsvMapperCliMain;
+import org.aksw.sparqlify.csv.CsvParserConfig;
 import org.aksw.sparqlify.csv.InputSupplierCSVReader;
 import org.aksw.sparqlify.csv.TripleIteratorTracking;
 import org.aksw.sparqlify.validation.LoggerCount;

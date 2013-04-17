@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.csv;
 
 import org.h2.tools.Csv;
 
