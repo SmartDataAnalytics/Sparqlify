@@ -1,0 +1,2 @@
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Select * { ?s foaf:name ?n . Filter(?n > 'a') . Filter(?n < 1) }

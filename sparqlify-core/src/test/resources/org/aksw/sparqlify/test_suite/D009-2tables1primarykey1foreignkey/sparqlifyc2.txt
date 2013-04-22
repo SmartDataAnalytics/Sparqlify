@@ -1,0 +1,22 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+//@base <http://example.com/base/> .
+
+
+Prefix exr: <http://example.com/resource/>
+
+Prefix spy: <http://aksw.org/sparqlify/>
+
+Create TriplesMap1 As
+  Construct {
+    ?s foaf:name ?n
+  }
+  With
+    ?s = uri(exr:student_, spy:urlEncode(?Name))
+    ?n = plainLiteral(?Name)
+  From
+    [[SELECT "Name", COUNT("Sport") FROM "Student" GROUP BY "Name"]]
+

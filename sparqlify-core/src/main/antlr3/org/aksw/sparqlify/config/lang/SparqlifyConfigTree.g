@@ -101,6 +101,34 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 	    prefixMapping.setNsPrefix(prefixDecl.getPrefix(), prefixDecl.getUri());
 	}
 
+
+    public String expandPrefix(String prefix) {
+    	String result = prefixMapping.getNsPrefixMap().get(prefix);
+
+        if(result == null) {
+            logger.error("Namespace for prefix '" + prefix + "' not declared");
+            result = "http://sparqlify.org/resource/unresolvedNamespace/";
+        }
+        
+        return result;
+    }
+    
+    
+    public String expandUri(String uri) {
+        int index = uri.indexOf(':');
+        if(index < 0) {
+            logger.error("Internal error: Expansion of '" + uri + "' requested although no symbol ':' found.");
+            return uri;
+        }
+        
+        String prefix = uri.substring(0, index);
+        String namespace = expandPrefix(prefix);
+
+        String result = namespace + uri.substring(index + 1);
+        
+        return result;
+    }
+
     public String getErrorMessage(RecognitionException e,
                                   String[] tokenNames)
     {
@@ -141,6 +169,21 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
         }
     }
 */
+
+    public E_Function createUriFunction(ExprList args) {
+        Expr arg;
+       
+        if(args.size() == 1) {
+			arg = args.get(0);
+        } else {
+			arg = new E_StrConcatPermissive(args);
+        }
+
+        E_Function result = createFunction(SparqlifyConstants.uriLabel, arg);
+        return result; 
+    }
+
+
     public E_Function createFunction(String label, Expr ... args) {
         ExprList exprs = new ExprList();
         for(Expr arg : args) {
@@ -248,7 +291,7 @@ varBinding returns [Expr value]
 	
 typeCtorExpression returns [Expr value]
     : ^(BNODE a=expression) {$value = createFunction(SparqlifyConstants.blankNodeLabel, $a.value); } 
-    | ^(URI a=expression) {$value = createFunction(SparqlifyConstants.uriLabel, $a.value); }
+    | ^(URI c=expressionList) {$value = createUriFunction($c.value); }
     | ^(PLAIN_LITERAL a=expression b=expression?) {$value = createFunction(SparqlifyConstants.plainLiteralLabel, $a.value, $b.value); }
     | ^(TYPED_LITERAL a=expression b=expression) {$value = createFunction(SparqlifyConstants.typedLiteralLabel, $a.value, $b.value); }
     ;
@@ -893,13 +936,13 @@ string returns [String value]
     ;
 
 iriRef returns [Node value]
-    : a=IRI_REF      {$value = Node.createURI(prefixMapping.expandPrefix($a.text));} 
+    : a=IRI_REF      {$value = Node.createURI($a.text);} 
     | b=prefixedName {$value = $b.value;}
     ;
 
 prefixedName returns [Node value]
-    : a=PNAME_LN  {$value = Node.createURI(prefixMapping.expandPrefix($a.text));}
-    | a=PNAME_NS  {$value = Node.createURI(prefixMapping.expandPrefix($a.text));}
+    : a=PNAME_LN  {$value = Node.createURI(expandUri($a.text));}
+    | a=PNAME_NS  {$value = Node.createURI(expandPrefix($a.text));}
     ;
 
 blankNode returns [Node value]

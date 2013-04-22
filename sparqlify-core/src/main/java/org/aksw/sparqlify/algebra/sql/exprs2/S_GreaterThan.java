@@ -12,7 +12,7 @@ public class S_GreaterThan
 	
 	@Override
 	public void asString(IndentedWriter writer) {
-		writer.print("GreaterThan");
+		writer.print(getName());
 		writeArgs(writer);
 	}
 

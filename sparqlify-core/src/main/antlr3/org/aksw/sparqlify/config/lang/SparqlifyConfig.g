@@ -330,7 +330,7 @@ varBinding
 
 typeCtorExpression
     : BNODE '(' expression ')' -> ^(BNODE expression)
-    | URI '(' expression ')' -> ^(URI expression)
+    | URI '(' expression (COMMA expression)* ')' -> ^(URI ^(EXPRESSION_LIST expression*))
     | PLAIN_LITERAL '(' expression (',' expression)? ')' -> ^(PLAIN_LITERAL expression expression?)
     | TYPED_LITERAL '(' expression ',' expression ')' -> ^(TYPED_LITERAL expression expression)
     ;

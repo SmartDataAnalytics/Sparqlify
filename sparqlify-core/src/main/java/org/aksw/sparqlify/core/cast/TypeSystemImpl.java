@@ -135,6 +135,8 @@ public class TypeSystemImpl
 
 		if(sqlType == null) {
 			
+			// NOTE sqlTypeMapper is configured in NewWorldTest.initSparqlModel
+			
 			throw new RuntimeException("No SQL conversion found for NodeValue: " + value + " ( " + datatypeUri + ")");
 			
 		}
@@ -153,7 +155,9 @@ public class TypeSystemImpl
 
 		if(transformer == null) {
 			
-			throw new RuntimeException("No cast found for: " + value + " to " + targetTypeToken);
+			logger.warn("No cast found for: " + value + " to " + targetTypeToken + " --- assuming type error");
+			//throw new RuntimeException(
+			return SqlValue.TYPE_ERROR;
 			
 		}
 		

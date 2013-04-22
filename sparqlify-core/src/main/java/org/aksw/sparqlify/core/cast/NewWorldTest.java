@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.commons.util.factory.Factory2;
 import org.aksw.commons.util.MapReader;
+import org.aksw.commons.util.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
@@ -21,6 +21,9 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThan;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThanOrEqual;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
@@ -247,6 +250,8 @@ public class NewWorldTest {
 		stm.register(XSD.xstring.getURI(), new SqlDatatypeDefault(TypeToken.String, new NodeValueToObjectDefault()));
 		stm.register(XSD.xboolean.getURI(), new SqlDatatypeDefault(TypeToken.Boolean, new NodeValueToObjectDefault()));
 
+		stm.register(XSD.integer.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
+		
 		stm.register(SparqlifyConstants.nvTypeError.asNode().getLiteralDatatypeURI(), new SqlDatatypeConstant(SqlValue.TYPE_ERROR));
 
 		
@@ -366,10 +371,59 @@ public class NewWorldTest {
 
 			typeSystem.registerSparqlFunction(f);
 
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
-			serializerSystem.addSerializer("greaterThan", serializer);
-			
+//			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
+//			serializerSystem.addSerializer("greaterThan", serializer);
 		}
+
+		
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_LessThan(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl("<", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}		
+
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_LessThanOrEqual(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl("<=", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}		
+		
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_GreaterThanOrEqual(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl(">=", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}		
+		
 		
 		// SqlExprSerializerPostgres
 		{
