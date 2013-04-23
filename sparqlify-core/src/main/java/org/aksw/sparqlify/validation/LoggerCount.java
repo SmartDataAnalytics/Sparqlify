@@ -26,13 +26,15 @@ public class LoggerCount
 
 	@Override
 	public void error(String message) {
-		System.err.println(message);
+		//System.err.println(message);
+		logger.error(message);
 		++errorCount; 
 	}
 
 	//@Override
 	public void warn(String message) {
-		System.err.println(message);
+		//System.err.println(message);
+		logger.warn(message);
 		++warningCount; 
 	}
 

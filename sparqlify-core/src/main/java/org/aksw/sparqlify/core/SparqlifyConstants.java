@@ -60,5 +60,5 @@ public class SparqlifyConstants {
 	
 	public static final String numericTypeLabel = "http://aksw.org/sparqlify/numeric";
 
-    public static final NodeValue nvTypeError = NodeValue.makeNode(Node.createLiteral("type-error", TypeMapper.getInstance().getSafeTypeByName("http://sparqlify.org/vocab/datatyps/TypeError"))); //NodeValue.makeNode(Node.createAnon(new AnonId("node value type error"))) ;
+    public static final NodeValue nvTypeError = NodeValue.makeNode(Node.createLiteral("type-error", TypeMapper.getInstance().getSafeTypeByName("http://sparqlify.org/vocab/datatypes/TypeError"))); //NodeValue.makeNode(Node.createAnon(new AnonId("node value type error"))) ;
 }

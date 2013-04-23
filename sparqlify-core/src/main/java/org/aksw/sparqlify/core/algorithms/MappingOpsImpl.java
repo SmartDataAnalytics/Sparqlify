@@ -845,9 +845,9 @@ public class MappingOpsImpl
 		
 		
 		JoinType joinType = isLeftJoin ? JoinType.LEFT : JoinType.INNER;
-//		if(joinType == JoinType.LEFT) {
-//			System.out.println("Left Join encountered");
-//		}
+		if(joinType == JoinType.LEFT) {
+			logger.debug("Left Join encountered");
+		}
 		
 		SqlOpJoin opJoin = SqlOpJoin.create(joinType, a.getSqlOp(), b.getSqlOp());
 		

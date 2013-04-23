@@ -537,6 +537,9 @@ public class SqlOpSerializerImpl
     		writer.println(restrictionStr);
     	}
     	
+    	if(op.getJoinType().equals(JoinType.LEFT)) {
+    		writer.println(" ON (TRUE) ");
+    	}
     	
     	//writer.print(") AS " + node.getAliasName());
 

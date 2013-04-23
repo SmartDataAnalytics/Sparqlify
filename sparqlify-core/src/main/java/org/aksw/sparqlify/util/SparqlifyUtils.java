@@ -25,6 +25,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1Prefix;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPassThrough;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -375,6 +376,11 @@ public class SparqlifyUtils {
 		}
 
 		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializer_Join(" || ");
+			result.addSerializer("concat", serializer);
+		}
+
+		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
 			result.addSerializer("greaterThan", serializer);
 		}
@@ -522,6 +528,8 @@ public class SparqlifyUtils {
 
 		return opMappingRewriter;
 	}
+
+	//public static QueryExecutionFactory
 	
 	public static QueryExecutionFactory createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();

@@ -351,6 +351,20 @@ public class NewWorldTest {
 
 		}
 
+		// CONCAT
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(true,
+					TypeToken.String, TypeToken.rdfTerm);
+
+			//SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals(typeSystem);
+
+			// As a fallback where Jena can't evaluate it, register a
+			// transformation to an SQL expression.
+			SparqlFunction f = new SparqlFunctionImpl("concat", sig, null, null);
+			typeSystem.registerSparqlFunction(f);
+		}
+		
+		
 		{
 			MethodSignature<TypeToken> sig = MethodSignature.create(false,
 					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);

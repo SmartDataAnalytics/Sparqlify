@@ -1,0 +1,3 @@
+Prefix ex: <http://example.com/>
+Select ?s ?n { ?s a ex:firstName ; ex:lastName ?n }
+ 
