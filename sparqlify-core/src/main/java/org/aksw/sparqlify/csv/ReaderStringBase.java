@@ -16,14 +16,14 @@ public abstract class ReaderStringBase
 	private int offset = 0; // set to -1 when done
 	
 	@Override
-	public int read(char[] cbuf, int off, int len)
+	public int read(char[] cbuf, int dstBegin, int len)
 			throws IOException
 	{	
 		if(offset < 0) {
 			return -1;
 		}
 		
-		int initOff = off;
+		int initOff = dstBegin;
 		
 		while(len > 0) {
 			int lineLen = line == null ? 0 : line.length();
@@ -31,8 +31,11 @@ public abstract class ReaderStringBase
 
 			int readLen = Math.min(lineAvailLen, len);
 			if(readLen > 0) {
-				line.getChars(offset, offset + readLen, cbuf, off);
-				off += readLen;
+				int srcEnd = offset + readLen;
+				line.getChars(offset, srcEnd, cbuf, dstBegin);
+				offset = srcEnd;
+
+				dstBegin += readLen;
 				len -= readLen;
 				lineAvailLen -= readLen;
 			}
@@ -47,7 +50,7 @@ public abstract class ReaderStringBase
 			}
 		}
 		
-		int result = off - initOff;
+		int result = dstBegin - initOff;
 
 		return result;
 	}

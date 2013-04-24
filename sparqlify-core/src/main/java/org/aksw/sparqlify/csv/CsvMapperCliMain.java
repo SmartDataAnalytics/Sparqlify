@@ -413,6 +413,12 @@ public class CsvMapperCliMain {
 		
 		Reader reader = new ReaderCSVReader(dataReader);
 		
+//		BufferedReader br = new BufferedReader(reader);
+//		String tmp;
+//		while((tmp = br.readLine()) != null) {
+//			System.out.println(tmp);
+//		}
+		
 		Csv csv = new Csv();
 		csv.setEscapeCharacter('\\');
 				

@@ -48,12 +48,14 @@ public class UpdateMain {
 		cleaner.getGraphListeners().add(queryUpdates);
 		
 		String inserts = Files.readContent(new File("src/test/resources/data/inserts.nt"));
-		
+
+	
 		String stmt = "Insert Data {\n" + inserts + "\n}";
 		graph.executeUpdate(stmt);
 		processChanges(queryUpdates.getChanges());
 
 
+		/*
 		stmt = "Delete Data {\n" + inserts + "\n}";		
 		graph.executeUpdate(stmt);
 		processChanges(queryUpdates.getChanges());
@@ -63,7 +65,7 @@ public class UpdateMain {
 		stmt = "Insert { ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .} Where { ?s ?p ?o . }";
 		graph.executeUpdate(stmt);
 		processChanges(queryUpdates.getChanges());
-
+*/
 		/*
 		stmt = "Delete Data { <http://dbpedia.org/resource/Saldria> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Person> .}";
 		graph.executeUpdate(stmt);

@@ -33,7 +33,10 @@ public class ReaderCSVReader
 	}
 	
 	public static String encodeCell(String cell) {
-		String result = cell.replace("\"", "\\\"");
+		String result; // = cell.replace("\\", "\\\\");
+		
+		result = cell.replace("\"", "\\\"");
+
 		return result;
 	}
 	
