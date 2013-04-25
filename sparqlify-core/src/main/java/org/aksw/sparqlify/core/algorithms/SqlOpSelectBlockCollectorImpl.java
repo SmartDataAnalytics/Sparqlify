@@ -26,6 +26,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
@@ -109,6 +111,8 @@ public class SqlOpSelectBlockCollectorImpl
 
 {
 
+	private static final Logger logger = LoggerFactory.getLogger(SqlOpSelectBlockCollectorImpl.class);
+
 	private static Generator aliasGenerator = Gensym.create("a");
 	
 	
@@ -121,7 +125,61 @@ public class SqlOpSelectBlockCollectorImpl
 	 * @return
 	 */
 	public static SqlOp _makeSelect(SqlOp sqlOp) {
-		SqlOp result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp);
+		SqlOp result;
+		
+		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
+		switch(type) {
+
+		case SqlOpEmpty:
+			result = makeSelect((SqlOpEmpty)sqlOp);
+			break;
+		
+		case SqlOpTable:
+			result = makeSelect((SqlOpTable)sqlOp);
+			break;
+
+		case SqlOpQuery:
+			result = makeSelect((SqlOpQuery)sqlOp);
+			break;
+
+		case SqlOpFilter:
+			result = makeSelect((SqlOpFilter)sqlOp);
+			break;
+
+		case SqlOpProject:
+			result = makeSelect((SqlOpProject)sqlOp);
+			break;
+		
+		case SqlOpExtend:
+			result = makeSelect((SqlOpExtend)sqlOp);
+			break;
+
+//		case SqlOpRename:
+//			result = makeSelect((SqlOpRename)sqlOp);
+//			break;
+			
+		case SqlOpJoin:
+			result = makeSelect((SqlOpJoin)sqlOp);
+			break;
+
+		case SqlOpUnionN:
+			result = makeSelect((SqlOpUnionN)sqlOp);
+			break;
+
+		case SqlOpDistinct:
+			result = makeSelect((SqlOpDistinct)sqlOp);
+			break;
+			
+		case SqlOpSlice:
+			result = makeSelect((SqlOpSlice)sqlOp);
+			break;
+			
+		default:
+			logger.warn("Should not come here");
+			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp);
+			break;
+		}
+		
 		
 		return result;
 	}
@@ -372,7 +430,56 @@ public class SqlOpSelectBlockCollectorImpl
 
 
 	public static JoinContext _collectJoins(SqlOp sqlOp) {
-		JoinContext result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "collectJoins", sqlOp);
+		JoinContext result;
+		
+		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
+		switch(type) {
+
+		case SqlOpEmpty:
+			result = collectJoins((SqlOpEmpty)sqlOp);
+			break;
+		
+		case SqlOpTable:
+			result = collectJoins((SqlOpTable)sqlOp);
+			break;
+
+		case SqlOpQuery:
+			result = collectJoins((SqlOpQuery)sqlOp);
+			break;
+
+		case SqlOpFilter:
+			result = collectJoins((SqlOpFilter)sqlOp);
+			break;
+
+		/*
+		case SqlOpProject:
+			result = collectJoins((SqlOpProject)sqlOp);
+			break;
+		
+		case SqlOpExtend:
+			result = collectJoins((SqlOpExtend)sqlOp);
+			break;
+		*/
+		case SqlOpRename:
+			result = collectJoins((SqlOpRename)sqlOp);
+			break;
+			
+		case SqlOpJoin:
+			result = collectJoins((SqlOpJoin)sqlOp);
+			break;
+
+		case SqlOpUnionN:
+			result = collectJoins((SqlOpUnionN)sqlOp);
+			break;
+
+			
+		default:
+			logger.warn("Should not come here");
+			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "collectJoins", sqlOp);
+			break;
+		}
+		
+		
 		
 		return result;
 	}
@@ -391,7 +498,13 @@ public class SqlOpSelectBlockCollectorImpl
 		JoinContext left = _collectJoins(op.getLeft());
 		JoinContext right = _collectJoins(op.getRight());
 		
-		SqlOpJoin join = SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
+		// NOTE We use a null schema because column names may be common to left and right operand
+		// which is invalid for the schema object.
+		// However, at this stage, we assume that the schema is already validated, and we can
+		// allow duplicate column names in order to avoid creating sub-queries
+		SqlOpJoin join = //SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
+				new SqlOpJoin(null, op.getJoinType(), left.getOp(), right.getOp(), op.getConditions());
+		
 		join.getConditions().addAll(op.getConditions());
 
 		JoinContextJoin context = new JoinContextJoin(join);
@@ -460,7 +573,7 @@ public class SqlOpSelectBlockCollectorImpl
 
 		JoinContext result;
 
-		boolean useCodeThatCausesConflictsOnDuplicateNames = false;
+		boolean useCodeThatCausesConflictsOnDuplicateNames = true;
 
 		if (useCodeThatCausesConflictsOnDuplicateNames) {
 			// FIXME: Can be removed it seems; the other part seems to be working now

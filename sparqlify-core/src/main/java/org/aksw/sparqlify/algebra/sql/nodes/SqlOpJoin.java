@@ -18,6 +18,10 @@ public class SqlOpJoin
 	private JoinType joinType;
 	//private boolean isLeftJoin;
 	private List<SqlExpr> conditions;
+
+	public SqlOpJoin(Schema schema, JoinType joinType, SqlOp left, SqlOp right) {
+		this(schema, joinType, left, right, new ArrayList<SqlExpr>());
+	}
 	
 	public SqlOpJoin(Schema schema, JoinType joinType, SqlOp left, SqlOp right, List<SqlExpr> conditions) {
 		super(schema, left, right);
