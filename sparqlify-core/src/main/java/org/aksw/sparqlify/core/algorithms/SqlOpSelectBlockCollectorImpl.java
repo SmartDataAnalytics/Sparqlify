@@ -130,6 +130,10 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
 		switch(type) {
 
+		case SqlOpGroupBy:
+			result = makeSelect((SqlOpGroupBy)sqlOp);
+			break;			
+		
 		case SqlOpEmpty:
 			result = makeSelect((SqlOpEmpty)sqlOp);
 			break;
