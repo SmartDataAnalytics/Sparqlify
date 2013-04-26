@@ -139,15 +139,15 @@ class SqlValueTransformerInteger
 		//TypeMapper tm = TypeMapper.getInstance();
 
 		//String typeName = TypeToken.Int.toString();
-		Integer v;
+		Long v;
 		try {
-			v = Integer.parseInt(str);
+			v = Long.parseLong(str);
 		} catch(NumberFormatException e) {
 			throw new CastException("Could not cast " + str + " to integer");
 		}
 		
 		
-		SqlValue result = new SqlValue(TypeToken.Int, v);
+		SqlValue result = new SqlValue(TypeToken.Long, v);
 		// String typeName = XSD.integer.toString();
 		//RDFDatatype dt = tm.getSafeTypeByName(typeName);
 
