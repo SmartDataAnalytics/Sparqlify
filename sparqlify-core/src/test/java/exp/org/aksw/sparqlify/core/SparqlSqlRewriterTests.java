@@ -3,7 +3,7 @@ package exp.org.aksw.sparqlify.core;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
+import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -54,7 +54,7 @@ public class SparqlSqlRewriterTests {
 		
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn . Filter(?dn = ?pn) } } }");
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn } } }");
-		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select Distinct * { ?s ex:name ?pn . Optional { ?s ex:dept ?d } } Limit 10 Offset 20	");
+		SparqlSqlStringRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select Distinct * { ?s ex:name ?pn . Optional { ?s ex:dept ?d } } Limit 10 Offset 20	");
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn }");
 //		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ?p ?pn }");
 

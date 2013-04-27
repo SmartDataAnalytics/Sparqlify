@@ -22,7 +22,7 @@ import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
@@ -173,7 +173,7 @@ public class MappingOpsImplTest {
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 
 

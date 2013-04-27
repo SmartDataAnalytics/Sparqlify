@@ -2,8 +2,8 @@ package org.aksw.sparqlify.config.loader;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 
 
@@ -11,7 +11,7 @@ public class SparqlifyQefFactory {
 	private Config config = null;
 	private DataSource dataSource = null;
 	
-	private Long maxQueryExecutionTime = null;
+	private Integer maxQueryExecutionTime = null;
 	private Long maxResultSetRowCount = null;
 	
 	//private static Logger logger = LoggerFactory.getLogger(SparqlifyQefFactory.class);
@@ -35,11 +35,11 @@ public class SparqlifyQefFactory {
 		this.dataSource = dataSource;
 	}
 	
-	public void setMaxQueryExecutionTime(Long seconds) {
+	public void setMaxQueryExecutionTime(Integer seconds) {
 		this.maxQueryExecutionTime = seconds;
 	}
 	
-	public Long getMaxQueryExecutionTime() {
+	public Integer getMaxQueryExecutionTime() {
 		return maxQueryExecutionTime;
 	}
 	
@@ -52,11 +52,11 @@ public class SparqlifyQefFactory {
 	}
 	
 	
-	public QueryExecutionFactory create()
+	public QueryExecutionFactoryEx create()
 		throws Exception
 	{
 
-		QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetRowCount, maxQueryExecutionTime);
+		QueryExecutionFactoryEx result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetRowCount, maxQueryExecutionTime);
 		
 		return result;
 	}

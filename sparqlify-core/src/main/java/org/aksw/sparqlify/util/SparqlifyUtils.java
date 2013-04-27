@@ -40,7 +40,7 @@ import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
-import org.aksw.sparqlify.core.algorithms.SparqlSqlRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
@@ -59,11 +59,16 @@ import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExImpl;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
 import org.antlr.runtime.RecognitionException;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
@@ -531,7 +536,73 @@ public class SparqlifyUtils {
 
 	//public static QueryExecutionFactory
 	
-	public static QueryExecutionFactory createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
+
+	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
+		RdfViewSystemOld.initSparqlifyFunctions();
+
+		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		
+		// typeAliases for the H2 datatype
+		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
+
+
+		Connection conn = dataSource.getConnection();
+
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
+
+		CandidateViewSelector<ViewDefinition> candidateViewSelector;
+		try {
+			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
+
+			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+
+		
+			//	RdfViewSystem system = new RdfViewSystem2();
+			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);		
+		} finally {
+			conn.close();
+		}
+
+
+		SparqlSqlOpRewriter ssoRewriter = SparqlifyUtils.createSqlOpRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+		
+		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem();
+		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
+
+		
+		SparqlSqlStringRewriter rewriter = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);//SparqlifyUtils.createSparqlSqlStringRewriter(ssoRewriter);
+
+		
+		
+		//SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+
+		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
+
+		
+		QueryExecutionFactory qefDefault = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+		
+		if(maxQueryExecutionTime != null) {
+			qefDefault = QueryExecutionFactoryTimeout.decorate(qefDefault, maxQueryExecutionTime * 1000);
+		}
+		
+		if(maxResultSetSize != null) {
+			qefDefault = QueryExecutionFactoryLimit.decorate(qefDefault, false, maxResultSetSize);
+		}
+		
+		
+		QueryExecutionFactory qefExplain = new QueryExecutionFactorySparqlifyExplain(dataSource, ssoRewriter, sqlOpSerializer);
+		
+		
+		QueryExecutionFactoryEx result = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
+		
+		return result;
+	}
+	
+	public static QueryExecutionFactory createDefaultSparqlifyEngineOld(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
@@ -577,7 +648,7 @@ public class SparqlifyUtils {
 			conn.close();
 		}
 
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
 
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
@@ -592,17 +663,18 @@ public class SparqlifyUtils {
 		return qef;
 	}
 	
-	/**
-	 * Creates a full blown SPARQL SQL rewriter object, comprised of:
-	 * - a candidate view selector (TODO rename: actually this object actually returnes a transformed algebra expression; rather than just selecting candidates. 
-	 * - a op 
-	 * 
-	 * @return
-	 * @throws SQLException
-	 * @throws IOException
-	 */
-	public static SparqlSqlRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {		
-		
+	
+	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter)  {
+	
+		SqlExprSerializerSystem serializerSystem = createSerializerSystem();
+		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
+
+		SparqlSqlStringRewriter result = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);
+
+		return result;
+	}
+	
+	public static SparqlSqlOpRewriter createSqlOpRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {
 		//DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
 		//ExprTransformer exprTransformer = new ExprTransformerMap();
 
@@ -617,13 +689,29 @@ public class SparqlifyUtils {
 		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(typeSerializer);
 		//SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(typeSerializer, sqlLiteralMapper);
 
-		SqlExprSerializerSystem serializerSystem = createSerializerSystem();
 		
-		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
 		
 		SqlOpSelectBlockCollector collector = new SqlOpSelectBlockCollectorImpl();
 		
-		SparqlSqlRewriter result = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, collector, sqlOpSerializer);
+		SparqlSqlOpRewriter result = new SparqlSqlOpRewriterImpl(candidateViewSelector, opMappingRewriter, collector);
+		
+		return result;
+	}
+	
+	/**
+	 * Creates a full blown SPARQL SQL rewriter object, comprised of:
+	 * - a candidate view selector (TODO rename: actually this object actually returnes a transformed algebra expression; rather than just selecting candidates. 
+	 * - a op 
+	 * 
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	@Deprecated
+	public static SparqlSqlStringRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {		
+		
+		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(candidateViewSelector, opMappingRewriter, datatypeSystem);
+		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(ssoRewriter);
 
 		return result;
 
@@ -693,5 +781,17 @@ public class SparqlifyUtils {
 		return result;
 	}
 	
-	
+	public static QueryExecutionFactoryExImpl createQueryExecutionFactoryEx(DataSource dataSource, SparqlSqlOpRewriter sparqlSqlOpRewriter, SqlOpSerializer sqlOpSerializer) {
+		
+		SparqlSqlStringRewriter sssRewriter = new SparqlSqlStringRewriterImpl(sparqlSqlOpRewriter, sqlOpSerializer);
+
+		QueryExecutionFactory qefDefault = new QueryExecutionFactorySparqlifyDs(sssRewriter, dataSource);
+		QueryExecutionFactory qefExplain = new QueryExecutionFactorySparqlifyExplain(dataSource, sparqlSqlOpRewriter, sqlOpSerializer);
+		
+		
+		QueryExecutionFactoryExImpl result = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
+		
+		return result;
+	}
+
 }

@@ -9,7 +9,7 @@ import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
 import org.aksw.commons.sparql.api.core.ResultSetClosable;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,13 +141,13 @@ public class QueryExecutionSparqlify
 {
 	public static Logger logger = LoggerFactory.getLogger(QueryExecutionSparqlify.class);
 	
-	private SparqlSqlRewriter rewriter;
+	private SparqlSqlStringRewriter rewriter;
 	private Connection conn;
 	private boolean closeConnWhenDone;
 	//private Query query;
 	
 	// subFactory is needed for DESCRIBE queries right now
-	public QueryExecutionSparqlify(SparqlSqlRewriter rewriter, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory subFactory) {
+	public QueryExecutionSparqlify(SparqlSqlStringRewriter rewriter, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory subFactory) {
 		super(query, subFactory);
 		this.rewriter = rewriter;
 		this.conn = conn;

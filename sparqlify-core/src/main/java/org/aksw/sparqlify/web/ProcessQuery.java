@@ -7,15 +7,14 @@ import java.util.Iterator;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.sparqlify.core.sparql.QueryEx;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
+import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
 
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -41,26 +40,26 @@ public class ProcessQuery {
 		};
 	}
 
-	public static StreamingOutput processQuery(String queryString, String format, QueryExecutionFactory qeFactory)
+	public static StreamingOutput processQuery(String queryString, String format, QueryExecutionFactoryEx qeFactory)
 		throws Exception
 	{
-		Query query = QueryFactory.create(queryString, Syntax.syntaxSPARQL_11);
-		StreamingOutput result = processQuery(query, format, qeFactory);
+		QueryEx queryEx = QueryFactoryEx.create(queryString); //QueryFactory.create(queryString, Syntax.syntaxSPARQL_11);
+		StreamingOutput result = processQuery(queryEx, format, qeFactory);
 		
 		return result;
 	}
 	
 	
-	public static StreamingOutput processQuery(Query query, String format, QueryExecutionFactory qeFactory)
+	public static StreamingOutput processQuery(QueryEx queryEx, String format, QueryExecutionFactoryEx qeFactory)
 			throws Exception
 	{
-		QueryExecutionStreaming qe = qeFactory.createQueryExecution(query);
-		StreamingOutput result = processQuery(query, format, qe);
+		QueryExecutionStreaming qe = qeFactory.createQueryExecution(queryEx);
+		StreamingOutput result = processQuery(queryEx, format, qe);
 		
 		return result;
 	}
 	
-	public static StreamingOutput processQuery(Query query, String format, QueryExecutionStreaming qe)
+	public static StreamingOutput processQuery(QueryEx query, String format, QueryExecutionStreaming qe)
 			throws Exception
 	{
 		try {

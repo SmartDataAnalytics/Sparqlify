@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.hp.hpl.jena.sparql.core.Var;
 
-public class SparqlSqlRewrite {
+public class SparqlSqlStringRewrite {
 	// Whether the query is known to yield an empty result
 	private boolean isEmptyResult;
 	
@@ -12,7 +12,7 @@ public class SparqlSqlRewrite {
 	private VarDefinition varDefinition;
 	private List<Var> projectionOrder;
 
-	public SparqlSqlRewrite(String sqlQueryString, boolean isEmptyResult, VarDefinition varDefinition, List<Var> projectionOrder) {
+	public SparqlSqlStringRewrite(String sqlQueryString, boolean isEmptyResult, VarDefinition varDefinition, List<Var> projectionOrder) {
 		this.sqlQueryString = sqlQueryString;
 		this.isEmptyResult = isEmptyResult;
 		this.varDefinition = varDefinition;
@@ -62,7 +62,7 @@ public class SparqlSqlRewrite {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SparqlSqlRewrite other = (SparqlSqlRewrite) obj;
+		SparqlSqlStringRewrite other = (SparqlSqlStringRewrite) obj;
 		if (projectionOrder == null) {
 			if (other.projectionOrder != null)
 				return false;

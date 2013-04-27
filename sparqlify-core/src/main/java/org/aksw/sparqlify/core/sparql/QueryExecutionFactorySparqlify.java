@@ -4,17 +4,17 @@ import java.sql.Connection;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 
 import com.hp.hpl.jena.query.Query;
 
 public class QueryExecutionFactorySparqlify
 	extends QueryExecutionFactoryBackQuery
 {
-	private SparqlSqlRewriter system;
+	private SparqlSqlStringRewriter system;
 	private Connection conn;
 
-	public QueryExecutionFactorySparqlify(SparqlSqlRewriter system, Connection conn)
+	public QueryExecutionFactorySparqlify(SparqlSqlStringRewriter system, Connection conn)
 	{
 		this.system = system;
 		this.conn = conn;

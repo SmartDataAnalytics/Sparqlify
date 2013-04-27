@@ -14,12 +14,12 @@ import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
-import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
+import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 
@@ -33,10 +33,10 @@ public class SparqlifyTestFacade {
 
 	private ViewDefinitionFactory vdFactory;
 	private CandidateViewSelector cvs;
-	private SparqlSqlRewriter rewriter;
+	private SparqlSqlStringRewriter rewriter;
 
 
-	public SparqlifyTestFacade(ViewDefinitionFactory vdFactory, CandidateViewSelector cvs, SparqlSqlRewriter rewriter) {
+	public SparqlifyTestFacade(ViewDefinitionFactory vdFactory, CandidateViewSelector cvs, SparqlSqlStringRewriter rewriter) {
 		this.cvs = cvs;
 		this.vdFactory = vdFactory;
 		this.rewriter = rewriter;
@@ -50,11 +50,11 @@ public class SparqlifyTestFacade {
 	}
 	
 	
-	public SparqlSqlRewrite rewrite(String queryStr) {
+	public SparqlSqlStringRewrite rewrite(String queryStr) {
 		Query query = new Query();
 		QueryFactory.parse(query, queryStr, "http://ex.org/", Syntax.syntaxSPARQL_11);
 
-		SparqlSqlRewrite result = rewriter.rewrite(query);
+		SparqlSqlStringRewrite result = rewriter.rewrite(query);
 
 		return result;
 	}
@@ -86,7 +86,7 @@ public class SparqlifyTestFacade {
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, opMappingRewriter, vdFactory.getDatatypeSystem());
+		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, opMappingRewriter, vdFactory.getDatatypeSystem());
 	
 		SparqlifyTestFacade result = new SparqlifyTestFacade(vdFactory, cvs, rewriter);
 			

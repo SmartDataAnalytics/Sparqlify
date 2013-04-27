@@ -13,8 +13,8 @@ import java.util.Map.Entry;
 import org.aksw.commons.collections.IClosable;
 import org.aksw.commons.sparql.api.core.QueryExecutionAdapter;
 import org.aksw.commons.sparql.api.core.ResultSetClosable;
-import org.aksw.sparqlify.core.domain.input.SparqlSqlRewrite;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class QueryExecutionSelect
 {
 	private static final Logger logger = LoggerFactory.getLogger(QueryExecutionSelect.class);
 	
-	private SparqlSqlRewriter rewriter;
+	private SparqlSqlStringRewriter rewriter;
 	private final Connection conn;
 	private boolean closeConnWhenDone;
 	
@@ -47,7 +47,7 @@ public class QueryExecutionSelect
 	private ResultSet rs;
 
 	
-	public QueryExecutionSelect(SparqlSqlRewriter rewriter, Connection conn, Query query, boolean closeConnWhenDone) {
+	public QueryExecutionSelect(SparqlSqlStringRewriter rewriter, Connection conn, Query query, boolean closeConnWhenDone) {
 		this.rewriter = rewriter;
 		this.conn = conn;
 		this.query = query;
@@ -105,7 +105,7 @@ public class QueryExecutionSelect
 	
 	// For streaming large result sets with postgres, it seems to only option is to set
 	// the fetch size
-	private static Statement createStatement(Connection conn)
+	public static Statement createStatement(Connection conn)
 			throws SQLException
 	{
 		Statement stmt = conn.createStatement();
@@ -130,7 +130,7 @@ public class QueryExecutionSelect
 		}
 		*/
 		
-		SparqlSqlRewrite rewrite = rewriter.rewrite(query); 
+		SparqlSqlStringRewrite rewrite = rewriter.rewrite(query); 
 
 		/*
 		if(logger.isInfoEnabled()) {

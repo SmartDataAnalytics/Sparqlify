@@ -1380,7 +1380,7 @@ public class MappingOpsImpl
 					Expr expr = def.getExpr();
 					Expr datatypeNorm = exprNormalizer.normalize(expr, typeMap);
 					String hash = datatypeNorm.toString();
-					logger.debug("Cluster for [" + expr + "] is [" + hash + "]");
+					logger.trace("Cluster for [" + expr + "] is [" + hash + "]");
 
 					
 //					if(expr.isConstant()) {

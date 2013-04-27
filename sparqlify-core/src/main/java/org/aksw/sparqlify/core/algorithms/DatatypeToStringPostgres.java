@@ -5,10 +5,15 @@ import java.util.Map;
 
 import org.aksw.commons.util.factory.Factory1;
 import org.aksw.sparqlify.core.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatatypeToStringPostgres
 	implements DatatypeToString
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DatatypeToStringPostgres.class);
+	
 	private Map<String, String> nameToPostgres = new HashMap<String, String>();
 
 	public DatatypeToStringPostgres() {
@@ -69,7 +74,8 @@ public class DatatypeToStringPostgres
 		String tmp = nameToPostgres.get(datatype.getName());
 		if(tmp == null) {
 			tmp = datatype.getName();
-			System.err.println("WARNING: Datatype not checked for db support");
+			//System.err.println("WARNING: Datatype not checked for db support");
+			logger.trace("WARNING: Datatype not checked for db support");
 			//throw new RuntimeException("No string representation for " + datatype.getName());
 		}
 		

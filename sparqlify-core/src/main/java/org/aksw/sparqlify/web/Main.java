@@ -21,15 +21,25 @@ import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
+import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
+import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
+import org.aksw.sparqlify.core.sparql.QueryEx;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExImpl;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
+import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
@@ -45,9 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.jolbox.bonecp.BoneCPConfig;
@@ -237,32 +245,48 @@ public class Main {
 		}
 
 		
-
-		SparqlSqlRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
-
-		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
-
+//		SparqlSqlOpRewriter ssoRewriter = SparqlifyUtils.createSqlOpRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+//		
+//		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem();
+//		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
+//
+//		
+//		SparqlSqlStringRewriter rewriter = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);//SparqlifyUtils.createSparqlSqlStringRewriter(ssoRewriter);
+//
+//		
+//		
+//		//SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+//
+//		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
+//
+//		
+//		QueryExecutionFactory qefDefault = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+//		
+//		if(maxQueryExecutionTime != null) {
+//			qefDefault = QueryExecutionFactoryTimeout.decorate(qefDefault, maxQueryExecutionTime * 1000);
+//		}
+//		
+//		if(maxResultSetSize != null) {
+//			qefDefault = QueryExecutionFactoryLimit.decorate(qefDefault, false, maxResultSetSize);
+//		}
+//		
+//		
+//		QueryExecutionFactory qefExplain = new QueryExecutionFactorySparqlifyExplain(dataSource, ssoRewriter, sqlOpSerializer);
+//		
+//		
+//		QueryExecutionFactoryEx qef = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
 		
-		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
-		
-		if(maxQueryExecutionTime != null) {
-			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);
-		}
-		
-		if(maxResultSetSize != null) {
-			qef = QueryExecutionFactoryLimit.decorate(qef, false, maxResultSetSize);
-		}
-		
+		QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetSize, maxQueryExecutionTime);
 		
 		if(queryString != null) {
-			Query query = QueryFactory.create(queryString); 
+			QueryEx queryEx = QueryFactoryEx.create(queryString); 
 			
-			if(query.isSelectType()) {
-				QueryExecution qe = qef.createQueryExecution(query);
+			if(queryEx.isSelectType()) {
+				QueryExecution qe = qef.createQueryExecution(queryEx);
 				ResultSet rs = qe.execSelect();
 				System.out.println(ResultSetFormatter.asText(rs));
 			}
-			else if(query.isConstructType()) {
+			else if(queryEx.isConstructType()) {
 				QueryExecutionStreaming qe = (QueryExecutionStreaming)qef.createQueryExecution(queryString);
 				Iterator<Triple> it = qe.execConstructStreaming();
 				SparqlFormatterUtils.writeText(System.out, it);

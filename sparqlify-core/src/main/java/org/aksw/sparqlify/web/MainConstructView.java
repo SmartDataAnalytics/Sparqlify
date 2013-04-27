@@ -14,8 +14,8 @@ import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
 import org.aksw.sparqlify.config.lang.ConstructConfigParser;
 import org.aksw.sparqlify.config.syntax.ConstructConfig;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.aksw.sparqlify.sparqlview.Dialect;
-import org.aksw.sparqlify.sparqlview.QueryExecutionFactorySparqlView;
 import org.aksw.sparqlify.sparqlview.SparqlViewSystem;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -271,7 +271,7 @@ public class MainConstructView {
 
 		//QueryExecutionFactoryStreamingProvider provider = new QueryExecutionFactoryStreamingProvider(qef);
 		//QueryExecutionFactoryStreamingProvider.qeFactory = qef;
-		HttpSparqlEndpoint.sparqler = qef;
+		HttpSparqlEndpoint.sparqler = QueryExecutionFactoryExWrapper.wrap(qef);
 		
 		
 		ServletHolder sh = new ServletHolder(ServletContainer.class);

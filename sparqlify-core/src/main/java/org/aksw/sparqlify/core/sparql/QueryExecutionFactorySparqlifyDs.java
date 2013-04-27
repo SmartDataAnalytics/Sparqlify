@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlRewriter;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +25,10 @@ public class QueryExecutionFactorySparqlifyDs
 	private static final Logger logger = LoggerFactory.getLogger(QueryExecutionFactorySparqlifyDs.class);
 	
 	
-	private SparqlSqlRewriter rewriter;
+	private SparqlSqlStringRewriter rewriter;
 	private DataSource dataSource;
 
-	public QueryExecutionFactorySparqlifyDs(SparqlSqlRewriter rewriter, DataSource dataSource)
+	public QueryExecutionFactorySparqlifyDs(SparqlSqlStringRewriter rewriter, DataSource dataSource)
 	{
 		this.rewriter = rewriter;
 		this.dataSource = dataSource;

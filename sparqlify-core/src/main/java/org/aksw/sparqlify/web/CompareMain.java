@@ -4,6 +4,7 @@ import org.aksw.commons.sparql.api.compare.QueryExecutionFactoryCompare;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.core.QueryExecutionStreamingFactory;
 import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -81,7 +82,7 @@ public class CompareMain {
 		
 		
 
-		HttpSparqlEndpoint.sparqler = qef;
+		HttpSparqlEndpoint.sparqler = QueryExecutionFactoryExWrapper.wrap(qef);
 		
 		
 		ServletHolder sh = new ServletHolder(ServletContainer.class);
