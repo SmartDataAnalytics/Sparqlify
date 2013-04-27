@@ -11,6 +11,7 @@ import com.hp.hpl.jena.query.Syntax;
 public class QueryFactoryEx {
 	
 	public static void main(String[] args) {
+		System.out.println(create("expLain sElect * { ?s ?p ?o \n\n }"));
 		System.out.println(create("Prefix ex: <http://example.org/>\n\n expLain sElect * { ?s ?p ?o \n\n }"));
 		System.out.println(create("Prefix ex: <http://example.org/>\n\n expLain\nconstruct { ?s ?p ?o \n\n } { ?s ?p ?o }"));
 	}
@@ -24,7 +25,7 @@ public class QueryFactoryEx {
 		int i = 0;
 		for(String queryForm : queryForms) {
 
-			Pattern explainPattern = Pattern.compile("explain(\\s|\n)+" + queryForm + "(\\s|\n)+", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+			Pattern explainPattern = Pattern.compile("(^|\\s|\n)+explain(\\s|\n)+" + queryForm + "(\\s|\n)+", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
 			explainPatterns[i] = explainPattern;
 			++i;
