@@ -60,4 +60,16 @@ public class QueryEx {
 		return getQueryType() == Query.QueryTypeAsk;
 	}
 
+	@Override
+	public String toString() {
+		String result = "" + query;
+		
+		if(isExplain) {
+			result = "EXPLAIN " + result;
+		}
+		
+		return result;
+		
+	}
+
 }
