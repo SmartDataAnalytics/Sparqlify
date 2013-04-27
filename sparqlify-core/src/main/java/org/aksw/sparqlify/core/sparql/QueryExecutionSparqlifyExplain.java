@@ -42,12 +42,12 @@ class WatchDog implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(WatchDog.class);
 	
 	private Statement stmt;
-	private int timeOutInMillis;
+	private long timeOutInMillis;
 	
-	private int remaining;
+	private long remaining;
 	private boolean isCancelled = false;
 	
-	public WatchDog(Statement stmt, int timeOutInMillis)
+	public WatchDog(Statement stmt, long timeOutInMillis)
 	{
 		this.stmt = stmt;
 		this.timeOutInMillis = timeOutInMillis;
@@ -102,7 +102,9 @@ public class QueryExecutionSparqlifyExplain
 	private SqlOpSerializer sqlOpSerializer;
 
 	private DataSource dataSource;
-	private int timeOutInMillis = 3000;
+	
+	// TODO Make the time out configurable
+	private int queryTimeOutInSeconds = 3;
 	
 	public QueryExecutionSparqlifyExplain(Query query, SparqlSqlOpRewriter sparqlSqlOpRewriter, SqlOpSerializer sqlOpSerializer, DataSource dataSource) {
 		
@@ -168,7 +170,10 @@ public class QueryExecutionSparqlifyExplain
 					
 					long start = System.currentTimeMillis();
 					
-					long elapsedTime = timeOutInMillis;
+					long queryTimeOutInMillis = queryTimeOutInSeconds * 1000;
+					
+					// If we hit a time out, the elapsed time is max
+					//long elapsedTimeInMillis = queryTimeOutInMillis;
 					boolean timeOut = true;
 					
 					Node resultSetSizeNode = null;
@@ -177,38 +182,43 @@ public class QueryExecutionSparqlifyExplain
 					
 					Connection conn = null;
 					java.sql.ResultSet sqlRs = null;
+					long elapsedTimeInMillis = 0;
 					try {
-						conn = dataSource.getConnection();
-						conn.setAutoCommit(false);
-						Statement stmt = QueryExecutionSelect.createStatement(conn);
-						
-						Thread thread = null;
-						WatchDog watchDog = null;
 						try {
-							stmt.setQueryTimeout(timeOutInMillis);
-						} catch(Exception e) {
-							logger.warn("Query time out not natively supported - falling back to custom solution");
+							conn = dataSource.getConnection();
+							conn.setAutoCommit(false);
+							Statement stmt = QueryExecutionSelect.createStatement(conn);
 							
-							watchDog = new WatchDog(stmt, timeOutInMillis);
+							Thread thread = null;
+							WatchDog watchDog = null;
+							try {
+								stmt.setQueryTimeout(queryTimeOutInSeconds);
+							} catch(Exception e) {
+								logger.warn("Query time out not natively supported - falling back to custom solution");
+								
+								watchDog = new WatchDog(stmt, queryTimeOutInMillis);
+								
+								thread = new Thread(watchDog);
+								thread.start();
+							}
+						
+
+							sqlRs = stmt.executeQuery(sqlQueryString);
 							
-							thread = new Thread(watchDog);
-							thread.start();
-						}
-					
-						
-						sqlRs = stmt.executeQuery(sqlQueryString);
-						
-						if(thread != null) {
-							timeOut = false;
-							watchDog.cancel();
+							if(thread != null) {
+								timeOut = false;
+								watchDog.cancel();
+							}
+
+						} finally {
+							long end = System.currentTimeMillis();
+							elapsedTimeInMillis = end - start;							
 						}
 						
 						sqlRs.next();
 						long resultSetSize = sqlRs.getLong("cnt");
 						resultSetSizeNode = NodeValue.makeInteger(resultSetSize).asNode();
 						
-						long end = System.currentTimeMillis();
-						elapsedTime = end - start;
 						
 					} catch (SQLTimeoutException e) {
 						timeOut = true;
@@ -217,7 +227,7 @@ public class QueryExecutionSparqlifyExplain
 						errorMsgNode = NodeValue.makeString(errorMsg).asNode();
 						isError = true;
 						
-						if(elapsedTime >= timeOutInMillis) {
+						if(elapsedTimeInMillis >= queryTimeOutInSeconds) {
 							timeOut = true;
 						}
 						
@@ -242,7 +252,7 @@ public class QueryExecutionSparqlifyExplain
 					
 					BindingHashMap binding = new BindingHashMap();
 					binding.add(idVar, NodeValue.makeInteger(id).asNode());
-					binding.add(executionTimeVar, NodeValue.makeInteger(elapsedTime).asNode());
+					binding.add(executionTimeVar, NodeValue.makeInteger(elapsedTimeInMillis).asNode());
 					binding.add(timeOutVar, NodeValue.makeBoolean(timeOut).asNode());
 					binding.add(resultSetSizeVar, resultSetSizeNode);
 					binding.add(isErrorVar, NodeValue.makeBoolean(isError).asNode());
