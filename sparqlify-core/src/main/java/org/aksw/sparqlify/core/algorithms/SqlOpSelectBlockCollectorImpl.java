@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
+import com.hp.hpl.jena.sdb.core.JoinType;
 
 interface JoinContext {
 	SqlOp getOp();
@@ -507,9 +508,8 @@ public class SqlOpSelectBlockCollectorImpl
 		// However, at this stage, we assume that the schema is already validated, and we can
 		// allow duplicate column names in order to avoid creating sub-queries
 		SqlOpJoin join = //SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
-				new SqlOpJoin(null, op.getJoinType(), left.getOp(), right.getOp(), op.getConditions());
+				new SqlOpJoin(null, op.getJoinType(), left.getOp(), right.getOp()); // op.getConditions());
 		
-		join.getConditions().addAll(op.getConditions());
 
 		JoinContextJoin context = new JoinContextJoin(join);
 
@@ -521,6 +521,16 @@ public class SqlOpSelectBlockCollectorImpl
 		context.getConditions().addAll(right.getConditions());
 		//copyProjection(join, node);
 
+		if(op.getJoinType().equals(JoinType.LEFT)) {
+			logger.debug("Left join encountered");
+		}
+		List<SqlExpr> transformed = adjustConditions(op.getConditions(), context.getProjection());		
+		//result.getConditions().addAll(transformed);
+
+		//join.getConditions().addAll(op.getConditions());
+		join.getConditions().addAll(transformed);
+
+		
 		return context;		
 	}
 

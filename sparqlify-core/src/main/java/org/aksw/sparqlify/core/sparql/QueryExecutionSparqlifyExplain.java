@@ -59,18 +59,20 @@ class WatchDog implements Runnable {
 
 		do {
 			long end = System.currentTimeMillis();
-			int elapsed = (int)(end - start);
+			long elapsed = end - start;
 			remaining = this.timeOutInMillis - elapsed;
 
 			try {
 				synchronized(this) {
-					this.wait(remaining);
+					if(remaining > 0) {
+						this.wait(remaining);
+					}
 				}
 			} catch(Exception e) {
 				
 			}
 			
-		} while (!isCancelled && (remaining > 0));;	
+		} while (!isCancelled && (remaining > 0));
 		
 		
 		if(!isCancelled) {
@@ -227,7 +229,7 @@ public class QueryExecutionSparqlifyExplain
 						errorMsgNode = NodeValue.makeString(errorMsg).asNode();
 						isError = true;
 						
-						if(elapsedTimeInMillis >= queryTimeOutInSeconds) {
+						if(elapsedTimeInMillis >= queryTimeOutInMillis) {
 							timeOut = true;
 						}
 						

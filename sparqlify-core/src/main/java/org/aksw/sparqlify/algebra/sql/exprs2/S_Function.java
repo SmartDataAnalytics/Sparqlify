@@ -30,7 +30,7 @@ public class S_Function
 	
 	@Override
 	public void asString(IndentedWriter writer) {
-		writer.print("Concat");
+		writer.print(name); //"Concat");
 		writeArgs(writer);
 	}
 }

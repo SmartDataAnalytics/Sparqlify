@@ -982,6 +982,7 @@ public class SqlTranslationUtils {
 		transMap.put("*", new ExprTransformerPassValue());
 		transMap.put("/", new ExprTransformerPassValue());
 		
+		transMap.put("bound", new ExprTransformerPassValue());
 		
 		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerPassValue());
 		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerPassValue());
@@ -991,7 +992,7 @@ public class SqlTranslationUtils {
 
 		
 		transMap.put("&&", new ExprTransformerLogicalAnd());
-		//transMap.put("||", new ExprTransformerLogicalAnd());
+		//transMap.put("||", new ExprTransformerLogicalAn());
 
 		return evaluator;
 	}

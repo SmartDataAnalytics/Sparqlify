@@ -845,7 +845,7 @@ public class MappingOpsImpl
 		
 		
 		JoinType joinType = isLeftJoin ? JoinType.LEFT : JoinType.INNER;
-		if(joinType == JoinType.LEFT) {
+		if(joinType.equals(JoinType.LEFT)) {
 			logger.debug("Left Join encountered");
 		}
 		
@@ -895,26 +895,38 @@ public class MappingOpsImpl
 			Collection<RestrictedExpr> defsA = a.getVarDefinition().getDefinitions(commonVar);
 			Collection<RestrictedExpr> defsB = b.getVarDefinition().getDefinitions(commonVar);
 			
-			VarDefKey tmp = joinDefinitionsOnEquals(defsA, defsB, typeMap, sqlTranslator);
+			VarDefKey ors = joinDefinitionsOnEquals(defsA, defsB, typeMap, sqlTranslator);
 
-			if(tmp == null) {
+			if(ors == null) {
 				opResult = SqlOpEmpty.create(opJoin.getSchema());
 				break;
 			}
+			newVarDef.putAll(commonVar, ors.definitionExprs);
 			
+			SqlExpr or = SqlExprUtils.orifyBalanced(ors.constraintExpr);
+			if(or == null || or.equals(S_Constant.TRUE)) {
+				continue;
+			} 			
 			
-			newVarDef.putAll(commonVar, tmp.definitionExprs);
-			joinCondition.addAll(tmp.constraintExpr);
+
+			//joinCondition.addAll(ors.constraintExpr);
+			joinCondition.add(or);
 		}
 
-		
-		//ExprList jc = new ExprList(new ArrayList<Expr>(joinCondition));
+		SqlOp resultSqlOp;
 		List<SqlExpr> jc = new ArrayList<SqlExpr>(joinCondition);
-		SqlOpFilter opFilter = SqlOpFilter.create(opResult, jc);
-		
+
+		if(joinType.equals(JoinType.LEFT)) {
+			opJoin.getConditions().addAll(jc);
+			resultSqlOp = opResult;
+		} else {
+			
+			//ExprList jc = new ExprList(new ArrayList<Expr>(joinCondition));
+			resultSqlOp = SqlOpFilter.create(opResult, jc);
+		}		
 		
 		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
-		Mapping result = new Mapping(newVarDefinition, opFilter);
+		Mapping result = new Mapping(newVarDefinition, resultSqlOp);
 
 		return result;
 	}

@@ -14,8 +14,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_PassThrough;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
@@ -364,7 +364,30 @@ public class NewWorldTest {
 			typeSystem.registerSparqlFunction(f);
 		}
 		
-		
+
+
+		// BOUND
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.Boolean, TypeToken.rdfTerm);
+
+/*
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a) {
+					return new S_Bound(a);
+				}
+			};
+*/
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "isNotNull"); //new SqlExprEvaluator_Bound(typeSystem);
+
+			// As a fallback where Jena can't evaluate it, register a
+			// transformation to an SQL expression.
+			SparqlFunction f = new SparqlFunctionImpl("bound", sig, evaluator, null);
+
+			typeSystem.registerSparqlFunction(f);
+		}
+
 		{
 			MethodSignature<TypeToken> sig = MethodSignature.create(false,
 					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
@@ -384,9 +407,6 @@ public class NewWorldTest {
 			SparqlFunction f = new SparqlFunctionImpl(">", sig, evaluator, null);
 
 			typeSystem.registerSparqlFunction(f);
-
-//			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
-//			serializerSystem.addSerializer("greaterThan", serializer);
 		}
 
 		
@@ -453,10 +473,10 @@ public class NewWorldTest {
 			serializerSystem.addSerializer("logicalAnd", serializer);
 		}
 
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("IS NOT NULL");
-			serializerSystem.addSerializer("isNotNull", serializer);
-		}
+//		{
+//			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("IS NOT NULL");
+//			serializerSystem.addSerializer("isNotNull", serializer);
+//		}
 		
 		{
 			MethodSignature<TypeToken> sig = MethodSignature.create(false,

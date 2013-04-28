@@ -500,6 +500,11 @@ public class SqlOpSerializerImpl
     	if(!restrictionStr.isEmpty()) {
     		restrictionStr = " ON (" + restrictionStr + ")";
     	} else {
+        	if(op.getJoinType().equals(JoinType.LEFT)) {
+        		//writer.println(" ON (TRUE) ");
+        		restrictionStr = " ON (TRUE)";
+        	}
+
     		//restrictionStr = " ON (TRUE)";
     		restrictionStr = "";
     	}
@@ -535,10 +540,6 @@ public class SqlOpSerializerImpl
     	
     	if(!restrictionStr.isEmpty()) {
     		writer.println(restrictionStr);
-    	}
-    	
-    	if(op.getJoinType().equals(JoinType.LEFT)) {
-    		writer.println(" ON (TRUE) ");
     	}
     	
     	//writer.print(") AS " + node.getAliasName());

@@ -345,7 +345,8 @@ public class FilterPlacementOptimizer2 {
 			Set<Var> clauseVars = clause.getVarsMentioned();
 
 			// If there are variables in the clause which do not appear on the right side, we cannot push the clause down the right side of the left join
-			if(rightVars.containsAll(clauseVars)) {
+			//if(rightVars.containsAll(clauseVars)) {
+			if(Sets.intersection(clauseVars, rightVars).isEmpty()) {
 				leftClauses.add(clause);				
 			} else {
 				nonPushable.add(clause);				
