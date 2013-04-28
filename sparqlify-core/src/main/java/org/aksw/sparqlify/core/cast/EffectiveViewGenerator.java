@@ -141,7 +141,7 @@ public class EffectiveViewGenerator {
 		
 		List<ViewDefinition> result = new ArrayList<ViewDefinition>();
 
-		boolean disableNullableTransform = false;
+		boolean disableNullableTransform = true;
 		if(disableNullableTransform) {
 			result.add(viewDef);
 			return result;

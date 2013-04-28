@@ -1,6 +1,8 @@
 package org.aksw.sparqlify.config.v0_2.bridge;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
@@ -9,6 +11,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.config.lang.Constraint;
+import org.aksw.sparqlify.config.lang.PrefixConstraint;
+import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.config.syntax.QueryString;
 import org.aksw.sparqlify.config.syntax.Relation;
 import org.aksw.sparqlify.config.syntax.RelationRef;
@@ -16,6 +20,8 @@ import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,11 +84,17 @@ public class SyntaxBridge {
 		
 		VarExprList varExprList = viewDefinition.getViewTemplateDefinition().getVarExprList();
 		List<Constraint> constraints = viewDefinition.getConstraints();
-		
+
+		Map<Var, PrefixConstraint> varToPrefixConstraint = new HashMap<Var, PrefixConstraint>();
 		if(constraints != null) {
 			for(Constraint constraint : constraints) {
-				// TODO
-				//constraint.
+				if(constraint instanceof PrefixConstraint) {
+					PrefixConstraint c = (PrefixConstraint)constraint;
+
+					varToPrefixConstraint.put(c.getVar(), c);
+				} else {
+					logger.warn("Unknown constraint type: " + constraint.getClass() + " - " + constraint);
+				}
 			}
 		}
 			
@@ -94,7 +106,18 @@ public class SyntaxBridge {
 			Var var = entry.getKey();
 			Expr expr = entry.getValue();
 			
-			RestrictedExpr rexpr = new RestrictedExpr(expr);
+			RestrictionSetImpl rs = null;
+			
+			PrefixConstraint c = varToPrefixConstraint.get(var);
+			if(c != null) {
+				PrefixSet ps = c.getPrefixes();
+				RestrictionImpl r = new RestrictionImpl(ps);
+				rs = new RestrictionSetImpl(r);
+			}
+			
+			
+			
+			RestrictedExpr rexpr = new RestrictedExpr(expr, rs);
 			
 			varDefs.put(var, rexpr);
 		}

@@ -1,0 +1,66 @@
+/**
+ * Sparqlify configuration file for LinkedGeoData
+ *
+ * Triplify flavour
+ *
+ */
+
+// Prefixes (these will also be used in the query responses)
+Prefix spy:<http://aksw.org/sparqlify/>
+Prefix ogc:<http://www.opengis.net/ont/geosparql#>
+
+#Prefix dc:<http://purl.org/dc/elements/1.1/>
+Prefix dcterms:<http://purl.org/dc/terms/>
+Prefix xsd:<http://www.w3.org/2001/XMLSchema#>
+Prefix rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+Prefix owl:<http://www.w3.org/2002/07/owl#>
+
+
+Prefix lgd:<http://linkedgeodata.org/triplify/>
+Prefix lgd-geom:<http://linkedgeodata.org/geometry/>
+Prefix lgdo:<http://linkedgeodata.org/ontology/>
+Prefix lgdm:<http://linkedgeodata.org/meta/>
+
+//Prefix geo:<http://www.georss.org/georss/>
+
+Prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+
+Prefix spatial:<http://geovocab.org/spatial#>
+Prefix geom:<http://geovocab.org/geometry#>
+
+//Prefix virtrdf:<http://www.openlinksw.com/schemas/virtrdf#>
+
+
+
+// Node geometries
+
+Create View lgd_nodes As
+	Construct {
+	    ?n a lgdm:Node .
+		?n geom:geometry ?g .
+		?g ogc:asWKT ?o .
+	}
+	With
+		?n = uri(concat(lgd:node, ?id))
+		?g = uri(concat(lgd-geom:node, ?id))
+		?o = typedLiteral(?geom, ogc:wktLiteral)
+	From
+		nodes
+
+
+Create View lgd_node_tags_resource_k As
+	Construct {
+		?s ?p ?o .
+	}
+	With
+		?s = uri(concat(lgd:node, ?node_id)) 
+		?p = uri(?property)
+		?o = uri(?object)
+	Constrain
+		?p prefix "http://linkedgeodata.org/ontology/" "http://www.w3.org/"
+		?o prefix "http://linkedgeodata.org/ontology/"
+	From
+		lgd_node_tags_resource_k
+
