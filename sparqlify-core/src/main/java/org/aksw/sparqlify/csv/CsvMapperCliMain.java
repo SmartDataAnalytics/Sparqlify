@@ -498,7 +498,7 @@ public class CsvMapperCliMain {
         Map<Var, Integer> varCountMap = state.getVarCountMap();
         int omittedTripleCount = totalTripleCount - tripleGenCount;
         
-        System.err.println("Varible\t#Unbound");
+        System.err.println("Variable\t#Unbound");
         for(Entry<Var, Integer> entry : varCountMap.entrySet()) {
         	Var var = entry.getKey();
         	Integer count = entry.getValue();

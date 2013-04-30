@@ -12,7 +12,7 @@ public class ExprRewriteCollection {
 	private Set<Expr> rewriteExprs = new HashSet<Expr>();
 
 	private ExprList paramVars;
-	private Var varArgVar; // A varible denoting a variable argument list.
+	private Var varArgVar; // A variable denoting a variable argument list.
 	
 	public ExprRewriteCollection(ExprList paramVars, Var varArgVar) {
 		this.paramVars = paramVars;

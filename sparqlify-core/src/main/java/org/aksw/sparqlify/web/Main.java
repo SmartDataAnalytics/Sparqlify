@@ -81,7 +81,11 @@ public class Main {
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) throws Exception {
+		
+		LoggerCount loggerCount = new LoggerCount(logger);
 
+		Class.forName("org.postgresql.Driver");
+		
 		CommandLineParser cliParser = new GnuParser();
 
 		cliOptions.addOption("P", "port", true, "Server port");
@@ -99,12 +103,17 @@ public class Main {
 		// Note: Q and D are exclusive. If either is given, no server is started
 		cliOptions.addOption("Q", "query", true, "");
 		cliOptions.addOption("D", "dump", false, "");
-		
-		cliOptions.addOption("c", "config", true, "Sparqlify config file");
+
+		// TODO Rename to m for mapping file soon
+		cliOptions.addOption("m", "mapping", true, "Sparqlify mapping file");
 
 		cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout");
 		cliOptions.addOption("n", "resultsetsize", true, "Maximum result set size");
+
+		cliOptions.addOption("c", "class", true, "JDBC driver class");
+		cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
 		
+
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
 
 		
@@ -115,11 +124,15 @@ public class Main {
 		int port = Integer.parseInt(portStr);
 		//int backLog = Integer.parseInt(backLogStr);
 
-		String hostName = commandLine.getOptionValue("h", "localhost");
+		String hostName = commandLine.getOptionValue("h", "");
 		String dbName = commandLine.getOptionValue("d", "");
 		String userName = commandLine.getOptionValue("u", "");
 		String passWord = commandLine.getOptionValue("p", "");
 
+		
+		String jdbcUrl = commandLine.getOptionValue("j", "");
+		//String driverClassName = commandLine.getOptionValue("c", "");
+		
 		boolean isDump = commandLine.hasOption("D");
 		String queryString = commandLine.getOptionValue("Q", "");
 		
@@ -129,7 +142,7 @@ public class Main {
 		}
 		
 		if(isDump && isQuery) {
-			logger.error("Options D and Q are exclusive");
+			loggerCount.error("Options D and Q are mutually exclusive");
 		}
 		
 		if(isDump) {
@@ -148,22 +161,21 @@ public class Main {
 				: Long.parseLong(maxResultSetSizeStr);
 		
 		
-		String configFileStr = commandLine.getOptionValue("c");
+		String configFileStr = commandLine.getOptionValue("m");
 
 		if (configFileStr == null) {
-			logger.error("No config file given");
+			loggerCount.error("No mapping file given");
 
 			printHelpAndExit(-1);
 		}
 
 		File configFile = new File(configFileStr);
 		if (!configFile.exists()) {
-			logger.error("File does not exist: " + configFileStr);
+			loggerCount.error("File does not exist: " + configFileStr);
 
 			printHelpAndExit(-1);
 		}
 
-		LoggerCount loggerCount = new LoggerCount(logger);
 		
 		ConfigParser parser = new ConfigParser();
 
@@ -175,20 +187,39 @@ public class Main {
 			in.close();
 		}
 
+		if(!jdbcUrl.isEmpty() && (!hostName.isEmpty() || !dbName.isEmpty())) {
+			loggerCount.error("Option 'j' is mutually exclusive with 'h' and 'd'");
+		}
+		
+		if(jdbcUrl.isEmpty() && hostName.isEmpty()) {
+			hostName = "localhost";
+		}
 
 		/*
 		 * Connection Pool  
 		 */
 		
-		PGSimpleDataSource dataSourceBean = new PGSimpleDataSource();
+		PGSimpleDataSource dataSourceBean = null;
+		
+		if(jdbcUrl.isEmpty()) {
+			dataSourceBean = new PGSimpleDataSource();
 
-		dataSourceBean.setDatabaseName(dbName);
-		dataSourceBean.setServerName(hostName);
-		dataSourceBean.setUser(userName);
-		dataSourceBean.setPassword(passWord);
-
+			dataSourceBean.setDatabaseName(dbName);
+			dataSourceBean.setServerName(hostName);
+			dataSourceBean.setUser(userName);
+			dataSourceBean.setPassword(passWord);
+		}
+		
 		BoneCPConfig cpConfig = new BoneCPConfig();
-		cpConfig.setDatasourceBean(dataSourceBean);
+		
+		if(jdbcUrl.isEmpty()) {
+			cpConfig.setDatasourceBean(dataSourceBean);			
+		} else {
+			cpConfig.setJdbcUrl(jdbcUrl);
+			cpConfig.setUsername(userName);
+			cpConfig.setPassword(passWord);
+		}
+		
 		/*
 		cpConfig.setJdbcUrl(dbconf.getDbConnString()); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
 		cpConfig.setUsername(dbconf.getUsername()); 

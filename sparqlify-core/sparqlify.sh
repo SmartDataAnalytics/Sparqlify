@@ -1,2 +1,3 @@
 #!/bin/sh
-java -cp /usr/share/sparqlify/sparqlify.jar org.aksw.sparqlify.rest.Main $@
+wd=`dirname $0`
+java -cp "$wd/target/sparqlify-core-jar-with-dependencies.jar" org.aksw.sparqlify.web.Main $@

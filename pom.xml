@@ -131,7 +131,38 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
-			<plugin>
+
+
+
+<!-- http://stackoverflow.com/questions/5586515/idea-to-avoid-that-spring-handlers-spring-schemas-get-overwritten-when-merging-m -->
+<!--         <plugin> -->
+<!--             <groupId>org.apache.maven.plugins</groupId> -->
+<!--             <artifactId>maven-shade-plugin</artifactId> -->
+<!--             <version>2.0</version> -->
+<!--             <executions> -->
+<!--                 <execution> -->
+<!--                     <phase>package</phase> -->
+<!--                     <goals> -->
+<!--                         <goal>shade</goal> -->
+<!--                     </goals> -->
+<!--                     <configuration> -->
+<!--                         <transformers> -->
+<!--                             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> -->
+<!--                                 <mainClass>at.seresunit.lecturemanager_connector.App</mainClass> -->
+<!--                             </transformer> -->
+<!--                             <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"> -->
+<!--                                 <resource>META-INF/spring.handlers</resource> -->
+<!--                             </transformer> -->
+<!--                             <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer"> -->
+<!--                                 <resource>META-INF/spring.schemas</resource> -->
+<!--                             </transformer> -->
+<!--                         </transformers> -->
+<!--                     </configuration> -->
+<!--                 </execution> -->
+<!--             </executions> -->
+<!--         </plugin> -->
+
+        <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.13</version>

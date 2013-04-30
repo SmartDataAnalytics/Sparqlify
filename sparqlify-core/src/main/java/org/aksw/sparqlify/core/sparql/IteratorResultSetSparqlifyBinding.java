@@ -212,7 +212,7 @@ public class IteratorResultSetSparqlifyBinding
 			NodeValue value = null;
 			//Node value = Node.NULL;
 			
-			// We distinguish on how to create a varible by the columns that are used
+			// We distinguish on how to create a variable by the columns that are used
 			// We use the most specific rdfTerm constructor
 			Set<Var> usedVars = new HashSet<Var>();
 			for(RestrictedExpr def : candidateExprs) {
