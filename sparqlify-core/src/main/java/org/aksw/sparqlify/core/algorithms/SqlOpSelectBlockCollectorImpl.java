@@ -348,7 +348,7 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpExtend op) {
+	public static SqlOpSelectBlock makeSelect(SqlOpExtend op) {
 		
 		SqlOp subOp = _makeSelect(op.getSubOp());
 		
@@ -460,11 +460,11 @@ public class SqlOpSelectBlockCollectorImpl
 		case SqlOpProject:
 			result = collectJoins((SqlOpProject)sqlOp);
 			break;
-		
+		*/
 		case SqlOpExtend:
 			result = collectJoins((SqlOpExtend)sqlOp);
 			break;
-		*/
+
 		case SqlOpRename:
 			result = collectJoins((SqlOpRename)sqlOp);
 			break;
@@ -479,7 +479,7 @@ public class SqlOpSelectBlockCollectorImpl
 
 			
 		default:
-			logger.warn("Should not come here");
+			logger.warn("Not sure if we should come here"); 
 			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "collectJoins", sqlOp);
 			break;
 		}
@@ -631,7 +631,21 @@ public class SqlOpSelectBlockCollectorImpl
 			projection.put(newName, new S_ColumnRef(datatype, oldName, aliasName));
 		}
 	}
-	
+
+	public static JoinContextJoin collectJoins(SqlOpExtend sqlOp) {
+		//SqlOpQuery query = makeSelectOrTable(op);
+		
+		SqlOpSelectBlock op = makeSelect((SqlOpExtend)sqlOp);
+		String alias = aliasGenerator.next();
+		op.setAliasName(alias);
+
+		
+		JoinContextJoin result = new JoinContextJoin(op);
+		initProjection(result.getProjection(), op.getSchema(), op.getAliasName());
+		
+		return result;
+	}
+
 	
 	public static JoinContextJoin collectJoins(SqlOpTable op) {
 		SqlOpTable table = makeSelectOrTable(op);
@@ -673,6 +687,18 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+
+//	public static SqlOpSelectBlock makeSelectOrTable(SqlOpSelectBlock result) {
+//		
+//		// TODO Maybe we should copy rather than doing in-place transformations
+//		String alias = aliasGenerator.next();
+//		result.setAliasName(alias);
+//		//SqlOpSelectBlock result = SqlOpSelectBlock.create(sqlOp, aliasName)
+//		//SqlOpTable result = new SqlOpSelect(node.getSchema(), node.getTableName(), alias);
+//		
+//		return result;
+//	}
+	
 	
 	public static SqlOpTable makeSelectOrTable(SqlOpTable node) {
 		
