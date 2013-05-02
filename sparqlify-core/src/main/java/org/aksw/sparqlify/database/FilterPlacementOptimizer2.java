@@ -62,6 +62,7 @@ class PredicateInstanceOf<T>
 	}		
 }
 
+
 /**
  * 
  * @author raven
@@ -236,7 +237,40 @@ public class FilterPlacementOptimizer2 {
 		return optimize(op.getSubOp(), child);
 	}
 	*/
+	
+	public static Op _optimizeNewButNotSureIfWeNeedSplitsHere(OpFilterIndexed op, RestrictionManagerImpl cnf) {
+		
+		RestrictionManagerImpl child = new RestrictionManagerImpl(cnf);
+		child.stateRestriction(op.getRestrictions());
+
+		
+		FilterSplit filterSplit = splitFilter(op, child);
+		
+		
+		RestrictionManagerImpl pushable = filterSplit.getLeftClauses();
+		
+
+		Op result = optimize(op.getSubOp(), pushable);
+
+		
+		if(!filterSplit.getNonPushable().getCnf().isEmpty()) {
+			result = OpFilterIndexed.filter(filterSplit.getNonPushable(), result);
+		}
+		
+		/*
+		if(child.isUnsatisfiable()) {
+			 Op result = OpNull.create();
+			 return result;
+		}*/
+
+		
+		return result;
+	}
+	
+	
 	public static Op _optimize(OpFilterIndexed op, RestrictionManagerImpl cnf) {
+		
+		
 		
 		RestrictionManagerImpl child = new RestrictionManagerImpl(cnf);
 		
@@ -327,6 +361,42 @@ public class FilterPlacementOptimizer2 {
 		};
 
 		Op result = handleLeftJoin(op.getLeft(), op.getRight(), cnf, factory);
+		return result;
+	}
+	
+	
+	public static FilterSplit splitFilter(Op op, RestrictionManagerImpl cnf) {
+		//Set<Var> rightVars = GetVarsMentioned.getVarsMentioned(right);
+		
+		Set<Var> opVars = GetVarsMentioned.getVarsMentioned(op);
+		
+		Set<Clause> leftClauses = new HashSet<Clause>();
+		Set<Clause> nonPushable = new HashSet<Clause>();
+
+		for(Clause clause : cnf.getCnf()) {
+			Set<Var> clauseVars = clause.getVarsMentioned();
+
+			// If the clause contains vars that are not part of the op, we cannot push it down
+			if(opVars.containsAll(clauseVars)) {
+				leftClauses.add(clause);				
+			} else {
+				nonPushable.add(clause);				
+			}
+
+			/*
+			if(Sets.intersection(clauseVars, rightVars).isEmpty()) { //  Do we need to check && !doesClauseContainBoundExpr(clause)) {				
+				leftClauses.add(clause);
+			} else {
+				nonPushable.add(clause);
+			}
+			*/
+		}
+		
+		RestrictionManagerImpl leftRm = new RestrictionManagerImpl(new NestedNormalForm(leftClauses));
+		RestrictionManagerImpl np = new RestrictionManagerImpl(new NestedNormalForm(nonPushable));
+		
+		FilterSplit result = new FilterSplit(leftRm, np);
+		
 		return result;
 	}
 

@@ -65,6 +65,7 @@ import com.hp.hpl.jena.sdb.core.JoinType;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.core.VarExprList;
 import com.hp.hpl.jena.sparql.expr.E_Function;
+import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
 import com.hp.hpl.jena.sparql.expr.ExprList;
@@ -276,6 +277,8 @@ public class MappingOpsImpl
 	 * 
 	 * List<{Map<Var, RestExpr>, SqlExpr} 
 	 * 
+	 * IMPORTANT NOTE: Negation is dealt with once the result of this method is obtained
+	 * I.e. if expr is of type E_LogicalNot, the result needs to be ANDified, otherwise ORified
 	 * 
 	 * @param condition
 	 * @param varDef
@@ -285,7 +288,7 @@ public class MappingOpsImpl
 	 */	
 	public static List<SqlExprContext> createSqlExprs(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		List<SqlExprContext> result = new ArrayList<SqlExprContext>();
-
+		
 		Set<Var> conditionVars = condition.getVarsMentioned();
 		
 		// Common variables of the condition and the varDef
@@ -361,7 +364,7 @@ public class MappingOpsImpl
 	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		List<SqlExprContext> items = createSqlExprs(condition, varDef, typeMap, sqlTranslator);
 		
-		List<SqlExpr> ors = new ArrayList<SqlExpr>();
+		List<SqlExpr> combines = new ArrayList<SqlExpr>();
 		for(SqlExprContext item : items) {
 			SqlExpr sqlExpr = item.getSqlExpr();
 			
@@ -373,10 +376,18 @@ public class MappingOpsImpl
 				continue;
 			}
 
-			ors.add(sqlExpr);			
+			combines.add(sqlExpr);			
 		}
 		
-		SqlExpr result = SqlExprUtils.orifyBalanced(ors);
+		
+		boolean isNegated = condition instanceof E_LogicalNot;
+		
+		SqlExpr result;
+		if(isNegated) {
+			result = SqlExprUtils.andifyBalanced(combines);			
+		} else {
+			result = SqlExprUtils.orifyBalanced(combines);
+		}
 
 
 		if(result == null) {
@@ -1013,9 +1024,13 @@ public class MappingOpsImpl
 	@Override
 	public Mapping filter(Mapping a, ExprList exprs) {
 		Map<String, TypeToken> typeMap = a.getSqlOp().getSchema().getTypeMap();
-		
+				
 		List<SqlExpr> sqlExprs = new ArrayList<SqlExpr>();
 		for(Expr expr : exprs) {
+		
+			if(expr.getVarsMentioned().contains(Var.alloc("aaa"))) {
+				System.out.println("Got my var");
+			}
 			
 			// Replace any variables in the expression with the variable definitions			
 			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap, sqlTranslator);
