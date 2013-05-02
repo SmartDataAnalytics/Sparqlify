@@ -400,8 +400,32 @@ public class FilterPlacementOptimizer2 {
 		return result;
 	}
 
-	
+	/*
+	 * TODO: We could still push constraints down on the RHS - why aren't we doing this?
+	 * Even the old version only considered restrictions on the left hand side
+	 * 
+	 */
 	public static Op handleLeftJoin(Op left, Op right, RestrictionManagerImpl cnf, Factory2<Op> factory) {
+		// Only push those expression on the, that do not contain any
+		// variables of the right side
+		
+		FilterSplit filterSplit = splitFilter(left, cnf);
+		
+		RestrictionManagerImpl leftRm = filterSplit.getLeftClauses();
+		RestrictionManagerImpl np = filterSplit.getNonPushable();
+		
+		Op newLeft = optimize(left, leftRm);
+		Op newRight = optimize(right, leftRm);
+		
+		//Op leftJoin = OpLeftJoin.create(newLeft, newRight, new ExprList());
+		Op leftJoin = factory.create(newLeft, newRight);
+
+		Op result = surroundWithFilterIfNeccessary(leftJoin, np);
+		return result;
+	}
+	
+	
+	public static Op handleLeftJoinOld(Op left, Op right, RestrictionManagerImpl cnf, Factory2<Op> factory) {
 		// Only push those expression on the, that do not contain any
 		// variables of the right side
 		

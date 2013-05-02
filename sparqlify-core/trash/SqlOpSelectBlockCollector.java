@@ -269,6 +269,7 @@ public class SqlOpSelectBlockCollector {
 	}
 
 	public static SqlOp makeSelectOrTable(SqlOpEmpty node) {
+		throw new RuntimeException("Empty SQL node");
 		// Should never come here
 		return node;
 	}

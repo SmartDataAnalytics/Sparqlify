@@ -2,12 +2,15 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
+import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
@@ -18,6 +21,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
+import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.openjena.atlas.io.IndentedWriter;
@@ -149,10 +154,34 @@ public class SqlOpSerializerImpl
 	
 	
 	
-	
-	
 	public void _serialize(SqlOpEmpty node, IndentedWriter writer) {
+
+		writer.print("(SELECT ");
+
+		Map<String, SqlExpr> proj = new HashMap<String, SqlExpr>();
+		SqlExpr sqlExpr = S_Constant.create(new SqlValue(TypeToken.Int, null));
+		
+		Schema schema = node.getSchema();
+		List<String> columnNames = schema.getColumnNames();
+		for(String columnName : columnNames) {
+			proj.put(columnName, sqlExpr);
+		}
+
+		String projStr = projection(columnNames, proj);
+		writer.print(projStr);
+		
+		writer.print(" WHERE FALSE)");
+
+		
+		if(node.getAliasName() != null) {
+			writer.print(" " + node.getAliasName());
+		}
+	}
+	
+	
+	public void _serializeOld(SqlOpEmpty node, IndentedWriter writer) {
 		writer.print("(SELECT NULL WHERE FALSE)");
+		
 		if(node.getAliasName() != null) {
 			writer.print(" " + node.getAliasName());
 		}

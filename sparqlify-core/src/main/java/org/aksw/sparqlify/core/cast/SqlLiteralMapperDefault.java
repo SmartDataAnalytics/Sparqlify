@@ -39,7 +39,9 @@ public class SqlLiteralMapperDefault
 		
 		String result;
 		if(typeToken.equals(TypeToken.String)) {
-			result = "'" + lex + "'";
+			//result = "'" + lex + "'";
+			// TODO We need to cast string literals to an explicit datatype!
+			result = "'" + lex + "'::text";
 		}
 		else {
 			result = "" + lex;

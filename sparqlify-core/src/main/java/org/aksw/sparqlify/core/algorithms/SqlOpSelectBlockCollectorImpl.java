@@ -201,8 +201,12 @@ public class SqlOpSelectBlockCollectorImpl
 	 * @return
 	 */
 	public static SqlOp makeSelect(SqlOpEmpty op) {
-		SqlOpSelectBlock result = requireSelectBlock(op);
-
+		SqlOp result = makeSelectOrTable(op);
+		
+//		SqlOpSelectBlock result = requireSelectBlock(op);
+//		String aliasName = aliasGenerator.next();
+//		result.setAliasName(aliasName);
+		
 		return result;
 	}
 	

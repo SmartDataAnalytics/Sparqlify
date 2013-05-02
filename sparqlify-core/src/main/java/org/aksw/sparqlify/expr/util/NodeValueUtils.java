@@ -6,7 +6,9 @@ import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode;
 
 public class NodeValueUtils {
 
@@ -55,7 +57,15 @@ public class NodeValueUtils {
 			return expr.getString();
 		} else if(expr instanceof NodeValueGeom){
 			return ((NodeValueGeom) expr).getGeometry();
-		} else {
+		} else if(expr instanceof NodeValueNode) {
+			//Node node = ((NodeValueNode)expr).ge
+			if(expr.equals(NodeValue.nvNothing)) {
+				return null;
+			} else {
+				throw new RuntimeException("Unknow datatype of node: " + expr);				
+			}
+		}
+		else {
 			throw new RuntimeException("Unknow datatype of constant: " + expr);
 		}
 	}

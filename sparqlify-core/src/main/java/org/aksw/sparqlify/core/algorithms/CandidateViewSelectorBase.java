@@ -158,7 +158,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * Abstract methods
 	 */
 	//public abstract I createUnionItem(List<ViewInstance<T>> list, RestrictionManagerImpl restrictions);
-	public abstract Op createOp(List<ViewInstanceJoin<T>> viewInstances);
+	public abstract Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<T>> viewInstances);
 
 	
 	/**
@@ -1177,7 +1177,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	{
 		List<ViewInstanceJoin<T>> conjunctions = getApplicableViewsBase(op, restrictions);
 		
-		Op result = createOp(conjunctions);
+		Op result = createOp(op, conjunctions);
 		/*
 		OpDisjunction result = OpDisjunction.create();
 		
@@ -1413,18 +1413,18 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	}
 
 	
-	// Fails the left join test case
+	// Seems to be working now
 	public Op processLeftJoin(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
 	{
 		FilterSplit filterSplit = FilterPlacementOptimizer2.splitFilter(left, restrictions);
-		RestrictionManagerImpl leftRestricitons = filterSplit.getLeftClauses();
+		RestrictionManagerImpl leftRestrictions = filterSplit.getLeftClauses();
 		
 		
 		Op newLeft = _getApplicableViews(left, filterSplit.getLeftClauses());
 
 		//System.out.println("so far so good\n" + newLeft);
 		
-		newLeft = FilterPlacementOptimizer2.optimize(newLeft, leftRestricitons);
+		newLeft = FilterPlacementOptimizer2.optimize(newLeft, leftRestrictions);
 
 		//System.out.println("so far so good\n" + newLeft);
 		
@@ -1447,9 +1447,15 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				
 				//System.out.println("Member: " + member);
 			
-				RestrictionManagerImpl subRestrictions = filterRestrictionsBound(leftRestricitons);//new RestrictionManager(restrictions);
-				RestrictionManagerImpl moreRestrictions = filterRestrictionsBound(getRestrictions2(member));
+//				RestrictionManagerImpl subRestrictions = filterRestrictionsBound(leftRestrictions);
+//				RestrictionManagerImpl tmp = getRestrictions2(member);
+//				RestrictionManagerImpl moreRestrictions = filterRestrictionsBound(tmp);
 
+				RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(leftRestrictions);
+				RestrictionManagerImpl tmp = getRestrictions2(member);
+				subRestrictions.stateRestriction(tmp);
+				
+				/*
 				if(moreRestrictions != null) {
 					/*
 					for(Clause clause : moreRestrictions.getCnf()) {
@@ -1457,11 +1463,12 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 							// FIXME Creating a new NormalForm for each clause is somewhat overkill
 							subRestrictions.stateCnf(new NestedNormalForm(Collections.singleton(clause)));
 						}
-					}*/
+					}* /
 					
 					
 					subRestrictions.stateRestriction(moreRestrictions);
 				}
+				*/
 				
 				if(exprs != null) {
 					for(Expr expr : exprs) {
@@ -1496,7 +1503,8 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			result = newUnion;
 		}
 				
-		logger.debug("Left join candidates:\n" + result);
+		//logger.debug("Left join candidates:\n" + result);
+		System.out.println("Left join candidates:\n" + result);
 		
 		return result;
 	}
@@ -1558,7 +1566,17 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	
 	public static RestrictionManagerImpl getRestrictions2(Op op) {
 		if(op instanceof OpFilterIndexed) {
-			return ((OpFilterIndexed) op).getRestrictions();
+			
+			OpFilterIndexed opFilter = (OpFilterIndexed)op;
+			RestrictionManagerImpl filterRestrictions = opFilter.getRestrictions(); 
+			RestrictionManagerImpl subRestrictions = getRestrictions2(opFilter.getSubOp());
+			
+			RestrictionManagerImpl result = new RestrictionManagerImpl(subRestrictions);
+
+			result.stateRestriction(filterRestrictions);
+
+			return result;
+			//return ((OpFilterIndexed) op).getRestrictions();
 		} else if(op instanceof Op1) {
 			return getRestrictions2(((Op1) op).getSubOp());
 		} else if(op instanceof OpJoin) {
@@ -1569,8 +1587,9 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			return getRestrictions2(((OpConditional)op).getLeft());			
 		} else if(op instanceof OpDisjunction) {
 			return null; // TODO We could factor out restrictions common to all elements
-		} else if(op instanceof OpRdfViewPattern) {
-			return null;
+		} else if(op instanceof OpViewInstanceJoin) {
+			OpViewInstanceJoin opPattern = (OpViewInstanceJoin)op;
+			return opPattern.getJoin().getRestrictions();
 		} else {
 			throw new RuntimeException("Should not happen: Unhandled Op: " + op.getClass() + " --- "+ op);
 		}		

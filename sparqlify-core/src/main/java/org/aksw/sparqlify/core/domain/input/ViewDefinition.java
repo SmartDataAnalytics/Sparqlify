@@ -9,10 +9,10 @@ import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
+import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.openjena.atlas.io.IndentedWriter;
-import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
@@ -73,6 +73,9 @@ import com.hp.hpl.jena.sparql.core.Var;
 public class ViewDefinition
 	implements IViewDef
 {
+	public static final ViewDefinition emptyViewDefinition = new ViewDefinition("emptyView", new QuadPattern(), null, MappingOpsImpl.createEmptyMapping(), null);
+	
+	
 	private String name;
 	
 	// Note: all quads in the template must (should?) be composed of variables only

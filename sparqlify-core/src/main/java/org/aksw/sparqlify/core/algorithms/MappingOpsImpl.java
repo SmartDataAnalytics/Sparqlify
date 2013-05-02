@@ -1027,11 +1027,7 @@ public class MappingOpsImpl
 				
 		List<SqlExpr> sqlExprs = new ArrayList<SqlExpr>();
 		for(Expr expr : exprs) {
-		
-			if(expr.getVarsMentioned().contains(Var.alloc("aaa"))) {
-				System.out.println("Got my var");
-			}
-			
+					
 			// Replace any variables in the expression with the variable definitions			
 			SqlExpr sqlExpr = createSqlCondition(expr, a.getVarDefinition(), typeMap, sqlTranslator);
 			if(sqlExpr.equals(S_Constant.TRUE)) {
@@ -1222,9 +1218,10 @@ public class MappingOpsImpl
 	public Mapping union(List<Mapping> members) {
 
 		//Remove all members that do not yield results 		
-		members = removeEmptyMembers(members);
+		//members = removeEmptyMembers(members);
 
 		if(members.isEmpty()) {
+			if(true) { throw new RuntimeException("Should not happen"); }
 			Mapping result = createEmptyMapping();
 			return result;
 		}

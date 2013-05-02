@@ -42,6 +42,10 @@ public class ExprUtils {
 	 */
 	public static boolean isConstantArgsOnly(ExprFunction fn) {
 		
+		if(fn == null) {
+			throw new RuntimeException("Null argument should not happen here");
+		}
+		
 		boolean result = isConstantsOnly(fn.getArgs());
 
 		return result;

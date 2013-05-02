@@ -21,7 +21,6 @@ import sparql.CnfUtils;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.engine.binding.BindingHashMap;
 import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -798,7 +797,10 @@ public class RestrictionManagerImpl implements RestrictionManager {
 		if(satisfiability == Boolean.FALSE) {
 			return "inconsistent";
 		} else {
-			return restrictions + " " + cnf.toString();
+			Map<Var, RestrictionImpl> varToRest = new HashMap<Var, RestrictionImpl>();
+			this.collectRestrictions(varToRest);
+			
+			return varToRest + " " + cnf.toString();
 		}
 	}
 

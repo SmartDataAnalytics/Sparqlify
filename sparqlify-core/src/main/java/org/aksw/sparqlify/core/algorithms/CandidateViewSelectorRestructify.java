@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
+import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 
 public class CandidateViewSelectorRestructify
 	extends CandidateViewSelectorBase<SparqlView, Void>
@@ -20,7 +21,7 @@ public class CandidateViewSelectorRestructify
 	}
 
 	@Override
-	public Op createOp(List<ViewInstanceJoin<SparqlView>> conjunctions) {
+	public Op createOp(OpQuadPattern qpQuadPattern, List<ViewInstanceJoin<SparqlView>> conjunctions) {
 		
 		
 		OpDisjunction result = OpDisjunction.create();
