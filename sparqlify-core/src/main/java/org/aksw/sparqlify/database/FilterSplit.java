@@ -3,16 +3,16 @@ package org.aksw.sparqlify.database;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
 public class FilterSplit {
-	private RestrictionManagerImpl leftClauses;
+	private RestrictionManagerImpl pushable;
 	private RestrictionManagerImpl nonPushable;
 	
-	public FilterSplit(RestrictionManagerImpl leftClauses, RestrictionManagerImpl nonPushable) {
-		this.leftClauses = leftClauses;
+	public FilterSplit(RestrictionManagerImpl pushable, RestrictionManagerImpl nonPushable) {
+		this.pushable = pushable;
 		this.nonPushable = nonPushable;
 	}
 
-	public RestrictionManagerImpl getLeftClauses() {
-		return leftClauses;
+	public RestrictionManagerImpl getPushable() {
+		return pushable;
 	}
 
 	public RestrictionManagerImpl getNonPushable() {

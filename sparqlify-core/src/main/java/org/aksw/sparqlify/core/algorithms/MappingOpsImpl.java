@@ -1218,10 +1218,10 @@ public class MappingOpsImpl
 	public Mapping union(List<Mapping> members) {
 
 		//Remove all members that do not yield results 		
-		//members = removeEmptyMembers(members);
+		members = removeEmptyMembers(members);
 
 		if(members.isEmpty()) {
-			if(true) { throw new RuntimeException("Should not happen"); }
+			//if(true) { throw new RuntimeException("Should not happen"); }
 			Mapping result = createEmptyMapping();
 			return result;
 		}

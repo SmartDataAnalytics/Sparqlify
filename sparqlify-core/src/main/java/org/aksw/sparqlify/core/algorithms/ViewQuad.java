@@ -4,6 +4,13 @@ import org.aksw.sparqlify.core.interfaces.IViewDef;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 
+/**
+ * Compares views by their name.
+ * 
+ * @author raven
+ *
+ * @param <T>
+ */
 public class ViewQuad<T extends IViewDef> {
 	private T view;
 	private Quad quad;
@@ -28,7 +35,7 @@ public class ViewQuad<T extends IViewDef> {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((quad == null) ? 0 : quad.hashCode());
-		result = prime * result + ((view == null) ? 0 : view.hashCode());
+		result = prime * result + ((view == null) ? 0 : view.getName().hashCode());
 		return result;
 	}
 
@@ -49,7 +56,7 @@ public class ViewQuad<T extends IViewDef> {
 		if (view == null) {
 			if (other.view != null)
 				return false;
-		} else if (!view.equals(other.view))
+		} else if (!view.getName().equals(other.view.getName()))
 			return false;
 		return true;
 	}

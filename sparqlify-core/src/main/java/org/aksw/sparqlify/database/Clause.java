@@ -23,7 +23,11 @@ public class Clause
 	extends ClauseBase
 {
 	private Map<Var, RestrictionImpl> varToRestriction = new HashMap<Var, RestrictionImpl>();
-	
+
+	public Clause() {
+		this(new HashSet<Expr>());
+	}
+
 	public Clause(Expr expr) {
 		this(new HashSet<Expr>(Collections.singleton(expr)));
 	}

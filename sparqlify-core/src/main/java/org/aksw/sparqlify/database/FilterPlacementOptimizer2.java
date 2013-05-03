@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
+import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.sparqlview.OpSparqlViewPattern;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
@@ -247,7 +249,7 @@ public class FilterPlacementOptimizer2 {
 		FilterSplit filterSplit = splitFilter(op, child);
 		
 		
-		RestrictionManagerImpl pushable = filterSplit.getLeftClauses();
+		RestrictionManagerImpl pushable = filterSplit.getPushable();
 		
 
 		Op result = optimize(op.getSubOp(), pushable);
@@ -395,6 +397,31 @@ public class FilterPlacementOptimizer2 {
 		RestrictionManagerImpl leftRm = new RestrictionManagerImpl(new NestedNormalForm(leftClauses));
 		RestrictionManagerImpl np = new RestrictionManagerImpl(new NestedNormalForm(nonPushable));
 		
+		for(Entry<Var, RestrictionImpl> entry : cnf.getRestrictions().entrySet()) {
+			Var var = entry.getKey();
+			RestrictionImpl rest = entry.getValue();
+			
+			leftRm.stateRestriction(var, rest);
+			np.stateRestriction(var, rest);
+		}
+
+		/*
+		for(Var var : leftRm.getVariables()) {
+			RestrictionImpl r = cnf.getRestriction(var);
+			if(r != null) {
+				leftRm.stateRestriction(var, r);
+			}
+		}
+		
+		for(Var var : np.getVariables()) {
+			RestrictionImpl r = cnf.getRestriction(var);
+			if(r != null) {
+				np.stateRestriction(var, r);
+			}
+		}
+		*/
+		
+		
 		FilterSplit result = new FilterSplit(leftRm, np);
 		
 		return result;
@@ -411,11 +438,16 @@ public class FilterPlacementOptimizer2 {
 		
 		FilterSplit filterSplit = splitFilter(left, cnf);
 		
-		RestrictionManagerImpl leftRm = filterSplit.getLeftClauses();
+		RestrictionManagerImpl leftRm = filterSplit.getPushable();
 		RestrictionManagerImpl np = filterSplit.getNonPushable();
 		
 		Op newLeft = optimize(left, leftRm);
-		Op newRight = optimize(right, leftRm);
+		
+		// We can push expressions from the left side into the right side - but
+		// only if ther expressions are pushable
+		FilterSplit rsplit = splitFilter(right, leftRm);
+		RestrictionManagerImpl rightRm = rsplit.getPushable();
+		Op newRight = optimize(right, rightRm);
 		
 		//Op leftJoin = OpLeftJoin.create(newLeft, newRight, new ExprList());
 		Op leftJoin = factory.create(newLeft, newRight);

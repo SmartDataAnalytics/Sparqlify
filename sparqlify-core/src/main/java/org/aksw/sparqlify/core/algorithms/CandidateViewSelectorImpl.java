@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.hp.hpl.jena.sdb.core.Generator;
+import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
@@ -144,6 +146,8 @@ public class CandidateViewSelectorImpl
 		return result;
 	}
 	
+	public static Generator emptyViewNameGenerator = Gensym.create("emptyView");
+	
 	public static Op createEmptyViewInstance(OpQuadPattern opQuadPattern) {
 		Set<Var> vars = GetVarsMentioned.getVarsMentioned(opQuadPattern);
 
@@ -176,7 +180,8 @@ public class CandidateViewSelectorImpl
 		VarDefinition varDef = new VarDefinition(varDefMap);
 		Mapping mapping = new Mapping(varDef, sqlOpEmpty);
 		
-		ViewDefinition viewDef = new ViewDefinition("emptyView", new QuadPattern(), null, mapping, null);
+		String viewName = emptyViewNameGenerator.next();
+		ViewDefinition viewDef = new ViewDefinition(viewName, new QuadPattern(), null, mapping, null);
 		
 		ViewInstance<ViewDefinition> viewInstance = new ViewInstance<ViewDefinition>(viewDef, binding);
 		List<ViewInstance<ViewDefinition>> tmp = new ArrayList<ViewInstance<ViewDefinition>>();

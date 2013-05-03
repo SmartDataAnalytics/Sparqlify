@@ -12,6 +12,7 @@ import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpAssign;
 import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
+import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
 import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
@@ -161,6 +162,17 @@ public class ReplaceConstants {
 	
 	public static Op _replace(OpUnion op) {
 		return OpUnion.create(replace(op.getLeft()), replace(op.getRight()));
+	}
+
+	public static Op _replace(OpDisjunction op) {
+		OpDisjunction result = OpDisjunction.create();
+		for(Op member : op.getElements()) {
+			Op newMember = replace(member);
+			
+			result.add(newMember);
+		}
+		
+		return result;
 	}
 	
 	public static Op _replace(OpFilter op) {

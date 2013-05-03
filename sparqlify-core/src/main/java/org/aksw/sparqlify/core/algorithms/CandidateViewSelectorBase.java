@@ -97,7 +97,8 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	private Table<Object> table;
 	
 	private PrefixIndex<Object> idxTest;
-	private Set<T> views = new HashSet<T>();
+	//private Set<T> views = new HashSet<T>();
+	private List<T> views = new ArrayList<T>();
 
 	//private ViewDefinitionNormalizer<T> viewDefinitionNormalizer;
 	
@@ -593,6 +594,77 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	private static final String[] columnNames = new String[]{"g_prefix", "s_prefix", "p_prefix", "o_prefix"};
 
 	
+	public Map<String, Constraint> inferColumnConstraints(Quad quad, RestrictionImpl[] termRestriction, Clause clause) {
+		
+		Map<String, Constraint> result = new HashMap<String, Constraint>();
+		
+		
+		boolean isUnsatisfiable = false;
+		// Prefix constraints
+		for(int i = 0; i < 4; ++i) {
+			Node n = QuadUtils.getNode(quad, i);
+			
+			/*
+			if(!(n instanceof Var)) {
+				System.out.println("debug");
+			}
+			*/
+			
+			Var var = (Var)n;
+			
+			RestrictionImpl r;
+			
+			RestrictionImpl clauseRest = clause.getRestriction(var);
+			RestrictionImpl bindRest = termRestriction[i];
+			
+			if(bindRest == null) {
+				r = clauseRest;
+			} else if(clauseRest != null) {
+				r = bindRest.clone();
+				r.stateRestriction(clauseRest);
+			} else {
+				r = null;
+			}
+			
+			
+			if(r == null) {
+				continue;
+			} else if(r.isUnsatisfiable()) {
+				isUnsatisfiable = true;
+				break;
+			}
+			
+			
+			
+			termRestriction[i] = r;
+			
+			if(r.getRdfTermTypes().contains(RdfTermType.URI) && r.hasConstant()) {
+				String columnName = columnNames[i];
+
+				result.put(columnName, new IsPrefixOfConstraint(r.getNode().getURI()));
+			}
+		}
+		
+		if(isUnsatisfiable) {
+			return null;
+		}
+
+		// Object type constraint
+		RestrictionImpl r = termRestriction[3];
+		if(r != null) {
+			switch(r.getType()) {
+			case URI:
+				result.put("o_type", new EqualsConstraint(1));
+				break;
+			case LITERAL:
+				result.put("o_type", new EqualsConstraint(2));
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * TODO: This method is far from optimal performance right now:
 	 * We need to consider prefix-set-restrictions of the variables during the lookup in order to rule
@@ -616,8 +688,12 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		Set<Var> quadVars = QuadUtils.getVarsMentioned(quad);
 		Set<Clause> dnf = restrictions.getEffectiveDnf(quadVars);
 		
+		if(dnf.isEmpty()) {
+			dnf = new HashSet<Clause>();
+			dnf.add(new Clause());
+		}
 
-		RestrictionImpl[] termRestriction = new RestrictionImpl[4];
+		RestrictionImpl[] baseTermRestriction = new RestrictionImpl[4];
 
 		// Get the restrictions for the variables
 		for(int i = 0; i < 4; ++i) {
@@ -626,80 +702,30 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			Var var = (Var)n;
 			
 			RestrictionImpl r = restrictions.getRestriction(var);
-			termRestriction[i] = r;
+			baseTermRestriction[i] = r;
 		}
 		
-		logger.debug("\nTerm restrictions for " + quad + ":\n" + StringUtils.itemPerLine(termRestriction));
+		logger.debug("\nTerm restrictions for " + quad + ":\n" + StringUtils.itemPerLine(baseTermRestriction));
 		
+		Set<ViewQuad<T>> result = new HashSet<ViewQuad<T>>();
 		for(Clause clause : dnf) {
-			Map<String, Constraint> columnConstraints = new HashMap<String, Constraint>();
 			
+			// NOTE: This array gets modified by inferColumnConstraints
+			RestrictionImpl[] termRestriction = Arrays.copyOf(baseTermRestriction, baseTermRestriction.length);
+			Map<String, Constraint> columnConstraints = inferColumnConstraints(quad, termRestriction, clause);
+	
 			
-			// Prefix constraints
-			for(int i = 0; i < 4; ++i) {
-				Node n = QuadUtils.getNode(quad, i);
-				
-				/*
-				if(!(n instanceof Var)) {
-					System.out.println("debug");
-				}
-				*/
-				
-				Var var = (Var)n;
-				
-				RestrictionImpl r;
-				
-				RestrictionImpl clauseRest = clause.getRestriction(var);
-				RestrictionImpl bindRest = termRestriction[i];
-				
-				if(bindRest == null) {
-					r = clauseRest;
-				} else if(clauseRest != null) {
-					r = bindRest.clone();
-					r.stateRestriction(clauseRest);
-				} else {
-					r = null;
-				}
-				
-				
-				if(r == null) {
-					continue;
-				}
-				termRestriction[i] = r;
-				
-				if(r.getRdfTermTypes().contains(RdfTermType.URI) && r.hasConstant()) {
-					String columnName = columnNames[i];
-
-					columnConstraints.put(columnName, new IsPrefixOfConstraint(r.getNode().getURI()));
-				}
-			}
-
-			// Object type constraint
-			RestrictionImpl r = termRestriction[3];
-			if(r != null) {
-				switch(r.getType()) {
-				case URI:
-					columnConstraints.put("o_type", new EqualsConstraint(1));
-					break;
-				case LITERAL:
-					columnConstraints.put("o_type", new EqualsConstraint(2));
-					break;
-				}
+			// null indicates unsatisfiablity
+			if(columnConstraints == null) {
+				continue;
 			}
 			
-			// TODO Remove subsumed constraints
-			constraints.add(columnConstraints);
-		}
+			Set<ViewQuad<T>> viewQuads = new HashSet<ViewQuad<T>>();
+			if(constraints.isEmpty()) {
+				// Add a dummy element to look up all views in the subsequent loop
+				constraints.add(new HashMap<String, Constraint>());			
+			}
 		
-
-		Set<ViewQuad<T>> viewQuads = new HashSet<ViewQuad<T>>();
-		if(constraints.isEmpty()) {
-			// Add a dummy element to look up all views in the subsequent loop
-			constraints.add(new HashMap<String, Constraint>());			
-		}
-		
-		//System.out.println("[Constraints] " + constraints);
-		for(Map<String, Constraint> columnConstraints : constraints) {
 		
 			Collection<List<Object>> rows = table.select(columnConstraints);
 
@@ -716,63 +742,65 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				ViewQuad<T> viewQuad = (ViewQuad<T>)row.get(row.size() - 1);
 				viewQuads.add(viewQuad);
 			}
-		}
-
-		
-		// Finally: Cross check the viewQuads against the namespace prefixes
-		int filterCount = 0;
-		Iterator<ViewQuad<T>> itViewQuad = viewQuads.iterator();
-		while(itViewQuad.hasNext()) {
-			ViewQuad<T> viewQuad = itViewQuad.next();
-
-			Quad q = viewQuad.getQuad();
-			boolean isUnsatisfiable = false;
-			for(int i = 0; i < 4; ++i) {
-				RestrictionImpl queryRest = termRestriction[i];
-				
-				Node n = QuadUtils.getNode(q, i);
-				
-
-				RestrictionImpl viewRest;
-				if(n.isVariable()) {
-					Var var = (Var)n;
-					viewRest = viewQuad.getView().getVarRestrictions().getRestriction(var);	
-				} else if(n.isURI()) {
-					viewRest = new RestrictionImpl();
-					viewRest.stateNode(n);
-				} else {
-					viewRest = null;
-					//throw new RuntimeException("FIXME ME handle this case");
+			
+			// Finally: Cross check the viewQuads against the namespace prefixes
+			int filterCount = 0;
+			Iterator<ViewQuad<T>> itViewQuad = viewQuads.iterator();
+			while(itViewQuad.hasNext()) {
+				ViewQuad<T> viewQuad = itViewQuad.next();
+	
+				Quad q = viewQuad.getQuad();
+				boolean isUnsatisfiable = false;
+				for(int i = 0; i < 4; ++i) {
+					RestrictionImpl queryRest = termRestriction[i];
+					
+					Node n = QuadUtils.getNode(q, i);
+					
+	
+					RestrictionImpl viewRest;
+					if(n.isVariable()) {
+						Var var = (Var)n;
+						viewRest = viewQuad.getView().getVarRestrictions().getRestriction(var);	
+					} else if(n.isURI()) {
+						viewRest = new RestrictionImpl();
+						viewRest.stateNode(n);
+					} else {
+						viewRest = null;
+						//throw new RuntimeException("FIXME ME handle this case");
+					}
+					 
+					if(viewRest == null || queryRest == null) {
+						continue;
+					}
+					
+					RestrictionImpl tmp = viewRest.clone();
+					tmp.stateRestriction(queryRest);
+					
+					if(tmp.isUnsatisfiable()) {
+						isUnsatisfiable = true;
+						break;
+					}
 				}
-				 
-				if(viewRest == null || queryRest == null) {
-					continue;
-				}
-				
-				RestrictionImpl tmp = viewRest.clone();
-				tmp.stateRestriction(queryRest);
-				
-				if(tmp.isUnsatisfiable()) {
-					isUnsatisfiable = true;
-					break;
+	
+				if(isUnsatisfiable) {
+					//System.out.println("Filtered: " + viewQuad);
+					++filterCount;
+					itViewQuad.remove();
 				}
 			}
-
-			if(isUnsatisfiable) {
-				//System.out.println("Filtered: " + viewQuad);
-				++filterCount;
-				itViewQuad.remove();
-			}
+			
+			int total = viewQuads.size() + filterCount;
+			logger.debug(viewQuads.size() + " of " + total + " candidates remaining (" + filterCount + " filtered)");
+		
+			
+			result.addAll(viewQuads);
+			//System.out.println("Total results: " + viewQuads.size());
+			//logger.debug(StringUtils.itemPerLine(viewQuads));
+			//logger.info("--------------------------------");
 		}
+		logger.debug("Total number of candidates: " + result.size());
 		
-		int total = viewQuads.size() + filterCount;
-		logger.debug(viewQuads.size() + " of " + total + " candidates remaining (" + filterCount + " filtered)");
-		
-		//System.out.println("Total results: " + viewQuads.size());
-		//logger.debug(StringUtils.itemPerLine(viewQuads));
-		//logger.info("--------------------------------");
-		
-		return viewQuads;
+		return result;
 	}
 
 	
@@ -1256,6 +1284,18 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		return result;
 	}
 
+	public Op getApplicableViews(OpDisjunction op, RestrictionManagerImpl restrictions) {
+		List<Op> members = op.getElements();
+		
+		List<Op> newMembers = new ArrayList<Op>(members.size());
+		for(Op member : members) {
+			Op newMember = _getApplicableViews(member, restrictions);
+			newMembers.add(newMember);
+		}
+				
+		Op result = OpDisjunction.create().copy(newMembers);
+		return result;
+	}
 
 	
 	public Op getApplicableViews(OpProject op, RestrictionManagerImpl restrictions) {
@@ -1417,16 +1457,17 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	public Op processLeftJoin(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
 	{
 		FilterSplit filterSplit = FilterPlacementOptimizer2.splitFilter(left, restrictions);
-		RestrictionManagerImpl leftRestrictions = filterSplit.getLeftClauses();
+		RestrictionManagerImpl leftRestrictions = filterSplit.getPushable();
 		
 		
-		Op newLeft = _getApplicableViews(left, filterSplit.getLeftClauses());
+		Op newLeft = _getApplicableViews(left, filterSplit.getPushable());
 
-		//System.out.println("so far so good\n" + newLeft);
+		System.out.println("so far so good\n" + newLeft);
 		
 		newLeft = FilterPlacementOptimizer2.optimize(newLeft, leftRestrictions);
 
-		//System.out.println("so far so good\n" + newLeft);
+		
+		System.out.println("so far so good\n" + newLeft);
 		
 		List<Op> members;
 		
@@ -1452,6 +1493,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 //				RestrictionManagerImpl moreRestrictions = filterRestrictionsBound(tmp);
 
 				RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(leftRestrictions);
+				//RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
 				RestrictionManagerImpl tmp = getRestrictions2(member);
 				subRestrictions.stateRestriction(tmp);
 				
@@ -1476,10 +1518,13 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 					}
 				}
 
-				Op newRight = _getApplicableViews(right, subRestrictions);
+				FilterSplit rsplit = FilterPlacementOptimizer2.splitFilter(right, subRestrictions);
+				
+				RestrictionManagerImpl rclauses = rsplit.getPushable();
+				Op newRight = _getApplicableViews(right, rclauses);
 				
 				Op item = (OpLeftJoin)OpLeftJoin.create(member, newRight, new ExprList());
-
+				
 				if(!filterSplit.getNonPushable().getCnf().isEmpty()) {
 					item = new OpFilterIndexed(item, filterSplit.getNonPushable());
 				}

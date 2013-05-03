@@ -243,5 +243,39 @@ public class ViewDefinition
 	public VarDefinition getVarDefinition() {
 		return mapping.getVarDefinition();
 	}
+
+	// HACK: We only use the name for equality testing - take care!!!
+	@Override
+	public int hashCode() {
+		throw new RuntimeException("Don't compare views with equal - use their name instead");
+		/*
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;*/
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		throw new RuntimeException("Don't compare views with equal - use their name instead");
+		/*
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ViewDefinition other = (ViewDefinition) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+		*/
+	}
+	
+	
+	
 }
 
