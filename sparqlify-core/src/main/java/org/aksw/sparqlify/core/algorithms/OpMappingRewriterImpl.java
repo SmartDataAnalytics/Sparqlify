@@ -214,6 +214,10 @@ public class OpMappingRewriterImpl
 	}
 
 	public Mapping rewrite(OpOrder op) {
+		// If the op is a union, we try to sort the members based on their prefix
+		// constraints
+		
+		
 		Mapping a = rewrite(op.getSubOp());
 		
 		List<SortCondition> sortConditions = op.getConditions();
