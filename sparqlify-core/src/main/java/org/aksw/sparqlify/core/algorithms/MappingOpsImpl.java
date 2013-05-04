@@ -1135,6 +1135,7 @@ public class MappingOpsImpl
 				// The following distinguishes between e.g.
 				// <http://ex.org/Amenity> and
 				// E_RdfTerm(1, "http://ex.org/Amenity", "", "")
+				// Note: We expand to constant, and then replace the "value" field
 				E_RdfTerm rdfTerm;
 				if(expr.isConstant()) {
 					rdfTerm = SqlTranslationUtils.expandConstant(expr);
@@ -1143,7 +1144,6 @@ public class MappingOpsImpl
 				}
 				
 				
-				// TODO THIS SEEMS BROKEN
 				boolean isConstantArgsOnly = ExprUtils.isConstantArgsOnly(rdfTerm);
 				if(isConstantArgsOnly) {
 					// Obtain the node value of the constant 
@@ -1175,7 +1175,11 @@ public class MappingOpsImpl
 					
 						exprs.add(e);
 					}
-					newExpr = ExprCopy.getInstance().copy(expr, exprs);
+					//newExpr = ExprCopy.getInstance().copy(expr, exprs);
+					newExpr = ExprCopy.getInstance().copy(rdfTerm, exprs);
+					
+					
+					// TODO If the constant was a URI, we could retain the PrefixSet constraint
 					
 				}
 				else {
