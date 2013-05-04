@@ -33,6 +33,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
+import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -104,7 +105,11 @@ public class FilterPlacementOptimizer2 {
 	public static Op _optimize(OpOrder op, RestrictionManagerImpl cnf) {
 		return new OpOrder(optimize(op.getSubOp(), cnf), op.getConditions());
 	}
-	
+
+	public static Op _optimize(OpTopN op, RestrictionManagerImpl cnf) {
+		return new OpTopN(optimize(op.getSubOp(), cnf), op.getLimit(), op.getConditions());
+	}
+
 	
 	public static Op _optimize(OpJoin op, RestrictionManagerImpl cnf) {
 		

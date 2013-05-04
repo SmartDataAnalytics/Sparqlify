@@ -70,6 +70,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
+import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
 import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
@@ -1284,6 +1285,14 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		return result;
 	}
 
+
+	public Op getApplicableViews(OpTopN op, RestrictionManagerImpl restrictions) {
+		Op subOp = _getApplicableViews(op.getSubOp(), restrictions);
+		
+		Op result = new OpTopN(subOp, op.getLimit(), op.getConditions());
+		return result;
+	}
+	
 	public Op getApplicableViews(OpDisjunction op, RestrictionManagerImpl restrictions) {
 		List<Op> members = op.getElements();
 		

@@ -25,6 +25,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.algebra.op.OpTable;
+import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
 import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.core.BasicPattern;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -125,6 +126,10 @@ public class ReplaceConstants {
 		return new OpProject(replace(op.getSubOp()), op.getVars());
 	}
 
+	public static Op _replace(OpTopN op) {
+		return new OpTopN(replace(op.getSubOp()), op.getLimit(), op.getConditions());
+	}
+	
 	public static Op _replace(OpDistinct op) {
 		return new OpDistinct(replace(op.getSubOp()));
 	}

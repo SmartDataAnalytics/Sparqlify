@@ -27,6 +27,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
+import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
 
@@ -78,17 +79,21 @@ public class OpMappingRewriterImpl
 		return result;
 	}
 	
+	public List<Mapping> rewriteList(List<Op> ops) {
+		List<Mapping> mappings = new ArrayList<Mapping>(ops.size());
+		
+		for(Op op : ops) {
+			Mapping tmp = rewrite(op);
+			mappings.add(tmp);	
+		}
+				
+		return mappings;	
+	}
 
 	public Mapping rewrite(OpDisjunction op) {
-		List<Mapping> mappings = new ArrayList<Mapping>(op.size());
 		
-		for(Op member : op.getElements()) {
-			
-			Mapping tmp = rewrite(member);
-			mappings.add(tmp);
-			
-		}
-		
+		List<Op> elements = op.getElements();
+		List<Mapping> mappings = rewriteList(elements);
 		
 		Mapping result = ops.union(mappings);
 		return result;
@@ -286,6 +291,19 @@ public class OpMappingRewriterImpl
 		}
 		else if (op instanceof OpOrder) {
 			result = rewrite((OpOrder)op);
+		}
+		else if(op instanceof OpTopN) {
+			OpTopN o = (OpTopN)op;
+			
+			// We convert this 'back' into an order by followed by limit
+			Op sub = o.getSubOp();
+			OpOrder inner = new OpOrder(sub, o.getConditions());
+			OpSlice outer = new OpSlice(inner, 0, o.getLimit());
+			
+			result = rewrite(outer);
+			
+//			return result;
+			
 		}
 		/*
 		else if(op instanceof OpNull) {
