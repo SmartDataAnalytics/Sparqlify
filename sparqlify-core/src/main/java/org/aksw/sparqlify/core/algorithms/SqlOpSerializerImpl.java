@@ -535,7 +535,7 @@ public class SqlOpSerializerImpl
         	}
 
     		//restrictionStr = " ON (TRUE)";
-    		restrictionStr = "";
+    		//restrictionStr = "";
     	}
 
     	
@@ -557,7 +557,6 @@ public class SqlOpSerializerImpl
     	} else {
     		throw new RuntimeException("Join type not supported");
     	}
-
     	
     	
     	//writer.print("(");

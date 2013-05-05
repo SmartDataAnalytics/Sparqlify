@@ -35,6 +35,10 @@ import com.hp.hpl.jena.sdb.core.JoinType;
 
 interface JoinContext {
 	SqlOp getOp();
+	
+	//List<Projection> getProjections();
+	
+	//SqlOp getOp();
 	List<SqlExpr> getConditions();
 	Projection getProjection();
 }
@@ -72,10 +76,14 @@ class JoinContextJoin
 {
 	// The effective op, i.e. table, query, join or union.
 	private SqlOp op;
-	private List<SqlExpr> conditions = new ArrayList<SqlExpr>();
 	private Projection projection = new Projection();
+	private List<SqlExpr> conditions = new ArrayList<SqlExpr>();
 
-	
+
+//	public JoinContextJoin() {
+//		super();
+//	}
+
 	public JoinContextJoin(SqlOp op) {
 		this.op = op;
 	}
@@ -90,8 +98,64 @@ class JoinContextJoin
 
 	public Projection getProjection() {
 		return projection;
+	}	
+}
+
+class SqlOpJoinBlock {
+	private List<JoinContext> members = new ArrayList<JoinContext>();
+	
+	public SqlOpJoinBlock()
+	{
+		super();
+	}
+	
+	public List<JoinContext> getMembers() {
+		return members;
+	}
+	
+}
+
+class SqlOpJoinBlockOld
+{
+	// The effective op, i.e. table, query, join or union.
+	private List<SqlOp> ops;
+	private List<Projection> projections = new ArrayList<Projection>();
+	private List<SqlExpr> conditions = new ArrayList<SqlExpr>();
+	
+	
+	public SqlOpJoinBlockOld() {
+		super();
+	}
+	
+	//public JoinContextJoin(SqlOp op) {
+	//	this.ops = new ArrayList<SqlOp>(Arrays.asList(op));
+	//}
+	
+	public List<SqlOp> getOps() {
+		return ops;
+	}
+	
+	public List<SqlExpr> getConditions() {
+		return conditions;
+	}
+	
+	public List<Projection> getProjections() {
+		return projections;
+	}
+	
+	
+	public void addOther(SqlOpJoinBlockOld other) {
+		this.ops.addAll(other.getOps());
+		this.projections.addAll(other.getProjections());
+	}
+	
+	public void add(SqlOp op, Projection projection) {
+		this.ops.add(op);
+		this.projections.add(projection);
 	}
 }
+
+
 
 
 /**
@@ -419,7 +483,20 @@ public class SqlOpSelectBlockCollectorImpl
 		//copyProjection(join, node);
 		 */
 
-		block.setSubOp(context.getOp());
+		// Create joins for all elements
+		// TODO We could actually make the JoinContext into
+		// an SqlOp directly
+//		SqlOp op = null;
+//		for(SqlOp member : context.getOps()) {
+//			if(op == null) {
+//				op = member;
+//			} else {
+//				op = SqlOpJoin.create(JoinType.INNER, op, member);
+//			}
+//		}
+	
+		SqlOp op = context.getOp();
+		block.setSubOp(op);
 		//block.setSchema(op.getSchema());
 		block.setSchema(schema);
 		block.getProjection().add(context.getProjection());
@@ -496,23 +573,109 @@ public class SqlOpSelectBlockCollectorImpl
 	// TODO SqlOpEmpty needs an alias
 	public static JoinContext collectJoins(SqlOpEmpty op) {
 		SqlOpEmpty table = makeSelectOrTable(op);		
-		JoinContextJoin result = new JoinContextJoin(table);		
+		JoinContextJoin result = new JoinContextJoin(table);
 		initProjection(result.getProjection(), op.getSchema(), table.getAliasName());
 		
 		return result;		
 	}
+
+
+//	public static SqlOpJoinBlock _collectJoinBlock(SqlOp op) {
+//			return null;
+//	}
+//	
+//	public static SqlOpJoinBlock collectJoinBlock(SqlOpJoin op, SqlOpJoinBlock joinBlock) {
+//		
+//		_collectJoinBlock(op.getLeft(), );
+//		SqlOpJoinBlock right = _collectJoinBlock(op.getRight());
+//		
+//		
+////		if(op.getJoinType().equals(JoinType.LEFT)) {
+////			if(left.getOp() instanceof SqlOpJoin) {
+////				//requireSelectBlock(op.getLeft());
+////				
+////				SqlOpSelectBlock subSelect = contextToBlock(op.getSchema(), left);
+////				String aliasName = aliasGenerator.next();
+////				subSelect.setAliasName(aliasName);
+////
+////				left = new JoinContextJoin(subSelect);
+////				left.getProjection().add(subSelect.getProjection());
+////				initProjection(left.getProjection(), op.getSchema(), aliasName);
+////			}
+////		}
+//		
+//		// NOTE We use a null schema because column names may be common to left and right operand
+//		// which is invalid for the schema object.
+//		// However, at this stage, we assume that the schema is already validated, and we can
+//		// allow duplicate column names in order to avoid creating sub-queries
+//		SqlOpJoin join = //SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
+//				new SqlOpJoin(null, op.getJoinType(), left.getOp(), right.getOp()); // op.getConditions());
+//		
+//
+//		JoinContextJoin context = new JoinContextJoin(join);
+//
+//		context.getProjection().add(left.getProjection());
+//		context.getProjection().add(right.getProjection());
+//		
+//		//join.getConditions().addAll(left.getConditions());
+//		context.getConditions().addAll(left.getConditions());
+//		context.getConditions().addAll(right.getConditions());
+//		//copyProjection(join, node);
+//
+//		List<SqlExpr> transformed = adjustConditions(op.getConditions(), context.getProjection());		
+//		//result.getConditions().addAll(transformed);
+//
+//		//join.getConditions().addAll(op.getConditions());
+//		join.getConditions().addAll(transformed);
+//
+//		
+//		return context;		
+//	}
+
+	
 	
 	public static JoinContext collectJoins(SqlOpJoin op) {
 		
 		JoinContext left = _collectJoins(op.getLeft());
 		JoinContext right = _collectJoins(op.getRight());
 		
+		
+		if(op.getJoinType().equals(JoinType.LEFT)) {
+			if(left.getOp() instanceof SqlOpJoin) {
+				//requireSelectBlock(op.getLeft());
+				
+				SqlOpSelectBlock subSelect = contextToBlock(left.getOp().getSchema(), left);
+				String aliasName = aliasGenerator.next();
+				subSelect.setAliasName(aliasName);
+
+				left = new JoinContextJoin(subSelect);
+				
+				Projection p = subSelect.getProjection();
+				Projection p2 = createProjectionWithReplacedAliasReferences(p, aliasName);
+				
+				left.getProjection().add(p2);
+				
+				//initProjection(left.getProjection(), left.getOp().getSchema(), aliasName);
+				//initProjection(left.getProjection(), op.getSchema(), aliasName);
+				
+				
+			}
+		}
+		
 		// NOTE We use a null schema because column names may be common to left and right operand
 		// which is invalid for the schema object.
 		// However, at this stage, we assume that the schema is already validated, and we can
 		// allow duplicate column names in order to avoid creating sub-queries
-		SqlOpJoin join = //SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());
-				new SqlOpJoin(null, op.getJoinType(), left.getOp(), right.getOp()); // op.getConditions());
+
+		SqlOpJoin join;
+		
+		if(useCodeThatCausesConflictsOnDuplicateNames) {
+			join = new SqlOpJoin(null, op.getJoinType(), left.getOp(), right.getOp()); // op.getConditions());			
+		} else {
+			join = SqlOpJoin.create(op.getJoinType(), left.getOp(), right.getOp());						
+		}
+		
+		
 		
 
 		JoinContextJoin context = new JoinContextJoin(join);
@@ -525,9 +688,6 @@ public class SqlOpSelectBlockCollectorImpl
 		context.getConditions().addAll(right.getConditions());
 		//copyProjection(join, node);
 
-		if(op.getJoinType().equals(JoinType.LEFT)) {
-			logger.debug("Left join encountered");
-		}
 		List<SqlExpr> transformed = adjustConditions(op.getConditions(), context.getProjection());		
 		//result.getConditions().addAll(transformed);
 
@@ -564,6 +724,10 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+
+	// If false, will wrap each join in a sub-select for renaming
+	static boolean useCodeThatCausesConflictsOnDuplicateNames = true;
+
 	
 	/**
 	 * 
@@ -591,7 +755,6 @@ public class SqlOpSelectBlockCollectorImpl
 
 		JoinContext result;
 
-		boolean useCodeThatCausesConflictsOnDuplicateNames = true;
 
 		if (useCodeThatCausesConflictsOnDuplicateNames) {
 			// FIXME: Can be removed it seems; the other part seems to be working now
@@ -612,6 +775,49 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+	public static Projection initNewProjection(Schema schema, String aliasName) {
+		Projection result = new Projection();
+		initProjection(result, schema, aliasName);
+		return result;
+	}
+
+	
+	public static Projection createProjectionWithReplacedAliasReferences(Projection projection, String aliasName) {
+		Projection result = new Projection();
+		
+		for(Entry<String, SqlExpr> entry : projection.getNameToExpr().entrySet()) {
+			
+			String oldName = entry.getKey();
+			SqlExpr sqlExpr = entry.getValue();
+			
+			SqlExpr newSqlExpr;
+			
+			// TODO In general, we would have to do this recursively!!!
+			if(sqlExpr instanceof S_ColumnRef) {
+				S_ColumnRef oldRef = (S_ColumnRef)sqlExpr;
+				
+				newSqlExpr = new S_ColumnRef(oldRef.getDatatype(), oldRef.getColumnName(), aliasName);
+			} else {
+				newSqlExpr = sqlExpr;
+			}
+			
+			
+			result.put(oldName, newSqlExpr);
+			
+//			TypeToken datatype = schema.getColumnType(oldName);
+//			assert datatype != null : "Datatype must not be null at this point";
+//			
+//			
+//			
+//			//projection.put(newName, new E_SqlColumnRef(oldName, aliasName, datatype));
+//			projection.put(newName, new S_ColumnRef(datatype, oldName, aliasName));
+//			
+		}
+		
+		return result;
+	}
+
+	
 	public static void initProjection(Projection projection, Schema schema, String aliasName) {
 		for(String oldName : schema.getColumnNames())  {
 			
