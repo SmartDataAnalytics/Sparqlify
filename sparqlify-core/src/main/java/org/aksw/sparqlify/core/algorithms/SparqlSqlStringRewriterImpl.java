@@ -37,6 +37,8 @@ public class SparqlSqlStringRewriterImpl
 		String sqlQueryString = sqlOpSerializer.serialize(sqlOp);
 		SparqlSqlStringRewrite result = new SparqlSqlStringRewrite(sqlQueryString, rewrite.isEmptyResult(), rewrite.getVarDefinition(), rewrite.getProjectionOrder());
 
+		logger.info("Variable Definitions:\n" + rewrite.getVarDefinition().toPrettyString());
+
 		logger.debug("Sql Query:\n" + result.getSqlQueryString());
 		
 		return result;

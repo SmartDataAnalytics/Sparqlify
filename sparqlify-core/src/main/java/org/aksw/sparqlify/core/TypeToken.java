@@ -45,6 +45,8 @@ public class TypeToken
 	public static final TypeToken Double = alloc("double");
 	public static final TypeToken String = alloc("string");
 
+	public static final TypeToken Date = alloc("date");
+
 	public static final TypeToken TypeError = alloc("type_error");
 	public static final TypeToken Special = alloc("special");
 	

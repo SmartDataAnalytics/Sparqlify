@@ -42,6 +42,8 @@ public class SqlLiteralMapperDefault
 			//result = "'" + lex + "'";
 			// TODO We need to cast string literals to an explicit datatype!
 			result = "'" + lex + "'::text";
+		} else if(typeToken.equals(TypeToken.Date)) {
+			result = "'" + lex + "'::timestamp";			
 		}
 		else {
 			result = "" + lex;

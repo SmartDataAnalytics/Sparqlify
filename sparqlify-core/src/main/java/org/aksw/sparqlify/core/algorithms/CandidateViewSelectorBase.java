@@ -454,7 +454,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 //		logger.debug("[Algebra] Jena Optimized: " + op);
 
 		op = ReplaceConstants.replace(op);
-		logger.debug("[Algebra] ConstantsEleminated: " + op);
+		//logger.debug("[Algebra] ConstantsEleminated: " + op);
 
 		// Note:
 		// OpAssign: The assignments end up in a mapping's variable definition
@@ -463,12 +463,12 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 		
 		Op augmented = _getApplicableViews(op);
-		logger.debug("[Algebra] View Candidates: " + augmented);
+		//logger.debug("[Algebra] View Candidates: " + augmented);
 
 		
 		Op optimizedFilters = FilterPlacementOptimizer2.optimize(augmented);
 		
-		logger.debug("[Algebra] Filter Placement Optimized: " + optimizedFilters);
+		//logger.debug("[Algebra] Filter Placement Optimized: " + optimizedFilters);
 		//System.out.println(optimizedFilters);
 		
 		//Op result = augmented;
@@ -1472,12 +1472,12 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 		Op newLeft = _getApplicableViews(left, filterSplit.getPushable());
 
-		System.out.println("so far so good\n" + newLeft);
+		//System.out.println("so far so good\n" + newLeft);
 		
 		newLeft = FilterPlacementOptimizer2.optimize(newLeft, leftRestrictions);
 
 		
-		System.out.println("so far so good\n" + newLeft);
+		//System.out.println("so far so good\n" + newLeft);
 		
 		List<Op> members;
 		
@@ -1559,7 +1559,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		}
 				
 		//logger.debug("Left join candidates:\n" + result);
-		System.out.println("Left join candidates:\n" + result);
+		//System.out.println("Left join candidates:\n" + result);
 		
 		return result;
 	}

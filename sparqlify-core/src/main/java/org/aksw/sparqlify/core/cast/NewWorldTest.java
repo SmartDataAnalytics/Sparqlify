@@ -256,6 +256,10 @@ public class NewWorldTest {
 
 		stm.register(XSD.integer.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
 		stm.register(XSD.decimal.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
+
+		
+		stm.register(XSD.dateTime.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
+
 		
 		stm.register(SparqlifyConstants.nvTypeError.asNode().getLiteralDatatypeURI(), new SqlDatatypeConstant(SqlValue.TYPE_ERROR));
 
@@ -287,6 +291,10 @@ public class NewWorldTest {
 		// The coercion system is still a hack...
 		cs.registerCoercion(TypeToken.String, TypeToken.alloc("INTEGER"),
 				new SqlValueTransformerInteger());
+
+		
+//		cs.registerCoercion(TypeToken.Date, TypeToken.,
+//				new SqlValueTransformer());
 
 		// FunctionRegistry functionRegistry = new FunctionRegistry();
 

@@ -993,6 +993,10 @@ public class SqlTranslationUtils {
 		
 		transMap.put("concat", new ExprTransformerConcat());
 		transMap.put("lang", new ExprTransformerLang());
+		
+		transMap.put("langMatches", new ExprTransformerLangMatches());
+
+		
 		transMap.put("=", new ExprTransformerRdfTermComparator(XSD.xboolean));
 		transMap.put(">", new ExprTransformerRdfTermComparator(XSD.xboolean));
 		transMap.put(">=", new ExprTransformerRdfTermComparator(XSD.xboolean));
@@ -1010,9 +1014,7 @@ public class SqlTranslationUtils {
 		transMap.put(SparqlifyConstants.plainLiteralLabel, new ExprTransformerRdfTermCtor());
 		transMap.put(SparqlifyConstants.typedLiteralLabel, new ExprTransformerRdfTermCtor());
 		transMap.put(SparqlifyConstants.rdfTermLabel, new ExprTransformerRdfTermCtor());
-		
 
-		
 		transMap.put("&&", new ExprTransformerLogicalConjunction());
 		transMap.put("||", new ExprTransformerLogicalConjunction());
 		transMap.put("!", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));

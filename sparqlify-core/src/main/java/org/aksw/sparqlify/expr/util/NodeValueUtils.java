@@ -33,7 +33,7 @@ public class NodeValueUtils {
 		if(expr == null) {
 			return NodeValue.nvNothing;
 		} else if(expr.isIRI()){
-			logger.debug("HACK - Uri constants should be converted to RdfTerms first");
+			//logger.debug("HACK - Uri constants should be converted to RdfTerms first");
 			return expr.asNode().getURI();
 		} else if(expr.isBoolean()) {
 			return expr.getBoolean();
@@ -55,6 +55,8 @@ public class NodeValueUtils {
 			}
 		} else if(expr.isString()) {
 			return expr.getString();
+		} else if(expr.isDateTime()) {
+			return expr.getDateTime();
 		} else if(expr instanceof NodeValueGeom){
 			return ((NodeValueGeom) expr).getGeometry();
 		} else if(expr instanceof NodeValueNode) {

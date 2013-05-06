@@ -415,7 +415,7 @@ public class SparqlifyUtils {
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">=");
-			result.addSerializer("greaterEqual", serializer);
+			result.addSerializer("greaterThanOrEqual", serializer);
 		}
 		
 		{
@@ -424,8 +424,8 @@ public class SparqlifyUtils {
 		}
 
 		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("<");
-			result.addSerializer("lessEqual", serializer);
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("<=");
+			result.addSerializer("lessThanOrEqual", serializer);
 		}
 
 		{

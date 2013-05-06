@@ -22,3 +22,5 @@ nonPositiveInteger	integer
 decimal	numeric
 float	numeric
 double	numeric
+
+timestamp	date

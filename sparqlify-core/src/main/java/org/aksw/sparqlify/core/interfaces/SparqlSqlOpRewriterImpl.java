@@ -45,7 +45,7 @@ public class SparqlSqlOpRewriterImpl
 
 		// Expand the query		
 		Op opViewInstance = candidateViewSelector.getApplicableViews(query);	
-		logger.trace("View Instance Op: " + opViewInstance);
+		//logger.trace("View Instance Op: " + opViewInstance);
 		
 	
 		// Get the projection order right in the result set
@@ -57,7 +57,7 @@ public class SparqlSqlOpRewriterImpl
 		}
 	
 		Mapping mapping = opMappingRewriter.rewrite(opViewInstance);
-		logger.info("Variable Definitions:\n" + mapping.getVarDefinition().toPrettyString());
+		//logger.info("Variable Definitions:\n" + mapping.getVarDefinition().toPrettyString());
 		
 		// FIXME Make the collector configurable
 		//SqlOp block = SqlOpSelectBlockCollector._makeSelect(mapping.getSqlOp());
