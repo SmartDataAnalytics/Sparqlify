@@ -26,4 +26,10 @@ public class S_LogicalAnd
 	public static S_LogicalAnd create(SqlExpr a, SqlExpr b) {
 		return new S_LogicalAnd(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

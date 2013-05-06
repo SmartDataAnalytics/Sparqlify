@@ -25,4 +25,10 @@ public class S_GreaterThanOrEqual
 	public static S_GreaterThanOrEqual create(SqlExpr a, SqlExpr b) {
 		return new S_GreaterThanOrEqual(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

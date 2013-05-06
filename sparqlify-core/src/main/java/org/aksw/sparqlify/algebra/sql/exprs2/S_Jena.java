@@ -60,4 +60,10 @@ public class S_Jena
 		
 		return result;
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

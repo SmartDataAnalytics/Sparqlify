@@ -26,4 +26,9 @@ public class S_LogicalNot
 		return new S_LogicalNot(a);
 	}
 
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

@@ -45,15 +45,15 @@ public abstract class SqlExpr2
 	
 	public abstract SqlExpr2 copy(SqlExpr left, SqlExpr right);
 	
-	public void writeArgs(IndentedWriter writer) {
-		writer.println("(");
-		writer.incIndent();
-		left.asString(writer);
-		writer.println(", ");
-		right.asString(writer);
-		writer.decIndent();
-		writer.println(")");
-	}
+//	public void writeArgs(IndentedWriter writer) {
+//		writer.println("(");
+//		writer.incIndent();
+//		left.asString(writer);
+//		writer.println(", ");
+//		right.asString(writer);
+//		writer.decIndent();
+//		writer.println(")");
+//	}
 
 	@Override
 	public int hashCode() {
@@ -85,6 +85,12 @@ public abstract class SqlExpr2
 			return false;
 		return true;
 	}
+
+//	@Override
+//	public void asString(IndentedWriter writer) {
+//		writer.print(name);
+//		writeArgs(writer);		
+//	}
 
 	/*
 	@Override

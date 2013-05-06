@@ -26,4 +26,10 @@ public class S_LogicalOr
 	public static S_LogicalOr create(SqlExpr a, SqlExpr b) {
 		return new S_LogicalOr(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 public enum SqlOps {
 	SqlOpGroupBy,
+	SqlOpOrder,
 	SqlOpEmpty,
 	SqlOpRename,
 	SqlOpFilter,

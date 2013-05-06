@@ -134,6 +134,13 @@ public class S_Constant
 		T tmp = (T)
 	}
 	*/
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
+
 }
 
 

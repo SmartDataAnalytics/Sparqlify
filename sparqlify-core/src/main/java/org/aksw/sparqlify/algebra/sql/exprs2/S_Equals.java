@@ -25,4 +25,11 @@ public class S_Equals
 	public static S_Equals create(SqlExpr a, SqlExpr b) {
 		return new S_Equals(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
+
 }

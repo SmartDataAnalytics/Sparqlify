@@ -2,9 +2,12 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.commons.factory.Factory2;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalOr;
@@ -15,6 +18,37 @@ import com.google.common.collect.Iterables;
 
 public class SqlExprUtils
 {
+	public static Set<S_ColumnRef> getColumnReferences(SqlExpr expr) {
+		Set<S_ColumnRef> result = new HashSet<S_ColumnRef>();
+		
+		collectColumnReferences(expr, result);
+		
+		return result;
+	}
+
+	public static void collectColumnReferences(SqlExpr expr, Collection<S_ColumnRef> result) {
+		if(expr.isFunction()) {
+			
+			List<SqlExpr> args = expr.getArgs();
+			for(SqlExpr arg : args) {
+				collectColumnReferences(arg, result);
+			}
+			
+		}
+		else if(expr.isConstant()) {
+			// Nothing to do
+		}
+		else if(expr.isVariable()) {
+			S_ColumnRef columnRef = (S_ColumnRef)expr;
+			result.add(columnRef);
+		}
+		else {
+			throw new RuntimeException("Should not happen");
+		}
+	}
+
+	
+	
 	public static List<SqlExpr> toDnf(Collection<? extends Iterable<SqlExpr>> clauses) {
 		List<SqlExpr> result = new ArrayList<SqlExpr>();
 		

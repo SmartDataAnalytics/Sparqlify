@@ -82,4 +82,10 @@ public class S_ColumnRef
 		
 		return result;
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

@@ -26,4 +26,10 @@ public class S_Multiply
 	public static S_Multiply create(SqlExpr a, SqlExpr b) {
 		return new S_Multiply(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

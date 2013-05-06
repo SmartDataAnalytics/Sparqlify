@@ -18,8 +18,11 @@ import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_When;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -29,14 +32,15 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpGroupBy;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.cast.SqlTypeMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
@@ -77,30 +81,67 @@ import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 
+//class SqlExprContext {
+//	private Map<Var, Expr> assignment;
+//	//private SqlExpr sqlExpr;
+//	private ExprSqlRewrite exprRewrite;
+//	
+//	public SqlExprContext(Map<Var, Expr> assignment, SqlExpr sqlExpr) {
+//		super();
+//		this.assignment = assignment;
+//		this.sqlExpr = sqlExpr;
+//	}
+//	public Map<Var, Expr> getAssignment() {
+//		return assignment;
+//	}
+//	
+//	public SqlExpr getSqlExpr() {
+//		return sqlExpr;
+//	}
+//	
+//	@Override
+//	public String toString() {
+//		return "SqlExprContext [assignment=" + assignment + ", sqlExpr="
+//				+ sqlExpr + "]";
+//	}
+//}
+
+/**
+ * This class represents a rewrite under a certain variable assignment
+ * 
+ * @author raven
+ *
+ */
 class SqlExprContext {
 	private Map<Var, Expr> assignment;
-	private SqlExpr sqlExpr;
-	
-	public SqlExprContext(Map<Var, Expr> assignment, SqlExpr sqlExpr) {
+	private ExprSqlRewrite exprRewrite;
+
+	public SqlExprContext(Map<Var, Expr> assignment, ExprSqlRewrite exprRewrite) {
 		super();
 		this.assignment = assignment;
-		this.sqlExpr = sqlExpr;
+		this.exprRewrite = exprRewrite;
 	}
+
 	public Map<Var, Expr> getAssignment() {
 		return assignment;
 	}
-	
+
+	// Convenience function that return the value field of the rewrite
 	public SqlExpr getSqlExpr() {
+		SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
 		return sqlExpr;
+	}
+
+	public ExprSqlRewrite getRewrite() {
+		return exprRewrite;
 	}
 	
 	@Override
 	public String toString() {
 		return "SqlExprContext [assignment=" + assignment + ", sqlExpr="
-				+ sqlExpr + "]";
+				+ exprRewrite + "]";
 	}
 }
-
 
 /**
  * Maybe at some point we want to externalize some state of the rewriting,
@@ -287,7 +328,7 @@ public class MappingOpsImpl
 	 * @param sqlTranslator
 	 * @return
 	 */	
-	public static List<SqlExprContext> createSqlExprs(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
+	public static List<SqlExprContext> createExprSqlRewrites(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		List<SqlExprContext> result = new ArrayList<SqlExprContext>();
 		
 		Set<Var> conditionVars = condition.getVarsMentioned();
@@ -302,11 +343,12 @@ public class MappingOpsImpl
 		if(commonVars.isEmpty()) {
 			//SqlExpr sqlExpr = sqlTranslator.translate(condition, null, typeMap);
 			ExprSqlRewrite exprRewrite = sqlTranslator.translate(condition, null, typeMap);
-			SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
+			///////SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
 
 			
 			Map<Var, Expr> assignment = new HashMap<Var, Expr>();
-			SqlExprContext tmp = new SqlExprContext(assignment, sqlExpr);
+			///////SqlExprContext tmp = new SqlExprContext(assignment, sqlExpr);
+			SqlExprContext tmp = new SqlExprContext(assignment, exprRewrite);
 
 			result.add(tmp);
 			
@@ -351,10 +393,10 @@ public class MappingOpsImpl
 			
 			//SqlExpr sqlExpr = sqlTranslator.translate(expr, null, typeMap);
 			ExprSqlRewrite exprRewrite = sqlTranslator.translate(condition, assignment, typeMap);
-			SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
+			///////SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
 
 			
-			SqlExprContext tmp = new SqlExprContext(assignment, sqlExpr);
+			SqlExprContext tmp = new SqlExprContext(assignment, exprRewrite);
 			result.add(tmp);
 		}
 		
@@ -363,7 +405,7 @@ public class MappingOpsImpl
 	}
 
 	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
-		List<SqlExprContext> items = createSqlExprs(condition, varDef, typeMap, sqlTranslator);
+		List<SqlExprContext> items = createExprSqlRewrites(condition, varDef, typeMap, sqlTranslator);
 		
 		List<SqlExpr> combines = new ArrayList<SqlExpr>();
 		for(SqlExprContext item : items) {
@@ -849,9 +891,9 @@ public class MappingOpsImpl
 	}
 
 	
-	// TODO Handle left join
 	public Mapping joinCommon(Mapping a, Mapping initB, boolean isLeftJoin) {
 
+		// TODO Make the generator global as to avoid creating conflicting names all the time 
 		Generator genSym = Gensym.create("h_");
 		
 		Mapping b = doJoinRename(a, initB, genSym);
@@ -1851,6 +1893,343 @@ public class MappingOpsImpl
 	}
 
 	
+
+
+	
+	/**
+	 * Two variants:
+	 * - create a case-block for each expression
+	 * - create a union - but with the union we would eval the expression over and over again
+	 * - so we go with the case block 
+	 * 
+	 * 
+	 * 
+	 * @param var
+	 * @param target
+	 * @param source
+	 */
+	public ExprSqlRewrite unifyAlternatives(Expr e, Mapping source)
+	{
+		//Collection<RestrictedExpr> restExprs = source.getVarDefinition().getDefinitions(var);
+		
+		Set<Var> varsMentioned = e.getVarsMentioned();
+		
+
+		Map<String, TypeToken> typeMap = source.getSqlOp().getSchema().getTypeMap();
+
+		SqlOp sqlOp = source.getSqlOp();
+		
+		VarDefinition varDef = source.getVarDefinition();
+		List<SqlExprContext> contexts = createExprSqlRewrites(e, varDef, typeMap, sqlTranslator);
+		
+
+//		List<ExprSqlRewrite> rewrites = new ArrayList<ExprSqlRewrite>(contexts.size());
+//		for(SqlExprContext context : contexts) {
+//			rewrites.add(context.getRewrite());
+//		}
+
+				
+				
+//		for(RestrictedExpr restExpr : restExprs) {
+//			Expr expr = restExpr.getExpr();
+//			
+//			// We assume that we can expand the expression to an RDF term
+//			E_RdfTerm rt = SqlTranslationUtils.expandAnyToTerm(expr);
+//			
+//			// We want to convert the second argument to string
+//			Expr orig = rt.getLexicalValue();
+//			
+//			Expr repl = new E_Str(orig);
+//			E_RdfTerm rdfTerm = new E_RdfTerm(rt.getType(), repl, rt.getLanguageTag(), rt.getDatatype());
+//			
+//			// Fake an expression + binding with just the variable
+////			ExprVar exprVar = new ExprVar(var);
+////			Map<Var, Expr> binding = new HashMap<Var, Expr>();
+////			binding.put(var, rdfTerm);
+//			
+//			// TODO Convert 
+//			
+//			// TODO Pass a generator the the translator so we get unique column names
+//			ExprSqlRewrite rewrite = sqlTranslator.translate(rdfTerm, null, typeMap);
+//			
+//			rewrites.add(rewrite);
+//		}
+		
+		
+		// TODO Sort rewrites by number of references columns
+		List<List<S_When>> whens = new ArrayList<List<S_When>>(4);
+		for(int i = 0; i < 4; ++i) {
+			whens.add(new ArrayList<S_When>());
+		}
+		
+		for(SqlExprContext context : contexts) {
+			
+			ExprSqlRewrite rewrite = context.getRewrite();
+			E_RdfTerm rdfTerm = rewrite.getRdfTermExpr();
+			
+			Set<S_ColumnRef> colRefs = rewrite.getInvolvedColumns();
+			//Set<Var> colRefs = rdfTerm.getVarsMentioned();
+			
+			// Create the case condition
+			// TODO: Actually we would have to add the NOT NULL (bound)
+			// condition to the expression of the assignment (and push this constraint down as much as possbile)
+			// rather than the
+			// column - but I guess in 99% of the cases this is equivalent
+			// In other words: if this breaks, I will spend hours looking for the problem
+			List<SqlExpr> conditionParts = new ArrayList<SqlExpr>();
+			for(S_ColumnRef colRef : colRefs) {
+				
+				SqlExpr expr = new S_IsNotNull(colRef);
+				conditionParts.add(expr);
+			}
+			SqlExpr condition = SqlExprUtils.andifyBalanced(conditionParts);
+			
+//			ExprSqlRewrite tmp = sqlTranslator.translate(condition, null, typeMap);
+//			E_RdfTerm t = tmp.getRdfTermExpr();
+//			String tv = t.getLexicalValue().getVarName();
+//			SqlExpr sqlCond = tmp.getProjection().getNameToExpr().get(tv);
+			
+			
+			
+			for(int i = 0; i < 4; ++i) {
+				List<S_When> cs = whens.get(i);
+
+				Expr field = rdfTerm.getArg(i + 1); // RAH Jena is really one-based here
+				
+				SqlExpr sqlExpr;
+				if(field.isVariable()) {
+					String varName = field.getVarName();
+					sqlExpr = rewrite.getProjection().getNameToExpr().get(varName);
+				}
+				else {
+					throw new RuntimeException("Should not happen");
+				}
+				
+				S_When caze = new S_When(TypeToken.String, condition, sqlExpr);
+				cs.add(caze);
+			}
+		}
+
+		S_Constant sqlNull = S_Constant.create(new SqlValue(TypeToken.String, null));
+
+		
+		Generator generator = Gensym.create("o");
+		
+		List<Expr> resultVars = new ArrayList<Expr>(4);
+		Projection resultProjection = new Projection();
+		for(int i = 0; i < 4; ++i) {
+			String varName = generator.next();
+			Var v = Var.alloc(varName);
+			ExprVar exprVar = new ExprVar(v);
+			
+			// Create the 'when' statement
+			List<S_When> cs = whens.get(i);
+			
+			
+			S_Case caze = S_Case.create(TypeToken.String, cs, sqlNull);
+			
+			
+			resultVars.add(exprVar);
+			resultProjection.put(varName, caze);
+		}
+		
+		E_RdfTerm resultTerm = new E_RdfTerm(resultVars);
+		ExprSqlRewrite result = new ExprSqlRewrite(resultTerm, resultProjection);
+		
+		return result;
+
+		// Expand the SQL projection with these now columns
+		//SqlOpExtend opExtend = SqlOpExtend.create(sqlOp, rewrite.getProjection());
+
+		
+	}
+	
+	
+
+	/**
+	 * Merge all possible combinations of sparql vars into a single expression
+	 * This conversion is lossy: All datatypes are converted to string (TODO actually, to_string(columnName), and this function can be defined as one likes 
+	 *  
+	 *  ?a = {
+	 *      rdfTerm(1, exprX, "", "")
+	 *      rdfTerm(2, exprY, "", "")
+	 *  }
+	 * 
+	 * IDEA: Can't we just take each expression, and rewrite it to sql?
+	 * This gives RdfTerm objects for each expression.
+	 * Then we only need to convert each of the value expressions to string
+	 * 
+	 * 
+	 * 
+	 * @param node
+	 */
+//	public static void unifyAlternatives(Var var, Mapping target, Mapping old, Generator generator) {
+//		Collection<VarDef> tmp = node.getSparqlVarToExprs().get(var);
+//		
+//		// We need to group even if there is just a single expression for the var
+//		// WRONG: If there is just a single expression, we can do a soft grouping
+//		// (i.e. ignore conversions to string (such as uris build from id int columns)
+//
+//		if(tmp.size() <= 1) {
+//			return;
+//		}
+//		
+//		
+//		
+//		// Create a copy of the exprs and sort by number of variables
+//		List<VarDef> defs = new ArrayList<VarDef>(tmp);
+//		Collections.sort(defs, new Comparator<VarDef>(){
+//			@Override
+//			public int compare(VarDef arg0, VarDef arg1) {
+//				return arg1.getExpr().getVarsMentioned().size() - arg1.getExpr().getVarsMentioned().size();
+//			}});
+//
+//		
+//		NodeExprSubstitutor substitutor = SqlNodeBinding.createSubstitutor(node.getAliasToColumn());
+//		// Now for each component of the E_RdfTerm, create the projection
+//		
+//		
+//		/*
+//		if(defs.isEmpty()) {
+//			System.out.println("debug");
+//		}*/
+//		
+//		
+//		
+//		/*
+//		// Rearrange exprs by args 
+//		List<Map<Set<Var>, Expr>> argToExprs = new ArrayList<Map<Set<Var>, Expr>>();
+//		for(int i = 0; i < 4; ++i) {
+//			Set<Expr> newExprs = new HashSet<Expr>();
+//			argToExprs.add(newExprs);
+//		
+//			for(Expr expr : exprs) {
+//				E_RdfTerm term = (E_RdfTerm)expr;
+//		
+//				newExprs.add(term.getArgs().get(i));
+//			}
+//		}*/
+//			
+//		List<Expr> newArgs = new ArrayList<Expr>();
+//		
+//		
+//		String datatype;
+//		for(int i = 0; i < 4; ++i) {
+//
+//			// Dependency on the columns
+//			List<SqlExpr> columnDeps = new ArrayList<SqlExpr>();
+//
+//			
+//			datatype = (i == 0) 
+//					? "::int"   //DatatypeSystemDefault._INTEGER
+//					: "::text"; //DatatypeSystemDefault._STRING;
+//			
+//			
+//			//Factory1<String> caster = castFactory.formatString(sqlExpr.getDatatype());
+//			
+//			
+//			List<String> exprStrs = new ArrayList<String>();
+//			for(VarDef def : defs) {
+//				
+//				Expr e = def.getExpr();
+//				
+//				E_RdfTerm args = (E_RdfTerm)e;
+//				Expr arg = args.getArgs().get(i);			
+//				
+//				//SqlExpr sqlExpr = SqlNodeBinding.forcePushDown(arg, substitutor);//(arg, node);
+//				SqlExpr sqlExpr = SqlNodeBinding.forcePushDown(arg, substitutor);
+//				
+//				Factory1<String> formatter = castFactory.formatString(sqlExpr.getDatatype());
+//				
+//				String exprStr = sqlExprSerializer.serialize(sqlExpr);
+//				
+//				exprStr = formatter.create(exprStr);
+//				
+//				
+//				exprStrs.add(exprStr);
+//			}
+//
+//			
+//			String replacement = "";
+//			/* TODO We need the dependencies to any column (see a few lines below)
+//			if(exprs.size() == 1) {
+//				replacement = exprStrs.get(0);
+//				
+//			} else*/ {
+//			
+//				String caseStr = "CASE\n";
+//				String elseStr = "NULL" + datatype;
+//				
+//				for(int j = 0; j < defs.size(); ++j) {
+//					VarDef def = defs.get(j);
+//					Expr expr = def.getExpr();
+//					
+//					String exprStr = exprStrs.get(j);
+//
+//					if(expr.getVarsMentioned().isEmpty()) {
+//						elseStr = exprStr;
+//					} else {
+//					
+//						List<String> columnNames = new ArrayList<String>();
+//						for(Var v : expr.getVarsMentioned()) {
+//							
+//
+//							// Keep the dependency to the original columns
+//							// If an expression does not depend on other columns, it will be treated as a constant.
+//							if(true) {
+//								String depName = v.getName();
+//								SqlExpr depSqlExpr = node.getAliasToColumn().get(depName);
+//								SqlDatatype depDatatype = depSqlExpr.getDatatype();
+//								
+//								columnDeps.add(new SqlExprColumn(target.getAliasName(), depName, depDatatype));
+//							}
+//								
+//							
+//							
+//							//columnNames.add(v.getName() + " IS NOT NULL");
+//							columnNames.add(target.getAliasName() + "." + v.getName() + " IS NOT NULL");
+//						}
+//				
+//						caseStr += "    WHEN (" + Joiner.on(" AND ").join(columnNames) + ") THEN " + "(" + exprStr + ")" + datatype + "\n";
+//					}
+//				}
+//				
+//				
+//				caseStr += "    ELSE " + elseStr + "\n";
+//				caseStr += "END ";
+//
+//				replacement = caseStr;
+//			}
+//
+//
+//			String columnAlias = generator.next();
+//			newArgs.add(new ExprVar(columnAlias));
+//
+//			
+//			S_String c = new S_String(replacement, DatatypeSystemDefault._STRING, columnDeps);
+//			target.getAliasToColumn().put(columnAlias, c);
+//			//node.getAliasToColumn().put(columnAlias, c);
+//			
+//			
+//			/*
+//			System.out.println("Group By " + var);
+//			System.out.println(SqlAlgebraToString.makeString(node));//asString(node, new IndentedWriter(System.out));
+//			System.out.println("-----------------------------");
+//			*/
+//		}
+//
+//
+//		E_RdfTerm replacement = new E_RdfTerm(newArgs);
+//
+//
+//		// Replace the projection
+//		target.getSparqlVarToExprs().removeAll(var);
+//		target.getSparqlVarToExprs().put(var, new VarDef(replacement));
+//	}
+//	
+	
+	
+	
 	
 	/**
 	 * FIXME The var definitions should not be lists rather than sets in order
@@ -1875,9 +2254,40 @@ public class MappingOpsImpl
 	 */
 	@Override
 	public Mapping order(Mapping a, List<SortCondition> sortConditions) {
+
+		boolean disableOrderBy = true;
+		if(disableOrderBy) {
+			return a;
+		}
 		
-		logger.warn("Order by not implemented yet.");
-		return a;
+		List<SqlSortCondition> sqlConds = new ArrayList<SqlSortCondition>(sortConditions.size() * 4);
+
+		for(SortCondition sc : sortConditions) {
+			Expr expr = sc.getExpression();
+			
+			ExprSqlRewrite rewrite = unifyAlternatives(expr, a);
+
+			List<SqlExpr> sqlExprs = rewrite.getSqlExprs();
+			
+			
+			for(SqlExpr sqlExpr : sqlExprs) {
+				
+				SqlSortCondition sqlCond = new SqlSortCondition(sqlExpr, sc.getDirection());
+			
+				sqlConds.add(sqlCond);
+			}
+		}
+
+		SqlOp subOp = a.getSqlOp();
+		
+		SqlOpOrder sqlOp = SqlOpOrder.create(subOp, sqlConds);
+
+		VarDefinition varDef = a.getVarDefinition();
+		Mapping result = new Mapping(varDef, sqlOp);
+		
+		
+		
+		return result;
 		/*
 		VarDefinition varDef = a.getVarDefinition();
 		SqlOp sqlOp = a.getSqlOp();

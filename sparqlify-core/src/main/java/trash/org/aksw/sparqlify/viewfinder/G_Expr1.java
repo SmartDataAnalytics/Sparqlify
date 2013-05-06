@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.trash.algebra.generic.exprs;
+package trash.org.aksw.sparqlify.viewfinder;
 
 import java.util.ArrayList;
 import java.util.List;

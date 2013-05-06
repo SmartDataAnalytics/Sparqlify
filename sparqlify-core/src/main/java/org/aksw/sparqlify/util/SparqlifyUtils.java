@@ -21,10 +21,13 @@ import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerCase;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerElse;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1Prefix;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPassThrough;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerWhen;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -448,6 +451,22 @@ public class SparqlifyUtils {
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("IS NOT NULL");
 			result.addSerializer("isNotNull", serializer);
 		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerWhen();
+			result.addSerializer("when", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerCase();
+			result.addSerializer("case", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerElse();
+			result.addSerializer("else", serializer);
+		}
+		
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();

@@ -28,23 +28,11 @@ public abstract class SqlExprN
 	}
 
 	//@Override
-	public void writeArgs(IndentedWriter writer) {
-		writer.print(" (");
-		writer.incIndent();
-		boolean isFirst = true;
-		for(SqlExpr arg : args) {
-			if(isFirst) {
-				isFirst = false;
-				writer.println();
-			} else {
-				writer.println(", ");
-			}
-			
-			arg.asString(writer);
-		}
-		writer.println();
-		writer.decIndent();
-		writer.print(")");
+
+	@Override
+	public void asString(IndentedWriter writer) {
+		writer.print(name);
+		writeArgs(writer);
 	}
 
 	@Override

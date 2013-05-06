@@ -32,5 +32,9 @@ public class S_IsNotNull
 	}
 
 	
-	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

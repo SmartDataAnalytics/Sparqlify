@@ -25,4 +25,10 @@ public class S_LessThan
 	public static S_LessThan create(SqlExpr a, SqlExpr b) {
 		return new S_LessThan(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

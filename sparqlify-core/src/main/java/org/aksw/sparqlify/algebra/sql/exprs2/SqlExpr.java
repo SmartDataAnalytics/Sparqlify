@@ -33,4 +33,5 @@ public interface SqlExpr {
 	
 	public void asString(IndentedWriter writer);
 
+	public <T> T accept(SqlExprVisitor<T> visitor);
 }

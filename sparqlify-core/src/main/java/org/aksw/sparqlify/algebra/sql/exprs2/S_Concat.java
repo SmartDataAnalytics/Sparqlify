@@ -33,4 +33,10 @@ public class S_Concat
 		writer.print("Concat");
 		writeArgs(writer);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

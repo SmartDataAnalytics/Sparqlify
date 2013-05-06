@@ -26,4 +26,10 @@ public class S_Substract
 	public static S_Substract create(SqlExpr a, SqlExpr b) {
 		return new S_Substract(a, b);
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

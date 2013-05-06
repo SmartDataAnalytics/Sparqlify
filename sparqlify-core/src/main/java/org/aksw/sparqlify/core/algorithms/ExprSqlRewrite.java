@@ -1,10 +1,15 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 
 import com.hp.hpl.jena.sparql.core.Var;
@@ -29,6 +34,38 @@ public class ExprSqlRewrite {
 	}
 	public Projection getProjection() {
 		return projection;
+	}
+	
+	public Set<S_ColumnRef> getInvolvedColumns() {
+		Set<S_ColumnRef> result = new HashSet<S_ColumnRef>();
+		
+		Collection<SqlExpr> exprs = projection.getNameToExpr().values();
+		for(SqlExpr expr : exprs) {
+			SqlExprUtils.collectColumnReferences(expr, result);
+		}
+		
+		return result;
+	}
+
+	public List<SqlExpr> getSqlExprs() {
+		List<SqlExpr> result = new ArrayList<SqlExpr>(4);
+		for(int i = 0; i < 4; ++i) {
+			SqlExpr sqlExpr = getSqlExpr(i);
+			result.add(sqlExpr);
+		}
+		
+		return result;
+	}
+	
+	public SqlExpr getSqlExpr(int index) {
+		E_RdfTerm rdfTerm = getRdfTermExpr();
+		Expr expr = rdfTerm.getArg(index + 1);
+		
+		String varName = expr.getVarName();
+		Map<String, SqlExpr> map = projection.getNameToExpr();
+		SqlExpr result = map.get(varName);
+		
+		return result;
 	}
 	
 	public List<String> getReferencedColumnNames() {

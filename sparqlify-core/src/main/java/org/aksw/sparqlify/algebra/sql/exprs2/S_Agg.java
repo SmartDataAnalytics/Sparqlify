@@ -65,4 +65,10 @@ public class S_Agg
 		
 		return result;
 	}
+	
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

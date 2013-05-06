@@ -26,4 +26,10 @@ public class S_Add
 	public static S_Add create(SqlExpr a, SqlExpr b) {
 		return new S_Add(a, b);
 	}
+
+	@Override
+	public <T> T accept(SqlExprVisitor<T> visitor) {
+		T result = visitor.visit(this);
+		return result;
+	}
 }

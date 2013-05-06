@@ -17,6 +17,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpGroupBy;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
@@ -24,6 +25,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.slf4j.Logger;
@@ -195,6 +197,10 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
 		switch(type) {
 
+		case SqlOpOrder:
+			result = makeSelect((SqlOpOrder)sqlOp);
+			break;
+			
 		case SqlOpGroupBy:
 			result = makeSelect((SqlOpGroupBy)sqlOp);
 			break;			
@@ -272,6 +278,20 @@ public class SqlOpSelectBlockCollectorImpl
 //		result.setAliasName(aliasName);
 		
 		return result;
+	}
+	
+	
+	public static SqlOp makeSelect(SqlOpOrder op) {
+		SqlOp newOp = _makeSelect(op.getSubOp());
+		SqlOpSelectBlock result = requireSelectBlock(newOp);
+		
+		List<SqlSortCondition> newExprs = adjustSortConditions(op.getSortConditions(), result.getProjection());
+		
+		result.getSortConditions().addAll(newExprs);
+		
+		
+		return result;
+
 	}
 	
 
@@ -391,6 +411,36 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlExpr result = substitutor.substitute(expr);
 		
 		return result;
+	}
+	
+	
+	public static List<SqlSortCondition> adjustSortConditions(List<SqlSortCondition> sqlConds, Projection projection) {
+		
+		int n = sqlConds.size();
+		
+		List<SqlExpr> exprs = new ArrayList<SqlExpr>(n);
+		for(SqlSortCondition sqlCond : sqlConds) {
+			SqlExpr expr = sqlCond.getExpression();
+			exprs.add(expr);
+		}
+		
+		List<SqlExpr> adjusteds = adjustConditions(exprs, projection);
+		
+		
+		List<SqlSortCondition> result = new ArrayList<SqlSortCondition>(n);
+
+		for(int i = 0; i < n; ++i) {
+			SqlSortCondition sqlCond = sqlConds.get(i);
+			SqlExpr adjusted = adjusteds.get(i);
+			
+			
+			int direction = sqlCond.getDirection();
+			
+			SqlSortCondition newSqlCond = new SqlSortCondition(adjusted, direction);
+			result.add(newSqlCond);
+		}
+
+		return result;		
 	}
 	
 	public static List<SqlExpr> adjustConditions(List<SqlExpr> exprs, Projection projection) {
