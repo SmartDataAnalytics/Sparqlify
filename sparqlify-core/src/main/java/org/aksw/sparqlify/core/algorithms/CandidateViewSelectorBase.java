@@ -449,8 +449,9 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 
 		//op.(transformer);
 
-		op = Algebra.optimize(op);
-		logger.debug("[Algebra] Jena Optimized: " + op);
+		logger.warn("JENA'S ALGEBRA OPTIMIZATION DISABLED");
+//		op = Algebra.optimize(op);
+//		logger.debug("[Algebra] Jena Optimized: " + op);
 
 		op = ReplaceConstants.replace(op);
 		logger.debug("[Algebra] ConstantsEleminated: " + op);

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.factory.Factory2;
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
@@ -19,11 +20,13 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThanOrEqual;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Substract;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
@@ -31,9 +34,10 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
-import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
+import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,7 +293,7 @@ public class NewWorldTest {
 		ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
 
 		// Eliminates rdf terms from Expr (this is datatype independent)
-		ExprEvaluator exprTransformer = SqlTranslationUtils
+		ExprEvaluator exprEvaluator = SqlTranslationUtils
 				.createDefaultEvaluator();
 
 		// Computes types for Expr, thereby yielding SqlExpr
@@ -518,7 +522,57 @@ public class NewWorldTest {
 			//SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
 			//serializerSystem.addSerializer(SparqlifyConstants.urlEncode, serializer);
 		}
+
 		
+		// + and -
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Int, TypeToken.Int, TypeToken.Int);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_Substract(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl("-", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}		
+
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Int, TypeToken.Int, TypeToken.Int);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_Add(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl("+", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}
+		
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Int, TypeToken.Int, TypeToken.Int);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_Add(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl("*", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}		
+
 		
 		
 		// {
@@ -564,8 +618,12 @@ public class NewWorldTest {
 		// Expr e0 =
 		// ExprUtils.parse("<http://aksw.org/sparqlify/typedLiteral>(?c + ?d, 'http://www.w3.org/2001/XMLSchema#double')");
 		// Expr e0 = ExprUtils.parse("?a = ?b || ?b = ?a && !(?a = ?a)");
-		Expr e0 = ExprUtils.parse("?e = '1'");
+		//Expr e0 = ExprUtils.parse("?e = '1'");
 
+		//Expr e0 = ExprUtils.parse("?c < ?d + 1");
+		//Expr e0 = ExprUtils.parse("(?e + 1) * (?e + 4)");
+		Expr e0 = ExprUtils.parse("?f = <http://foobar>");
+		
 		Expr a = ExprUtils.parse("<http://aksw.org/sparqlify/uri>(?website)");
 		// Expr b =
 		// ExprUtils.parse("<http://aksw.org/sparqlify/plainLiteral>(<http://aksw.org/sparqlify/plainLiteral>(?foo))");
@@ -579,14 +637,20 @@ public class NewWorldTest {
 
 		Expr e = ExprUtils
 				.parse("<http://aksw.org/sparqlify/typedLiteral>(?x, 'http://www.w3.org/2001/XMLSchema#int')");
+
+		Expr f = ExprUtils
+				.parse("<http://aksw.org/sparqlify/uri>('http://foobar')");
 		// Expr e = ExprUtils.parse("");
 
+
+		
 		Map<Var, Expr> binding = new HashMap<Var, Expr>();
 		binding.put(Var.alloc("a"), a);
 		binding.put(Var.alloc("b"), b);
 		binding.put(Var.alloc("c"), c);
 		binding.put(Var.alloc("d"), d);
 		binding.put(Var.alloc("e"), e);
+		binding.put(Var.alloc("f"), f);
 
 		// ExprHolder aaa;
 
@@ -602,28 +666,34 @@ public class NewWorldTest {
 		Expr e1 = exprBindingSubstitutor.substitute(e0, binding);
 		logger.debug("[ExprRewrite Phase 1]: " + e1);
 
-		Expr e2 = exprTransformer.transform(e1);
+		//Expr e2 = exprTransformer.transform(e1);
+		//logger.debug("[ExprRewrite Phase 2]: " + e2);
+
+		RdfTermEliminatorImpl exprTrns = SqlTranslationUtils.createDefaultTransformer();
+		E_RdfTerm e2 = exprTrns._transform(e1);
 		logger.debug("[ExprRewrite Phase 2]: " + e2);
-
+		
 		// This step should must be generalized to return an SqlExprRewrite
-
-		ExprSqlRewrite e3 = typedExprTransformer.rewrite(e2, typeMap);
+		Expr e3 = exprEvaluator.transform(e2);
 		logger.debug("[ExprRewrite Phase 3]: " + e3);
 
-		Expr et = e3.getExpr();
+		ExprSqlRewrite e4 = typedExprTransformer.rewrite(e3, typeMap);
+		logger.debug("[ExprRewrite Phase 4]: " + e4);
+
+		Expr et = e4.getExpr();
 		if (et instanceof ExprSqlBridge) {
 
 			ExprSqlBridge bridge = (ExprSqlBridge) et;
 
 			SqlExpr ex = bridge.getSqlExpr();
 
-			String e4 = serializerSystem.serialize(ex);
-			logger.debug("[ExprRewrite Phase 4]: " + e4);
+			String e5 = serializerSystem.serialize(ex);
+			logger.debug("[ExprRewrite Phase 5]: " + e5);
 		} else {
 
 			logger.debug("Done rewriting: ");
 			logger.debug("" + et);
-			logger.debug("" + e3.getProjection());
+			logger.debug("" + e4.getProjection());
 
 		}
 

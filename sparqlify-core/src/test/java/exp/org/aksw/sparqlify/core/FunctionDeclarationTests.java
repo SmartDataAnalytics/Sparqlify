@@ -2,24 +2,14 @@ package exp.org.aksw.sparqlify.core;
 
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
-import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
-import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 /*

@@ -51,9 +51,19 @@ public class SchemaImpl
 	
 	
 	public static void validateNames(List<String> names) {
-		Set<String> n = new HashSet<String>(names);
-		if(n.size() != names.size()) {
-			throw new RuntimeException("Multiple column names: " + names);
+		
+		Set<String> dups = new HashSet<String>();
+		Set<String> visited = new HashSet<String>();
+		for(String name : names) {
+			if(visited.contains(name)) {
+				dups.add(name);
+			}
+			
+			visited.add(name);
+		}
+		
+		if(!dups.isEmpty()) {
+			throw new RuntimeException("Multiple column names: " + dups);
 		}
 		
 	}

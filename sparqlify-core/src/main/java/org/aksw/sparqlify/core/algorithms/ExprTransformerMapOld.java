@@ -20,19 +20,19 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class ExprTransformerMap
+public class ExprTransformerMapOld
 	implements ExprTransformer
 {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ExprTransformerMap.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExprTransformerMapOld.class);
 	
 	private Map<String, ExprTransformer> idToTransformer = new HashMap<String, ExprTransformer>();
 
 
-	public ExprTransformerMap() {
+	public ExprTransformerMapOld() {
 	}
 	
-	public ExprTransformerMap(Map<String, ExprTransformer> idToTransformer) {
+	public ExprTransformerMapOld(Map<String, ExprTransformer> idToTransformer) {
 		this.idToTransformer = idToTransformer;
 	}
 	

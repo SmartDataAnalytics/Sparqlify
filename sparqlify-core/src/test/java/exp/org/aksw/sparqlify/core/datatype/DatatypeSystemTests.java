@@ -1,45 +1,5 @@
 package exp.org.aksw.sparqlify.core.datatype;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.config.syntax.FunctionDeclaration;
-import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
-import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluatorPartial;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluatorSql;
-import org.aksw.sparqlify.core.algorithms.ExprTransformerMap;
-import org.aksw.sparqlify.core.algorithms.FunctionRegistrySql;
-import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
-import org.aksw.sparqlify.core.datatypes.DatatypeSystemCustom;
-import org.aksw.sparqlify.core.datatypes.DefaultCoercions;
-import org.aksw.sparqlify.core.datatypes.SqlExprOps;
-import org.aksw.sparqlify.core.datatypes.XMethod;
-import org.aksw.sparqlify.core.datatypes.XMethodImpl;
-import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.util.SparqlifyUtils;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.function.FunctionRegistry;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 

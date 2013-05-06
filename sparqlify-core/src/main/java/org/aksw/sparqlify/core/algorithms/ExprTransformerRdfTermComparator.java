@@ -5,6 +5,8 @@ import java.util.List;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
+import org.aksw.sparqlify.expr.util.ExprUtils;
 
 import com.hp.hpl.jena.sparql.expr.E_Conditional;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
@@ -48,6 +50,10 @@ public class ExprTransformerRdfTermComparator
 	@Override
 	public Expr transform(ExprFunction fn) {
 	
+		if(ExprUtils.getFunctionId(fn).equals("+")) {
+			System.out.println("Debug point reached");
+		}
+		
 		Expr result = null;
 		
 		List<Expr> exprs = fn.getArgs();

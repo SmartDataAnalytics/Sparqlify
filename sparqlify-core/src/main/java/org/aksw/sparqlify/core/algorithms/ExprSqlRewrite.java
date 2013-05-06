@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 
 import com.hp.hpl.jena.sparql.core.Var;
@@ -19,6 +20,10 @@ public class ExprSqlRewrite {
 		this.projection = projection;
 	}
 
+	public E_RdfTerm getRdfTermExpr() {
+		return (E_RdfTerm)expr;
+	}
+	
 	public Expr getExpr() {
 		return expr;
 	}

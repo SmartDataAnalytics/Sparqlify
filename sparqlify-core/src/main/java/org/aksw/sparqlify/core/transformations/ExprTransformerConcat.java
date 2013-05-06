@@ -1,28 +1,31 @@
-package org.aksw.sparqlify.core.algorithms;
+package org.aksw.sparqlify.core.transformations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  * Expand all arguments of any concat expression into this expression.
  * Also merges consecutive constants.
  * 
  */
-public class ExprTransformerConcatNested
+public class ExprTransformerConcat
 	implements ExprTransformer
 {	
 	@Override
-	public Expr transform(ExprFunction fn) {
+	public E_RdfTerm transform(Expr fn, List<E_RdfTerm> exprs) {
 		
 		List<Expr> newArgs = new ArrayList<Expr>();
-		for(Expr arg : fn.getArgs()) {
+		for(E_RdfTerm expr : exprs) {
+			Expr arg = expr.getLexicalValue();
+			
 			if(SqlTranslationUtils.isConcatExpr(arg)) {
 				
 				ExprFunction fnArg = arg.getFunction();
@@ -37,7 +40,10 @@ public class ExprTransformerConcatNested
 		ExprList merged = SqlTranslationUtils.mergeConsecutiveConstants(newArgs);
 		
 		
-		Expr result = ExprCopy.getInstance().copy(fn, merged);
+		Expr newVal = ExprCopy.getInstance().copy(fn, merged);
+		
+		E_RdfTerm result = E_RdfTerm.createTypedLiteral(newVal, XSD.xstring);
+		
 
 		return result;
 	}	

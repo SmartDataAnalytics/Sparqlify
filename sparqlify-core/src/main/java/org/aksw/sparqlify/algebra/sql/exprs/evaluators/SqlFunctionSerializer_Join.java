@@ -23,7 +23,7 @@ public class SqlFunctionSerializer_Join
 
 	@Override
 	public String serialize(List<String> args) {
-		String result = Joiner.on(separator).join(args);
+		String result = "(" + Joiner.on(separator).join(args) + ")";
 		return result;
 	}
 }

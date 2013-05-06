@@ -34,6 +34,9 @@ public class TypeToken
 	 * Some common datatype tokens
 	 */
 	public static final TypeToken Object = alloc("object");
+	
+	public static final TypeToken Numeric = alloc("numeric");
+	
 	public static final TypeToken Byte = alloc("byte");
 	public static final TypeToken Boolean = alloc("boolean");
 	public static final TypeToken Int = alloc("int");

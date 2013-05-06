@@ -25,7 +25,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -10,6 +10,7 @@ int	long
 long	integer
 integer decimal
 
+
 unsignedByte	unsignedShort
 unsignedInt	unsignedLong
 unsignedLong	nonNegativeInteger
@@ -18,6 +19,6 @@ nonNegativeInteger	integer
 negativeInteger	nonPositiveInteger
 nonPositiveInteger	integer
 
-integer	numeric
+decimal	numeric
 float	numeric
 double	numeric

@@ -5,31 +5,58 @@ import java.util.List;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
 import com.hp.hpl.jena.sparql.expr.ExprList;
+import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 public class E_RdfTerm
 	extends ExprFunctionN
 {
+	public static final NodeValue typeVar = NodeValue.makeInteger(-1);
+	public static final NodeValue typeBlank = NodeValue.makeInteger(0);
+	public static final NodeValue typeUri = NodeValue.makeInteger(1);
+	public static final NodeValue typePlainLiteral = NodeValue.makeInteger(2);
+	public static final NodeValue typeTypedLiteral = NodeValue.makeInteger(3);
+
+	
+	public static E_RdfTerm createVar(ExprVar expr) {
+		return new E_RdfTerm(typeVar, expr, NodeValue.nvEmptyString, NodeValue.nvEmptyString);
+	}
+	
 	public static E_RdfTerm createBlankNode(Expr expr) {
-		return new E_RdfTerm(NodeValue.makeInteger(0), expr, NodeValue.makeString(""), NodeValue.makeString(""));
+		return new E_RdfTerm(typeBlank, expr, NodeValue.nvEmptyString, NodeValue.nvEmptyString);
 	}
 	
 	public static E_RdfTerm createUri(Expr expr) {
-		return new E_RdfTerm(NodeValue.makeInteger(1), expr, NodeValue.makeString(""), NodeValue.makeString(""));
+		return new E_RdfTerm(typeUri, expr, NodeValue.nvEmptyString, NodeValue.nvEmptyString);
 	}
 
 	public static E_RdfTerm createPlainLiteral(Expr expr) {
-		return new E_RdfTerm(NodeValue.makeInteger(2), expr, NodeValue.makeString(""), NodeValue.makeString(""));
+		return new E_RdfTerm(typePlainLiteral, expr, NodeValue.nvEmptyString, NodeValue.nvEmptyString);
 	}
 	
 	public static E_RdfTerm createTypedLiteral(Expr expr, Expr datatype) {
 		
 		//DatatypeSystemDefault.
-		return new E_RdfTerm(NodeValue.makeInteger(3), expr, NodeValue.makeString(""), datatype);
+		return new E_RdfTerm(typeTypedLiteral, expr, NodeValue.nvEmptyString, datatype);
+	}
+
+	public static E_RdfTerm createTypedLiteral(Expr expr, Resource datatype) {
+
+		return createTypedLiteral(expr, datatype.asNode());
+	}
+
+	public static E_RdfTerm createTypedLiteral(Expr expr, Node datatype) {
+		
+		String datatypeUri = datatype.getURI();
+		Expr datatypeExpr = NodeValue.makeString(datatypeUri);
+		//DatatypeSystemDefault.
+		return new E_RdfTerm(typeTypedLiteral, expr, NodeValue.nvEmptyString, datatypeExpr);
 	}
 
 	

@@ -1,7 +1,10 @@
-package org.aksw.sparqlify.core.algorithms;
+package org.aksw.sparqlify.core.transformations;
+
+import java.util.List;
+
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 
 import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
 
 /**
  * The purpose of the ExprTransformer is to transform an expression
@@ -20,5 +23,5 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
  *
  */
 public interface ExprTransformer {
-	Expr transform(ExprFunction fn);
+	E_RdfTerm transform(Expr orig, List<E_RdfTerm> exprs);
 }

@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.algorithms;
+package org.aksw.sparqlify.core.transformations;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import org.aksw.sparqlify.compile.sparql.Alignment;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlPrePusher;
 import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
+import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.sse.Tags;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 
 /**
@@ -250,6 +253,25 @@ public class SqlTranslationUtils {
 	}
 
 
+	/**
+	 * Expands both constants and functions to RDF terms
+	 * 
+	 * I don't want to touch the legacy function - thats why this function has this name 
+	 * 
+	 * @param expr
+	 * @return
+	 */
+	public static E_RdfTerm expandAnyToTerm(Expr expr) {
+		E_RdfTerm result;
+		
+		if(expr.isConstant()) {
+			result = expandConstant(expr);
+		} else {
+			result = expandRdfTerm(expr);
+		}
+		
+		return result;
+	}
 	
 	public static E_RdfTerm expandRdfTerm(Expr expr) {
 		
@@ -963,36 +985,44 @@ public class SqlTranslationUtils {
 		
 		return result;
 	}
-
-	public static ExprEvaluator createDefaultEvaluator() {
-		ExprTransformerMap exprTransformer = new ExprTransformerMap();		
-		ExprEvaluatorPartial evaluator = new ExprEvaluatorPartial(FunctionRegistry.get(), exprTransformer);
+	
+	public static RdfTermEliminatorImpl createDefaultTransformer() {
+		RdfTermEliminatorImpl exprTransformer = new RdfTermEliminatorImpl();		
 		
 		Map<String, ExprTransformer> transMap = exprTransformer.getTransformerMap();
 		
-		transMap.put("concat", new ExprTransformerConcatNested());
+		transMap.put("concat", new ExprTransformerConcat());
 		transMap.put("lang", new ExprTransformerLang());
-		transMap.put("=", new ExprTransformerRdfTermComparator(evaluator));
-		transMap.put(">", new ExprTransformerRdfTermComparator(evaluator));
-		transMap.put(">=", new ExprTransformerRdfTermComparator(evaluator));
-		transMap.put("<", new ExprTransformerRdfTermComparator(evaluator));
-		transMap.put("<=", new ExprTransformerRdfTermComparator(evaluator));
-		transMap.put("+", new ExprTransformerPassValue());
-		transMap.put("-", new ExprTransformerPassValue());
-		transMap.put("*", new ExprTransformerPassValue());
-		transMap.put("/", new ExprTransformerPassValue());
+		transMap.put("=", new ExprTransformerRdfTermComparator(XSD.xboolean));
+		transMap.put(">", new ExprTransformerRdfTermComparator(XSD.xboolean));
+		transMap.put(">=", new ExprTransformerRdfTermComparator(XSD.xboolean));
+		transMap.put("<", new ExprTransformerRdfTermComparator(XSD.xboolean));
+		transMap.put("<=", new ExprTransformerRdfTermComparator(XSD.xboolean));
+		transMap.put("+", new ExprTransformerArithmetic(XSD.decimal));
+		transMap.put("-", new ExprTransformerArithmetic(XSD.decimal));
+		transMap.put("*", new ExprTransformerArithmetic(XSD.decimal));
+		transMap.put("/", new ExprTransformerArithmetic(XSD.decimal));
 		
-		transMap.put("bound", new ExprTransformerPassValue());
+		transMap.put("bound", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
 		
-		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerPassValue());
-		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerPassValue());
-		transMap.put(SparqlifyConstants.plainLiteralLabel, new ExprTransformerPassValue());
-		transMap.put(SparqlifyConstants.typedLiteralLabel, new ExprTransformerPassValue());
+		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerRdfTermCtor());
+		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerRdfTermCtor());
+		transMap.put(SparqlifyConstants.plainLiteralLabel, new ExprTransformerRdfTermCtor());
+		transMap.put(SparqlifyConstants.typedLiteralLabel, new ExprTransformerRdfTermCtor());
+		transMap.put(SparqlifyConstants.rdfTermLabel, new ExprTransformerRdfTermCtor());
 		
 
 		
-		transMap.put("&&", new ExprTransformerLogicalAnd());
+		transMap.put("&&", new ExprTransformerLogicalConjunction());
+		transMap.put("||", new ExprTransformerLogicalConjunction());
+		transMap.put("!", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
 		//transMap.put("||", new ExprTransformerLogicalAn());
+
+		return exprTransformer;
+	}
+
+	public static ExprEvaluator createDefaultEvaluator() {
+		ExprEvaluatorPartial evaluator = new ExprEvaluatorPartial(FunctionRegistry.get());
 
 		return evaluator;
 	}

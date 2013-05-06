@@ -43,7 +43,6 @@ import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
-import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
@@ -69,6 +68,8 @@ import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExImpl;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
+import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.antlr.runtime.RecognitionException;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
@@ -376,10 +377,32 @@ public class SparqlifyUtils {
 				typeSerializer, sqlLiteralMapper);
 		
 		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("+");
+			result.addSerializer("add", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("-");
+			result.addSerializer("substract", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("*");
+			result.addSerializer("multiply", serializer);
+		}
+		
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("/");
+			result.addSerializer("divide", serializer);
+		}
+
+		
+		
+		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("=");
 			result.addSerializer("equals", serializer);
 		}
-
+		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializer_Join(" || ");
 			result.addSerializer("concat", serializer);
@@ -449,15 +472,16 @@ public class SparqlifyUtils {
 	
 	public static SqlTranslator createSqlRewriter() {
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer();
 		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
 	
 		
-		SqlTranslator result = createSqlRewriter(typeSystem, exprTransformer);
+		SqlTranslator result = createSqlRewriter(typeSystem, rdfTermEliminator, exprTransformer);
 		return result;
 	}
 
 		
-	public static SqlTranslator createSqlRewriter(TypeSystem datatypeSystem, ExprEvaluator exprTransformer) {
+	public static SqlTranslator createSqlRewriter(TypeSystem datatypeSystem, RdfTermEliminator rdfTermEliminator, ExprEvaluator exprTransformer) {
 
 		ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
 		
@@ -468,7 +492,7 @@ public class SparqlifyUtils {
 
 		
 		//SqlTranslator sqlTranslator = new SqlTranslatorImpl(datatypeSystem);
-		SqlTranslator result = new SqlTranslatorImpl2(exprBindingSubstitutor, exprTransformer, typedExprTransformer);
+		SqlTranslator result = new SqlTranslatorImpl2(exprBindingSubstitutor, rdfTermEliminator, exprTransformer, typedExprTransformer);
 		
 		return result;
 	}
@@ -514,8 +538,9 @@ public class SparqlifyUtils {
 	
 	
 	public static MappingOps createDefaultMappingOps(TypeSystem typeSystem) {
+		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer();
 		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
-		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, exprTransformer);
+		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, rdfTermEliminator, exprTransformer);
 		
 		
 		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();

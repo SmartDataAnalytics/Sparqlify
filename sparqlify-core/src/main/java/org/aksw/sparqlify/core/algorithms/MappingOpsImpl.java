@@ -44,6 +44,7 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
@@ -805,6 +806,8 @@ public class MappingOpsImpl
 		List<String> commonNames = new ArrayList<String>(namesB);
 		commonNames.retainAll(namesA);
 		
+		//GeneratorBlacklist genbl = GeneratorBlacklist.create(gen, blacklist);
+		
 		if(commonNames.isEmpty()) {
 			return b;
 		}
@@ -815,9 +818,9 @@ public class MappingOpsImpl
 			String newName = null;
 			for(;;) {
 				newName = gen.next();
-				if(namesA.contains(newName)) {
+				if(namesA.contains(newName) || namesB.contains(newName)) {
 
-					logger.trace("FIXME Have to generate another column name - should be prevented");
+					logger.warn("FIXME Have to generate another column name - should be prevented");
 					continue;
 				}
 				
@@ -856,9 +859,9 @@ public class MappingOpsImpl
 		
 		
 		JoinType joinType = isLeftJoin ? JoinType.LEFT : JoinType.INNER;
-		if(joinType.equals(JoinType.LEFT)) {
-			logger.debug("Left Join encountered");
-		}
+//		if(joinType.equals(JoinType.LEFT)) {
+//			logger.debug("Left Join encountered");
+//		}
 		
 		SqlOpJoin opJoin = SqlOpJoin.create(joinType, a.getSqlOp(), b.getSqlOp());
 		

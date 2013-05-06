@@ -2,7 +2,7 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.apache.commons.lang.NotImplementedException;
 

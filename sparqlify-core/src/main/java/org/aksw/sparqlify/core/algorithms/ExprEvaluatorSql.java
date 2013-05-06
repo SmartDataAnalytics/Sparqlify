@@ -13,6 +13,7 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.Invocable;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.core.transformations.ExprEvaluatorPartial;
 
 // NOTE This file should become the replacement for the class PushDown
 

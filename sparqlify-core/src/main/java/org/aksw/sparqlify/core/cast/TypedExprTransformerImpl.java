@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
@@ -17,6 +18,7 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
@@ -59,6 +61,11 @@ class ExprHolder {
 	
 	public SqlExpr getSqlExpr() {
 		return (SqlExpr) expr;
+	}
+
+	@Override
+	public String toString() {
+		return "ExprHolder: " + expr;
 	}
 }
 
@@ -136,8 +143,91 @@ public class TypedExprTransformerImpl
 		return false;
 	}
 	
-
+//	public List<ExprHolder> rewriteArgsDefault(ExprFunction fn, Map<String, TypeToken> typeMap, RewriteState state) 
+//	{
+//		List<ExprHolder> evaledArgs = new ArrayList<ExprHolder>();
+//		boolean isAllSqlExpr = true;
+//		for(Expr arg : fn.getArgs()) {
+//			
+//			ExprHolder evaledArg = rewrite(arg, typeMap, state);
+//			
+//
+//			isAllSqlExpr = isAllSqlExpr && evaledArg.isSqlExpr();
+//			
+//			// If an argument evaluated to type error, return type error
+//			// TODO: Distinguish between null and type error. Currently we use nvNothing which actually corresponds to NULL
+//			// (currently represented with nvNothing - is that safe? - Rather no - see above)
+//			/*
+//			if(evaledArg.equals(NodeValue.nvNothing)) {
+//				return NodeValue.nvNothing;
+//			}
+//			*/
+//			
+//			evaledArgs.add(evaledArg);
+//		}
+//
+//		return evaledArgs;
+//	}
+//	
+//	public List<ExprHolder> rewriteArgsRdfTerm(E_RdfTerm rdfTerm, Map<String, TypeToken> typeMap, RewriteState state) {
+//		
+//		List<Expr> args = rdfTerm.getArgs();
+//		List<ExprHolder> rewrittenArgs = new ArrayList<ExprHolder>();
+//
+//		for(Expr arg : args) {
+//			ExprHolder rewrittenArg;
+//			if(arg.isConstant()) {
+//				rewrittenArg = new ExprHolder(arg); // Do not rewrite constants
+//			} else {
+//				rewrittenArg = rewrite(arg, typeMap, state);
+//			}
+//			
+//			rewrittenArgs.add(rewrittenArg);
+//		}
+//
+//		return rewrittenArgs;
+//	}
+	
+	
+	public ExprVar allocateVariable(SqlExpr sqlExpr, RewriteState state) {
+		String varName = state.getGenSym().next();
+		Var var = Var.alloc(varName);
+		ExprVar result = new ExprVar(var);
+		
+		state.getProjection().put(varName, sqlExpr);
+		
+		return result;
+	}
+	
 	public ExprSqlRewrite rewrite(Expr expr, Map<String, TypeToken> typeMap) {
+		
+		E_RdfTerm rdfTerm;
+		if(expr.isConstant()) {
+			rdfTerm = SqlTranslationUtils.expandConstant(expr);
+		} else {
+			rdfTerm = SqlTranslationUtils.expandRdfTerm(expr);
+		}
+		
+		
+		RewriteState state = new RewriteState();
+		
+		ExprHolder rewrite = rewrite(rdfTerm, typeMap, state);
+		
+		Expr resultExpr;
+		if(rewrite.isSqlExpr()) {
+			SqlExpr sqlExpr = rewrite.getSqlExpr();
+			resultExpr = allocateVariable(sqlExpr, state);
+		} else {
+			resultExpr = rewrite.getExpr();
+		}
+		
+		ExprSqlRewrite result = new ExprSqlRewrite(resultExpr, state.getProjection());
+		
+		return result;
+	}
+
+
+	public ExprSqlRewrite rewriteOld(Expr expr, Map<String, TypeToken> typeMap) {
 		RewriteState state = new RewriteState();
 		
 		ExprHolder rewrite = rewrite(expr, typeMap, state);
@@ -181,6 +271,8 @@ public class TypedExprTransformerImpl
 		return result;
 	}
 	
+	
+	
 	public ExprHolder rewrite(ExprFunction fn, Map<String, TypeToken> typeMap, RewriteState state) {
 
 		ExprHolder result;
@@ -194,12 +286,26 @@ public class TypedExprTransformerImpl
 			return S_Constant.TYPE_ERROR;
 		}
 		*/
+		boolean pushConstants = true;
+		
+		if(fn instanceof E_RdfTerm) {
+			// We always push constants to make data access uniform
+			//pushConstants = false;
+		}
+		
 		
 		List<ExprHolder> evaledArgs = new ArrayList<ExprHolder>();
 		boolean isAllSqlExpr = true;
 		for(Expr arg : fn.getArgs()) {
 			
-			ExprHolder evaledArg = rewrite(arg, typeMap, state);
+			ExprHolder evaledArg;
+			if(arg.isConstant() && !pushConstants) {
+				evaledArg = new ExprHolder(arg);
+			} else {
+				evaledArg = rewrite(arg, typeMap, state);	
+			}
+			
+			
 			
 
 			isAllSqlExpr = isAllSqlExpr && evaledArg.isSqlExpr();
@@ -216,9 +322,14 @@ public class TypedExprTransformerImpl
 			evaledArgs.add(evaledArg);
 		}
 
+		boolean isFnRewritable = isAllSqlExpr;
+		
+		if(fn instanceof E_RdfTerm) {
+			isFnRewritable = false;
+		}
 
 		// Allocate variables for all SqlExprs, pass on Exprs
-		if(!isAllSqlExpr) {
+		if(!isFnRewritable) {
 			
 			List<Expr> newArgs = new ArrayList<Expr>(evaledArgs.size());
 			
@@ -227,13 +338,10 @@ public class TypedExprTransformerImpl
 				Expr arg;
 				
 				if(holder.isSqlExpr()) {
+					
 					SqlExpr typedExpr = holder.getSqlExpr();
+					arg = allocateVariable(typedExpr, state);
 					
-					String varName = state.getGenSym().next();
-					Var var = Var.alloc(varName);
-					arg = new ExprVar(var);
-					
-					state.getProjection().put(varName, typedExpr);
 				}  else {
 					
 					arg = holder.getExpr();
@@ -287,7 +395,7 @@ public class TypedExprTransformerImpl
 				}
 			} else {
 			
-				// If there is no evaluator, use the default behaviour:
+				// If there is no evaluator, use the default behavior:
 				MethodSignature<TypeToken> signature = sparqlFunction.getSignature();
 				if(signature != null) {
 					
@@ -314,6 +422,11 @@ public class TypedExprTransformerImpl
 
 	
 	/**
+	 * This function requires a type-constructor free expression as input:
+	 * That is an expression that can be translated directly to SQL -
+	 * i.e. all bnode/uri/literal type constructors have been removed from it
+	 * 
+	 * 
 	 * TODO How to pass the type error to SPARQL functions,
 	 * such as logical AND/OR/NOT, so they get a chance to deal with it?
 	 * 

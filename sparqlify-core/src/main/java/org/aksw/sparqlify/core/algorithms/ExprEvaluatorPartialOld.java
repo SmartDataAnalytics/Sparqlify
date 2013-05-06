@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.transformations.ExprEvaluatorPartial;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +42,11 @@ import com.hp.hpl.jena.sparql.util.ExprUtils;
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *
  */
-public class ExprEvaluatorPartial
+public class ExprEvaluatorPartialOld
 	implements ExprEvaluator
 {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ExprEvaluatorPartial.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExprEvaluatorPartialOld.class);
 	
 	private FunctionRegistry registry;
 	
@@ -55,7 +56,7 @@ public class ExprEvaluatorPartial
 	 */
 	private ExprTransformer exprTransformer;
 	
-	public ExprEvaluatorPartial(FunctionRegistry registry, ExprTransformer exprTransformer) {
+	public ExprEvaluatorPartialOld(FunctionRegistry registry, ExprTransformer exprTransformer) {
 		this.registry = registry;
 		this.exprTransformer = exprTransformer;
 	}
@@ -141,7 +142,7 @@ public class ExprEvaluatorPartial
 		
 		// Check if the function's IRI is registered
 		// If not, don't try to evaluate the corresponding expression
-		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">=", "if", "&&", "||", "!"));
+		Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">=", "if", "&&", "||", "!", "+", "-", "*", "/"));
 		
 		String fnIri = org.aksw.sparqlify.expr.util.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();			
 		if(fnIri != null && !fnIri.isEmpty()) {

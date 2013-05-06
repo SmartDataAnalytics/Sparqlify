@@ -45,7 +45,7 @@ import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.compile.sparql.SqlAlgebraToString;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
-import org.aksw.sparqlify.core.algorithms.SqlTranslationUtils;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
