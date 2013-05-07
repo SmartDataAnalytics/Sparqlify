@@ -194,6 +194,7 @@ public class SqlOpSelectBlockCollectorImpl
 	public static SqlOp _makeSelect(SqlOp sqlOp) {
 		SqlOp result;
 		
+		
 		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
 		switch(type) {
 
@@ -702,6 +703,13 @@ public class SqlOpSelectBlockCollectorImpl
 		
 		
 		if(op.getJoinType().equals(JoinType.LEFT)) {
+			
+//			SqlOp leftOp = left.getOp();
+//			List<SqlOp> joins = SqlOptimizer.collectJoins(left.getOp());
+//			
+//			// if there is multiple joins, create a subselect 
+			
+			
 			if(left.getOp() instanceof SqlOpJoin) {
 				//requireSelectBlock(op.getLeft());
 				

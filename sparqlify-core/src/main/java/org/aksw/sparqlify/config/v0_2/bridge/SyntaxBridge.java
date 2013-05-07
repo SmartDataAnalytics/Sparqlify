@@ -125,7 +125,7 @@ public class SyntaxBridge {
 		VarDefinition varDefinition = new VarDefinition(varDefs);
 		
 
-		Relation relation = viewDefinition.getRelation();
+		SqlOp relation = viewDefinition.getRelation();
 		
 		// TODO: I think the adapter should be able to resolve the schema at this stage,
 		// Rather than leaving the schema on null.
@@ -137,16 +137,16 @@ public class SyntaxBridge {
 			Schema schema = schemaProvider.createSchemaForQueryString("SELECT 1");
 			sqlOp = new SqlOpQuery(schema, "SELECT 1"); //;null;
 
-		} else if(relation instanceof QueryString) {
+		} else if(relation instanceof SqlOpQuery) {
 
-			String rawQueryString = ((QueryString)relation).getQueryString();
+			String rawQueryString = ((SqlOpQuery)relation).getQueryString();
 			String queryString = normalizeQueryString(rawQueryString);
 			Schema schema = schemaProvider.createSchemaForQueryString(queryString);
 			sqlOp = new SqlOpQuery(schema, queryString);
 
-		} else if(relation instanceof RelationRef){
+		} else if(relation instanceof SqlOpTable){
 			
-			String relationName = ((RelationRef) relation).getRelationName();
+			String relationName = ((SqlOpTable) relation).getTableName();
 			Schema schema = schemaProvider.createSchemaForRelationName(relationName);
 			sqlOp = new SqlOpTable(schema, relationName);
 			

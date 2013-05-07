@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.aksw.sparqlify.util.QuadPatternUtils;
@@ -32,7 +33,7 @@ public class ViewDefinition {
 	private ViewTemplateDefinition viewTemplateDefinition;
 	private ExprList filters = new ExprList();
 	
-	private Relation relation;
+	private SqlOp relation;
 	
 	private List<Constraint> constraints;
 	
@@ -40,7 +41,7 @@ public class ViewDefinition {
 		this.viewTemplateDefinition = new ViewTemplateDefinition();
 	}
 	
-	public ViewDefinition(String name, ViewTemplateDefinition viewTemplateDefinition, Relation relation, List<Constraint> constraints) {
+	public ViewDefinition(String name, ViewTemplateDefinition viewTemplateDefinition, SqlOp relation, List<Constraint> constraints) {
 		this.name = name;
 		this.viewTemplateDefinition = viewTemplateDefinition;
 		this.relation = relation;
@@ -65,10 +66,10 @@ public class ViewDefinition {
 		return name;
 	}
 
-	public Relation getRelation() {
+	public SqlOp getRelation() {
 		return relation;
 	}
-	public void setRelation(Relation relation) {
+	public void setRelation(SqlOp relation) {
 		this.relation = relation;
 	}
 	

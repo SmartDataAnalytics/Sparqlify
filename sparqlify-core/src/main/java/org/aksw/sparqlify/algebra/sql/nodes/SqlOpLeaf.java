@@ -22,6 +22,10 @@ public abstract class SqlOpLeaf
 	public String getAliasName() {
 		return aliasName;
 	}
+	
+	public void setAliasName(String aliasName) {
+		this.aliasName = aliasName;
+	}
 
 	@Override
 	public List<SqlOp> getSubOps() {

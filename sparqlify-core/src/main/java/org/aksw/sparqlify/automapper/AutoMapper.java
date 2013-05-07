@@ -22,8 +22,8 @@ import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
-import org.aksw.sparqlify.config.syntax.RelationRef;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
@@ -378,7 +378,7 @@ public class AutoMapper {
 			
 			//String relationClass = uriSchema.getClassUri(relationName);			
 			//SqlNode relationNode = new SqlTable(relation.getName());
-			viewDefinition.setRelation(new RelationRef(relation.getName()));
+			viewDefinition.setRelation(new SqlOpQuery(null, relation.getName()));
 			
 			System.out.println(viewDefinition.getDefinitionString());
 			

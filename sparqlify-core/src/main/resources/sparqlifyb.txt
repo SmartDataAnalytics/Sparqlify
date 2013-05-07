@@ -1,0 +1,14 @@
+Prefix rr: <http://www.w3.org/ns/r2rml#>
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Prefix ex: <http://example.com/>
+Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+//@base <http://example.com/base/> .
+
+Create View TriplesMap1 As
+  Construct {
+      ?s a ex:Person
+  }
+  With
+    ?s = uri(?id)
+  From
+    people as a, foobar as b where ?id = 3

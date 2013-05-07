@@ -1008,6 +1008,8 @@ public class SqlTranslationUtils {
 		transMap.put("/", new ExprTransformerArithmetic(XSD.decimal));
 		
 		transMap.put("bound", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
+		transMap.put("cast", new ExprTransformerCast());
+		transMap.put("str", new ExprTransformerStr());
 		
 		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerRdfTermCtor());
 		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerRdfTermCtor());
@@ -1020,6 +1022,9 @@ public class SqlTranslationUtils {
 		transMap.put("!", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
 		//transMap.put("||", new ExprTransformerLogicalAn());
 
+		transMap.put(XSD.xdouble.getURI(), new ExprTransformerCast());
+
+		
 		return exprTransformer;
 	}
 

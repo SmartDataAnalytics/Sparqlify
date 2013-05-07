@@ -108,7 +108,7 @@ public class AntlrTest {
 		//File file = new File("data/wortschatz.sparqlify");
 		//InputStream in = new FileInputStream(file);
 
-		InputStream in = AntlrTest.class.getResourceAsStream("/sparqlifya.txt");
+		InputStream in = AntlrTest.class.getResourceAsStream("/sparqlifyb.txt");
 		CharStream cs = new ANTLRInputStream(in);
 		//CharStream csFile = new ANTLRFileStream("data/test.sparqlify");
 		//CharStream csFile = new ANTLRFileStream("data/wortschatz.sparqlify");
@@ -134,6 +134,8 @@ public class AntlrTest {
 		System.out.println("ast built");
 		printAst(ast, 0);
 
+		
+		System.out.println("done with ast");
 		TypeMapper x;
 		//System.out.println(ast.toStringTree());
 		//System.out.println(x.getStop());

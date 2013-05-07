@@ -537,6 +537,7 @@ public class NewWorldTest {
 			MethodSignature<TypeToken> sig = MethodSignature.create(false,
 					TypeToken.Int, TypeToken.Int, TypeToken.Int);
 
+			// TODO The SqlExprFactory2 also must accept a type argument
 			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
 				@Override
 				public SqlExpr create(SqlExpr a, SqlExpr b) {
@@ -579,8 +580,23 @@ public class NewWorldTest {
 			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
 			SparqlFunction f = new SparqlFunctionImpl("*", sig, evaluator, null);
 			typeSystem.registerSparqlFunction(f);
-		}		
+		}
 
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false,
+					TypeToken.Int, TypeToken.Int, TypeToken.Int);
+
+			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
+				@Override
+				public SqlExpr create(SqlExpr a, SqlExpr b) {
+					return new S_Add(a, b);
+				}
+			};
+			
+			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
+			SparqlFunction f = new SparqlFunctionImpl("*", sig, evaluator, null);
+			typeSystem.registerSparqlFunction(f);
+		}		
 		
 		
 		// {

@@ -45,6 +45,9 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 	import com.hp.hpl.jena.rdf.model.AnonId;    
 	import org.aksw.sparqlify.util.*;
 
+	import org.aksw.sparqlify.algebra.sql.nodes.*;
+	import com.hp.hpl.jena.sdb.core.JoinType;
+
     import java.util.Collection;
     import java.util.List;
     import java.util.ArrayList;
@@ -296,9 +299,29 @@ typeCtorExpression returns [Expr value]
     | ^(TYPED_LITERAL a=expression b=expression) {$value = createFunction(SparqlifyConstants.typedLiteralLabel, $a.value, $b.value); }
     ;
 	
-sqlRelation returns [Relation value]
+sqlRelationOld returns [Relation value]
 	: ^(SQL_RELATION a=SQL_QUERY) {$value = new QueryString($a.text);}
 	| ^(SQL_RELATION a=SQL_TABLE) {$value = new RelationRef($a.text);}
+	;
+
+
+// Expressions are SPARQL expressions, so its a bit hacky right now
+sqlRelation returns [SqlOp value]
+    : ^(RELATION_REF a=joinClause b=expression?) {$value=($b.value == null) ? a : new SqlOpFilterExpr(null, $a.value, $b.value);}
+    ;
+
+joinClause returns [SqlOp value]
+    : a=joinClauseMember {$value=$a.value;}
+    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, JoinType.INNER, $a.value, $b.value);} 
+    ;
+    
+joinClauseMember returns [SqlOp value]
+    : ^(JOIN_MEMBER a=sqlLogicalTable b=NAME?) {$value = $a.value; ((SqlOpLeaf)$value).setAliasName($b.text);}
+    ;
+
+sqlLogicalTable returns [SqlOp value]
+	: ^(SQL_RELATION a=SQL_QUERY) {$value = new SqlOpQuery(null, $a.text);}
+	| ^(SQL_RELATION a=SQL_TABLE) {$value = new SqlOpTable(null, $a.text);}
 	;
 
 

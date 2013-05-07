@@ -2002,12 +2002,13 @@ public class MappingOpsImpl
 					String varName = field.getVarName();
 					SqlExpr tmp = rewrite.getProjection().getNameToExpr().get(varName);
 					
-					if(i == 0) {
-						sqlExpr = tmp;
-					} else {
-						sqlExpr = S_Cast.create(TypeToken.String, tmp);
-					}
-					
+//					if(i == 0) {
+//						sqlExpr = tmp;
+//					} else {
+//						sqlExpr = S_Cast.create(TypeToken.String, tmp);
+//					}
+
+					sqlExpr = tmp;
 				}
 				else {
 					throw new RuntimeException("Should not happen");

@@ -42,6 +42,12 @@ REGEX;
 CONSTRAINTS;
 REGEX_CONSTRAINT;
 PREFIX_CONSTRAINT;
+FULL_JOIN;
+JOIN_MEMBER;
+RELATION_REF;
+
+ALIASED_LOGICAL_TABLE;
+ALIASED_VAR;
 
 STRING_LIST;
 
@@ -308,10 +314,43 @@ macroStmt
     ;
 
 relationRef
+    : a=joinClause (WHERE b=expression)? -> ^(RELATION_REF $a $b?)
+    ;
+
+
+joinClause
+	: joinClauseMember
+	| a=joinClauseMember COMMA b=joinClause -> ^(FULL_JOIN $a $b)  
+    ;
+
+joinClauseMember
+    : a=logicalTable (AS? b=name)? -> ^(JOIN_MEMBER $a $b?)
+    ;
+
+name
+    : NAME
+    | a=A -> ^(NAME[$a])
+    ;
+
+
+logicalTable
     : a=SQL_QUERY -> ^(SQL_RELATION SQL_QUERY[$a])
     | a=NAME -> ^(SQL_RELATION SQL_TABLE[$a])
     | a=STRING_LITERAL2 -> ^(SQL_RELATION SQL_TABLE[$a])
     ;
+
+
+//    | a=logicalTable AS? b=NAME -> ^(ALIASED_LOGICAL_TABLE $a NAME[$b]) 
+
+/*
+joinClause
+	: (a=joinClauseMember) (joinClauseRest[((CommonTree)$a.tree)])? 
+    ;
+
+joinClauseRest[CommonTree left] 
+    : COMMA joinClause -> ^(FULL_JOIN {left} joinClause)
+    ;
+*/
 
 
 varBindingPart
@@ -813,6 +852,12 @@ unaryExpression
 
 primaryExpression
     : brackettedExpression | builtInCall | iriRefOrFunction | rdfLiteral | numericLiteral | booleanLiteral | var | aggregate
+	| aliasedVar
+    ;
+
+// Used for referring to members of joinClausMember
+aliasedVar
+    : a=NAME DOT b=NAME -> ^(ALIASED_VAR $a $b)
     ;
 
 brackettedExpression

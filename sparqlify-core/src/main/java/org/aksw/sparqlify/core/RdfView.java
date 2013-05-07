@@ -205,6 +205,8 @@ public class RdfView
 	}
 
 	public static RdfView create(ViewDefinition definition) {
+		throw new RuntimeException("Dont use anymore");
+		/*
 		return create(
 				definition.getName(),
 				definition.getViewTemplateDefinition().getConstructTemplate(),
@@ -213,6 +215,7 @@ public class RdfView
 				definition.getConstraints(),
 				definition.getRelation()
 				);
+				*/
 	}
 	
 	/**

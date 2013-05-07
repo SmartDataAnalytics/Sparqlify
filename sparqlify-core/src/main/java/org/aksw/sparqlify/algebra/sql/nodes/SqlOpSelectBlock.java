@@ -430,7 +430,9 @@ public class SqlOpSelectBlock
 	public void write(IndentedWriter writer) {
 		String aliasPart = aliasName == null ? " anonymous" : " AS " + aliasName; 
 		
-		writer.println("SqlOpSelectBlock" + aliasPart + "(" + schema.getColumnNames());
+		String schemaStr = schema == null ? "null schema" : "" + schema.getColumnNames();
+		
+		writer.println("SqlOpSelectBlock" + aliasPart + "(" + schemaStr);
 		
 		writer.incIndent();
 		writer.println("Where: " + conditions);
