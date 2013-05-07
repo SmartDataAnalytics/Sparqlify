@@ -158,8 +158,6 @@ class SqlOpJoinBlockOld
 }
 
 
-
-
 /**
  * Pitfalls:
  *     (distinct (project ...)) -> First project then make distinct
@@ -182,6 +180,8 @@ public class SqlOpSelectBlockCollectorImpl
 
 	private static Generator aliasGenerator = Gensym.create("a");
 	
+	// Used for sort conditions
+	private static Generator projectionGenerator = Gensym.create("o");
 	
 	/**
 	 * Turn an SqlOp into an OpSqlSelectBlock.
@@ -323,6 +323,17 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOp newOp = _makeSelect(op.getSubOp());
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		result.setDistinct(true);
+
+		
+		// Sort conditions must now become part of the projection
+		for(SqlSortCondition cond : result.getSortConditions()) {
+			String colName = projectionGenerator.next();
+			
+			SqlExpr expr = cond.getExpression();
+			
+			result.getProjection().put(colName, expr);
+		}
+		
 		
 		return result;
 	}

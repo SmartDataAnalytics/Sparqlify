@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import java.util.List;
+
 import org.openjena.atlas.io.IndentedWriter;
 
 
@@ -15,6 +17,9 @@ public interface SqlOp {
 	Schema getSchema();
 	
 	boolean isEmpty(); // Whether the op indicates a zero-row-count relation
+	
+	public List<SqlOp> getSubOps();
+
 	
 	//String getIndentedString();
 	void write(IndentedWriter writer);	

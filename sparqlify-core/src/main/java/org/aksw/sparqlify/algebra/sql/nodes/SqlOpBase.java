@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import java.util.List;
+
 import org.openjena.atlas.io.IndentedWriter;
 
 public abstract class SqlOpBase
@@ -17,6 +19,7 @@ public abstract class SqlOpBase
 	
 	public abstract boolean isEmpty();
 
+	
 //	public boolean isEmpty() {
 //		return false;
 //	}

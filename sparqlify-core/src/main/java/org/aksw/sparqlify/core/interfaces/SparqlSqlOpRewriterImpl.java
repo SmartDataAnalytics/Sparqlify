@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SqlOptimizer;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
 import org.slf4j.Logger;
@@ -66,6 +67,8 @@ public class SparqlSqlOpRewriterImpl
 		
 		if(sqlOpSelectBlockCollector != null) {
 			sqlOp = sqlOpSelectBlockCollector.transform(sqlOp);
+			
+			SqlOptimizer.optimize(sqlOp);
 		}
 	
 		/*

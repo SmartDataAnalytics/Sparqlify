@@ -18,6 +18,7 @@ import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_When;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
@@ -1999,7 +2000,14 @@ public class MappingOpsImpl
 				SqlExpr sqlExpr;
 				if(field.isVariable()) {
 					String varName = field.getVarName();
-					sqlExpr = rewrite.getProjection().getNameToExpr().get(varName);
+					SqlExpr tmp = rewrite.getProjection().getNameToExpr().get(varName);
+					
+					if(i == 0) {
+						sqlExpr = tmp;
+					} else {
+						sqlExpr = S_Cast.create(TypeToken.String, tmp);
+					}
+					
 				}
 				else {
 					throw new RuntimeException("Should not happen");
@@ -2010,7 +2018,8 @@ public class MappingOpsImpl
 			}
 		}
 
-		S_Constant sqlNull = S_Constant.create(new SqlValue(TypeToken.String, null));
+		S_Constant sqlNullString = S_Constant.create(new SqlValue(TypeToken.String, null));
+		S_Constant sqlNullInt = S_Constant.create(new SqlValue(TypeToken.Int, null));
 
 		
 		Generator generator = Gensym.create("o");
@@ -2025,8 +2034,13 @@ public class MappingOpsImpl
 			// Create the 'when' statement
 			List<S_When> cs = whens.get(i);
 			
+			S_Case caze;
+			if(i == 0) {
+				caze = S_Case.create(TypeToken.Int, cs, sqlNullInt);
+			} else {
+				caze = S_Case.create(TypeToken.String, cs, sqlNullString);	
+			}
 			
-			S_Case caze = S_Case.create(TypeToken.String, cs, sqlNull);
 			
 			
 			resultVars.add(exprVar);
@@ -2255,7 +2269,7 @@ public class MappingOpsImpl
 	@Override
 	public Mapping order(Mapping a, List<SortCondition> sortConditions) {
 
-		boolean disableOrderBy = true;
+		boolean disableOrderBy = false;
 		if(disableOrderBy) {
 			return a;
 		}

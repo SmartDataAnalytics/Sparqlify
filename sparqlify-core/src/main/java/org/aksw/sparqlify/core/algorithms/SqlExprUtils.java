@@ -3,16 +3,21 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.aksw.sparqlify.util.CnfTransformer;
+import org.aksw.sparqlify.util.ExprAccessor;
+import org.aksw.sparqlify.util.SqlExprAccessor;
 
 import com.google.common.collect.Iterables;
 
@@ -100,6 +105,60 @@ public class SqlExprUtils
 		}
 		
 		return false;
+	}
+
+	
+	
+	
+	
+	//public static final CnfTransformer<SqlExpr> cnfTransformer = new CnfTransformer<SqlExpr>(new SqlExprAccessor());
+	public static final ExprAccessor<SqlExpr> accessor = new SqlExprAccessor();
+	
+	public static SqlExpr toCnfExpr(SqlExpr expr) {
+		SqlExpr result = CnfTransformer.eval(expr, accessor);
+		return result;
+	}
+
+	public static List<Collection<SqlExpr>> toCnf(SqlExpr expr) {
+		SqlExpr tmp = toCnfExpr(expr);
+		List<Collection<SqlExpr>> result = CnfTransformer.toCnf(tmp, accessor);
+		return result;
+	}
+
+	public static List<Collection<SqlExpr>> toCnf(Iterable<SqlExpr> exprs) {
+
+		List<Collection<SqlExpr>> result = CnfTransformer.toCnf(exprs, accessor);
+		return result;
+	}
+
+	public static void optimizeNotNullInPlace(List<Collection<SqlExpr>> cnf) {
+		
+		for(Collection<SqlExpr> clause : cnf) {
+			Iterator<SqlExpr> it = clause.iterator();
+			
+			Set<S_ColumnRef> columnRefs = new HashSet<S_ColumnRef>();
+			
+			for(SqlExpr expr : clause) {
+				if(expr instanceof S_IsNotNull) {
+					SqlExprUtils.collectColumnReferences(expr, columnRefs);
+					
+				}				
+			}
+			
+			while(it.hasNext()) {	
+				SqlExpr expr = it.next();
+				
+				if(expr instanceof S_IsNotNull) {
+					S_IsNotNull tmp = (S_IsNotNull)expr;
+					SqlExpr arg = tmp.getExpr();
+					
+					boolean contained = columnRefs.contains(arg);
+					if(contained) {
+						it.remove();
+					}
+				}
+			}
+		}
 	}
 
 }

@@ -452,6 +452,12 @@ public class SparqlifyUtils {
 			result.addSerializer("isNotNull", serializer);
 		}
 
+		// Cast is built in
+//		{
+//			SqlFunctionSerializer serializer = new SqlFunctionSerializerCast();
+//			result.addSerializer("cast", serializer);
+//		}
+
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerWhen();
 			result.addSerializer("when", serializer);

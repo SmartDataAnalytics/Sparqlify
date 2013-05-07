@@ -1,6 +1,9 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
-public class SqlOpBase1
+import java.util.Collections;
+import java.util.List;
+
+public abstract class SqlOpBase1
 	extends SqlOpBase
 {
 	protected SqlOp subOp;
@@ -17,5 +20,10 @@ public class SqlOpBase1
 	@Override
 	public boolean isEmpty() {
 		return subOp.isEmpty();
+	}
+
+	@Override
+	public List<SqlOp> getSubOps() {
+		return Collections.singletonList(subOp);
 	}
 }

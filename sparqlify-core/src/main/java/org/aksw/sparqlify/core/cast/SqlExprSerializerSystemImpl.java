@@ -14,8 +14,6 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-
 public class SqlExprSerializerSystemImpl
 	implements SqlExprSerializerSystem
 {
@@ -52,6 +50,7 @@ public class SqlExprSerializerSystemImpl
 		
 		} else if(expr.isFunction()) {
 
+			
 			SqlExprFunction f = expr.asFunction();
 			List<SqlExpr> args = f.getArgs();
 			List<String> strs = new ArrayList<String>(args.size());
@@ -60,15 +59,27 @@ public class SqlExprSerializerSystemImpl
 				
 				strs.add(str);
 			}
-
 			
-			String functionName = f.getName();			
-			SqlFunctionSerializer serializer = nameToSerializer.get(functionName);
-			if(serializer == null) {
-				throw new RuntimeException("No serializer defined for: " + functionName + " in " + expr);
+			String functionName = f.getName();
+			
+			if(functionName.equals("cast")) {
+				Factory1<String> castSerializer = typeSerializer.asString(f.getDatatype());
+				
+				assert args.size() == 1 : "Excactly one argument expected for cast, got: " + args;
+				
+				String argStr = strs.get(0);
+				
+				result = castSerializer.create(argStr);
+				
+			} else {
+			
+				SqlFunctionSerializer serializer = nameToSerializer.get(functionName);
+				if(serializer == null) {
+					throw new RuntimeException("No serializer defined for: " + functionName + " in " + expr);
+				}
+				
+				result = serializer.serialize(strs);
 			}
-			
-			result = serializer.serialize(strs);
 			
 		} else if(expr.isVariable()) {
 			

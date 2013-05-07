@@ -99,6 +99,9 @@ public class SqlSelectBlockCollector {
 		SqlSelectBlock result = _makeSelect(node.getSubNode());
 		result.setDistinct(true);
 		
+		// Sort conditions must now become part of the projection
+		
+		
 		return result;
 	}
 	

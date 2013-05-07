@@ -1,5 +1,8 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Leaf nodes in an SQL expression. May carry aliases.
  * 
@@ -18,5 +21,10 @@ public abstract class SqlOpLeaf
 	
 	public String getAliasName() {
 		return aliasName;
+	}
+
+	@Override
+	public List<SqlOp> getSubOps() {
+		return Collections.emptyList();
 	}
 }
