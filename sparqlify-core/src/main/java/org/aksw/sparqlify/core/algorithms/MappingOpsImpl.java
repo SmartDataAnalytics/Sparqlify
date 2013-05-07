@@ -18,12 +18,11 @@ import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Cast;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_When;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_When;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -2035,17 +2034,35 @@ public class MappingOpsImpl
 			// Create the 'when' statement
 			List<S_When> cs = whens.get(i);
 			
-			S_Case caze;
-			if(i == 0) {
-				caze = S_Case.create(TypeToken.Int, cs, sqlNullInt);
-			} else {
-				caze = S_Case.create(TypeToken.String, cs, sqlNullString);	
-			}
+			// If there is just a single when entry, we can skip the when
+			// If all cazes map to the same expression, we can also skip the case
 			
+			
+			Set<SqlExpr> resultExprs = new HashSet<SqlExpr>();
+			for(S_When when : cs) {
+				resultExprs.add(when.getRight());
+			}
+
+			SqlExpr expr;
+			if(resultExprs.size() == 1) {
+				expr = resultExprs.iterator().next();				
+			}
+			else {
+				
+				S_Case caze;
+				if(i == 0) {
+					caze = S_Case.create(TypeToken.Int, cs, sqlNullInt);
+				} else {
+					caze = S_Case.create(TypeToken.String, cs, sqlNullString);	
+				}
+				
+				expr = caze;
+			}
+				
 			
 			
 			resultVars.add(exprVar);
-			resultProjection.put(varName, caze);
+			resultProjection.put(varName, expr);
 		}
 		
 		E_RdfTerm resultTerm = new E_RdfTerm(resultVars);
@@ -2286,6 +2303,11 @@ public class MappingOpsImpl
 			
 			
 			for(SqlExpr sqlExpr : sqlExprs) {
+				
+				if(sqlExpr.isConstant()) {
+					// No need to sort by constants
+					continue;
+				}
 				
 				SqlSortCondition sqlCond = new SqlSortCondition(sqlExpr, sc.getDirection());
 			
