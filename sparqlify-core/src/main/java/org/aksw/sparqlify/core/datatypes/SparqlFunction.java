@@ -40,6 +40,8 @@ public interface SparqlFunction {
 	 * object -> http://sparqlify.org/vocab/type/Object (anything)
 	 * plainLiteral -> http://sparqlify.org/vocab/type/PlainLitera
 	 * 
+	 * Note this signature refers to RDF types!!! - NOT SQL ONES!
+	 * 
 	 * nonRdfTermObject -> http://sparqlify.org/vocab/type/NrtObject (excludes URIs, blanknodes and literals)
 	 * 
 	 * @return
@@ -95,6 +97,9 @@ public interface SparqlFunction {
 	ExprSubstitutor getSubstitutor();
 	
 
+	
+	
+	
 	/**
 	 * 
 	 * 

@@ -18,6 +18,8 @@ import org.aksw.sparqlify.core.datatypes.XMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
@@ -45,6 +47,16 @@ public class TypeSystemImpl
 	private CoercionSystem<TypeToken, SqlValueTransformer> coercionSystem = new CoercionSystemImpl3(this);
 
 	
+	/**
+	 * Maps SPARQL functions to sets of declarations of SQL functions
+	 * E.g. ogc:st_intersects -> {ST_INSERSECTS(geometry, geometry), ST_INTERSECTS(geography, geography)}
+	 * 
+	 * 
+	 */
+	private Multimap<String, String> sparqlToSqlImpl = HashMultimap.create();
+	
+	
+	
 	public TypeSystemImpl() {
 		// By default use Jena's default TypeMapper
 		this.typeMapper = TypeMapper.getInstance();
@@ -65,11 +77,15 @@ public class TypeSystemImpl
 		this.nameToSparqlFunction.put(sparqlFunction.getName(), sparqlFunction);
 	}
 
+	
+	
+	
 	/**
 	 * Registering the same name with different signatures (overloading)
 	 * is allowed.
 	 * 
 	 */
+	@Deprecated
 	void registerSqlFunction(String name, SqlFunctionCollection sqlFunctions) {
 		nameToSqlFunctions.put(name, sqlFunctions);
 	}
@@ -95,6 +111,7 @@ public class TypeSystemImpl
 	}
 
 	@Override
+	@Deprecated
 	public void registerCoercion(XMethod method) {
 		// TODO Auto-generated method stub
 		
@@ -248,8 +265,8 @@ public class TypeSystemImpl
 	}
 
 	
-	public static TypeSystemImpl create(Map<String, String> typeHierarchy) {
-		
+	
+	public static IBiSetMultimap<TypeToken, TypeToken> createHierarchyMap(Map<String, String> typeHierarchy) {
 		IBiSetMultimap<TypeToken, TypeToken> subToSuperType = new BiHashMultimap<TypeToken, TypeToken>();
 		for(Entry<String, String> entry : typeHierarchy.entrySet()) {
 			
@@ -262,6 +279,13 @@ public class TypeSystemImpl
 
 			subToSuperType.put(subType, superType);
 		}
+		
+		return subToSuperType;
+	}
+	
+	public static TypeSystemImpl create(Map<String, String> typeHierarchy) {
+		
+		IBiSetMultimap<TypeToken, TypeToken> subToSuperType = createHierarchyMap(typeHierarchy);
 
 		
 		TypeSystemImpl result = new TypeSystemImpl();

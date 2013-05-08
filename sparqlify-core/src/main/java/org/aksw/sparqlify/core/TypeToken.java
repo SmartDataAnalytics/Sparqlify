@@ -50,6 +50,8 @@ public class TypeToken
 	public static final TypeToken TypeError = alloc("type_error");
 	public static final TypeToken Special = alloc("special");
 	
+	
+	
 	@Deprecated // Should not be used, because SqlExpr objects don't treat rdfTerm as a datatype
 	public static final TypeToken rdfTerm = alloc("rdfTerm");
 	

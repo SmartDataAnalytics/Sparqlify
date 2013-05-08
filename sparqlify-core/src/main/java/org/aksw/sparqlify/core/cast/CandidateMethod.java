@@ -2,27 +2,33 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.List;
 
-public class CandidateMethod<T, I> {
-	private MethodEntry<T, I> method;
-	private List<MethodEntry<T, I>> coercions;
+public class CandidateMethod<T> {
+	private MethodEntry<T> method;
+	private List<CandidateMethod<T>> coercions;
 	
 	private MethodDistance distance;
 	
-	public CandidateMethod(MethodEntry<T, I> method, List<MethodEntry<T, I>> coercions, MethodDistance distance) {
+	public CandidateMethod(MethodEntry<T> method, List<CandidateMethod<T>> coercions, MethodDistance distance) {
 		this.coercions = coercions;
 		this.method = method;
 		this.distance = distance;
 	}
 
-	public MethodEntry<T, I> getMethod() {
+	public MethodEntry<T> getMethod() {
 		return method;
 	}
 
-	public List<MethodEntry<T, I>> getCoercions() {
+	public List<CandidateMethod<T>> getCoercions() {
 		return coercions;
 	}
 
 	public MethodDistance getDistance() {
 		return distance;
+	}
+
+	@Override
+	public String toString() {
+		return "CandidateMethod [method=" + method + ", coercions=" + coercions
+				+ ", distance=" + distance + "]";
 	}
 }
