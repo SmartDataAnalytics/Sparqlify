@@ -1,47 +1,41 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
+import org.aksw.commons.factory.Factory1;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
 
 import com.google.common.collect.Iterables;
 
-
-/**
- * 
- * @author raven
- *
- *
- * Deprecation: Need to port this to SqlExprSubstitutor2
- */
-@Deprecated
-public class SqlExprSubstitutor {
-
-	private Map<String, ? extends SqlExpr> map;
-
-	public SqlExprSubstitutor(Map<String, ? extends SqlExpr> map) {
-		this.map = map;
-	}
-
+public class SqlExprSubstitutor2 {
 	
-	public List<SqlExpr> substitute(List<SqlExpr> exprs) {
+	public static List<Collection<SqlExpr>> substitute(List<Collection<SqlExpr>> nf, Factory1<SqlExpr> postTraversalTransformer) {
+		List<Collection<SqlExpr>> result = new ArrayList<Collection<SqlExpr>>();
+		for(Collection<SqlExpr> clause : nf) {
+			Collection<SqlExpr> newClause = substitute(clause, postTraversalTransformer);
+			
+			result.add(newClause);
+		}
+		
+		return result;
+	}
+	
+	public static List<SqlExpr> substitute(Collection<SqlExpr> exprs, Factory1<SqlExpr> postTraversalTransformer) {
 		List<SqlExpr> result = new ArrayList<SqlExpr>(exprs.size());
 		
 		for(SqlExpr expr : exprs) {
-			SqlExpr newExpr = substitute(expr);
+			SqlExpr newExpr = substitute(expr, postTraversalTransformer);
 			
 			result.add(newExpr);
 		}
 		
 		return result;
 	}
-	
-	public SqlExpr substitute(SqlExpr expr) {
+
+	public static SqlExpr substitute(SqlExpr expr, Factory1<SqlExpr> postTraversalTransformer) {
 
 		if(expr == null) {
 			System.out.println("Null expr");
@@ -53,7 +47,8 @@ public class SqlExprSubstitutor {
 		SqlExpr result;
 		switch(expr.getType()) {
 		case Constant: {
-			result = expr;
+			//result = expr;
+			result = postTraversalTransformer.create(expr);
 			break;
 		}
 		case Function: {
@@ -63,22 +58,26 @@ public class SqlExprSubstitutor {
 			
 			assert !Iterables.contains(args, null) : "Null argument in expr: " + fn;
 			
-			List<SqlExpr> newArgs = substitute(args);
-			result = fn.copy(newArgs);
+			List<SqlExpr> newArgs = substitute(args, postTraversalTransformer);
+			SqlExpr tmp = fn.copy(newArgs);
+			
+			result = postTraversalTransformer.create(tmp);
 			break;
 		}
 		case Variable: {
 			//S_ColumnRef columnRef = (S_ColumnRef)expr;
-			SqlExprVar var = expr.asVariable();
-			String name = var.getVarName();
+			//SqlExprVar var = expr.asVariable();
+			//String name = var.getVarName();
 			
-			SqlExpr substitute = map.get(name);
+			result = postTraversalTransformer.create(expr);//map.get(name);
+			
+			/*
 			if(substitute != null) {
 				result = substitute;
 			} else {
 				result = expr;
 			}
-			
+			)*/
 			//columnRef.ge
 			
 			// The datatype of the substituted expression must be an equal-or-sub-type of the current one. 	
@@ -94,15 +93,4 @@ public class SqlExprSubstitutor {
 		return result;
 	}
 
-	public SqlExpr trySubstitute(S_ColumnRef sqlExpr) {
-		SqlExpr substitute = map.get(sqlExpr);
-
-		return (substitute == null) ? sqlExpr : substitute;
-	}
-
-	
-	public static SqlExprSubstitutor create(Map<String, SqlExpr> map) {
-		SqlExprSubstitutor result = new SqlExprSubstitutor(map);
-		return result;
-	}
 }

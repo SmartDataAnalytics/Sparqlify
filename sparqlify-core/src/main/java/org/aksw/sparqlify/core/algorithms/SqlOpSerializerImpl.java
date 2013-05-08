@@ -15,6 +15,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoinN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
@@ -191,6 +192,21 @@ public class SqlOpSerializerImpl
 	
 	
 	
+	public void _serialize(SqlOpJoinN node, IndentedWriter writer) {
+		List<SqlOp> subOps = node.getSubOps();
+		
+		boolean isFirst = true;
+		for(SqlOp subOp : subOps) {
+			if(!isFirst) {
+				writer.println(", ");
+			}
+			
+			isFirst = false;
+			serialize(subOp, writer);
+			
+		}
+		//writer.print("EMPTY_SQL_NODE");
+	}
 	
 	
 	public void _serialize(SqlNodeEmpty node, IndentedWriter writer) {

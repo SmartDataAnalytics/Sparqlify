@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.util.MapReader;
+import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
@@ -56,6 +57,8 @@ public class MappingOpsImplTest {
 		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
+		Schema databaseSchema = Schema.create(conn);
+		
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
@@ -173,7 +176,7 @@ public class MappingOpsImplTest {
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 
 

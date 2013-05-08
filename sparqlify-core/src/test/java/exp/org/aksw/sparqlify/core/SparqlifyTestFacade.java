@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
+import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
@@ -74,6 +75,8 @@ public class SparqlifyTestFacade {
 		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
+		Schema databaseSchema = Schema.create(conn);
+		
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
@@ -86,7 +89,7 @@ public class SparqlifyTestFacade {
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, opMappingRewriter, vdFactory.getDatatypeSystem());
+		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(cvs, opMappingRewriter, vdFactory.getDatatypeSystem(), databaseSchema);
 	
 		SparqlifyTestFacade result = new SparqlifyTestFacade(vdFactory, cvs, rewriter);
 			

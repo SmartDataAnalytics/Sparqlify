@@ -14,12 +14,13 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.cache.extra.SqlUtils;
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
 import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.StreamUtils;
+import org.aksw.commons.util.jdbc.Schema;
+import org.aksw.commons.util.jdbc.SqlUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerCase;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerElse;
@@ -615,6 +616,7 @@ public class SparqlifyUtils {
 		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
 
 		CandidateViewSelector<ViewDefinition> candidateViewSelector;
+		Schema databaseSchema; 
 		try {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
@@ -623,13 +625,16 @@ public class SparqlifyUtils {
 
 		
 			//	RdfViewSystem system = new RdfViewSystem2();
-			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);		
+			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);
+			
+			databaseSchema = Schema.create(conn);
 		} finally {
 			conn.close();
 		}
 
+		
 
-		SparqlSqlOpRewriter ssoRewriter = SparqlifyUtils.createSqlOpRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+		SparqlSqlOpRewriter ssoRewriter = SparqlifyUtils.createSqlOpRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 		
 		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem();
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
@@ -696,6 +701,7 @@ public class SparqlifyUtils {
 		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
 
 		CandidateViewSelector<ViewDefinition> candidateViewSelector;
+		Schema databaseSchema;
 		try {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
@@ -704,12 +710,14 @@ public class SparqlifyUtils {
 
 		
 			//	RdfViewSystem system = new RdfViewSystem2();
-			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);		
+			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);
+			
+			databaseSchema = Schema.create(conn);
 		} finally {
 			conn.close();
 		}
 
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
+		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
@@ -735,7 +743,7 @@ public class SparqlifyUtils {
 		return result;
 	}
 	
-	public static SparqlSqlOpRewriter createSqlOpRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {
+	public static SparqlSqlOpRewriter createSqlOpRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem, Schema databaseSchema) throws SQLException, IOException {
 		//DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
 		//ExprTransformer exprTransformer = new ExprTransformerMap();
 
@@ -754,7 +762,7 @@ public class SparqlifyUtils {
 		
 		SqlOpSelectBlockCollector collector = new SqlOpSelectBlockCollectorImpl();
 		
-		SparqlSqlOpRewriter result = new SparqlSqlOpRewriterImpl(candidateViewSelector, opMappingRewriter, collector);
+		SparqlSqlOpRewriter result = new SparqlSqlOpRewriterImpl(candidateViewSelector, opMappingRewriter, collector, databaseSchema);
 		
 		return result;
 	}
@@ -769,9 +777,9 @@ public class SparqlifyUtils {
 	 * @throws IOException
 	 */
 	@Deprecated
-	public static SparqlSqlStringRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem) throws SQLException, IOException {		
+	public static SparqlSqlStringRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem, Schema databaseSchema) throws SQLException, IOException {		
 		
-		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(candidateViewSelector, opMappingRewriter, datatypeSystem);
+		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(candidateViewSelector, opMappingRewriter, datatypeSystem, databaseSchema);
 		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(ssoRewriter);
 
 		return result;

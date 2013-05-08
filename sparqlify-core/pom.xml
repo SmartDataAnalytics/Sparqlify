@@ -199,6 +199,10 @@
 				<artifactId>junit</artifactId>
 			</dependency>
 
+		<dependency>
+		    <groupId>net.sf.jgrapht</groupId>
+		    <artifactId>jgrapht</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

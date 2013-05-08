@@ -10,6 +10,7 @@ import java.util.Set;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LogicalOr;
@@ -52,6 +53,18 @@ public class SqlExprUtils
 		}
 	}
 
+	
+	
+	public static List<SqlExpr> cnfAsList(Collection<? extends Iterable<SqlExpr>> nf) {
+		List<SqlExpr> result = new ArrayList<SqlExpr>();
+		
+		for(Iterable<SqlExpr> clause : nf) {
+			SqlExpr expr = orifyBalanced(clause);
+			result.add(expr);
+		}
+		
+		return result;
+	}
 	
 	
 	public static List<SqlExpr> toDnf(Collection<? extends Iterable<SqlExpr>> clauses) {
@@ -131,6 +144,28 @@ public class SqlExprUtils
 		return result;
 	}
 
+	
+	public static void optimizeEqualityInPlace(List<Collection<SqlExpr>> cnf) {
+		for(Collection<SqlExpr> clause : cnf) {
+			Iterator<SqlExpr> it = clause.iterator();
+			
+			while(it.hasNext()) {	
+				SqlExpr expr = it.next();
+				
+				if(expr instanceof S_Equals) {
+					S_Equals tmp = (S_Equals)expr;
+
+					
+					boolean isSame = tmp.getLeft().equals(tmp.getRight());
+					if(isSame) {
+						it.remove();
+					}
+				}
+			}
+		}
+	}
+	
+	
 	public static void optimizeNotNullInPlace(List<Collection<SqlExpr>> cnf) {
 		
 		for(Collection<SqlExpr> clause : cnf) {

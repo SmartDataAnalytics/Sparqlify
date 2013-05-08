@@ -19,6 +19,7 @@ Prefix rev:<http://purl.org/stuff/rev#>
 Prefix bsbm:<http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/>
 Prefix bsbm-inst:<http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/instances/>
 
+/*
 Create View ppt1 As Construct { ?s bsbm:productPropertyTextual1 ?o } With ?s = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr)) ?o = plainLiteral(?propertyTex1) From [[SELECT * FROM product WHERE "propertyTex1" IS NOT NULL]]
 Create View ppt2 As Construct { ?s bsbm:productPropertyTextual2 ?o } With ?s = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr)) ?o = plainLiteral(?propertyTex2) From [[SELECT * FROM product WHERE "propertyTex2" IS NOT NULL]]
 Create View ppt3 As Construct { ?s bsbm:productPropertyTextual3 ?o } With ?s = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr)) ?o = plainLiteral(?propertyTex3) From [[SELECT * FROM product WHERE "propertyTex3" IS NOT NULL]]
@@ -32,7 +33,7 @@ Create View ppn3 As Construct { ?s bsbm:productPropertyNumeric3 ?o } With ?s = u
 Create View ppn4 As Construct { ?s bsbm:productPropertyNumeric4 ?o } With ?s = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr)) ?o = typedLiteral(?propertyNum4, xsd:Integer) From [[SELECT * FROM product WHERE "propertyNum4" IS NOT NULL]]
 Create View ppn5 As Construct { ?s bsbm:productPropertyNumeric5 ?o } With ?s = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr)) ?o = typedLiteral(?propertyNum5, xsd:Integer) From [[SELECT * FROM product WHERE "propertyNum5" IS NOT NULL]]
 Create View ppn6 As Construct { ?s bsbm:productPropertyNumeric6 ?o } With ?s = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Product", ?nr)) ?o = typedLiteral(?propertyNum6, xsd:Integer) From [[SELECT * FROM product WHERE "propertyNum6" IS NOT NULL]]
-
+*/
 
 
 Create View view_product As
@@ -42,7 +43,7 @@ Create View view_product As
     ?s rdfs:label                   ?label .
     ?s rdfs:comment                 ?comment .
     ?s bsbm:producer                ?producer .
-    /*
+
     ?s bsbm:productPropertyTextual1 ?ppt1 .
     ?s bsbm:productPropertyTextual2 ?ppt2 .
     ?s bsbm:productPropertyTextual3 ?ppt3 .
@@ -55,7 +56,7 @@ Create View view_product As
     ?s bsbm:productPropertyNumeric4 ?ppn4 .
     ?s bsbm:productPropertyNumeric5 ?ppn5 .
     ?s bsbm:productPropertyNumeric6 ?ppn6 .
-    */
+
 
     ?s dc:publisher                 ?publisher .
     ?s dc:date                      ?publishDate .
@@ -67,7 +68,7 @@ Create View view_product As
     ?comment     = plainLiteral(?comment)
     //?producer    = uri(concat(bsbm:producer, ?producer))
     ?producer    = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
-/*
+
     ?ppt1        = plainLiteral(?propertyTex1)
     ?ppt2        = plainLiteral(?propertyTex2)
     ?ppt3        = plainLiteral(?propertyTex3)
@@ -80,7 +81,7 @@ Create View view_product As
     ?ppn4        = typedLiteral(?propertyNum4, xsd:Integer)
     ?ppn5        = typedLiteral(?propertyNum5, xsd:Integer)
     ?ppn6        = typedLiteral(?propertyNum6, xsd:Integer)
-*/
+
     ?publisher   = uri(concat(bsbm-inst:dataFromProducer, ?producer, "/Producer", ?producer))
     ?publishDate = typedLiteral(?publishDate, xsd:dateTime)
   From

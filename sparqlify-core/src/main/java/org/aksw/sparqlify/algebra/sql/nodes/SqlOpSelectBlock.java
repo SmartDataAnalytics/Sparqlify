@@ -90,9 +90,12 @@ public class SqlOpSelectBlock
 	}*/
 	
 	public void setSubOp(SqlOp subOp) {
+		/*
 		if(this.subOp != null) {
 			throw new RuntimeException("Child already set");
 		}
+		*/
+		
 		this.subOp = subOp;
 	}
 	

@@ -2,9 +2,10 @@ package org.aksw.sparqlify.core.interfaces;
 
 import java.util.List;
 
+import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
-import org.aksw.sparqlify.core.algorithms.SqlOptimizer;
+import org.aksw.sparqlify.core.algorithms.SqlOptimizerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
 import org.apache.commons.lang.time.StopWatch;
@@ -31,14 +32,22 @@ public class SparqlSqlOpRewriterImpl
 	private OpMappingRewriter opMappingRewriter;
 	private SqlOpSelectBlockCollector sqlOpSelectBlockCollector;
 	
+	// TODO Replace with an SQL optimizer object ; or more general an SqlOp post transformer
+	//private Schema databaseSchema;
+	
+	private SqlOptimizerImpl sqlOptimizer;
+	
 	public SparqlSqlOpRewriterImpl(
 			CandidateViewSelector<? extends IViewDef> candidateViewSelector,
 			OpMappingRewriter opMappingRewriter,
-			SqlOpSelectBlockCollector sqlOpSelectBlockCollector)
+			SqlOpSelectBlockCollector sqlOpSelectBlockCollector,
+			Schema databaseSchema)
 	{
 		this.candidateViewSelector = candidateViewSelector;
 		this.opMappingRewriter = opMappingRewriter;
 		this.sqlOpSelectBlockCollector = sqlOpSelectBlockCollector;
+		
+		this.sqlOptimizer = new SqlOptimizerImpl(databaseSchema);
 	}
 	
 	
@@ -84,7 +93,9 @@ public class SparqlSqlOpRewriterImpl
 		if(sqlOpSelectBlockCollector != null) {
 			sqlOp = sqlOpSelectBlockCollector.transform(sqlOp);
 			
-			SqlOptimizer.optimize(sqlOp);
+			//sqlOptimizer.optimize(sqlOp);
+			
+			//SqlOptimizerImpl.optimize(sqlOp);
 
 			logger.info("[" + sw.getTime() + "] Sql optimization completed");
 		}

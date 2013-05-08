@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,41 +13,6 @@ import org.aksw.commons.jena.util.QuadUtils;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
-
-
-class VarConst<K, V> {
-	private Set<K> keys;
-	private V value;
-
-	
-	public VarConst() {
-		this.keys = new HashSet<K>();
-	}
-	
-
-	public VarConst(Set<K> keys, V value) {
-		this.keys = keys;
-		this.value = value;
-	}
-
-	public Set<K> getKeys() {
-		return keys;
-	}
-
-	public V getValue() {
-		return value;
-	}
-	
-	public void setValue(V value) {
-		this.value = value;
-	}
-
-
-	@Override
-	public String toString() {
-		return "[keys=" + keys + ", value=" + value + "]";
-	}
-}
 
 
 class BindingVal

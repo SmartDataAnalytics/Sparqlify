@@ -35,7 +35,7 @@
 
 		<jersey.version>1.8</jersey.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
-		<aksw.commons.version>0.5</aksw.commons.version>
+		<aksw.commons.version>0.6-SNAPSHOT</aksw.commons.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -744,6 +744,13 @@
 				<version>4.11</version>
 				<scope>test</scope>
 			</dependency>
+			
+		<dependency>
+		    <groupId>net.sf.jgrapht</groupId>
+		    <artifactId>jgrapht</artifactId>
+		    <version>0.8.3</version>
+		</dependency>
+			
 
 			<!-- <dependency> -->
 			<!-- <groupId>c3p0</groupId> -->

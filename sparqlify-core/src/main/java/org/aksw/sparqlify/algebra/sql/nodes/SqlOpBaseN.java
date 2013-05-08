@@ -20,7 +20,7 @@ public abstract class SqlOpBaseN
 	
 	@Override
 	public void write(IndentedWriter writer) {
-		writer.println("SqlOpUnion(" + schema.getColumnNames());
+		writer.println("SqlOpBaseN"); //"SqlOpUnion(" + schema.getColumnNames());
 		
 		writer.incIndent();
 		
