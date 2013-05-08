@@ -9,6 +9,7 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XMethod;
 
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
@@ -56,6 +57,7 @@ public interface TypeSystem
 	 * 
 	 * @param sqlFunction
 	 */
+	@Deprecated
 	void registerSqlFunction(XMethod sqlFunction);
 	
 	/**
@@ -92,6 +94,7 @@ public interface TypeSystem
 	 *  
 	 * @param method
 	 */
+	@Deprecated
     void registerCoercion(XMethod method);
 	
     
@@ -113,10 +116,17 @@ public interface TypeSystem
 	 */
 	Factory1<SqlExpr> cast(TypeToken fromTypeUri, TypeToken toTypeUri);
 
-	
+	@Deprecated
 	boolean isSuperClassOf(TypeToken a, TypeToken b);
 	
+	@Deprecated
 	Set<TypeToken> supremumDatatypes(TypeToken from, TypeToken to);
+	
+	
+	Multimap<String, String> getSparqlSqlImpls();
+
+	FunctionModel<TypeToken> getSqlFunctionModel();
+
 }
 
 

@@ -10,7 +10,12 @@ public class MethodEntry<T> {
 	public MethodEntry(String id, String name, MethodSignature<T> signature) {
 		super();
 		this.id = id;
+		this.name = name;
 		this.signature = signature;
+	}
+
+	public String getId() {
+		return id;
 	}
 	
 	public String getName() {

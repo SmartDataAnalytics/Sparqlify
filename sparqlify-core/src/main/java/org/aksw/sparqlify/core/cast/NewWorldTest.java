@@ -42,6 +42,7 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Node;
@@ -263,6 +264,9 @@ public class NewWorldTest {
 		
 		stm.register(SparqlifyConstants.nvTypeError.asNode().getLiteralDatatypeURI(), new SqlDatatypeConstant(SqlValue.TYPE_ERROR));
 
+		
+		
+		
 		
 		// RDFDatatype i = new XSDBaseNumericType(TypeToken.Int.toString(),
 		// BigInteger.class);
@@ -598,6 +602,42 @@ public class NewWorldTest {
 			typeSystem.registerSparqlFunction(f);
 		}		
 		
+		
+		
+		FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
+		Multimap<String, String> sparqlSqlImpls = typeSystem.getSparqlSqlImpls();
+		
+		{
+			sqlModel.registerFunction("str@str", "str", MethodSignature.create(false, TypeToken.String, TypeToken.String));
+			sqlModel.registerFunction("str@double", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Double));
+			sqlModel.registerFunction("str@float", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Float));
+			sqlModel.registerFunction("str@int", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Int));
+
+			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.rdfTerm, TypeToken.rdfTerm);
+			SparqlFunction f = new SparqlFunctionImpl("str", sig, null, null);
+
+			typeSystem.registerSparqlFunction(f);
+
+			sparqlSqlImpls.put("str", "str@str");
+			sparqlSqlImpls.put("str", "str@double");
+			sparqlSqlImpls.put("str", "str@float");
+			sparqlSqlImpls.put("str", "str@int");
+			
+			
+		}
+
+		
+		{
+			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.rdfTerm, TypeToken.rdfTerm);
+			SparqlFunction f = new SparqlFunctionImpl(XSD.xdouble.getURI(), sig, null, null);
+			typeSystem.registerSparqlFunction(f);
+			
+			sqlModel.registerFunction("double@str", "double", MethodSignature.create(false, TypeToken.Double, TypeToken.String));
+			
+			sparqlSqlImpls.put(XSD.xdouble.getURI(), "double@str");
+		}
+		
+		//
 		
 		// {
 		// MethodSignature<String> sig = MethodSignature.create(false,

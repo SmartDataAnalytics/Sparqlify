@@ -1,7 +1,9 @@
 package org.aksw.sparqlify.core.cast;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -53,10 +55,34 @@ public class TypeSystemImpl
 	 * 
 	 * 
 	 */
+	private FunctionModel<TypeToken> functionModel = new FunctionModelImpl<TypeToken>(typeHierarchyProvider);
 	private Multimap<String, String> sparqlToSqlImpl = HashMultimap.create();
 	
 	
+	public Multimap<String, String> getSparqlSqlImpls() {
+		return sparqlToSqlImpl;
+	}
+
+	public FunctionModel<TypeToken> getSqlFunctionModel() {
+		return functionModel;
+	}
+//	
+//	
+//	
+//	public void registerSparqlSqlImpl(String sparqlFnId, String sqlId) {
+//		this.sparqlToSqlImpl.put(sparqlFnId, sqlId);
+//	}
 	
+
+
+//	public Collection<String> getSqlImpls(String sparqlFnId) {
+//		Collection<String> sqlFnIds = this.sparqlToSqlImpl.get(sparqlFnId);
+//		return sqlFnIds;
+//	}
+
+//	public Coll
+	
+
 	public TypeSystemImpl() {
 		// By default use Jena's default TypeMapper
 		this.typeMapper = TypeMapper.getInstance();
@@ -305,4 +331,35 @@ public class TypeSystemImpl
 	public SqlTypeMapper getSqlTypeMapper() {
 		return sqlTypeMapper;
 	}
+	
+	
+	public static <T> CandidateMethod<T> lookupSqlCandidate(FunctionModel<T> functionModel, Multimap<String, String> nameToDecls, String sparqlFnName, List<T> argTypes) {
+		//FunctionModel<T> functionModel = typeSystem.getSqlFunctionModel();
+		
+		Collection<String> sqlFnIds = nameToDecls.get(sparqlFnName);//typeSystem.getSparqlSqlImpls().get(sparqlFnName);
+		Collection<MethodEntry<T>> sqlFns = new ArrayList<MethodEntry<T>>(sqlFnIds.size());
+		for(String sqlFnId : sqlFnIds) {
+			MethodEntry<T> sqlFn = functionModel.lookupById(sqlFnId);
+			if(sqlFn != null) {
+				sqlFns.add(sqlFn);
+			}
+		}
+		
+		
+		Collection<CandidateMethod<T>> candidates = functionModel.lookup(sqlFns, argTypes);
+		
+		CandidateMethod<T> result;
+		if(candidates.size() > 1) {
+			throw new RuntimeException("Multiple matching SQL declarations for SPARQL function " + sparqlFnName + " with argument types " + argTypes);
+		} else if(candidates.isEmpty()) {
+			result = null;
+		} else {
+			result = candidates.iterator().next();
+		}
+		
+		return result;
+	}
+	
+	
+	
 }

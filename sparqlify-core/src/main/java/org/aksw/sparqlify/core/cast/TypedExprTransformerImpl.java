@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -396,30 +398,83 @@ public class TypedExprTransformerImpl
 			} else {
 			
 				// If there is no evaluator, use the default behavior:
-				MethodSignature<TypeToken> signature = sparqlFunction.getSignature();
-				if(signature != null) {
-					
-					TypeToken returnType = signature.getReturnType();
-					if(returnType != null) {
+//				MethodSignature<TypeToken> signature = sparqlFunction.getSignature();
+//				if(signature != null) {
+//					
+//					TypeToken returnType = signature.getReturnType();
+//					if(returnType != null) {
+
 						
-						SqlExpr tmp = S_Function.create(returnType, functionId, newArgs);
-						result = new ExprHolder(tmp);
-					} else {
-						throw new RuntimeException("Return type is null: " + signature);
-					}
-					
-				} else {
-					throw new RuntimeException("Neither evaluator nor signature found for " + functionId + " in " + fn);					
-				}
+						// Get the types of the evaluated arguments
+						List<TypeToken> argTypes = new ArrayList<TypeToken>(newArgs.size());
+						for(SqlExpr newArg : newArgs) {
+							argTypes.add(newArg.getDatatype());
+						}
+						
+						FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
+						Multimap<String, String> sparqlSqlImpls = typeSystem.getSparqlSqlImpls();
+						
+						CandidateMethod<TypeToken> candidate = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlImpls, functionId, argTypes);
+						
+						if(candidate != null) {
+							
+							SqlExpr sqlExpr = createSqlExpr(candidate, newArgs);
+							result = new ExprHolder(sqlExpr);							
+							
+						} else {
+							// Type error
+							throw new RuntimeException("Type error.... needs to be handled - No function found: " + functionId + " with argtypes " + argTypes);
+						}
+						
+						
+						
+						//SqlExpr tmp = S_Function.create(returnType, functionId, newArgs);
+
+//					} else {
+//						throw new RuntimeException("Return type is null: " + signature);
+//					}
+//					
+//				} else {
+//					throw new RuntimeException("Neither evaluator nor signature found for " + functionId + " in " + fn);					
+//				}
 				
 			}			
 			// Check if the functionProvider has a definition for the functionId
 			
 		}
 		
+		
 		return result;
 	}
 
+	
+	public static SqlExpr createSqlExpr(CandidateMethod<TypeToken> candidate, List<SqlExpr> args) {
+		MethodEntry<TypeToken> method = candidate.getMethod();
+		List<CandidateMethod<TypeToken>> coercions = candidate.getCoercions();
+		
+		// Apply coercions
+		List<SqlExpr> newArgs = new ArrayList<SqlExpr>(args.size());
+		for(int i = 0; i < args.size(); ++i) {
+			SqlExpr arg = args.get(i);
+			CandidateMethod<TypeToken> coercion = coercions.get(i);
+			
+			SqlExpr newArg;
+			if(coercion != null) {
+				newArg = createSqlExpr(coercion, Collections.singletonList(arg));
+			} else {
+				newArg = arg;
+			}
+			
+			newArgs.add(newArg);
+		}
+		
+		TypeToken returnType = method.getSignature().getReturnType();
+		String functionId = method.getId();
+		
+		SqlExpr result = S_Function.create(returnType, functionId, newArgs);
+
+		return result;
+	}
 	
 	/**
 	 * This function requires a type-constructor free expression as input:

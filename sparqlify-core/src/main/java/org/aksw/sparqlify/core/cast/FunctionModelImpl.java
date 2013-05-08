@@ -34,7 +34,6 @@ interface SparqlSqlFunctionMap<T> {
 
 
 
-
 /**
  * T is the type
  * I some implementation of a function
@@ -44,9 +43,11 @@ interface SparqlSqlFunctionMap<T> {
  * @param <T>
  * @param <I>
  */
-public class SqlFunctionModel<T> {
+public class FunctionModelImpl<T>
+	implements FunctionModel<T>
+{
 
-	private static final Logger logger = LoggerFactory.getLogger(SqlFunctionModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(FunctionModel.class);
 	
 	private Multimap<String, MethodEntry<T>> nameToMethodEntry = ArrayListMultimap.create();
 	private Map<String, MethodEntry<T>> idToMethodEntry = new HashMap<String, MethodEntry<T>>();
@@ -56,7 +57,7 @@ public class SqlFunctionModel<T> {
 	private Multimap<T, MethodEntry<T>> sourceToTargets = ArrayListMultimap.create();
 	
 	
-	public SqlFunctionModel(DirectSuperTypeProvider<T> typeHierarchyProvider) {
+	public FunctionModelImpl(DirectSuperTypeProvider<T> typeHierarchyProvider) {
 		this.typeHierarchyProvider = typeHierarchyProvider;
 	}
 	
@@ -79,7 +80,7 @@ public class SqlFunctionModel<T> {
 		IBiSetMultimap<TypeToken, TypeToken> h = TypeSystemImpl.createHierarchyMap(typeHierarchy);
 		TypeHierarchyProviderImpl thp = new TypeHierarchyProviderImpl(h);
 
-		SqlFunctionModel<TypeToken> model = new SqlFunctionModel<TypeToken>(thp);
+		FunctionModel<TypeToken> model = new FunctionModelImpl<TypeToken>(thp);
 		
 		model.registerFunction("plus_int", "+", MethodSignature.create(false, TypeToken.Int, TypeToken.Int, TypeToken.Int));
 		//model.registerCoercion("to_int", "to_int", MethodSignature.create(false, TypeToken.Double, TypeToken.Int));
@@ -175,6 +176,8 @@ public class SqlFunctionModel<T> {
 		MethodEntry<T> entry = new MethodEntry<T>(id, name, signature);
 		
 		signatures.add(entry);
+		
+		idToMethodEntry.put(id, entry);
 	}
 	
 	
@@ -190,6 +193,8 @@ public class SqlFunctionModel<T> {
 		MethodEntry<T> entry = new MethodEntry<T>(id, name, signature);
 		
 		targets.add(entry);
+		
+		idToMethodEntry.put(id, entry);
 	}
 	
 	

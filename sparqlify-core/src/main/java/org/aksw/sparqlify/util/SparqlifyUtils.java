@@ -448,10 +448,21 @@ public class SparqlifyUtils {
 		}
 
 		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("IS NOT NULL");
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix(" IS NOT NULL");
 			result.addSerializer("isNotNull", serializer);
 		}
 
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float8");
+			result.addSerializer("double@str", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
+			result.addSerializer("str@double", serializer);
+		}
+
+		
 		// Cast is built in
 //		{
 //			SqlFunctionSerializer serializer = new SqlFunctionSerializerCast();

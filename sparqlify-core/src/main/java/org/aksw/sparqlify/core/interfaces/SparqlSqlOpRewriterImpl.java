@@ -7,6 +7,7 @@ import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOptimizer;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
+import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +45,18 @@ public class SparqlSqlOpRewriterImpl
 	@Override
 	public SparqlSqlOpRewrite rewrite(Query query) {
 
-		// Expand the query		
-		Op opViewInstance = candidateViewSelector.getApplicableViews(query);	
+		StopWatch sw = new StopWatch();
+		
+		sw.start();
+		logger.info("[" + sw.getTime() + "] Rewrite started.");
+		
+		// Expand the query
+		Op opViewInstance = candidateViewSelector.getApplicableViews(query);		
+	
+		
+		logger.info("[" + sw.getTime() + "] Candidate selection completed");
+		
+		
 		//logger.trace("View Instance Op: " + opViewInstance);
 		
 	
@@ -58,6 +69,9 @@ public class SparqlSqlOpRewriterImpl
 		}
 	
 		Mapping mapping = opMappingRewriter.rewrite(opViewInstance);
+
+		logger.info("[" + sw.getTime() + "] Mapping rewrite completed");
+
 		//logger.info("Variable Definitions:\n" + mapping.getVarDefinition().toPrettyString());
 		
 		// FIXME Make the collector configurable
@@ -65,11 +79,18 @@ public class SparqlSqlOpRewriterImpl
 		
 		SqlOp sqlOp = mapping.getSqlOp();
 		
+		logger.info("[" + sw.getTime() + "] Sql translation completed");
+
 		if(sqlOpSelectBlockCollector != null) {
 			sqlOp = sqlOpSelectBlockCollector.transform(sqlOp);
 			
 			SqlOptimizer.optimize(sqlOp);
+
+			logger.info("[" + sw.getTime() + "] Sql optimization completed");
 		}
+
+		sw.stop();
+		logger.info("[" + sw.getTime() + "] Done (without serilization");
 	
 		/*
 		boolean debugPerformance = true;
