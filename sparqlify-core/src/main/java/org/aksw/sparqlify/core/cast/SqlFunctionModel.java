@@ -13,6 +13,19 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+/**
+ * Return the set of SQL function declarations for a given sparql function id
+ * 
+ * @author raven
+ *
+ * @param <T>
+ * @param <I>
+ */
+interface SparqlSqlFunctionMap<T, I> {
+	Collection<MethodEntry<T, I>> getSqlImpls(String id);
+}
+
+
 
 /**
  * T is the type
@@ -33,6 +46,10 @@ public class SqlFunctionModel<T, I> {
 	private Multimap<T, MethodEntry<T, I>> sourceToTargets = ArrayListMultimap.create();
 	
 	
+	
+	public static void main(String[] args) {
+		//DirectSuperTypeProvider<Impl>
+	}
 	
 	
 	public void lookupCoercionRec(T argType, T targetType, int depth, Set<CandidateMethod<T, I>> result) {
