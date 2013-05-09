@@ -9,16 +9,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.commons.collections.MultiMaps;
+import org.aksw.commons.collections.multimaps.MultimapUtils;
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.jdbc.ColumnsReference;
 import org.aksw.commons.util.jdbc.Index;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoinN;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpLeaf;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
@@ -28,7 +32,6 @@ import org.jgrapht.graph.SimpleGraph;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.query.SortCondition;
 import com.hp.hpl.jena.sdb.core.JoinType;
 
 
@@ -236,6 +239,50 @@ public class SqlOptimizerImpl
 		
 	}
 
+
+	/**
+	 * Assumes that the values in the map form a tree from child to parent.
+	 * The resulting map will map each node directly to its root.
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static <T> Map<T, T> transitiveMapInPlace(Map<T, T> map) {
+
+		Map<T, T> open = map;
+        Map<T, T> next = new HashMap<T, T>();
+
+        for(;;) {
+            // Check if any edge following an open edge would create a new edge
+            for(Map.Entry<T, T> edge : open.entrySet()) {
+                T nodeA = edge.getKey();
+                T nodeB = edge.getValue();
+                
+                T nodeC = map.get(nodeB);
+                if(nodeC != null) {
+                	next.put(nodeA, nodeC);
+                }	
+            }
+
+            // Exit condition
+            if(next.isEmpty()) {
+                return map;
+            }
+
+            // Preparation of next iteration
+            map.putAll(next);
+
+            if(open == map) {
+                open = new HashMap<T, T>();
+            } else {
+                open.clear();
+            }
+
+            Map<T, T> tmp = next;
+            next = open;
+            open = tmp;
+        }		
+	}
 		
 
 	/**
@@ -250,15 +297,15 @@ public class SqlOptimizerImpl
 		// Index the tables - and keep track of the rest that is not a table
 		// We only seek to eleminate self joins on tables
 		// (otherwise we most likely won't know about unique constraints)
-		Map<String, SqlOpTable> aliasToTable = new HashMap<String, SqlOpTable>();
-		Multimap<String, SqlOpTable> nameToTable = HashMultimap.create();
+		Map<String, SqlOpLeaf> aliasToTable = new HashMap<String, SqlOpLeaf>();
+		Multimap<String, SqlOp> nameToTable = HashMultimap.create();
 		List<SqlOp> rests = new ArrayList<SqlOp>();
 		
 		for(SqlOp op : ops) {
-			if(op instanceof SqlOpTable) {
-				SqlOpTable opTable = (SqlOpTable)op;
+			if(op instanceof SqlOpLeaf) {
+				SqlOpLeaf opTable = (SqlOpLeaf)op;
 				//String alias = opTable.getAliasName();
-				String tableName = opTable.getTableName();
+				String tableName = opTable.getId();
 				nameToTable.put(tableName, opTable);
 				
 				String aliasName = opTable.getAliasName();
@@ -274,6 +321,9 @@ public class SqlOptimizerImpl
 		UndirectedGraph<String, EdgeSelfJoin> selfJoinGraph = new SimpleGraph<String, EdgeSelfJoin>(EdgeSelfJoin.class);
 		//joinGraph.edgesOf("a").
 		
+		// Const to tables to cols to aliases
+		Map<S_Constant, Map<String, Multimap<String, String>>> cToTblToColsToAliases = new HashMap<S_Constant, Map<String, Multimap<String, String>>>();// ArrayListMultimap.create();
+		
 		// Create the join graph
 		for(Collection<SqlExpr> clause : cnf) {
 			// Skip disjunctions (empty clauses should not happen)
@@ -283,6 +333,8 @@ public class SqlOptimizerImpl
 			
 			SqlExpr expr = clause.iterator().next();
 			
+			
+			// From here search for expressions of the form S_Equals(ai.col = aj.col)
 			if(!(expr instanceof S_Equals)) {
 				continue;
 			}
@@ -290,20 +342,54 @@ public class SqlOptimizerImpl
 			S_Equals equals = (S_Equals)expr;
 			
 			SqlExpr ta = equals.getLeft();
+			SqlExpr tb = equals.getRight();
 			
+			// We need ta to be a column reference
+			if(!(ta instanceof S_ColumnRef)) {
+				SqlExpr tmp = ta;
+				ta = tb;
+				tb = tmp;
+			}
+
+			// If after swapping ta is still no column ref, continue
 			if(!(ta instanceof S_ColumnRef)) {
 				continue;
 			}
+
+			S_ColumnRef a = (S_ColumnRef)ta;
+			String colNameA = a.getColumnName();
+			String aliasA = a.getRelationAlias();
+			SqlOpLeaf tableA = aliasToTable.get(aliasA);
+			String tableNameA = tableA.getId();
+			//String tableNameA = tableA.getTableName();
+
+			if(tb instanceof S_Constant) {
+				S_Constant constant = (S_Constant)tb;
+				
+				Map<String, Multimap<String, String>> tblToColsToAliases = cToTblToColsToAliases.get(constant);
+				if(tblToColsToAliases == null) {
+					tblToColsToAliases = new HashMap<String, Multimap<String, String>>();
+					cToTblToColsToAliases.put(constant, tblToColsToAliases);
+				}
+				
+				Multimap<String, String> colsToAliases = tblToColsToAliases.get(tableNameA);
+				if(colsToAliases == null) {
+					colsToAliases = HashMultimap.create();
+					tblToColsToAliases.put(tableNameA, colsToAliases);
+				}
+				
+				Collection<String> aliases = colsToAliases.get(colNameA);
+				aliases.add(aliasA);
+				continue;
+			}
 			
-			SqlExpr tb = equals.getRight();
+			
 			if(!(tb instanceof S_ColumnRef)) {
 				continue;
 			}
 			
-			S_ColumnRef a = (S_ColumnRef)ta;
 			S_ColumnRef b = (S_ColumnRef)tb;
 			
-			String colNameA = a.getColumnName();
 			String colNameB = b.getColumnName();
 			
 			if(!colNameA.equals(colNameB)) {
@@ -312,14 +398,11 @@ public class SqlOptimizerImpl
 			}
 
 			
-			String aliasA = a.getRelationAlias();
 			String aliasB = b.getRelationAlias();
 			
-			SqlOpTable tableA = aliasToTable.get(aliasA);
-			SqlOpTable tableB = aliasToTable.get(aliasB);
+			SqlOpLeaf tableB = aliasToTable.get(aliasB);
 			
-			String tableNameA = tableA.getTableName();
-			String tableNameB = tableB.getTableName();
+			String tableNameB = tableB.getId();
 			
 			if(!tableNameA.equals(tableNameB)) {
 				// No self join candidate
@@ -339,12 +422,60 @@ public class SqlOptimizerImpl
 			
 			edge.getColumnNames().add(colNameA);
 		}
-
+		
+		boolean enableConstantSelfJoinElimination = true;
+		
+		// If enabled, adds edges inferred from constants to the join graph
+		if(enableConstantSelfJoinElimination) {
+			
+			for(Map<String, Multimap<String, String>> tblToColsToAliases : cToTblToColsToAliases.values()) {
+				for(Multimap<String, String> colsToAliases : tblToColsToAliases.values()) {
+					
+					for(Entry<String, Collection<String>> entry : colsToAliases.asMap().entrySet()) {
+	
+						String colName = entry.getKey();
+						
+						List<String> aliases = new ArrayList<String>(entry.getValue());
+						
+						for(String alias : aliases) {
+							selfJoinGraph.addVertex(alias);						
+						}
+						
+						for(int i = 0; i < aliases.size() - 1; ++i) {
+							
+							String aliasA = aliases.get(i);
+							
+							for(int j = i + 1; j < aliases.size(); ++j) {
+								
+								String aliasB = aliases.get(j);
+								
+								EdgeSelfJoin edge = selfJoinGraph.getEdge(aliasA, aliasB);
+								
+								if(edge == null) {
+									edge = new EdgeSelfJoin(aliasA, aliasB);
+									
+									selfJoinGraph.addEdge(aliasA, aliasB, edge);
+								}
+								
+								edge.getColumnNames().add(colName);
+							}
+						}
+						
+	
+						
+					}				
+				}
+			}
+				
+		}
+		// Process all constants we have collected whether they also make
+		// self join candidates
+		
+		
 		//Set<String> open = selfJoinGraph.vertexSet();
 		List<EdgeSelfJoin> openEdges = new ArrayList<EdgeSelfJoin>(selfJoinGraph.edgeSet());
 		List<EdgeSelfJoin> nextEdges = new ArrayList<EdgeSelfJoin>();
 		
-		Set<String> affectedVertices = new HashSet<String>();
 		
 		Map<String, String> aliasRemap = new HashMap<String, String>();
 		
@@ -367,8 +498,8 @@ public class SqlOptimizerImpl
 					continue;
 				}
 				
-				SqlOpTable tableA = aliasToTable.get(aliasA);
-				String tableName = tableA.getTableName();
+				SqlOpLeaf tableA = aliasToTable.get(aliasA);
+				String tableName = tableA.getId();
 				
 				Collection<String> joinColumns = edge.getColumnNames();
 				
@@ -441,13 +572,15 @@ public class SqlOptimizerImpl
 			
 		// TODO Not sure if aliasRemap needs to be transitively accessed or not
 		// I guess not - if self joins are not properly removed, this might be the reason
-
+		transitiveMapInPlace(aliasRemap);
+		
+		
 		Factory1<SqlExpr> aliasSubstitutor = new AliasSubstitutor(aliasRemap);
 		
 
 		List<SqlOp> newOps = new ArrayList<SqlOp>();
 		
-		for(SqlOpTable table : aliasToTable.values()) {
+		for(SqlOpLeaf table : aliasToTable.values()) {
 			
 			String alias = table.getAliasName();
 			boolean isRemapped = aliasRemap.containsKey(alias);
@@ -571,7 +704,12 @@ public class SqlOptimizerImpl
 			block.getSortConditions().clear();
 			block.getSortConditions().addAll(newSortConditions);
 			
-			SqlOpJoinN newOp = new SqlOpJoinN(null, newOps);
+			SqlOp newOp;
+			if(newOps.size() > 1) {
+				newOp = new SqlOpJoinN(null, newOps);
+			} else {
+				newOp = newOps.get(0);
+			}
 			block.setSubOp(newOp);
 			
 			

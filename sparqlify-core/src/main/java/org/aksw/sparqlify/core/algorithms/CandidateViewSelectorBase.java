@@ -160,7 +160,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * Abstract methods
 	 */
 	//public abstract I createUnionItem(List<ViewInstance<T>> list, RestrictionManagerImpl restrictions);
-	public abstract Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<T>> viewInstances);
+	public abstract Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<T>> viewInstances, C context);
 
 	
 	/**
@@ -1207,7 +1207,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	{
 		List<ViewInstanceJoin<T>> conjunctions = getApplicableViewsBase(op, restrictions);
 		
-		Op result = createOp(op, conjunctions);
+		Op result = createOp(op, conjunctions, null);
 		/*
 		OpDisjunction result = OpDisjunction.create();
 		

@@ -19,6 +19,8 @@ public abstract class SqlOpLeaf
 		this.aliasName = aliasName;
 	}
 	
+	public abstract String getId();
+	
 	public String getAliasName() {
 		return aliasName;
 	}

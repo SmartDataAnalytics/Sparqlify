@@ -12,7 +12,7 @@ Create View TriplesMap1 As
     ?s ex:BirthDay ?o
   }
   With
-    ?s = uri(concat("http://example.com/Person/", ?ID, "/", ?Name, "/", spy:urlEncode(?DateOfBirth))
+    ?s = uri(concat("http://example.com/Person/", ?ID, "/", ?Name, "/", spy:urlEncode(?DateOfBirth)))
     ?o = plainLiteral(?DateOfBirth)
   From
     Person

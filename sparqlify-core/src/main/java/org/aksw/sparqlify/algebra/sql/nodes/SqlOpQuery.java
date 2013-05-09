@@ -66,6 +66,11 @@ public class SqlOpQuery
 		return true;
 	}
 
+	@Override
+	public String getId() {
+		return queryString;
+	}
+
 	
 	/*
 	@Override

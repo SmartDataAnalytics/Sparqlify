@@ -75,4 +75,9 @@ public class SqlOpTable
 			return false;
 		return true;
 	}
+
+	@Override
+	public String getId() {
+		return tableName;
+	}
 }

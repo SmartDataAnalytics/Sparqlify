@@ -53,5 +53,10 @@ public class SqlOpEmpty
 	@Override
 	public boolean isEmpty() {
 		return true;
+	}
+
+	@Override
+	public String getId() {
+		return "SELECT NULL";
 	}	
 }

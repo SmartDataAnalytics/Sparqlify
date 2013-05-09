@@ -21,7 +21,7 @@ public class CandidateViewSelectorRestructify
 	}
 
 	@Override
-	public Op createOp(OpQuadPattern qpQuadPattern, List<ViewInstanceJoin<SparqlView>> conjunctions) {
+	public Op createOp(OpQuadPattern qpQuadPattern, List<ViewInstanceJoin<SparqlView>> conjunctions, Void context) {
 		
 		
 		OpDisjunction result = OpDisjunction.create();

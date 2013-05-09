@@ -120,7 +120,7 @@ public class CandidateViewSelectorImpl
 	*/
 	
 	@Override
-	public Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<ViewDefinition>> conjunctions) {
+	public Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<ViewDefinition>> conjunctions, Mapping mapping) {
 		
 		
 		for(ViewInstanceJoin<ViewDefinition> conjunction : conjunctions) {

@@ -93,7 +93,7 @@ public class SparqlSqlOpRewriterImpl
 		if(sqlOpSelectBlockCollector != null) {
 			sqlOp = sqlOpSelectBlockCollector.transform(sqlOp);
 			
-			//sqlOptimizer.optimize(sqlOp);
+			sqlOptimizer.optimize(sqlOp);
 			
 			//SqlOptimizerImpl.optimize(sqlOp);
 

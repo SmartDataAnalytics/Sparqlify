@@ -60,7 +60,9 @@ public class SqlExprUtils
 		
 		for(Iterable<SqlExpr> clause : nf) {
 			SqlExpr expr = orifyBalanced(clause);
-			result.add(expr);
+			if(expr != null) {
+				result.add(expr);
+			}
 		}
 		
 		return result;
@@ -174,7 +176,7 @@ public class SqlExprUtils
 			Set<S_ColumnRef> columnRefs = new HashSet<S_ColumnRef>();
 			
 			for(SqlExpr expr : clause) {
-				if(expr instanceof S_IsNotNull) {
+				if(!(expr instanceof S_IsNotNull)) {
 					SqlExprUtils.collectColumnReferences(expr, columnRefs);
 					
 				}				
