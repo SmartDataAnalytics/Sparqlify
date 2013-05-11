@@ -30,6 +30,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
+import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 
 
@@ -322,6 +323,10 @@ public class OpMappingRewriterImpl
 			
 		case OpMapping:
 			result = rewrite((OpMapping)op);
+			break;
+
+		case OpUnion:
+			result = rewrite((OpUnion)op);
 			break;
 			
 		case OpDisjunction:

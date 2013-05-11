@@ -435,8 +435,8 @@ public class NewWorldTest {
 		putForAll(sqlImpls, sqlModel.getIdsByName("logicalNot"), new SqlExprEvaluator_LogicalNot());
 
 
-		sqlModel.registerFunction("concat@object", "concat", MethodSignature.create(true, TypeToken.Object, TypeToken.Object));		
-		sparqlSqlDecls.put("concat", "concat@object");
+		sqlModel.registerFunction("concat@str", "concat", MethodSignature.create(true, TypeToken.String, TypeToken.String));		
+		sparqlSqlDecls.put("concat", "concat@str");
 
 		
 		// register a parse int function

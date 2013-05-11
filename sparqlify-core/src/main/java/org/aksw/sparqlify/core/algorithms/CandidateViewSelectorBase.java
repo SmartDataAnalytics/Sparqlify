@@ -1325,6 +1325,11 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			result = getApplicableViews((OpProject)op, restrictions);
 			break;
 
+		case OpUnion:
+			result = getApplicableViews((OpUnion)op, restrictions);
+			break;
+			
+			
 		default:
 			throw new RuntimeException("Unknown op type: " + op.getClass());
 		}
@@ -1529,6 +1534,13 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	// Seems to be working now
 	public Op processLeftJoin(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
 	{
+		Op result = processLeftJoinSplitLhs(left, right, exprs, restrictions);
+		//Op result = processLeftJoinDirect(left, right, exprs, restrictions);
+		return result;
+	}
+	
+	public Op processLeftJoinSplitLhs(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
+	{
 		FilterSplit filterSplit = FilterPlacementOptimizer2.splitFilter(left, restrictions);
 		RestrictionManagerImpl leftRestrictions = filterSplit.getPushable();
 		
@@ -1628,7 +1640,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	}
 	
 	
-	public OpLeftJoin processLeftJoinOldButWorking(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
+	public OpLeftJoin processLeftJoinDirect(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
 	{
 		Op newLeft = _getApplicableViews(left, restrictions);
 		
@@ -1689,7 +1701,13 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			RestrictionManagerImpl filterRestrictions = opFilter.getRestrictions(); 
 			RestrictionManagerImpl subRestrictions = getRestrictions2(opFilter.getSubOp());
 			
-			RestrictionManagerImpl result = new RestrictionManagerImpl(subRestrictions);
+			RestrictionManagerImpl result;
+			if(subRestrictions == null) {
+				result = new RestrictionManagerImpl();
+				//result = new RestrictionManagerImpl(subRestrictions);
+			} else {
+				result = new RestrictionManagerImpl(subRestrictions);
+			}
 
 			result.stateRestriction(filterRestrictions);
 

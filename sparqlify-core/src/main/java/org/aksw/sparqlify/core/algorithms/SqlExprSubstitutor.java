@@ -44,7 +44,8 @@ public class SqlExprSubstitutor {
 	public SqlExpr substitute(SqlExpr expr) {
 
 		if(expr == null) {
-			System.out.println("Null expr");
+			throw new NullPointerException();
+			//System.out.println("Null expr");
 		}
 		
 		assert expr != null : "Expr must not be null";

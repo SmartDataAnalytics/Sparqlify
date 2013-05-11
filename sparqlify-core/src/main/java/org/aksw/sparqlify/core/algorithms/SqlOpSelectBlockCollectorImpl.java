@@ -535,6 +535,7 @@ public class SqlOpSelectBlockCollectorImpl
 	public static SqlOpSelectBlock contextToBlock(Schema schema, JoinContext context) {
 		SqlOpSelectBlock block = SqlOpSelectBlock.create();
 		
+				
 		/*
 		JoinContext left = _$s(op.getLeft());
 		JoinContext right = _collectJoins(op.getRight());
@@ -720,6 +721,16 @@ public class SqlOpSelectBlockCollectorImpl
 				//requireSelectBlock(op.getLeft());
 				
 				SqlOpSelectBlock subSelect = contextToBlock(left.getOp().getSchema(), left);
+				
+				/*
+				 * TODO Treat the case:
+				 * 
+				 * context.projection.nameToExpr={h_4=a_4.label, ...,  label=a_3.label}]
+				 * 
+				 * 
+				 */
+
+				
 				String aliasName = aliasGenerator.next();
 				subSelect.setAliasName(aliasName);
 
@@ -800,7 +811,7 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 
-	// If false, will wrap each join in a sub-select for renaming
+	// If false, will wrap each join in a sub-select for renaming -- not working anymore
 	static boolean useCodeThatCausesConflictsOnDuplicateNames = true;
 
 	
@@ -871,7 +882,8 @@ public class SqlOpSelectBlockCollectorImpl
 			if(sqlExpr instanceof S_ColumnRef) {
 				S_ColumnRef oldRef = (S_ColumnRef)sqlExpr;
 				
-				newSqlExpr = new S_ColumnRef(oldRef.getDatatype(), oldRef.getColumnName(), aliasName);
+				//newSqlExpr = new S_ColumnRef(oldRef.getDatatype(), oldRef.getColumnName(), aliasName);
+				newSqlExpr = new S_ColumnRef(oldRef.getDatatype(), oldName, aliasName);
 			} else {
 				newSqlExpr = sqlExpr;
 			}

@@ -20,4 +20,13 @@ public class SqlSortCondition{
 	public int getDirection() {
 		return direction;
 	}
+
+	@Override
+	public String toString() {
+		String suffix = (direction > 0) ? "ASC" : "DESC"; 
+		
+		return "" + expr + " " + suffix; 
+	}
+	
+	
 }

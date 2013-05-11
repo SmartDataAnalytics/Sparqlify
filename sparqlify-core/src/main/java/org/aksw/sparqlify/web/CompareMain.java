@@ -67,7 +67,7 @@ public class CompareMain {
 
 		
 		// Parsing of command line args
-		String portStr = commandLine.getOptionValue("P", "7531");
+		String portStr = commandLine.getOptionValue("P", "3333");
 		//String backLogStr = commandLine.getOptionValue("B", "100");
 		//String contextStr = commandLine.getOptionValue("C", "/sparqlify");
 		int port = Integer.parseInt(portStr);

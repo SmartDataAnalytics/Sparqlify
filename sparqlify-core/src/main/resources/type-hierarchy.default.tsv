@@ -3,6 +3,9 @@ boolean	object
 byte	object
 numeric	object
 string	object
+dateTime object
+geometry object
+geography object
 
 byte	short
 short	int

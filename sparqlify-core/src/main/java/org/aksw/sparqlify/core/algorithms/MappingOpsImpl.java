@@ -894,13 +894,14 @@ public class MappingOpsImpl
 		return result;		
 	}
 
-	
+
+	static Generator genSymJoin = Gensym.create("h");
+
 	public Mapping joinCommon(Mapping a, Mapping initB, boolean isLeftJoin) {
 
 		// TODO Make the generator global as to avoid creating conflicting names all the time 
-		Generator genSym = Gensym.create("h_");
 		
-		Mapping b = doJoinRename(a, initB, genSym);
+		Mapping b = doJoinRename(a, initB, genSymJoin);
 		
 		
 		
@@ -1994,6 +1995,10 @@ public class MappingOpsImpl
 				SqlExpr expr = new S_IsNotNull(colRef);
 				conditionParts.add(expr);
 			}
+			
+			// TODO If there is no condition, what then?
+			//if(conditionPa)
+			
 			SqlExpr condition = SqlExprUtils.andifyBalanced(conditionParts);
 			
 //			ExprSqlRewrite tmp = sqlTranslator.translate(condition, null, typeMap);
@@ -2025,56 +2030,85 @@ public class MappingOpsImpl
 					throw new RuntimeException("Should not happen");
 				}
 				
-				S_When caze = new S_When(TypeToken.String, condition, sqlExpr);
+				S_When caze = new S_When(sqlExpr.getDatatype(), condition, sqlExpr);
 				cs.add(caze);
 			}
 		}
 
-		S_Constant sqlNullString = S_Constant.create(new SqlValue(TypeToken.String, null));
-		S_Constant sqlNullInt = S_Constant.create(new SqlValue(TypeToken.Int, null));
+		//S_Constant sqlNullString = S_Constant.create(new SqlValue(TypeToken.String, null));
+		//S_Constant sqlNullInt = S_Constant.create(new SqlValue(TypeToken.Int, null));
 
 		
+		
+
+			
 		Generator generator = Gensym.create("o");
 		
 		List<Expr> resultVars = new ArrayList<Expr>(4);
 		Projection resultProjection = new Projection();
 		for(int i = 0; i < 4; ++i) {
-			String varName = generator.next();
-			Var v = Var.alloc(varName);
-			ExprVar exprVar = new ExprVar(v);
 			
-			// Create the 'when' statement
+			
 			List<S_When> cs = whens.get(i);
 			
-			// If there is just a single when entry, we can skip the when
-			// If all cazes map to the same expression, we can also skip the case
+			// Group the different whens by their datatype
+			Multimap<TypeToken, S_When> typeToWhen = HashMultimap.create();
+			
+			for(S_When c : cs) {
+				typeToWhen.put(c.getDatatype(), c);
+			}
 			
 			
-			Set<SqlExpr> resultExprs = new HashSet<SqlExpr>();
-			for(S_When when : cs) {
-				resultExprs.add(when.getRight());
-			}
-
-			SqlExpr expr;
-			if(resultExprs.size() == 1) {
-				expr = resultExprs.iterator().next();				
-			}
-			else {
+			// For each datatype group...
+			for(Entry<TypeToken, Collection<S_When>> group : typeToWhen.asMap().entrySet()) {
 				
-				S_Case caze;
-				if(i == 0) {
-					caze = S_Case.create(TypeToken.Int, cs, sqlNullInt);
-				} else {
-					caze = S_Case.create(TypeToken.String, cs, sqlNullString);	
+				TypeToken groupType = group.getKey();
+				
+				if(groupType.getName().equals("object")) {
+					throw new RuntimeException("Should not happen");
 				}
 				
-				expr = caze;
-			}
+				List<S_When> groupWhens = new ArrayList<S_When>(group.getValue());
 				
-			
-			
-			resultVars.add(exprVar);
-			resultProjection.put(varName, expr);
+				String varName = generator.next();
+				Var v = Var.alloc(varName);
+				ExprVar exprVar = new ExprVar(v);
+				
+				// Create the 'when' statement
+				
+				// If there is just a single when entry, we can skip the when
+				// If all cazes map to the same expression, we can also skip the case
+				
+				
+				Set<SqlExpr> resultExprs = new HashSet<SqlExpr>();
+				for(S_When when : groupWhens) {
+					resultExprs.add(when.getRight());
+				}
+	
+				SqlExpr expr;
+				if(resultExprs.size() == 1) {
+					expr = resultExprs.iterator().next();				
+				}
+				else {
+					
+//					S_Case caze;
+//					if(i == 0) {
+//						caze = S_Case.create(TypeToken.Int, cs, sqlNullInt);
+//					} else {
+//						caze = S_Case.create(TypeToken.String, cs, sqlNullString);	
+//					}
+//					
+//					expr = caze;
+					
+					SqlExpr nullExpr = S_Constant.create(new SqlValue(groupType, null));
+					expr = S_Case.create(groupType, groupWhens, nullExpr);
+				}
+					
+				
+				
+				resultVars.add(exprVar);
+				resultProjection.put(varName, expr);
+			}
 		}
 		
 		E_RdfTerm resultTerm = new E_RdfTerm(resultVars);

@@ -413,7 +413,7 @@ public class SparqlifyUtils {
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializer_Join(" || ");
-			result.addSerializer("concat@object", serializer);
+			result.addSerializer("concat@str", serializer);
 		}
 
 		{
@@ -439,17 +439,19 @@ public class SparqlifyUtils {
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("AND");
 			result.addSerializer(sqlModel.getIdsByName("logicalAnd"), serializer);
-
+			result.addSerializer("logicalAnd", serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("OR");
 			result.addSerializer(sqlModel.getIdsByName("logicalOr"), serializer);
+			result.addSerializer("logicalOr", serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1("NOT");
 			result.addSerializer(sqlModel.getIdsByName("logicalNot"), serializer);
+			result.addSerializer("logicalNot", serializer);
 		}
 
 		
@@ -496,17 +498,20 @@ public class SparqlifyUtils {
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerWhen();
-			result.addSerializer(sqlModel.getIdsByName("when"), serializer);
+			//result.addSerializer(sqlModel.getIdsByName("when"), serializer);
+			result.addSerializer("when", serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerCase();
-			result.addSerializer(sqlModel.getIdsByName("case"), serializer);
+			//result.addSerializer(sqlModel.getIdsByName("case"), serializer);
+			result.addSerializer("case", serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerElse();
-			result.addSerializer(sqlModel.getIdsByName("else"), serializer);
+			//result.addSerializer(sqlModel.getIdsByName("else"), serializer);
+			result.addSerializer("else", serializer);
 		}
 		
 		

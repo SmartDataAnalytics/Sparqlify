@@ -95,7 +95,6 @@ public class SparqlSqlOpRewriterImpl
 			
 			sqlOptimizer.optimize(sqlOp);
 			
-			//SqlOptimizerImpl.optimize(sqlOp);
 
 			logger.info("[" + sw.getTime() + "] Sql optimization completed");
 		}
