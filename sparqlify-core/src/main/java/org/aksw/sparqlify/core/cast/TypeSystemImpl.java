@@ -62,6 +62,7 @@ public class TypeSystemImpl
 	private FunctionModel<TypeToken> functionModel = new FunctionModelImpl<TypeToken>(typeHierarchyProvider);
 	private Multimap<String, String> sparqlToSqlDecl = HashMultimap.create();
 	private Map<String, SqlExprEvaluator> sqlToImpl = new HashMap<String, SqlExprEvaluator>();
+	private FunctionModelMeta sqlFunctionMetaModel = new FunctionModelMeta();
 	
 	
 	public Multimap<String, String> getSparqlSqlDecls() {
@@ -79,6 +80,12 @@ public class TypeSystemImpl
 	public IBiSetMultimap<TypeToken, TypeToken> getPhysicalTypeMap() {
 		return physicalTypeMap;
 	}
+	
+	@Override
+	public FunctionModelMeta getSqlFunctionMetaModel() {
+		return sqlFunctionMetaModel;
+	}
+
 //	
 //	
 //	

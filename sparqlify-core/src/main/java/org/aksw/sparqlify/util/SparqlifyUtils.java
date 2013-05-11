@@ -386,7 +386,7 @@ public class SparqlifyUtils {
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("+");
-			result.addSerializer(sqlModel.getIdsByName("add"), serializer);
+			result.addSerializer(sqlModel.getIdsByName("numericPlus"), serializer);
 		}
 
 		{

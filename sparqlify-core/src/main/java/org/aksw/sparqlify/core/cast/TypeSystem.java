@@ -131,6 +131,7 @@ public interface TypeSystem
 	
 
 	FunctionModel<TypeToken> getSqlFunctionModel();
+	FunctionModelMeta getSqlFunctionMetaModel();
 
 	IBiSetMultimap<TypeToken, TypeToken> getPhysicalTypeMap();
 }

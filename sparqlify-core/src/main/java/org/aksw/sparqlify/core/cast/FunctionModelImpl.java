@@ -57,7 +57,25 @@ public class FunctionModelImpl<T>
 	
 	private DirectSuperTypeProvider<T> typeHierarchyProvider; // = new TypeHierarchyProviderImpl(typeHierarchy);
 	
+	
+	// This is the map for coercion functions
 	private Multimap<T, MethodEntry<T>> sourceToTargets = ArrayListMultimap.create();
+
+	
+	// This maps symbols to inverse functions
+	private Map<String, String> inverses = new HashMap<String, String>(); 
+	
+	public Map<String, String> getInverses() {
+		return inverses;
+	}
+	
+
+//	Map<String, Map<String, String>> tags = new HashMap<String, Map<String, String>>();
+//	
+//	public Map<String, Map<String, String>> getTags() {
+//		return tags;
+//	}
+	
 	
 	
 	public FunctionModelImpl(DirectSuperTypeProvider<T> typeHierarchyProvider) {

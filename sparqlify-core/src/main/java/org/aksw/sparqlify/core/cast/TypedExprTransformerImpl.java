@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -360,7 +361,6 @@ public class TypedExprTransformerImpl
 			result = new ExprHolder(expr);
 		
 		} else {
-
 			// All arguments are SQL Exprs
 			List<SqlExpr> newArgs = new ArrayList<SqlExpr>(evaledArgs.size());
 			
@@ -369,46 +369,114 @@ public class TypedExprTransformerImpl
 				newArgs.add(sqlExpr);
 			}
 			
-			// There must be a function registered for the argument types
-	
-	//		String datatype = exprTypeEvaluator.evaluateType(fn);
-	//		if(datatype == null) {
-	//			throw new RuntimeException("No datatype could be obtained for " + fn);	
-	//		}
-	//		
-	//		//result = S_Function.create(datatype, functionId, evaledArgs);
-			
+			SqlExpr sqlExpr = processFunction(functionId, newArgs);
 
-			
-			// Get the types of the evaluated arguments
-			List<TypeToken> argTypes = new ArrayList<TypeToken>(newArgs.size());
-			for(SqlExpr newArg : newArgs) {
-				argTypes.add(newArg.getDatatype());
-			}
-			
-			FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
-			Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
-			
-			CandidateMethod<TypeToken> candidate = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, functionId, argTypes);
-			
-			if(candidate != null) {
-				
-				SqlExpr sqlExpr = createSqlExpr(candidate, newArgs);
-				result = new ExprHolder(sqlExpr);							
-				
-			} else {
-				// Type error
-				logger.info("Yielding Type error because to signature found for: " + functionId + " with arguments " + argTypes);
-				result = new ExprHolder(S_Constant.TYPE_ERROR);
-				//throw new RuntimeException("Type error.... needs to be handled - No function found: " + functionId + " with argtypes " + argTypes);
-			}
-			
+			result = new ExprHolder(sqlExpr);
 		}
 		
 		
 		return result;
 	}
+
+	
+	public SqlExpr processFunction(String functionId, List<SqlExpr> newArgs) {
 		
+		// There must be a function registered for the argument types
+
+//		String datatype = exprTypeEvaluator.evaluateType(fn);
+//		if(datatype == null) {
+//			throw new RuntimeException("No datatype could be obtained for " + fn);	
+//		}
+//		
+//		//result = S_Function.create(datatype, functionId, evaledArgs);
+		
+
+		
+		// Get the types of the evaluated arguments
+		List<TypeToken> argTypes = new ArrayList<TypeToken>(newArgs.size());
+		for(SqlExpr newArg : newArgs) {
+			argTypes.add(newArg.getDatatype());
+		}
+		
+		FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
+		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
+		
+		CandidateMethod<TypeToken> candidate = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, functionId, argTypes);
+		
+		
+		SqlExpr result = null;
+		if(candidate != null) {
+
+			/* Check if we can apply an inverse function:
+			/* The rules are: 
+			 * - The function must be a comparator (these implicitly take 2 arguments)
+			 * - One of the arguments is a function expression whose symbol has an inverse defined
+			 * - The other operand is a constant 
+			 */
+			FunctionModelMeta sqlMetaModel = typeSystem.getSqlFunctionMetaModel();
+
+			String opId = candidate.getMethod().getId();
+			if(sqlMetaModel.getComparators().contains(opId)) {
+				
+				// TODO: We need the name of the comparator
+				//typeSystem.getSparqlSqlDecls()
+				
+				SqlExpr a = newArgs.get(0);
+				SqlExpr b = newArgs.get(1);
+				
+				if(b.isConstant()) {
+					SqlExpr tmp = a;
+					a = b;
+					b = tmp;
+				}
+				
+				if(a.isConstant() && b.isFunction()) {
+					String fnId = b.asFunction().getName();
+					
+					String invId = sqlMetaModel.getInverses().get(fnId);
+					if(invId != null) {
+						Map<String, SqlExprEvaluator> sqlImpls = typeSystem.getSqlImpls();
+						SqlExprEvaluator see = sqlImpls.get(invId);
+						
+						SqlExpr c = b.getArgs().get(0);
+						
+						if(see == null) {
+							throw new RuntimeException("Inverse " + invId + " of " + fnId + " declared, but no implementation provided");
+						}
+						
+						SqlExpr d = see.eval(Collections.singletonList(a));
+
+						List<SqlExpr> aa = Arrays.asList(d, c);
+						
+						
+						
+						
+						
+						result = processFunction(functionId, aa);
+						// Lookp an comparator for the new argument types
+
+					}
+					
+				}
+				
+				S_Constant cnst;
+			}
+
+			if(result == null) {
+			
+			
+				result = createSqlExpr(candidate, newArgs);
+			}
+			
+		} else {
+			// Type error
+			logger.info("Yielding Type error because to signature found for: " + functionId + " with arguments " + argTypes);
+			result = S_Constant.TYPE_ERROR;
+			//throw new RuntimeException("Type error.... needs to be handled - No function found: " + functionId + " with argtypes " + argTypes);
+		}
+		
+		return result;
+	}
 			
 			
 //	SparqlFunction sparqlFunction = functionProvider.getSparqlFunction(functionId);

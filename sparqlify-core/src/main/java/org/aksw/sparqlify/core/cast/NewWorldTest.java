@@ -7,29 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.MapReader;
-import org.aksw.commons.util.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_PassThrough;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseInt;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThan;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThanOrEqual;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Multiply;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Substract;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
@@ -73,6 +61,9 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
  }
  */
+
+
+
 
 /*
  class ExprEvaluatorJena
@@ -447,6 +438,28 @@ public class NewWorldTest {
 		sqlModel.registerFunction("concat@object", "concat", MethodSignature.create(true, TypeToken.Object, TypeToken.Object));		
 		sparqlSqlDecls.put("concat", "concat@object");
 
+		
+		// register a parse int function
+		sqlModel.registerFunction("parseInt@str", "parseInt", MethodSignature.create(false, TypeToken.Int, TypeToken.String));		
+		//sparqlSqlDecls.put("concat", "concat@object");
+		
+		FunctionModelMeta sqlMetaModel = typeSystem.getSqlFunctionMetaModel();
+		
+		sqlMetaModel.getInverses().put("str@int", "parseInt@str");
+		
+		sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThan"));
+		sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThanOrEqual"));
+		sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("equal"));
+		sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("greaterThanOrEqual"));
+		sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("greaterThan"));
+		
+		
+		//sqlModel.getInverses().put();
+		sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());
+		
+		
+		
+		// tag the comparators as comparators...
 		
 		
 		// urlEncode

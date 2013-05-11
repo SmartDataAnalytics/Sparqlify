@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 
@@ -17,5 +18,6 @@ public interface FunctionModel<T> {
 	void registerFunction(String id, String name, MethodSignature<T> signature);
 	void registerCoercion(String id, String name, MethodSignature<T> signature);
 	
-	
+	Map<String, String> getInverses();
+	//Map<String, Map<String, String>> getTags();
 }
