@@ -356,6 +356,9 @@ public class MappingOpsImpl
 		}
 		
 		// Sort the variable definitions by number of alternatives
+		
+		// FIXME We might be able to use an optimization similar to the candidate lookup here:
+		// If an expression evaluates to false, we could skip all successive assignments
 		final Map<Var, Collection<RestrictedExpr>> map = varDef.getMap().asMap();
 		Collections.sort(commonVars, new Comparator<Var>() {
 			@Override
@@ -817,6 +820,7 @@ public class MappingOpsImpl
 		
 		Mapping result = null;
 		SqlOp op = viewInstance.getViewDefinition().getMapping().getSqlOp();
+		
 		if(ands == null) { // Unconstrained
 			 result = new Mapping(varDefinition, op);
 		} else if(ands.isEmpty()) { // Unsatisfiable
@@ -982,6 +986,14 @@ public class MappingOpsImpl
 		}		
 		
 		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
+		
+		
+		// TODO Minimize the schema to only the referenced columns
+		
+		//List<String> refs = newVarDefinition.getReferencedNames();
+		
+		
+		
 		Mapping result = new Mapping(newVarDefinition, resultSqlOp);
 
 		return result;

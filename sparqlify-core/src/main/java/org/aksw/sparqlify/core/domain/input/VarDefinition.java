@@ -1,15 +1,20 @@
 package org.aksw.sparqlify.core.domain.input;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 
+import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -65,7 +70,33 @@ public class VarDefinition
 	}
 	
 	
-	public VarDefinition copyProject(List<Var> viewVars) {
+	/**
+	 * In place expression transformation
+	 * 
+	 * @param transform
+	 */
+	public void applyExprTransform(Function<Expr, Expr> transform) {
+		
+		Multimap<Var, RestrictedExpr> newVarToExprs = HashMultimap.create();
+		for(Entry<Var, RestrictedExpr> entry : varToExprs.entries()) {
+			
+			Var var = entry.getKey();
+			
+			RestrictedExpr restExpr = entry.getValue();
+			Expr expr = restExpr.getExpr();
+			Expr ne = transform.apply(expr);
+			
+			RestrictionSetImpl r = restExpr.getRestrictions();
+			RestrictedExpr nre = new RestrictedExpr(ne, r);
+			//entry.setValue(new );
+			newVarToExprs.put(var, nre);
+			
+		}
+		
+		varToExprs = newVarToExprs;
+	}
+	
+	public VarDefinition copyProject(Collection<Var> viewVars) {
 		Multimap<Var, RestrictedExpr> map = HashMultimap.create();
 	
 		for(Var var : viewVars) {
@@ -184,6 +215,31 @@ public class VarDefinition
 		String result = toIndentedString(map);
 		return result;
 	}
+	
+	
+	public List<String> getReferencedNames() {
+		Set<Var> tmp = getReferencedVars();
+		List<String> result = new ArrayList<String>(tmp.size());
+		for(Var var : tmp) {
+			String name = var.getName();
+			result.add(name);
+		}
+		
+		return result;
+	}
+	
+	public Set<Var> getReferencedVars() {
+		Set<Var> result = new HashSet<Var>();
+		
+		for(Entry<Var, RestrictedExpr> entry : varToExprs.entries()) {
+			
+			Set<Var> tmp = entry.getValue().getExpr().getVarsMentioned();
+			result.addAll(tmp);			
+		}
+		
+		return result;
+	}
+	
 	
 	public static String toIndentedString(Multimap<Var, RestrictedExpr> varToExprs) {
 		

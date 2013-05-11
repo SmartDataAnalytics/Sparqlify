@@ -38,6 +38,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
@@ -50,6 +51,7 @@ import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
+import org.aksw.sparqlify.core.cast.FunctionModel;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystemImpl;
@@ -372,7 +374,7 @@ public class SparqlifyUtils {
 	}
 	
 	
-	public static SqlExprSerializerSystem createSerializerSystem() {
+	public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
 		DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
 
 		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
@@ -380,78 +382,90 @@ public class SparqlifyUtils {
 		SqlExprSerializerSystem result = new SqlExprSerializerSystemImpl(
 				typeSerializer, sqlLiteralMapper);
 		
+		FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
+		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("+");
-			result.addSerializer("add", serializer);
+			result.addSerializer(sqlModel.getIdsByName("add"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("-");
-			result.addSerializer("substract", serializer);
+			result.addSerializer(sqlModel.getIdsByName("numericMinus"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("*");
-			result.addSerializer("multiply", serializer);
+			result.addSerializer(sqlModel.getIdsByName("numericMultiply"), serializer);
 		}
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("/");
-			result.addSerializer("divide", serializer);
+			result.addSerializer(sqlModel.getIdsByName("numericDivide"), serializer);
 		}
 
 		
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("=");
-			result.addSerializer("equals", serializer);
+			result.addSerializer(sqlModel.getIdsByName("equal"), serializer);
 		}
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializer_Join(" || ");
-			result.addSerializer("concat", serializer);
+			result.addSerializer("concat@object", serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
-			result.addSerializer("greaterThan", serializer);
+			result.addSerializer(sqlModel.getIdsByName("greaterThan"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">=");
-			result.addSerializer("greaterThanOrEqual", serializer);
+			result.addSerializer(sqlModel.getIdsByName("greaterThanOrEqual"), serializer);
 		}
 		
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("<");
-			result.addSerializer("lessThan", serializer);
+			result.addSerializer(sqlModel.getIdsByName("lessThan"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("<=");
-			result.addSerializer("lessThanOrEqual", serializer);
+			result.addSerializer(sqlModel.getIdsByName("lessThanOrEqual"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("AND");
-			result.addSerializer("logicalAnd", serializer);
+			result.addSerializer(sqlModel.getIdsByName("logicalAnd"), serializer);
 
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("OR");
-			result.addSerializer("logicalOr", serializer);
+			result.addSerializer(sqlModel.getIdsByName("logicalOr"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1("NOT");
-			result.addSerializer("logicalNot", serializer);
+			result.addSerializer(sqlModel.getIdsByName("logicalNot"), serializer);
 		}
 
+		
+		// HACK: When isNotNull contraints are added based on the schema,
+		// these expressions are not passed through the SQL rewriting process
+		// Therefore we need this entry
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix(" IS NOT NULL");
 			result.addSerializer("isNotNull", serializer);
 		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix(" IS NOT NULL");
+			result.addSerializer(sqlModel.getIdsByName("isNotNull"), serializer);
+		}
+
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float8");
@@ -463,6 +477,16 @@ public class SparqlifyUtils {
 			result.addSerializer("str@double", serializer);
 		}
 
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
+			result.addSerializer("str@str", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
+			result.addSerializer("str@int", serializer);
+		}
+
 		
 		// Cast is built in
 //		{
@@ -472,17 +496,17 @@ public class SparqlifyUtils {
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerWhen();
-			result.addSerializer("when", serializer);
+			result.addSerializer(sqlModel.getIdsByName("when"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerCase();
-			result.addSerializer("case", serializer);
+			result.addSerializer(sqlModel.getIdsByName("case"), serializer);
 		}
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerElse();
-			result.addSerializer("else", serializer);
+			result.addSerializer(sqlModel.getIdsByName("else"), serializer);
 		}
 		
 		
@@ -636,7 +660,7 @@ public class SparqlifyUtils {
 
 		SparqlSqlOpRewriter ssoRewriter = SparqlifyUtils.createSqlOpRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 		
-		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem();
+		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
 
 		
@@ -733,9 +757,9 @@ public class SparqlifyUtils {
 	}
 	
 	
-	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter)  {
-	
-		SqlExprSerializerSystem serializerSystem = createSerializerSystem();
+	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter, TypeSystem typeSystem)  {
+
+		SqlExprSerializerSystem serializerSystem = createSerializerSystem(typeSystem);
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
 
 		SparqlSqlStringRewriter result = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);
@@ -780,7 +804,7 @@ public class SparqlifyUtils {
 	public static SparqlSqlStringRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem, Schema databaseSchema) throws SQLException, IOException {		
 		
 		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(candidateViewSelector, opMappingRewriter, datatypeSystem, databaseSchema);
-		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(ssoRewriter);
+		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(ssoRewriter, datatypeSystem);
 
 		return result;
 

@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.List;
+import java.util.Set;
 
 import org.openjena.atlas.io.IndentedWriter;
 
@@ -22,5 +23,15 @@ public interface SqlOp {
 
 	
 	//String getIndentedString();
-	void write(IndentedWriter writer);	
+	void write(IndentedWriter writer);
+	
+	
+	/**
+	 * Create a copy of the SqlOp with a projected schema.
+	 * The new schema will only hold information of the selected columns.
+	 * Used to filter an Op to only the referenced columns.
+	 * 
+	 * This is different from a projection!
+	 */
+	SqlOp copy(Schema schema, List<SqlOp> newOps);
 }

@@ -9,7 +9,9 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
+import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
@@ -34,7 +36,8 @@ public class ExprTests {
 	
 	public ExprTests() {
 		sqlRewriter = SparqlifyUtils.createSqlRewriter();
-		serializerSystem = SparqlifyUtils.createSerializerSystem();
+		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
 	}
 
 	public SqlExpr rewriteToString(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {

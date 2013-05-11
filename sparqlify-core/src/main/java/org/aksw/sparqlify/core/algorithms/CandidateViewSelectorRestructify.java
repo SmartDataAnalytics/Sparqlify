@@ -21,12 +21,14 @@ public class CandidateViewSelectorRestructify
 	}
 
 	@Override
-	public Op createOp(OpQuadPattern qpQuadPattern, List<ViewInstanceJoin<SparqlView>> conjunctions, Void context) {
+	public Op createOp(OpQuadPattern qpQuadPattern, List<RecursionResult<SparqlView, Void>> conjunctions) {
 		
+		//ViewInstanceJoin<SparqlView> conjunctions = item.get
 		
 		OpDisjunction result = OpDisjunction.create();
 		
-		for(ViewInstanceJoin<SparqlView> item : conjunctions) {
+		for(RecursionResult<SparqlView, Void> entry : conjunctions) {
+			ViewInstanceJoin<SparqlView> item = entry.getViewInstances(); 
 			Op tmp = new OpSparqlViewPattern(item);
 			result.add(tmp);
 		}

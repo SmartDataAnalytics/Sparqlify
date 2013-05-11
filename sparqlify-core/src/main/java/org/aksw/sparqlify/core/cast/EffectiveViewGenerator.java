@@ -126,6 +126,42 @@ public class EffectiveViewGenerator {
 		return result;
 	}
 	
+	public static List<ViewDefinition> createQuadMaps(ViewDefinition viewDef) {
+		
+		List<ViewDefinition> result = new ArrayList<ViewDefinition>();
+		
+		SqlOp sqlOp = viewDef.getMapping().getSqlOp();
+		
+		QuadPattern qp = viewDef.getTemplate();
+		for(Quad q : qp.getList()) {
+			Set<Var> vars = QuadUtils.getVarsMentioned(q);
+			
+			VarDefinition newVarDef = viewDef.getVarDefinition().copyProject(vars);
+			
+			SqlOp newSqlOp = createMinimalSchema(sqlOp, newVarDef);
+			
+			String newName = viewDef.getName() + "_" + q;
+			QuadPattern newTemplate = new QuadPattern();
+			newTemplate.add(q);
+			
+			Mapping newMapping = new Mapping(newVarDef, newSqlOp);
+			
+			ViewDefinition newViewDef = new ViewDefinition(newName, newTemplate, null, newMapping, viewDef);
+			result.add(newViewDef);
+		}
+		
+		
+		return result;
+	}
+	
+	
+	public static SqlOp createMinimalSchema(SqlOp sqlOp, VarDefinition varDef) {
+		List<String> refs = varDef.getReferencedNames();
+		Schema newSchema = sqlOp.getSchema().createSubSchema(refs);
+		
+		SqlOp result = sqlOp.copy(newSchema, null);
+		return result;
+	}
 	
 	/**
 	 * Adds "columnName" IS NOT NULL constraints to the view definitions according to the schema.
@@ -138,6 +174,23 @@ public class EffectiveViewGenerator {
 	 * @return
 	 */
 	public List<ViewDefinition> transform(ViewDefinition viewDef) {
+		List<ViewDefinition> result = new ArrayList<ViewDefinition>();
+		
+		List<ViewDefinition> tmp = createQuadMaps(viewDef);
+		
+		
+		for(ViewDefinition t : tmp) {
+			List<ViewDefinition> x = addNullConstraints(t);
+			
+			
+			result.addAll(x);
+		}
+		
+		return result;
+	}
+	
+	
+	public List<ViewDefinition> addNullConstraints(ViewDefinition viewDef) {
 		
 		List<ViewDefinition> result = new ArrayList<ViewDefinition>();
 
@@ -234,6 +287,9 @@ public class EffectiveViewGenerator {
 		
 		Multimap<Set<Var>, Quad> groups = HashMultimap.create();
 		
+		
+		// If true, each quad will end up in its own group
+		
 		QuadPattern template = viewDef.getTemplate();
 		for(Quad quad : template) {
 			
@@ -258,9 +314,11 @@ public class EffectiveViewGenerator {
 				}*/
 				
 			}
+				
 			groups.put(groupNullableVars, quad);
 		}
 
+		
 		/*
 		 * For each group create a new view with the appropriate conditions attached 
 		 * 
@@ -314,12 +372,18 @@ public class EffectiveViewGenerator {
 //				
 //				Collection<Var> exprVars = expr.getVarsMentioned();
 //			}
+			
+			
+			// Reduce the SqlOp's schema to that of the referenced columns
+			
+			SqlOp baseOp = createMinimalSchema(sqlOp, newVarDef);
+			
 
 			SqlOp newSqlOp;
 			if(!conds.isEmpty()) {
-				newSqlOp = SqlOpFilter.createIfNeeded(sqlOp, conds);
+				newSqlOp = SqlOpFilter.createIfNeeded(baseOp, conds);
 			} else {
-				newSqlOp = sqlOp;
+				newSqlOp = baseOp;
 			}
 			
 			Mapping newMapping = new Mapping(newVarDef, newSqlOp);

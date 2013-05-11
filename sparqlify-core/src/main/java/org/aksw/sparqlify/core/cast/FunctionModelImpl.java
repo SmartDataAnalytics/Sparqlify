@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -49,9 +50,11 @@ public class FunctionModelImpl<T>
 
 	private static final Logger logger = LoggerFactory.getLogger(FunctionModel.class);
 	
-	private Multimap<String, MethodEntry<T>> nameToMethodEntry = ArrayListMultimap.create();
+	//private Multimap<String, MethodEntry<T>> nameToMethodEntry = ArrayListMultimap.create();
 	private Map<String, MethodEntry<T>> idToMethodEntry = new HashMap<String, MethodEntry<T>>();
 
+	private Multimap<String, String> nameToIds = HashMultimap.create();
+	
 	private DirectSuperTypeProvider<T> typeHierarchyProvider; // = new TypeHierarchyProviderImpl(typeHierarchy);
 	
 	private Multimap<T, MethodEntry<T>> sourceToTargets = ArrayListMultimap.create();
@@ -60,7 +63,13 @@ public class FunctionModelImpl<T>
 	public FunctionModelImpl(DirectSuperTypeProvider<T> typeHierarchyProvider) {
 		this.typeHierarchyProvider = typeHierarchyProvider;
 	}
-	
+
+	@Override
+	public Collection<String> getIdsByName(String name) 
+	{
+		Collection<String> result = nameToIds.get(name);
+		return result;
+	}
 
 	public static void main(String[] args) throws IOException {
 		
@@ -166,18 +175,21 @@ public class FunctionModelImpl<T>
 	
 
 	public void registerFunction(String id, String name, MethodSignature<T> signature) {
-		Collection<MethodEntry<T>> signatures = nameToMethodEntry.get(name);
+		//Collection<MethodEntry<T>> signatures = nameToMethodEntry.get(name);
+		
 		
 		// TODO More thorough checks on the type hierarchy...
-		if(signatures.contains(name)) {
-			throw new RuntimeException("Function " + name + " with signature " + signature + " already registered");
-		}
+//		if(signatures.contains(name)) {
+//			throw new RuntimeException("Function " + name + " with signature " + signature + " already registered");
+//		}
 		
 		MethodEntry<T> entry = new MethodEntry<T>(id, name, signature);
+
+		idToMethodEntry.put(id,  entry);
 		
-		signatures.add(entry);
+		//signatures.add(entry);
 		
-		idToMethodEntry.put(id, entry);
+		nameToIds.put(name, id);
 	}
 	
 	
@@ -206,11 +218,25 @@ public class FunctionModelImpl<T>
 
 	//public Collection<CandidateMethod<T>> lookupByName(String functionName, T ... argType) {
 	
+	public Collection<MethodEntry<T>> lookupByName(String name) {
+		List<MethodEntry<T>> result = new ArrayList<MethodEntry<T>>();
+		Collection<String> ids = nameToIds.get(name);
+		
+		for(String id : ids) {
+			MethodEntry<T> method = idToMethodEntry.get(id);
+			
+			if(method != null) {
+				result.add(method);
+			}
+		}
+		
+		return result;
+	}
 	
 	public Collection<CandidateMethod<T>> lookupByName(String functionName, List<T> argTypes) {
 
 		
-		Collection<MethodEntry<T>> signatures = nameToMethodEntry.get(functionName);
+		Collection<MethodEntry<T>> signatures = lookupByName(functionName);
 
 		
 		Collection<CandidateMethod<T>> result = lookup(signatures, argTypes);
@@ -228,16 +254,19 @@ public class FunctionModelImpl<T>
 			 
 			MethodSignature<T> signature = candidate.getSignature();
 			
-			if(signature.getParameterTypes().size() > argTypes.size()) {
+			List<T> paramTypes = signature.getParameterTypes(); 
+			
+			if(paramTypes.size() > argTypes.size()) {
 				continue; // Not enough arguments provided
 			}
 			
 			
-			if(!signature.isVararg() && signature.getParameterTypes().size() < argTypes.size()) {
+			if(!signature.isVararg() && paramTypes.size() < argTypes.size()) {
 				continue; // Too many arguments provided
 			}
 			
-			int n = Math.min(argTypes.size(), signature.getParameterTypes().size());
+			int n = argTypes.size(); //Math.min(argTypes.size(), signature.getParameterTypes().size());
+			int m = paramTypes.size();
 			
 			boolean isCandidate = true;
 			
@@ -245,8 +274,14 @@ public class FunctionModelImpl<T>
 			List<CandidateMethod<T>> coercions = new ArrayList<CandidateMethod<T>>();
 			
 			for(int i = 0; i < n ; ++i) {
+				T paramType;
+				if(i < m) {
+					paramType = paramTypes.get(i);
+				} else {
+					paramType = signature.getVarArgType();
+				}
+				
 				T argType = argTypes.get(i);
-				T paramType = signature.getParameterTypes().get(i);
 				
 				
 				boolean usesCoercion = false;
@@ -276,6 +311,8 @@ public class FunctionModelImpl<T>
 				}
 			}
 
+
+			
 			if(isCandidate) {
 
 				MethodDistance distance = new MethodDistance(new ParamDistance(0, false), distances);

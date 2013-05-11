@@ -2,7 +2,7 @@
 boolean	object
 byte	object
 numeric	object
-text	object
+string	object
 
 byte	short
 short	int

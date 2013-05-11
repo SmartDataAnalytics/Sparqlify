@@ -12,6 +12,7 @@ import org.aksw.commons.collections.MultiMaps;
 import org.aksw.commons.collections.multimaps.BiHashMultimap;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.factory.Factory1;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
@@ -40,6 +41,9 @@ public class TypeSystemImpl
 	private Map<String, SparqlFunction> nameToSparqlFunction = new HashMap<String, SparqlFunction>();
 	private Map<String, SqlLiteralMapper> typeToLiteralMapper = new HashMap<String, SqlLiteralMapper>();
 
+	// Maps database types (e.g. varchar and int4 to our schematic types, e.g. string and int)
+	private IBiSetMultimap<TypeToken, TypeToken> physicalTypeMap = new BiHashMultimap<TypeToken, TypeToken>();
+	
 	private Map<String, SqlFunctionCollection> nameToSqlFunctions = new HashMap<String, SqlFunctionCollection>(); 
 	
 	private IBiSetMultimap<TypeToken, TypeToken> typeHierarchy = new BiHashMultimap<TypeToken, TypeToken>();
@@ -56,15 +60,24 @@ public class TypeSystemImpl
 	 * 
 	 */
 	private FunctionModel<TypeToken> functionModel = new FunctionModelImpl<TypeToken>(typeHierarchyProvider);
-	private Multimap<String, String> sparqlToSqlImpl = HashMultimap.create();
+	private Multimap<String, String> sparqlToSqlDecl = HashMultimap.create();
+	private Map<String, SqlExprEvaluator> sqlToImpl = new HashMap<String, SqlExprEvaluator>();
 	
 	
-	public Multimap<String, String> getSparqlSqlImpls() {
-		return sparqlToSqlImpl;
+	public Multimap<String, String> getSparqlSqlDecls() {
+		return sparqlToSqlDecl;
 	}
 
 	public FunctionModel<TypeToken> getSqlFunctionModel() {
 		return functionModel;
+	}
+	
+	public Map<String, SqlExprEvaluator> getSqlImpls() {
+		return sqlToImpl;
+	}
+	
+	public IBiSetMultimap<TypeToken, TypeToken> getPhysicalTypeMap() {
+		return physicalTypeMap;
 	}
 //	
 //	
@@ -309,14 +322,16 @@ public class TypeSystemImpl
 		return subToSuperType;
 	}
 	
-	public static TypeSystemImpl create(Map<String, String> typeHierarchy) {
+	public static TypeSystemImpl create(Map<String, String> typeHierarchy, Map<String, String> rawPhysicalTypeMap) {
 		
 		IBiSetMultimap<TypeToken, TypeToken> subToSuperType = createHierarchyMap(typeHierarchy);
 
+		IBiSetMultimap<TypeToken, TypeToken> physicalTypeMap = createHierarchyMap(rawPhysicalTypeMap);
 		
 		TypeSystemImpl result = new TypeSystemImpl();
 		
 		result.getTypeHierarchy().putAll(subToSuperType);
+		result.getPhysicalTypeMap().putAll(physicalTypeMap);
 		
 		return result;
 	}

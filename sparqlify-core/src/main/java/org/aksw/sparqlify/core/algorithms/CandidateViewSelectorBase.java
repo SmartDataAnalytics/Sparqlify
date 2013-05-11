@@ -16,10 +16,10 @@ import java.util.TreeMap;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
-import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpOrder;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.core.ReplaceConstants;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
@@ -92,7 +92,7 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
 public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	implements CandidateViewSelector<T>
 {
-	private static Logger logger = LoggerFactory.getLogger(CandidateViewSelectorImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(CandidateViewSelectorBase.class);
 	
 	private int viewId = 1;
 	private Table<Object> table;
@@ -160,7 +160,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * Abstract methods
 	 */
 	//public abstract I createUnionItem(List<ViewInstance<T>> list, RestrictionManagerImpl restrictions);
-	public abstract Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<T>> viewInstances, C context);
+	public abstract Op createOp(OpQuadPattern opQuadPattern, List<RecursionResult<T, C>> viewInstances);
 
 	
 	/**
@@ -562,9 +562,10 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * such as 'aaaa' = prefix
 	 * 'aaaaa$' = constant
 	 */
-	public List<ViewInstanceJoin<T>> getApplicableViewsBase(OpQuadPattern op, RestrictionManagerImpl restrictions)
+	public List<RecursionResult<T, C>> getApplicableViewsBase(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
-		List<ViewInstanceJoin<T>> result = new ArrayList<ViewInstanceJoin<T>>();
+		//List<ViewInstanceJoin<T>> result = new ArrayList<ViewInstanceJoin<T>>();
+		List<RecursionResult<T, C>> result = new ArrayList<RecursionResult<T, C>>();
 		
 		QuadPattern queryQuads = op.getPattern(); //PatternUtils.collectQuads(op);
 		//RestrictionManager restrictions = new RestrictionManager(exprs);
@@ -707,7 +708,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			baseTermRestriction[i] = r;
 		}
 		
-		logger.debug("\nTerm restrictions for " + quad + ":\n" + StringUtils.itemPerLine(baseTermRestriction));
+		logger.trace("\nTerm restrictions for " + quad + ":\n" + StringUtils.itemPerLine(baseTermRestriction));
 		
 		Set<ViewQuad<T>> result = new HashSet<ViewQuad<T>>();
 		for(Clause clause : dnf) {
@@ -746,6 +747,10 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			}
 			
 			// Finally: Cross check the viewQuads against the namespace prefixes
+			
+
+			// TODO: We can still cross check the viewQuads against the clauses!
+			
 			int filterCount = 0;
 			Iterator<ViewQuad<T>> itViewQuad = viewQuads.iterator();
 			while(itViewQuad.hasNext()) {
@@ -800,7 +805,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			//logger.debug(StringUtils.itemPerLine(viewQuads));
 			//logger.info("--------------------------------");
 		}
-		logger.debug("Total number of candidates: " + result.size());
+		logger.debug("Total number of candidates after " + dnf.size() + " clauses: " + result.size());
 		
 		return result;
 	}
@@ -941,7 +946,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * @param restrictions
 	 * @param result
 	 */
-	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad<T>> viewQuads, Map<Quad, Set<ViewQuad<T>>> candidates, RestrictionManagerImpl restrictions, NestedStack<ViewInstance<T>> instances, List<ViewInstanceJoin<T>> result, C baseContext) //Mapping baseMapping)
+	public void getApplicableViewsRec2(int index, List<Quad> quadOrder, Set<ViewQuad<T>> viewQuads, Map<Quad, Set<ViewQuad<T>>> candidates, RestrictionManagerImpl restrictions, NestedStack<ViewInstance<T>> instances, List<RecursionResult<T, C>> result, C baseContext) //Mapping baseMapping)
 	{
 		//List<String> debug = Arrays.asList("view_nodes", "node_tags_resource_kv"); // "view_lgd_relation_specific_resources");
 		List<String> viewNames = new ArrayList<String>();
@@ -1158,8 +1163,12 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				}*/
 				
 				//I item = createUnionItem(nextInstances.asList(), subRestrictions);
+				
 				ViewInstanceJoin<T> viewConjunction = new ViewInstanceJoin<T>(nextInstances.asList(), subRestrictions);
-				result.add(viewConjunction);
+				RecursionResult<T, C> recResult = RecursionResult.create(viewConjunction, nextContext);
+				
+				//result.add(viewConjunction);
+				result.add(recResult);
 				
 
 				// remove self joins
@@ -1205,9 +1214,10 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		
 	public Op getApplicableViews(OpQuadPattern op, RestrictionManagerImpl restrictions)
 	{
-		List<ViewInstanceJoin<T>> conjunctions = getApplicableViewsBase(op, restrictions);
+		//List<ViewInstanceJoin<T>> conjunctions =
+		List<RecursionResult<T, C>> conjuncions = getApplicableViewsBase(op, restrictions);
 		
-		Op result = createOp(op, conjunctions, null);
+		Op result = createOp(op, conjuncions);
 		/*
 		OpDisjunction result = OpDisjunction.create();
 		
@@ -1270,7 +1280,60 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 
 	public Op _getApplicableViews(Op op, RestrictionManagerImpl restrictions)
 	{
-		return MultiMethod.invoke(this, "getApplicableViews", op, restrictions);
+		Ops type = Ops.valueOf(op.getClass().getSimpleName());
+		Op result;
+		
+		switch(type) {
+
+		case OpOrder:
+			result = getApplicableViews((OpOrder)op, restrictions);
+			break;
+			
+		case OpDistinct:
+			result = getApplicableViews((OpDistinct)op, restrictions);
+			break;
+
+		case OpFilter:
+			result = getApplicableViews((OpFilter)op, restrictions);
+			break;
+
+		case OpGroup:
+			result = getApplicableViews((OpGroup)op, restrictions);
+			break;
+			
+		case OpJoin:
+			result = getApplicableViews((OpJoin)op, restrictions);
+			break;
+
+		case OpLeftJoin:
+			result = getApplicableViews((OpLeftJoin)op, restrictions);
+			break;
+
+		case OpExtend:
+			result = getApplicableViews((OpExtend)op, restrictions);
+			break;			
+			
+		case OpQuadPattern:
+			result = getApplicableViews((OpQuadPattern)op, restrictions);
+			break;			
+		
+		case OpSlice:
+			result = getApplicableViews((OpSlice)op, restrictions);
+			break;
+			
+		case OpProject:
+			result = getApplicableViews((OpProject)op, restrictions);
+			break;
+
+		default:
+			throw new RuntimeException("Unknown op type: " + op.getClass());
+		}
+		
+		return result;
+
+		
+		
+		//return MultiMethod.invoke(this, "getApplicableViews", op, restrictions);
 	}
 
 	public Op getApplicableViews(OpSequence op, RestrictionManagerImpl restrictions) {
@@ -1645,6 +1708,9 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		} else if(op instanceof OpViewInstanceJoin) {
 			OpViewInstanceJoin opPattern = (OpViewInstanceJoin)op;
 			return opPattern.getJoin().getRestrictions();
+		} else if(op instanceof OpMapping) {
+			OpMapping opMapping = (OpMapping)op;
+			return opMapping.getRestrictions();
 		} else {
 			throw new RuntimeException("Should not happen: Unhandled Op: " + op.getClass() + " --- "+ op);
 		}		
@@ -1754,3 +1820,5 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 */
 	
 }
+
+

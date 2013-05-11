@@ -101,7 +101,7 @@ public class SparqlSqlOpRewriterImpl
 		}
 
 		sw.stop();
-		logger.info("[" + sw.getTime() + "] Done (without serilization");
+		logger.info("[" + sw.getTime() + "] Done (excluding serialization)");
 	
 		/*
 		boolean debugPerformance = true;

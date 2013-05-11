@@ -2,7 +2,6 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.aksw.sparqlify.core.TypeToken;
 
@@ -18,6 +17,8 @@ public interface Schema {
 	
 	boolean isNullable(String columnName);
 	
+	
+	Schema createSubSchema(List<String> columnNames);
 	
 	// Any combinations of columns that are unique. Includes primary/foreign key constraints.
 	//List<Set<String>> uniqueConstraints();

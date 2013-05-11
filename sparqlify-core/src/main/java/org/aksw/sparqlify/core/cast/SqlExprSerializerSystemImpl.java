@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,12 @@ public class SqlExprSerializerSystemImpl
 		nameToSerializer.put(functionName, serializer);
 	}
 
+	@Override
+	public void addSerializer(Collection<String> functionIds, SqlFunctionSerializer serializer) {
+		NewWorldTest.putForAll(nameToSerializer, functionIds, serializer);
+	}
+
+	
 	@Override
 	public String serialize(SqlExpr expr) {
 		String result;

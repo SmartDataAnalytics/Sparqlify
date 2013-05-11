@@ -1,9 +1,12 @@
 package org.aksw.sparqlify.core.cast;
 
 
+import java.util.Map;
 import java.util.Set;
 
+import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.factory.Factory1;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
@@ -123,10 +126,13 @@ public interface TypeSystem
 	Set<TypeToken> supremumDatatypes(TypeToken from, TypeToken to);
 	
 	
-	Multimap<String, String> getSparqlSqlImpls();
+	Multimap<String, String> getSparqlSqlDecls();
+	Map<String, SqlExprEvaluator> getSqlImpls();
+	
 
 	FunctionModel<TypeToken> getSqlFunctionModel();
 
+	IBiSetMultimap<TypeToken, TypeToken> getPhysicalTypeMap();
 }
 
 

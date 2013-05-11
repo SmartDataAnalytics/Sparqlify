@@ -41,7 +41,7 @@ public class MethodSignature<T>
 	}
 	
 	public static <T> MethodSignature<T> create(T returnType, List<T> parameterTypes, T varArgType) {
-		return new MethodSignature<T>(returnType, parameterTypes, null);
+		return new MethodSignature<T>(returnType, parameterTypes, varArgType);
 	}
 
 	/*

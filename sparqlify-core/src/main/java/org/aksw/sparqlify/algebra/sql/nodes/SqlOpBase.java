@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.List;
+import java.util.Set;
 
 import org.openjena.atlas.io.IndentedWriter;
 
@@ -34,5 +35,9 @@ public abstract class SqlOpBase
 	public String toString() {
 		String result = SqlOpFormatter.format(this);
 		return result;
+	}
+	
+	public SqlOp copy(Schema schema, List<SqlOp> newOps) {
+		throw new RuntimeException("Not implemented");
 	}
 }

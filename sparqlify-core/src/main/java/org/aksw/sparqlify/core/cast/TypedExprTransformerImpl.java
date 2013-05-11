@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
@@ -376,26 +378,58 @@ public class TypedExprTransformerImpl
 	//		
 	//		//result = S_Function.create(datatype, functionId, evaledArgs);
 			
-	
-			SparqlFunction sparqlFunction = functionProvider.getSparqlFunction(functionId);
-			if(sparqlFunction == null) {
-				throw new RuntimeException("Sparql function not declared: " + functionId);
+
+			
+			// Get the types of the evaluated arguments
+			List<TypeToken> argTypes = new ArrayList<TypeToken>(newArgs.size());
+			for(SqlExpr newArg : newArgs) {
+				argTypes.add(newArg.getDatatype());
 			}
+			
+			FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
+			Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
+			
+			CandidateMethod<TypeToken> candidate = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, functionId, argTypes);
+			
+			if(candidate != null) {
 				
-			SqlExprEvaluator evaluator = sparqlFunction.getEvaluator();
-			
-			logger.debug("Evaluator for '" + functionId + "': " + evaluator);
-			
-			// If there is an evaluator, we can pass all arguments to it, and see if it yields a new expression
-			if(evaluator != null) {
-				SqlExpr tmp = evaluator.eval(newArgs);
-				if(tmp != null) {
-					result = new ExprHolder(tmp);
-					//return tmp;
-				} else {
-					throw new RuntimeException("Evaluator yeld null value");
-				}
+				SqlExpr sqlExpr = createSqlExpr(candidate, newArgs);
+				result = new ExprHolder(sqlExpr);							
+				
 			} else {
+				// Type error
+				logger.info("Yielding Type error because to signature found for: " + functionId + " with arguments " + argTypes);
+				result = new ExprHolder(S_Constant.TYPE_ERROR);
+				//throw new RuntimeException("Type error.... needs to be handled - No function found: " + functionId + " with argtypes " + argTypes);
+			}
+			
+		}
+		
+		
+		return result;
+	}
+		
+			
+			
+//	SparqlFunction sparqlFunction = functionProvider.getSparqlFunction(functionId);
+//	if(sparqlFunction == null) {
+//		throw new RuntimeException("Sparql function not declared: " + functionId);
+//	}
+//		
+//	SqlExprEvaluator evaluator = sparqlFunction.getEvaluator();
+//	
+//	logger.debug("Evaluator for '" + functionId + "': " + evaluator);
+//	
+//	// If there is an evaluator, we can pass all arguments to it, and see if it yields a new expression
+//	if(evaluator != null) {
+//		SqlExpr tmp = evaluator.eval(newArgs);
+//		if(tmp != null) {
+//			result = new ExprHolder(tmp);
+//			//return tmp;
+//		} else {
+//			throw new RuntimeException("Evaluator yeld null value");
+//		}
+//	} else {
 			
 				// If there is no evaluator, use the default behavior:
 //				MethodSignature<TypeToken> signature = sparqlFunction.getSignature();
@@ -404,29 +438,7 @@ public class TypedExprTransformerImpl
 //					TypeToken returnType = signature.getReturnType();
 //					if(returnType != null) {
 
-						
-						// Get the types of the evaluated arguments
-						List<TypeToken> argTypes = new ArrayList<TypeToken>(newArgs.size());
-						for(SqlExpr newArg : newArgs) {
-							argTypes.add(newArg.getDatatype());
-						}
-						
-						FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
-						Multimap<String, String> sparqlSqlImpls = typeSystem.getSparqlSqlImpls();
-						
-						CandidateMethod<TypeToken> candidate = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlImpls, functionId, argTypes);
-						
-						if(candidate != null) {
-							
-							SqlExpr sqlExpr = createSqlExpr(candidate, newArgs);
-							result = new ExprHolder(sqlExpr);							
-							
-						} else {
-							// Type error
-							throw new RuntimeException("Type error.... needs to be handled - No function found: " + functionId + " with argtypes " + argTypes);
-						}
-						
-						
+												
 						
 						//SqlExpr tmp = S_Function.create(returnType, functionId, newArgs);
 
@@ -438,14 +450,9 @@ public class TypedExprTransformerImpl
 //					throw new RuntimeException("Neither evaluator nor signature found for " + functionId + " in " + fn);					
 //				}
 				
-			}			
+//			}			
 			// Check if the functionProvider has a definition for the functionId
 			
-		}
-		
-		
-		return result;
-	}
 
 	
 	public static SqlExpr createSqlExpr(CandidateMethod<TypeToken> candidate, List<SqlExpr> args) {
@@ -626,11 +633,29 @@ public class TypedExprTransformerImpl
 		String varName = expr.getVarName();
 		TypeToken datatype = typeMap.get(varName);
 
+		
 		if(datatype == null) {
 			throw new RuntimeException("No datatype found for " + varName);
 		}
+
+		IBiSetMultimap<TypeToken, TypeToken> ptm = typeSystem.getPhysicalTypeMap();
+		Set<TypeToken> schematicTypes = ptm.get(datatype);
 		
-		SqlExpr result = new S_ColumnRef(datatype, varName);
+		TypeToken schematicType;
+		if(schematicTypes.isEmpty()) {
+			schematicType = datatype;
+			//typeSystem.get
+			//throw new RuntimeException("Physical type " + datatype + " not known");
+		} else if(schematicTypes.size() > 1) {
+			throw new RuntimeException("Multiple mappings for physical type " + datatype + ": " + schematicTypes);
+		} else {
+			schematicType = schematicTypes.iterator().next();
+		}
+		
+		// We need to map the phyical datatype to a schematic one
+		// e.g. varchar -> string
+		
+		SqlExpr result = new S_ColumnRef(schematicType, varName);
 		return result;
 	}
 	

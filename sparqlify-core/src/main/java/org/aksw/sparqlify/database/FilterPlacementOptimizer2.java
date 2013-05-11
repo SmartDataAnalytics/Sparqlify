@@ -10,6 +10,7 @@ import java.util.Set;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
+import org.aksw.sparqlify.core.algorithms.OpMapping;
 import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
@@ -545,6 +546,10 @@ public class FilterPlacementOptimizer2 {
 	}
 
 	public static Op _optimize(OpViewInstanceJoin op, RestrictionManagerImpl cnf) {
+		return surroundWithFilterIfNeccessary(op, cnf);
+	}
+
+	public static Op _optimize(OpMapping op, RestrictionManagerImpl cnf) {
 		return surroundWithFilterIfNeccessary(op, cnf);
 	}
 

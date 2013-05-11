@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.aksw.commons.util.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
@@ -26,6 +28,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThanOrEqual;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Multiply;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Substract;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
@@ -194,6 +197,25 @@ class NodeValueTransformerInteger implements NodeValueTransformer {
  */
 public class NewWorldTest {
 
+	public static void registerSqlOperatorBatchNumeric(FunctionModel<TypeToken> sqlModel, String name) {
+		sqlModel.registerFunction(name + "@boolean", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
+		sqlModel.registerFunction(name + "@int", name, MethodSignature.create(false, TypeToken.Int, TypeToken.Int, TypeToken.Int));
+		sqlModel.registerFunction(name + "@float", name, MethodSignature.create(false, TypeToken.Float, TypeToken.Float, TypeToken.Float));
+		sqlModel.registerFunction(name + "@double", name, MethodSignature.create(false, TypeToken.Double, TypeToken.Double, TypeToken.Double));
+		//sqlModel.registerFunction(name + "@string", name, MethodSignature.create(false, TypeToken.String, TypeToken.String, TypeToken.String));
+		//sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Date, TypeToken.Date, TypeToken.Date));		
+	}
+
+	public static void registerSqlOperatorBatchCompare(FunctionModel<TypeToken> sqlModel, String name) {
+		sqlModel.registerFunction(name + "@boolean", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
+		sqlModel.registerFunction(name + "@int", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Int, TypeToken.Int));
+		sqlModel.registerFunction(name + "@float", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Float, TypeToken.Float));
+		sqlModel.registerFunction(name + "@double", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Double, TypeToken.Double));
+		sqlModel.registerFunction(name + "@string", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
+		sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.Date));		
+	}
+
+	
 	private static final Logger logger = LoggerFactory.getLogger(NewWorldTest.class);
 	
 	public static TypeSystem createDefaultDatatypeSystem() {
@@ -208,16 +230,16 @@ public class NewWorldTest {
 			Map<String, String> typeHierarchy = MapReader
 					.readFromResource("/type-hierarchy.default.tsv");
 
-			Map<String, String> typeMap = MapReader
+			Map<String, String> physicalTypeMap = MapReader
 					.readFromResource("/type-map.h2.tsv");
 
 			// TODO HACK Do not add types programmatically 
-			typeMap.put("INTEGER", "int");
+			physicalTypeMap.put("INTEGER", "int");
 			
-			typeHierarchy.putAll(typeMap);
+			//typeHierarchy.putAll(physicalTypeMap);
 			
 			
-			TypeSystem result = TypeSystemImpl.create(typeHierarchy);
+			TypeSystem result = TypeSystemImpl.create(typeHierarchy, physicalTypeMap);
 
 			initSparqlModel(result);
 
@@ -227,6 +249,12 @@ public class NewWorldTest {
 		}
 	}
 
+	public static <K, V> void putForAll(Map<K, V> map, Collection<K> keys, V value) {
+		for(K key : keys) {
+			map.put(key, value);
+		}
+	}
+	
 	/**
 	 * Create the SPARQL and SQL models
 	 * 
@@ -235,6 +263,7 @@ public class NewWorldTest {
 	 */
 	public static void initSparqlModel(TypeSystem typeSystem) {
 
+		
 		// NodeValue xxx = NodeValue.makeInteger(1);
 		// RDFDatatype yyy = xxx.asNode().getLiteral().getDatatype();
 		// System.out.println(yyy);
@@ -341,301 +370,99 @@ public class NewWorldTest {
 		// ExprEvaluator evaluator = new ExprEvaluatorJena();
 		//
 		//
-		{
-			// 1. Define the signature, e.g. boolean = (rdfTerm, rdfTerm)
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
 
-			// 2. Attach Jena's evaluator to it (for constant expressions)
-			// (already defined globally)
-
-			// 3. Attach a typeEvaluator to it.
-			// TODO Should we skip step 2 in favor of this?
-
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals(typeSystem);
-
-			// As a fallback where Jena can't evaluate it, register a
-			// transformation to an SQL expression.
-			SparqlFunction f = new SparqlFunctionImpl("=", sig, evaluator, null);
-
-			typeSystem.registerSparqlFunction(f);
-
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("=");
-			serializerSystem.addSerializer("equals", serializer);
-
-			// result = new S_Serialize(TypeToken.Boolean, "AND",
-			// Arrays.asList(a, b), serializer);
-
-		}
-
-		// CONCAT
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(true,
-					TypeToken.String, TypeToken.rdfTerm);
-
-			//SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals(typeSystem);
-
-			// As a fallback where Jena can't evaluate it, register a
-			// transformation to an SQL expression.
-			SparqlFunction f = new SparqlFunctionImpl("concat", sig, null, null);
-			typeSystem.registerSparqlFunction(f);
-		}
-		
-
-
-		// BOUND
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.Boolean, TypeToken.rdfTerm);
-
-/*
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a) {
-					return new S_Bound(a);
-				}
-			};
-*/
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "isNotNull"); //new SqlExprEvaluator_Bound(typeSystem);
-
-			// As a fallback where Jena can't evaluate it, register a
-			// transformation to an SQL expression.
-			SparqlFunction f = new SparqlFunctionImpl("bound", sig, evaluator, null);
-
-			typeSystem.registerSparqlFunction(f);
-		}
-
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
-
-
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_GreaterThan(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-
-			// As a fallback where Jena can't evaluate it, register a
-			// transformation to an SQL expression.
-			SparqlFunction f = new SparqlFunctionImpl(">", sig, evaluator, null);
-
-			typeSystem.registerSparqlFunction(f);
-		}
+		FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
+		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
+		Map<String, SqlExprEvaluator> sqlImpls = typeSystem.getSqlImpls();
 
 		
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
-
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_LessThan(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl("<", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-		}		
-
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
-
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_LessThanOrEqual(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl("<=", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-		}		
+		registerSqlOperatorBatchCompare(sqlModel, "lessThan");
+		registerSqlOperatorBatchCompare(sqlModel, "lessThanOrEqual");
+		registerSqlOperatorBatchCompare(sqlModel, "equal");		
+		registerSqlOperatorBatchCompare(sqlModel, "greaterThan");
+		registerSqlOperatorBatchCompare(sqlModel, "greaterThanOrEqual");
 		
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.rdfTerm, TypeToken.rdfTerm);
+		registerSqlOperatorBatchNumeric(sqlModel, "numericPlus");
+		registerSqlOperatorBatchNumeric(sqlModel, "numericMinus");
+		registerSqlOperatorBatchNumeric(sqlModel, "numericMultiply");
+		registerSqlOperatorBatchNumeric(sqlModel, "numericDivide");
 
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_GreaterThanOrEqual(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl(">=", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-		}		
+		sqlModel.registerFunction("str@str", "str", MethodSignature.create(false, TypeToken.String, TypeToken.String));
+		sqlModel.registerFunction("str@double", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Double));
+		sqlModel.registerFunction("str@float", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Float));
+		sqlModel.registerFunction("str@int", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Int));
+
+		sqlModel.registerFunction("double@str", "double", MethodSignature.create(false, TypeToken.Double, TypeToken.String));		
+
+		sqlModel.registerFunction("isNotNull@object", "isNotNull", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Object));
+
+		
+		sparqlSqlDecls.putAll("<", sqlModel.getIdsByName("lessThan"));
+		sparqlSqlDecls.putAll("<=", sqlModel.getIdsByName("lessThanOrEqual"));
+		sparqlSqlDecls.putAll("=", sqlModel.getIdsByName("equal"));
+		sparqlSqlDecls.putAll(">", sqlModel.getIdsByName("greaterThan"));
+		sparqlSqlDecls.putAll(">=", sqlModel.getIdsByName("greaterThanOrEqual"));
+
+		sparqlSqlDecls.putAll("+", sqlModel.getIdsByName("numericPlus"));
+		sparqlSqlDecls.putAll("-", sqlModel.getIdsByName("numericMinus"));
+		sparqlSqlDecls.putAll("/", sqlModel.getIdsByName("numericMultiply"));
+		sparqlSqlDecls.putAll("*", sqlModel.getIdsByName("numericDivide"));
+		
+		sparqlSqlDecls.put("str", "str@str");
+		sparqlSqlDecls.put("str", "str@double");
+		sparqlSqlDecls.put("str", "str@float");
+		sparqlSqlDecls.put("str", "str@int");
+		sparqlSqlDecls.put(XSD.xdouble.getURI(), "double@str");
+		
+		sparqlSqlDecls.put("bound", "isNotNull@object");
+
+		putForAll(sqlImpls, sqlModel.getIdsByName("lessThan"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryLessThan));
+		putForAll(sqlImpls, sqlModel.getIdsByName("lessThanOrEqual"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryLessThanOrEqual));
+		putForAll(sqlImpls, sqlModel.getIdsByName("equal"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryEqual));
+		putForAll(sqlImpls, sqlModel.getIdsByName("greaterThan"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryGreaterThan));
+		putForAll(sqlImpls, sqlModel.getIdsByName("greaterThanOrEqual"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryGreaterThanOrEqual));
+
+		putForAll(sqlImpls, sqlModel.getIdsByName("numericPlus"), new SqlExprEvaluator_Arithmetic());
+
+		putForAll(sqlImpls, sqlModel.getIdsByName("+"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericPlus));
+		putForAll(sqlImpls, sqlModel.getIdsByName("-"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericMinus));
+		putForAll(sqlImpls, sqlModel.getIdsByName("*"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericMultiply));
+//		putForAll(sqlImpls, sqlModel.getIdsByName("/"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericDivide));
+
+		
+
+		sqlModel.registerFunction("logicalAnd@boolean", "logicalAnd", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
+		sparqlSqlDecls.putAll("&&", sqlModel.getIdsByName("logicalAnd"));
+		putForAll(sqlImpls, sqlModel.getIdsByName("logicalAnd"), new SqlExprEvaluator_LogicalAnd());
+
+		sqlModel.registerFunction("logicalOr@boolean", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
+		sparqlSqlDecls.putAll("||", sqlModel.getIdsByName("logicalOr"));
+		putForAll(sqlImpls, sqlModel.getIdsByName("logicalOr"), new SqlExprEvaluator_LogicalOr());
+
+		sqlModel.registerFunction("logicalNot@boolean", "logicalNot", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean));
+		sparqlSqlDecls.putAll("!", sqlModel.getIdsByName("logicalNot"));
+		putForAll(sqlImpls, sqlModel.getIdsByName("logicalNot"), new SqlExprEvaluator_LogicalNot());
+
+
+		sqlModel.registerFunction("concat@object", "concat", MethodSignature.create(true, TypeToken.Object, TypeToken.Object));		
+		sparqlSqlDecls.put("concat", "concat@object");
+
 		
 		
-		// SqlExprSerializerPostgres
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean);
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalAnd();
-
-			SparqlFunction f = new SparqlFunctionImpl("&&", sig, evaluator,
-					null);
-			typeSystem.registerSparqlFunction(f);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(
-					"AND");
-			serializerSystem.addSerializer("logicalAnd", serializer);
-		}
-
-//		{
-//			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("IS NOT NULL");
-//			serializerSystem.addSerializer("isNotNull", serializer);
-//		}
-		
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean);
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalOr();
-
-			SparqlFunction f = new SparqlFunctionImpl("||", sig, evaluator,
-					null);
-			typeSystem.registerSparqlFunction(f);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(
-					"OR");
-			serializerSystem.addSerializer("logicalOr", serializer);
-
-		}
-
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Boolean, TypeToken.Boolean);
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalNot();
-
-			SparqlFunction f = new SparqlFunctionImpl("!", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1(
-					"NOT");
-			serializerSystem.addSerializer("logicalNot", serializer);
-		}
-
-
 		// urlEncode
 		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.String, TypeToken.String);
-			//SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalNot();
-			SqlExprEvaluator evaluator = null;
+			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.String, TypeToken.String);
 
-			SparqlFunction f = new SparqlFunctionImpl(SparqlifyConstants.urlEncode, sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-			//SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
-			//serializerSystem.addSerializer(SparqlifyConstants.urlEncode, serializer);
-		}
-
-		
-		// + and -
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Int, TypeToken.Int, TypeToken.Int);
-
-			// TODO The SqlExprFactory2 also must accept a type argument
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_Substract(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl("-", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-		}		
-
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Int, TypeToken.Int, TypeToken.Int);
-
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_Add(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl("+", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-		}
-		
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Int, TypeToken.Int, TypeToken.Int);
-
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_Add(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl("*", sig, evaluator, null);
+			SparqlFunction f = new SparqlFunctionImpl(SparqlifyConstants.urlEncode, sig, null, null);
 			typeSystem.registerSparqlFunction(f);
 		}
 
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false,
-					TypeToken.Int, TypeToken.Int, TypeToken.Int);
-
-			Factory2<SqlExpr> exprFactory = new Factory2<SqlExpr>() {
-				@Override
-				public SqlExpr create(SqlExpr a, SqlExpr b) {
-					return new S_Add(a, b);
-				}
-			};
-			
-			SqlExprEvaluator evaluator = new SqlExprEvaluator_Compare(typeSystem, exprFactory);
-			SparqlFunction f = new SparqlFunctionImpl("*", sig, evaluator, null);
-			typeSystem.registerSparqlFunction(f);
-		}		
 		
 		
-		
-		FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
-		Multimap<String, String> sparqlSqlImpls = typeSystem.getSparqlSqlImpls();
-		
-		{
-			sqlModel.registerFunction("str@str", "str", MethodSignature.create(false, TypeToken.String, TypeToken.String));
-			sqlModel.registerFunction("str@double", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Double));
-			sqlModel.registerFunction("str@float", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Float));
-			sqlModel.registerFunction("str@int", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Int));
-
-			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.rdfTerm, TypeToken.rdfTerm);
-			SparqlFunction f = new SparqlFunctionImpl("str", sig, null, null);
-
-			typeSystem.registerSparqlFunction(f);
-
-			sparqlSqlImpls.put("str", "str@str");
-			sparqlSqlImpls.put("str", "str@double");
-			sparqlSqlImpls.put("str", "str@float");
-			sparqlSqlImpls.put("str", "str@int");
-			
-			
-		}
 
 		
-		{
-			MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.rdfTerm, TypeToken.rdfTerm);
-			SparqlFunction f = new SparqlFunctionImpl(XSD.xdouble.getURI(), sig, null, null);
-			typeSystem.registerSparqlFunction(f);
-			
-			sqlModel.registerFunction("double@str", "double", MethodSignature.create(false, TypeToken.Double, TypeToken.String));
-			
-			sparqlSqlImpls.put(XSD.xdouble.getURI(), "double@str");
-		}
+
+		
 		
 		//
 		

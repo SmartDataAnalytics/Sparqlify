@@ -68,7 +68,7 @@ public class CandidateViewSelectorImpl
 	public ViewDefinition normalizeView(ViewDefinition view) {
 		ViewDefinition normalized = viewDefinitionNormalizer.normalize(view);
 
-		logger.debug("Normalized view:\n" + normalized);
+		logger.trace("Normalized view:\n" + normalized);
 		
 		return normalized;
 	}
@@ -118,19 +118,44 @@ public class CandidateViewSelectorImpl
 		return viewConjunction;
 	}
 	*/
-	
 	@Override
-	public Op createOp(OpQuadPattern opQuadPattern, List<ViewInstanceJoin<ViewDefinition>> conjunctions, Mapping mapping) {
+	public Op createOp(OpQuadPattern opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
+		
+		OpDisjunction result = OpDisjunction.create();
+		
+		for(RecursionResult<ViewDefinition, Mapping> entry : conjunctions) {
+			Mapping mapping = entry.getFinalContext();
+			RestrictionManagerImpl restrictions = entry.getViewInstances().getRestrictions();
+			
+			Op tmp = new OpMapping(mapping, restrictions);
+			result.add(tmp);
+		}
 		
 		
-		for(ViewInstanceJoin<ViewDefinition> conjunction : conjunctions) {
+		// If there were no candidates, we fake a view definition where all variables of
+		// the quad pattern (of the query) are bound to Node.nvNothing
+		if(result.size() == 0) {
+			Op tmp = createEmptyViewInstance(opQuadPattern);
+			result.add(tmp);
+		}
+		
+		return result;			
+	}
+	
+	
+	//@Override
+	public Op createOpOldButWorking(OpQuadPattern opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
+		
+		for(RecursionResult<ViewDefinition, Mapping> tmp : conjunctions) {
+			ViewInstanceJoin<ViewDefinition> conjunction = tmp.getViewInstances();
 			SelfJoinEliminator.merge(conjunction);
 		}
 		
 		
 		OpDisjunction result = OpDisjunction.create();
 		
-		for(ViewInstanceJoin<ViewDefinition> item : conjunctions) {
+		for(RecursionResult<ViewDefinition, Mapping> entry : conjunctions) {
+			ViewInstanceJoin<ViewDefinition> item = entry.getViewInstances();
 			Op tmp = new OpViewInstanceJoin(item);
 			result.add(tmp);
 		}

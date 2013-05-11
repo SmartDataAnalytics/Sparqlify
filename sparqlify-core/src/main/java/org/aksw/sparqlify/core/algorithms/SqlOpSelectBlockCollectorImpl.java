@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
@@ -191,43 +192,48 @@ public class SqlOpSelectBlockCollectorImpl
 	 * @param sqlOp
 	 * @return
 	 */
-	public static SqlOp _makeSelect(SqlOp sqlOp) {
-		SqlOp result;
+	public static SqlOp makeSelect(SqlOp sqlOp) {
+		SqlOp result = _makeSelect(sqlOp, null);
+		return result;
+	}
+	
+	public static SqlOp _makeSelect(SqlOp sqlOp, Set<String> refs) {
 		
+		SqlOp result;
 		
 		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
 		switch(type) {
 
 		case SqlOpOrder:
-			result = makeSelect((SqlOpOrder)sqlOp);
+			result = makeSelect((SqlOpOrder)sqlOp, refs);
 			break;
 			
 		case SqlOpGroupBy:
-			result = makeSelect((SqlOpGroupBy)sqlOp);
+			result = makeSelect((SqlOpGroupBy)sqlOp, refs);
 			break;			
 		
 		case SqlOpEmpty:
-			result = makeSelect((SqlOpEmpty)sqlOp);
+			result = makeSelect((SqlOpEmpty)sqlOp, refs);
 			break;
 		
 		case SqlOpTable:
-			result = makeSelect((SqlOpTable)sqlOp);
+			result = makeSelect((SqlOpTable)sqlOp, refs);
 			break;
 
 		case SqlOpQuery:
-			result = makeSelect((SqlOpQuery)sqlOp);
+			result = makeSelect((SqlOpQuery)sqlOp, refs);
 			break;
 
 		case SqlOpFilter:
-			result = makeSelect((SqlOpFilter)sqlOp);
+			result = makeSelect((SqlOpFilter)sqlOp, refs);
 			break;
 
 		case SqlOpProject:
-			result = makeSelect((SqlOpProject)sqlOp);
+			result = makeSelect((SqlOpProject)sqlOp, refs);
 			break;
 		
 		case SqlOpExtend:
-			result = makeSelect((SqlOpExtend)sqlOp);
+			result = makeSelect((SqlOpExtend)sqlOp, refs);
 			break;
 
 //		case SqlOpRename:
@@ -235,24 +241,24 @@ public class SqlOpSelectBlockCollectorImpl
 //			break;
 			
 		case SqlOpJoin:
-			result = makeSelect((SqlOpJoin)sqlOp);
+			result = makeSelect((SqlOpJoin)sqlOp, refs);
 			break;
 
 		case SqlOpUnionN:
-			result = makeSelect((SqlOpUnionN)sqlOp);
+			result = makeSelect((SqlOpUnionN)sqlOp, refs);
 			break;
 
 		case SqlOpDistinct:
-			result = makeSelect((SqlOpDistinct)sqlOp);
+			result = makeSelect((SqlOpDistinct)sqlOp, refs);
 			break;
 			
 		case SqlOpSlice:
-			result = makeSelect((SqlOpSlice)sqlOp);
+			result = makeSelect((SqlOpSlice)sqlOp, refs);
 			break;
 			
 		default:
 			logger.warn("Should not come here");
-			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp);
+			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "makeSelect", sqlOp, refs);
 			break;
 		}
 		
@@ -271,8 +277,8 @@ public class SqlOpSelectBlockCollectorImpl
 	 * @param op
 	 * @return
 	 */
-	public static SqlOp makeSelect(SqlOpEmpty op) {
-		SqlOp result = makeSelectOrTable(op);
+	public static SqlOp makeSelect(SqlOpEmpty op, Set<String> refs) {
+		SqlOp result = makeSelectOrTable(op, refs);
 		
 //		SqlOpSelectBlock result = requireSelectBlock(op);
 //		String aliasName = aliasGenerator.next();
@@ -282,8 +288,8 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 	
 	
-	public static SqlOp makeSelect(SqlOpOrder op) {
-		SqlOp newOp = _makeSelect(op.getSubOp());
+	public static SqlOp makeSelect(SqlOpOrder op, Set<String> refs) {
+		SqlOp newOp = _makeSelect(op.getSubOp(), refs);
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		
 		List<SqlSortCondition> newExprs = adjustSortConditions(op.getSortConditions(), result.getProjection());
@@ -296,8 +302,8 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 	
 
-	public static SqlOp makeSelect(SqlOpGroupBy op) {
-		SqlOp newOp = _makeSelect(op.getSubOp());
+	public static SqlOp makeSelect(SqlOpGroupBy op, Set<String> refs) {
+		SqlOp newOp = _makeSelect(op.getSubOp(), refs);
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		
 		List<SqlExpr> newExprs = adjustConditions(op.getGroupByExprs(), result.getProjection());
@@ -310,8 +316,8 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 	
-	public static SqlOp makeSelect(SqlOpSlice op) {
-		SqlOp newOp = _makeSelect(op.getSubOp());
+	public static SqlOp makeSelect(SqlOpSlice op, Set<String> refs) {
+		SqlOp newOp = _makeSelect(op.getSubOp(), refs);
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		
 		
@@ -320,8 +326,8 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpDistinct op) {
-		SqlOp newOp = _makeSelect(op.getSubOp());
+	public static SqlOp makeSelect(SqlOpDistinct op, Set<String> refs) {
+		SqlOp newOp = _makeSelect(op.getSubOp(), refs);
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		result.setDistinct(true);
 
@@ -339,11 +345,11 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOpUnionN makeSelect(SqlOpUnionN op) {
+	public static SqlOpUnionN makeSelect(SqlOpUnionN op, Set<String> refs) {
 		
 		List<SqlOp> newMembers = new ArrayList<SqlOp>();
 		for(SqlOp member : op.getSubOps()) {
-			SqlOp subOp = _makeSelect(member);
+			SqlOp subOp = _makeSelect(member, refs);
 			newMembers.add(subOp);
 		}
 		
@@ -370,7 +376,7 @@ public class SqlOpSelectBlockCollectorImpl
 		
 	}
 	
-	public static SqlOp makeSelect(SqlOpTable node) {
+	public static SqlOp makeSelect(SqlOpTable node, Set<String> refs) {
 
 		SqlOpTable opTable = makeSelectOrTable(node);
 		
@@ -388,7 +394,7 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpQuery node) {
+	public static SqlOp makeSelect(SqlOpQuery node, Set<String> refs) {
 
 		SqlOpQuery result = makeSelectOrTable(node);
 
@@ -465,9 +471,9 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpFilter op) {
+	public static SqlOp makeSelect(SqlOpFilter op, Set<String> refs) {
 		
-		SqlOp subOp = _makeSelect(op.getSubOp());
+		SqlOp subOp = _makeSelect(op.getSubOp(), refs);
 		
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
 		result.setSchema(op.getSchema());
@@ -478,9 +484,9 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOpSelectBlock makeSelect(SqlOpExtend op) {
+	public static SqlOpSelectBlock makeSelect(SqlOpExtend op, Set<String> refs) {
 		
-		SqlOp subOp = _makeSelect(op.getSubOp());
+		SqlOp subOp = _makeSelect(op.getSubOp(), refs);
 		
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
 		result.setSchema(op.getSchema());
@@ -501,9 +507,9 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpProject op) {
+	public static SqlOp makeSelect(SqlOpProject op, Set<String> refs) {
 		
-		SqlOp subOp = _makeSelect(op.getSubOp());
+		SqlOp subOp = _makeSelect(op.getSubOp(), refs);
 		
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
 		
@@ -568,35 +574,35 @@ public class SqlOpSelectBlockCollectorImpl
 		
 	}
 	
-	public static SqlOp makeSelect(SqlOpJoin op) {
+	public static SqlOp makeSelect(SqlOpJoin op, Set<String> refs) {
 
-		JoinContext context = collectJoins(op);
+		JoinContext context = collectJoins(op, refs);
 		SqlOpSelectBlock block = contextToBlock(op.getSchema(), context);
 
 		return block;
 	}
 
 
-	public static JoinContext _collectJoins(SqlOp sqlOp) {
+	public static JoinContext _collectJoins(SqlOp sqlOp, Set<String> refs) {
 		JoinContext result;
 		
 		SqlOps type = SqlOps.valueOf(sqlOp.getClass().getSimpleName());
 		switch(type) {
 
 		case SqlOpEmpty:
-			result = collectJoins((SqlOpEmpty)sqlOp);
+			result = collectJoins((SqlOpEmpty)sqlOp, refs);
 			break;
 		
 		case SqlOpTable:
-			result = collectJoins((SqlOpTable)sqlOp);
+			result = collectJoins((SqlOpTable)sqlOp, refs);
 			break;
 
 		case SqlOpQuery:
-			result = collectJoins((SqlOpQuery)sqlOp);
+			result = collectJoins((SqlOpQuery)sqlOp, refs);
 			break;
 
 		case SqlOpFilter:
-			result = collectJoins((SqlOpFilter)sqlOp);
+			result = collectJoins((SqlOpFilter)sqlOp, refs);
 			break;
 
 		/*
@@ -605,19 +611,19 @@ public class SqlOpSelectBlockCollectorImpl
 			break;
 		*/
 		case SqlOpExtend:
-			result = collectJoins((SqlOpExtend)sqlOp);
+			result = collectJoins((SqlOpExtend)sqlOp, refs);
 			break;
 
 		case SqlOpRename:
-			result = collectJoins((SqlOpRename)sqlOp);
+			result = collectJoins((SqlOpRename)sqlOp, refs);
 			break;
 			
 		case SqlOpJoin:
-			result = collectJoins((SqlOpJoin)sqlOp);
+			result = collectJoins((SqlOpJoin)sqlOp, refs);
 			break;
 
 		case SqlOpUnionN:
-			result = collectJoins((SqlOpUnionN)sqlOp);
+			result = collectJoins((SqlOpUnionN)sqlOp, refs);
 			break;
 
 			
@@ -633,8 +639,8 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 	// TODO SqlOpEmpty needs an alias
-	public static JoinContext collectJoins(SqlOpEmpty op) {
-		SqlOpEmpty table = makeSelectOrTable(op);		
+	public static JoinContext collectJoins(SqlOpEmpty op, Set<String> refs) {
+		SqlOpEmpty table = makeSelectOrTable(op, refs);		
 		JoinContextJoin result = new JoinContextJoin(table);
 		initProjection(result.getProjection(), op.getSchema(), table.getAliasName());
 		
@@ -696,10 +702,10 @@ public class SqlOpSelectBlockCollectorImpl
 
 	
 	
-	public static JoinContext collectJoins(SqlOpJoin op) {
+	public static JoinContext collectJoins(SqlOpJoin op, Set<String> refs) {
 		
-		JoinContext left = _collectJoins(op.getLeft());
-		JoinContext right = _collectJoins(op.getRight());
+		JoinContext left = _collectJoins(op.getLeft(), refs);
+		JoinContext right = _collectJoins(op.getRight(), refs);
 		
 		
 		if(op.getJoinType().equals(JoinType.LEFT)) {
@@ -768,8 +774,8 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 
-	public static JoinContext collectJoins(SqlOpUnionN op) {
-		SqlOpUnionN newOp = makeSelect(op);
+	public static JoinContext collectJoins(SqlOpUnionN op, Set<String> refs) {
+		SqlOpUnionN newOp = makeSelect(op, refs);
 
 		//SqlOpSelectBlock resultOp = SqlOpSelectBlock.create(newOp, newOp.getAliasName());		
 		//initProjection(resultOp.getProjection(), op.getSchema(), resultOp.getAliasName());
@@ -783,9 +789,9 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static JoinContext collectJoins(SqlOpFilter op) {
+	public static JoinContext collectJoins(SqlOpFilter op, Set<String> refs) {
 
-		JoinContext result = _collectJoins(op.getSubOp());
+		JoinContext result = _collectJoins(op.getSubOp(), refs);
 		
 		List<SqlExpr> transformed = adjustConditions(op.getExprs(), result.getProjection());		
 		result.getConditions().addAll(transformed);
@@ -820,18 +826,18 @@ public class SqlOpSelectBlockCollectorImpl
 	 * @param context
 	 * @return
 	 */
-	public static JoinContext collectJoins(SqlOpRename op) {
+	public static JoinContext collectJoins(SqlOpRename op, Set<String> refs) {
 
 		JoinContext result;
 
 
 		if (useCodeThatCausesConflictsOnDuplicateNames) {
 			// FIXME: Can be removed it seems; the other part seems to be working now
-			result = _collectJoins(op.getSubOp());		
+			result = _collectJoins(op.getSubOp(), refs);		
 			result.getProjection().renameAll(op.getRename());
 		} else {
 			// Create a sub select
-			JoinContext context = _collectJoins(op.getSubOp());
+			JoinContext context = _collectJoins(op.getSubOp(), refs);
 			context.getProjection().renameAll(op.getRename());
 			SqlOpSelectBlock selectBlock = contextToBlock(op.getSchema(), context); 
 			
@@ -911,10 +917,10 @@ public class SqlOpSelectBlockCollectorImpl
 		}
 	}
 
-	public static JoinContextJoin collectJoins(SqlOpExtend sqlOp) {
+	public static JoinContextJoin collectJoins(SqlOpExtend sqlOp, Set<String> refs) {
 		//SqlOpQuery query = makeSelectOrTable(op);
 		
-		SqlOpSelectBlock op = makeSelect((SqlOpExtend)sqlOp);
+		SqlOpSelectBlock op = makeSelect((SqlOpExtend)sqlOp, refs);
 		String alias = aliasGenerator.next();
 		op.setAliasName(alias);
 
@@ -926,7 +932,7 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 	
-	public static JoinContextJoin collectJoins(SqlOpTable op) {
+	public static JoinContextJoin collectJoins(SqlOpTable op, Set<String> refs) {
 		SqlOpTable table = makeSelectOrTable(op);
 		
 		JoinContextJoin result = new JoinContextJoin(table);
@@ -936,7 +942,7 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
-	public static JoinContextJoin collectJoins(SqlOpQuery op) {
+	public static JoinContextJoin collectJoins(SqlOpQuery op, Set<String> refs) {
 		SqlOpQuery query = makeSelectOrTable(op);
 		
 		JoinContextJoin result = new JoinContextJoin(query);
@@ -958,7 +964,7 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	*/
-	public static SqlOpEmpty makeSelectOrTable(SqlOpEmpty node) {
+	public static SqlOpEmpty makeSelectOrTable(SqlOpEmpty node, Set<String> refs) {
 		
 		String alias = aliasGenerator.next();
 		SqlOpEmpty result = new SqlOpEmpty(node.getSchema(), alias);
@@ -1000,7 +1006,7 @@ public class SqlOpSelectBlockCollectorImpl
 	@Override
 	public SqlOp transform(SqlOp op) {
 		
-		return SqlOpSelectBlockCollectorImpl._makeSelect(op);
+		return SqlOpSelectBlockCollectorImpl._makeSelect(op, null);
 		
 	}
 

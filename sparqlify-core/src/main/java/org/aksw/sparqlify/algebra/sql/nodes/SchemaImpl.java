@@ -168,6 +168,29 @@ public class SchemaImpl
 		return result;
 	}
 
+	@Override
+	public Schema createSubSchema(List<String> columnNames) {
+		
+		Map<String, TypeToken> tm = new HashMap<String, TypeToken>();
+		Set<String> nulls = new HashSet<String>();
+		for(String colName : columnNames) {
+			
+			TypeToken type = nameToType.get(colName);
+			if(type == null) {
+				throw new RuntimeException("Column " + colName + " does not exist.");
+			}
+			
+			tm.put(colName, type);
+			if(isNullable(colName)) {
+				nulls.add(colName);
+			}
+		}
+		
+		SchemaImpl result = new SchemaImpl(columnNames, tm, nulls);
+		return result;
+		
+	}
+
 //	@Override
 //	public boolean isNullable(boolean assumption) {
 //		// TODO Auto-generated method stub

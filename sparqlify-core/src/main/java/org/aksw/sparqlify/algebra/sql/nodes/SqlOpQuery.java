@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import java.util.List;
+
 import org.openjena.atlas.io.IndentedWriter;
 
 public class SqlOpQuery
@@ -71,7 +73,11 @@ public class SqlOpQuery
 		return queryString;
 	}
 
-	
+	public SqlOp copy(Schema schema, List<SqlOp> newArgs) {
+		SqlOpQuery result = new SqlOpQuery(schema,queryString, aliasName);
+		return result;
+	}
+
 	/*
 	@Override
 	public String toString() {

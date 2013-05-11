@@ -7,7 +7,6 @@ integer	integer
 varchar	string
 VARCHAR string
 text	string
-text	string
 bpchar	string
 float4	float
 float8	double

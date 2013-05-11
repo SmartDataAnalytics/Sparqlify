@@ -1,1 +1,1 @@
-java -cp target/sparqlify-core-0.2-SNAPSHOT-jar-with-dependencies.jar org.aksw.sparqlify.web.CompareMain -P 3333 $@
+java -cp target/sparqlify-core-jar-with-dependencies.jar org.aksw.sparqlify.web.CompareMain -P 3333 $@

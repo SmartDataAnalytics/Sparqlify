@@ -20,11 +20,13 @@ import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
 import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
 import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
+import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
 import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
 import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
+import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
@@ -249,75 +251,161 @@ public class OpMappingRewriterImpl
 	}
 	*/
 
+	public Mapping rewrite(OpTopN op) {		
+		// We convert this 'back' into an order by followed by limit
+		Op sub = op.getSubOp();
+		OpOrder inner = new OpOrder(sub, op.getConditions());
+		OpSlice outer = new OpSlice(inner, 0, op.getLimit());
+		
+		Mapping result = rewrite(outer);
+		
+		return result;
+	}
+
+	public Mapping rewrite(OpMapping op) {
+		Mapping result = op.getMapping();
+		return result;
+	}
 	
 	@Override
 	public Mapping rewrite(Op op) {
 
 		Mapping result;
-		if(op instanceof OpViewInstanceJoin) {
-			result = rewrite((OpViewInstanceJoin)op);
-		}
-		else if (op instanceof OpDisjunction) {
-			result = rewrite((OpDisjunction)op);
-		} 
-		else if (op instanceof OpFilterIndexed) {
-			result = rewrite((OpFilterIndexed)op);
-		}
-		else if (op instanceof OpProject) {
-			result = rewrite((OpProject)op);
-		}
-		else if (op instanceof OpJoin) {
-			result = rewrite((OpJoin)op);
-		}
-		else if (op instanceof OpLeftJoin) {
-			result = rewrite((OpLeftJoin)op);
-		}
-		else if (op instanceof OpSequence) {
-			result = rewrite((OpSequence)op);
-		}
-		else if (op instanceof OpConditional) {
-			result = rewrite((OpConditional)op);
-		}		
-		else if (op instanceof OpSlice) {
-			result = rewrite((OpSlice)op);
-		}
-		else if (op instanceof OpDistinct) {
-			result = rewrite((OpDistinct)op);
-		}
-		else if (op instanceof OpGroup) {
-			result = rewrite((OpGroup)op);
-		}
-		else if (op instanceof OpExtend) {
-			result = rewrite((OpExtend)op);
-		}
-		else if (op instanceof OpAssign) {
-			result = rewrite((OpAssign)op);
-		}
-		else if (op instanceof OpOrder) {
+		
+		Ops type = Ops.valueOf(op.getClass().getSimpleName());
+		
+		switch(type) {
+
+		case OpOrder:
 			result = rewrite((OpOrder)op);
-		}
-		else if(op instanceof OpTopN) {
-			OpTopN o = (OpTopN)op;
+			break;
 			
-			// We convert this 'back' into an order by followed by limit
-			Op sub = o.getSubOp();
-			OpOrder inner = new OpOrder(sub, o.getConditions());
-			OpSlice outer = new OpSlice(inner, 0, o.getLimit());
+		case OpDistinct:
+			result = rewrite((OpDistinct)op);
+			break;
+
+		case OpFilter:
+			result = rewrite((OpFilter)op);
+			break;
+
+		case OpGroup:
+			result = rewrite((OpGroup)op);
+			break;
 			
-			result = rewrite(outer);
+		case OpJoin:
+			result = rewrite((OpJoin)op);
+			break;
+
+		case OpLeftJoin:
+			result = rewrite((OpLeftJoin)op);
+			break;
+
+		case OpExtend:
+			result = rewrite((OpExtend)op);
+			break;			
 			
-//			return result;
+		case OpQuadPattern:
+			result = rewrite((OpQuadPattern)op);
+			break;			
+		
+		case OpSlice:
+			result = rewrite((OpSlice)op);
+			break;
 			
-		}
-		/*
-		else if(op instanceof OpNull) {
-			result = rewrite((OpNull) op);
-		}*/
-		else {
-			throw new RuntimeException("Unhandled op type: " + op.getClass() + "; " + op);
+		case OpProject:
+			result = rewrite((OpProject)op);
+			break;
+			
+		case OpFilterIndexed:
+			result = rewrite((OpFilterIndexed)op);
+			break;
+			
+		case OpMapping:
+			result = rewrite((OpMapping)op);
+			break;
+			
+		case OpDisjunction:
+			result = rewrite((OpDisjunction)op);
+			break;
+
+		case OpViewInstanceJoin:
+			result = rewrite((OpViewInstanceJoin)op);
+			break;
+			
+		default:
+			throw new RuntimeException("Unknown op type: " + op.getClass());
 		}
 		
 		return result;
+		
+		
+//		if(op instanceof OpViewInstanceJoin) {
+//			result = rewrite((OpViewInstanceJoin)op);
+//		}
+//		else if (op instanceof OpMapping) {
+//			result = ((OpMapping)op).getMapping();
+//		}
+//		else if (op instanceof OpDisjunction) {
+//			result = rewrite((OpDisjunction)op);
+//		} 
+//		else if (op instanceof OpFilterIndexed) {
+//			result = rewrite((OpFilterIndexed)op);
+//		}
+//		else if (op instanceof OpProject) {
+//			result = rewrite((OpProject)op);
+//		}
+//		else if (op instanceof OpJoin) {
+//			result = rewrite((OpJoin)op);
+//		}
+//		else if (op instanceof OpLeftJoin) {
+//			result = rewrite((OpLeftJoin)op);
+//		}
+//		else if (op instanceof OpSequence) {
+//			result = rewrite((OpSequence)op);
+//		}
+//		else if (op instanceof OpConditional) {
+//			result = rewrite((OpConditional)op);
+//		}		
+//		else if (op instanceof OpSlice) {
+//			result = rewrite((OpSlice)op);
+//		}
+//		else if (op instanceof OpDistinct) {
+//			result = rewrite((OpDistinct)op);
+//		}
+//		else if (op instanceof OpGroup) {
+//			result = rewrite((OpGroup)op);
+//		}
+//		else if (op instanceof OpExtend) {
+//			result = rewrite((OpExtend)op);
+//		}
+//		else if (op instanceof OpAssign) {
+//			result = rewrite((OpAssign)op);
+//		}
+//		else if (op instanceof OpOrder) {
+//			result = rewrite((OpOrder)op);
+//		}
+//		else if(op instanceof OpTopN) {
+//			OpTopN o = (OpTopN)op;
+//			
+//			// We convert this 'back' into an order by followed by limit
+//			Op sub = o.getSubOp();
+//			OpOrder inner = new OpOrder(sub, o.getConditions());
+//			OpSlice outer = new OpSlice(inner, 0, o.getLimit());
+//			
+//			result = rewrite(outer);
+//			
+////			return result;
+//			
+//		}
+//		/*
+//		else if(op instanceof OpNull) {
+//			result = rewrite((OpNull) op);
+//		}*/
+//		else {
+//			throw new RuntimeException("Unhandled op type: " + op.getClass() + "; " + op);
+//		}
+//		
+//		return result;
 	}
 
 	

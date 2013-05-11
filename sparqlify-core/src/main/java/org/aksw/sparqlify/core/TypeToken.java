@@ -39,7 +39,7 @@ public class TypeToken
 	
 	public static final TypeToken Byte = alloc("byte");
 	public static final TypeToken Boolean = alloc("boolean");
-	public static final TypeToken Int = alloc("int");
+	public static final TypeToken Int = alloc("integer");
 	public static final TypeToken Long = alloc("long");
 	public static final TypeToken Float = alloc("float");
 	public static final TypeToken Double = alloc("double");

@@ -619,14 +619,14 @@ public class SqlOptimizerImpl
 		SqlOp subOp = op.getSubOp();
 		List<SqlOp> subOps = collectJoins(subOp);
 		
-		System.out.println("Joins collected: " + subOps.size());
+		//System.out.println("Joins collected: " + subOps.size());
 		eliminateSelfJoins(subOps, cnf);
 		
 		
 		if(subOps.size() > 1) {
 			for(SqlOp s : subOps) {
 				//s.getSchema().
-				System.out.println("     Member schema: " + s.getSchema());
+				//System.out.println("     Member schema: " + s.getSchema());
 			}
 		}
 		
@@ -678,7 +678,7 @@ public class SqlOptimizerImpl
 			SqlOp subOp = block.getSubOp();
 			List<SqlOp> subOps = collectJoins(subOp);
 			
-			System.out.println("Joins collected: " + subOps.size());
+			//System.out.println("Joins collected: " + subOps.size());
 			
 			for(SqlOp so : subOps) {
 				optimize(so);
@@ -716,7 +716,7 @@ public class SqlOptimizerImpl
 			if(subOps.size() > 1) {
 				for(SqlOp s : subOps) {
 					//s.getSchema().
-					System.out.println("     Member schema: " + s.getSchema());
+					//System.out.println("     Member schema: " + s.getSchema());
 				}
 			}
 			
