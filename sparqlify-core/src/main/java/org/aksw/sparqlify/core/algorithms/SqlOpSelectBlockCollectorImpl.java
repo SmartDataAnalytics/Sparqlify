@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -491,10 +492,47 @@ public class SqlOpSelectBlockCollectorImpl
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
 		result.setSchema(op.getSchema());
 
+		Projection subProj = result.getProjection();
+		
 		Projection extendedProj = new Projection();
 		for(Entry<String, SqlExpr> entry : op.getProjection().getNameToExpr().entrySet()) {
 			String columnName = entry.getKey();
 			SqlExpr originalExpr = entry.getValue();
+			
+			
+			boolean enableRefSubstitution = false;
+			// TODO Expand the originalExpr as to not refer to any other columns that have been added through expansion
+			// If the projection removes them, we get dangling references:
+			// Project(C2, Expand(C2=C1, Expand(C1=c, tbl))) -> SELECT C2 FROM tbl -> FAIL, because C2 does not exist in the table
+			// Project(C2, Expand(C2=c,    table)) -> SUCCESS
+			
+			// UPDATE Seems as if this is not the problem
+			if(enableRefSubstitution) {
+			
+				Set<S_ColumnRef> colRefs = SqlExprUtils.getColumnReferences(originalExpr);
+				//Map<S_ColumnRef, SqlExpr> subst = new HashMap<S_ColumnRef, SqlExpr>();
+				Map<String, SqlExpr> subst = new HashMap<String, SqlExpr>();
+				
+				for(S_ColumnRef colRef : colRefs) {
+					String colAlias = colRef.getRelationAlias();  
+					if(colAlias != null) {
+						continue;
+					}
+					
+					String refName = colRef.getColumnName();
+					SqlExpr subExpr = subProj.getNameToExpr().get(refName);
+					if(subExpr != null) {
+						subst.put(refName, subExpr);
+					}
+				}
+				
+				if(!subst.isEmpty()) {
+					originalExpr = SqlExprSubstitutor.create(subst).substitute(originalExpr);
+				}
+			}				
+			
+			
+			
 			SqlExpr aliasedExpr = transformToAliasedReferences(originalExpr, result.getProjection());
 			
 			extendedProj.getNames().add(columnName);

@@ -35,7 +35,7 @@ public class S_ColumnRef
 
 	@Override
 	public String toString() {
-		return getVarName();
+		return getVarName() + "(" + datatype + ")";
 	}
 
 	@Override

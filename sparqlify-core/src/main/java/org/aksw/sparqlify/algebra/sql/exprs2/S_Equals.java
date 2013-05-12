@@ -11,12 +11,6 @@ public class S_Equals
 	}
 	
 	@Override
-	public void asString(IndentedWriter writer) {
-		writer.print("Equals");
-		writeArgs(writer);
-	}
-
-	@Override
 	public S_Equals copy(SqlExpr left, SqlExpr right) {
 		S_Equals result = new S_Equals(left, right);
 		return result;

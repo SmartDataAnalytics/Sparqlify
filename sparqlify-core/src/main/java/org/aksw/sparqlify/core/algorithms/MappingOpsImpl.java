@@ -58,6 +58,7 @@ import org.aksw.sparqlify.util.SqlTranslatorImpl2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -1309,7 +1310,7 @@ public class MappingOpsImpl
 		 *     H2 fails with them
 		 */
 		//Generator aliasGen = Gensym.create("C");
-		Generator aliasGen = GeneratorBlacklist.create("C", columnNameBlacklist);
+		Generator aliasGenUnion = GeneratorBlacklist.create("C", columnNameBlacklist);
 
 		
 		if(members.size() == 1) {
@@ -1368,64 +1369,14 @@ public class MappingOpsImpl
 			}
 		}
 		
-		NodeValue nullNode = NodeValue.makeString("should not appear anywhere");
-//
-//		
-//		// For each var that maps to a constant, add a NULL mapping for
-//		// every union member which does not define the variable as a constant
-//		for(Entry<Var, TermDef> entry : varToConstant.entrySet()) {
-//			Var var = entry.getKey();
-//			TermDef baseTermDef = entry.getValue();
-//			
-//			for (int i = 0; i < sqlNodes.size(); ++i) {
-//				SqlNode sqlNode = sqlNodes.get(i);
-//				
-//				Multimap<Var, TermDef> varDefs = sqlNode.getSparqlVarToExprs();
-//				
-//				boolean hasConstant = false;
-//				for(TermDef termDef : varDefs.get(var)) {
-//					if(termDef.getExpr().isConstant()) {
-//						hasConstant = true;
-//						continue;
-//					}
-//				}
-//				
-//				if(!hasConstant) {
-//					ExprList exprs = new ExprList();
-//					List<Expr> args = baseTermDef.getExpr().getFunction().getArgs();
-//					//System.out.println("Args: " + args.size());
-//					for(int j = 0; j < args.size(); ++j) {
-//						Expr expr = j == 1 ? NodeValue.makeString(""): args.get(j);
-//						
-//						exprs.add(expr);
-//					}
-//					
-//					Expr newExpr = ExprCopy.getInstance().copy(baseTermDef.getExpr(), exprs); 
-//					
-//					varToSqlNode.put((Var)var, i);
-//					varDefs.put(var, new TermDef(newExpr));
-//				}				
-//			}
-//		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		
 		// If a variable maps to a constant, than the mapping does not apply to any union member
 		// that does not define the constant.
 		// This means we have to introduce a column for discrimination, which contains NULL for
-		// all union members where to constaint is not applicable 		
-		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGen);
+		// all union members where to constraint is not applicable 		
+		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGenUnion);
 
 		
 		Map<String, TypeToken> unionTypeMap = new HashMap<String, TypeToken>();
@@ -1438,7 +1389,7 @@ public class MappingOpsImpl
 			
 			// TODO Just clustering by hash may result in clashes!!!
 			// For each hash we have to keep a list and explicitly compare for structural equivalence
-			Multimap<String, ArgExpr> cluster = HashMultimap.create();
+			Multimap<String, ArgExpr> cluster = ArrayListMultimap.create();
 			
 			
 
@@ -1458,6 +1409,13 @@ public class MappingOpsImpl
 				
 				Collection<RestrictedExpr> exprsForVar = member.getVarDefinition().getDefinitions(var);
 				
+				
+				boolean singleSizeCluster = false;
+				if(exprsForVar.size() > 1) {
+					singleSizeCluster = true;
+				}
+				
+				int j = 0;
 				for(RestrictedExpr def : exprsForVar) {
 				
 					Map<String, TypeToken> typeMap = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
@@ -1466,6 +1424,11 @@ public class MappingOpsImpl
 					Expr expr = def.getExpr();
 					Expr datatypeNorm = exprNormalizer.normalize(expr, typeMap);
 					String hash = datatypeNorm.toString();
+					
+					if(singleSizeCluster) {
+						hash = "m" + index + "e" + j + hash;
+					}
+					
 					logger.trace("Cluster for [" + expr + "] is [" + hash + "]");
 
 					
@@ -1474,6 +1437,8 @@ public class MappingOpsImpl
 //					}
 					
 					cluster.put(hash, new ArgExpr(expr, index));
+					
+					++j;
 				}
 			}
 			
@@ -1513,8 +1478,10 @@ public class MappingOpsImpl
 				// Now we can finally factor the cluster
 				// Legacy code - it takes variables rather than column references
 				List<Map<Var, Expr>> tmpPartialProjections = new ArrayList<Map<Var, Expr>>();
+				
+				// TODO: I did not think about the case, where several alternatives may come from the same member...
 				Expr common = factorizer.transform(exprs, tmpPartialProjections);
-
+				// [{?C_17=?C_8, ?C_16=?C_7}, {?C_17=?C_6, ?C_16=?C_5}]
 				
 				// FIXME Get rid of this conversion
 				List<Map<String, SqlExpr>> partialProjections = new ArrayList<Map<String, SqlExpr>>();
@@ -1546,6 +1513,8 @@ public class MappingOpsImpl
 //						System.out.println("Union type map: " + unionTypeMap);
 					}
 					
+					// CRITICAL TODO: Here we might override entries
+					// {C_16=C_7(string), C_17=C_8(string)}.add( {C_16=C_5(string), C_17=C_6(string)} )
 					partialProjections.add(map);
 				}
 				
@@ -2122,6 +2091,50 @@ public class MappingOpsImpl
 		
 	}
 	
+	
+	
+	
+//	NodeValue nullNode = NodeValue.makeString("should not appear anywhere");
+//
+//	
+//	// For each var that maps to a constant, add a NULL mapping for
+//	// every union member which does not define the variable as a constant
+//	for(Entry<Var, TermDef> entry : varToConstant.entrySet()) {
+//		Var var = entry.getKey();
+//		TermDef baseTermDef = entry.getValue();
+//		
+//		for (int i = 0; i < sqlNodes.size(); ++i) {
+//			SqlNode sqlNode = sqlNodes.get(i);
+//			
+//			Multimap<Var, TermDef> varDefs = sqlNode.getSparqlVarToExprs();
+//			
+//			boolean hasConstant = false;
+//			for(TermDef termDef : varDefs.get(var)) {
+//				if(termDef.getExpr().isConstant()) {
+//					hasConstant = true;
+//					continue;
+//				}
+//			}
+//			
+//			if(!hasConstant) {
+//				ExprList exprs = new ExprList();
+//				List<Expr> args = baseTermDef.getExpr().getFunction().getArgs();
+//				//System.out.println("Args: " + args.size());
+//				for(int j = 0; j < args.size(); ++j) {
+//					Expr expr = j == 1 ? NodeValue.makeString(""): args.get(j);
+//					
+//					exprs.add(expr);
+//				}
+//				
+//				Expr newExpr = ExprCopy.getInstance().copy(baseTermDef.getExpr(), exprs); 
+//				
+//				varToSqlNode.put((Var)var, i);
+//				varDefs.put(var, new TermDef(newExpr));
+//			}				
+//		}
+//	}
+	
+
 	
 
 	/**

@@ -31,22 +31,22 @@ public abstract class SqlExprFunctionBase
 	
 	public void writeArgs(IndentedWriter writer) {
 		writer.print(" (");
-		writer.incIndent();
+		//writer.incIndent();
 		boolean isFirst = true;
 		
 		List<SqlExpr> args = this.getArgs();
 		for(SqlExpr arg : args) {
 			if(isFirst) {
 				isFirst = false;
-				writer.println();
+				//writer.println();
 			} else {
-				writer.println(", ");
+				writer.print(", ");
 			}
 			
 			arg.asString(writer);
 		}
-		writer.println();
-		writer.decIndent();
+		//writer.println();
+		//writer.decIndent();
 		writer.print(")");
 	}
 	

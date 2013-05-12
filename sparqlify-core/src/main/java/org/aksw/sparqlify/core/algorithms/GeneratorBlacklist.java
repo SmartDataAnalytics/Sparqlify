@@ -46,4 +46,8 @@ public class GeneratorBlacklist
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "current: " + generator.current() + ", blacklist: " + blacklist;
+	}
 }
