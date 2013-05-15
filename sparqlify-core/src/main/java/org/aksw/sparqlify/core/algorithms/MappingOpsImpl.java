@@ -1902,6 +1902,21 @@ public class MappingOpsImpl
 		SqlOp sqlOp = source.getSqlOp();
 		
 		VarDefinition varDef = source.getVarDefinition();
+		
+		// If a variable is not bound, skip the evaluation of the expression
+		// We assume this case only occurs if
+		// - no view candidates matched and therefore the variable is undefined
+		// - a variable not elsewhere part of the query was used in the sorting expression
+		// TODO: Can we reference variables that were defined in the projection for sorting???
+		
+		Set<Var> refVars = e.getVarsMentioned();
+		Set<Var> definedVars = source.getVarDefinition().getMap().keySet();
+		
+		boolean allDefined = definedVars.containsAll(refVars);
+		if(!allDefined) {
+			return null;
+		}
+		
 		List<SqlExprContext> contexts = createExprSqlRewrites(e, varDef, typeMap, sqlTranslator);
 		
 
@@ -2357,7 +2372,10 @@ public class MappingOpsImpl
 			Expr expr = sc.getExpression();
 			
 			ExprSqlRewrite rewrite = unifyAlternatives(expr, a);
-
+			if(rewrite == null) {
+				continue;
+			}
+			
 			List<SqlExpr> sqlExprs = rewrite.getSqlExprs();
 			
 			
