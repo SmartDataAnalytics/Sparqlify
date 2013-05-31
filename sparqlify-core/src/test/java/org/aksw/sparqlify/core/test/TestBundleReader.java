@@ -19,8 +19,8 @@ class TestBundleReader
 	private static final Comparator<Resource> resourceComparator = new ResourceComparator();	
 	private static final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 	
-	private String spyBasePath = "/org/aksw/sparqlify/test_suite/";
-	private String r2rmlBasePath = "/org/w3c/r2rml/test_suite/";
+	private String smlBasePath = "/org/aksw/sml/r2rml_tests/";
+	private String r2rmlBasePath = "/org/w3c/r2rml_tests/";
 
 	
 	public List<TestBundle> getTestBundles() throws IOException {
@@ -44,7 +44,7 @@ class TestBundleReader
 		List<TestBundle> result = new ArrayList<TestBundle>();
 		
 		
-		String spyPathStr = spyBasePath + r.getFilename() + "/";
+		String spyPathStr = smlBasePath + r.getFilename() + "/";
 		String r2rPathStr = r2rmlBasePath + r.getFilename() + "/";
 		
 		Resource spyPathRes = resolver.getResource(spyPathStr);
