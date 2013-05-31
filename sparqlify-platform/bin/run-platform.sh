@@ -15,7 +15,8 @@ fi
 port="${2:-7531}"
 contextPath="${3:-/}"
 
-cd "$DIR/../sparqlify-platform"
+#cd "$DIR/../sparqlify-platform"
+cd "$DIR/.."
 
 echo "Starting Sparqlify Platform"
 echo "---------------------------"
