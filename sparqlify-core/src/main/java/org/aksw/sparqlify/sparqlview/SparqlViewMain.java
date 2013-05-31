@@ -1,15 +1,10 @@
 package org.aksw.sparqlify.sparqlview;
 
 import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
-import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.config.lang.SparqlifyConfigParser;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorRestructify;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
-import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.util.SparqlifyUtils;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryFactory;

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.6-SNAPSHOT</version>
+	<version>0.6</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -58,13 +57,12 @@
 		<connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
 		<!-- developerConnection></developerConnection -->
 		<!-- url>https://my-project.googlecode.com/svn</url -->
-		<tag>HEAD</tag>
+		<tag>sparqlify-parent-0.6</tag>
 	</scm>
 
 
 	<build>
 		<plugins>
-
 			<!-- That's a sledge hammer solution - but at least it works ... -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -76,7 +74,6 @@
 					<goals>-Dmaven.test.skip=true deploy</goals>
 				</configuration>
 			</plugin>
-
 
 			<!--Maven Compiler Plugin -->
 			<plugin>
@@ -238,81 +235,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-
-
-
-			<plugin>
-				<!-- This plugin's configuration must come *before* the Debian Maven 
-					Plugin. -->
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>copy-deb-resources</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<overwrite>true</overwrite>
-							<outputDirectory>${basedir}/target/deb</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/deb/resources</directory>
-									<!-- Uncomment the following line to enable Velocity filtering. -->
-									<!-- <filtering>true</filtering> -->
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<!-- This plugin's configuration must come *after* the Maven Resources 
-					Plugin, and *before* the Debian Maven Plugin. -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>fix-permissions</id>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<chmod perm="ugo+x">
-									<fileset dir="${basedir}/target/deb">
-										<include name="**/bin/**" />
-										<include name="**/sbin/**" />
-										<include name="DEBIAN/post*" />
-										<include name="DEBIAN/pre*" />
-									</fileset>
-								</chmod>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>net.sf.debian-maven</groupId>
-				<artifactId>debian-maven-plugin</artifactId>
-				<version>1.0.5</version>
-				<configuration>
-					<packageName>sparqlify</packageName>
-					<packagePriority>extra</packagePriority>
-					<packageSection>web</packageSection>
-					<packageDependencies>
-						<packageDependency>openjdk-7-jre | openjdk-6-jre | sun-java6-jre</packageDependency>
-					</packageDependencies>
-					<!-- <packageName>my-package</packageName> <packageVersion>1.0.0</packageVersion> 
-						... -->
-				</configuration>
-			</plugin>
-
 
 		</plugins>
 	</build>

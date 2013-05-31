@@ -1,0 +1,9 @@
+#!/bin/sh
+
+artifactBase="/usr/share/lib/sparqlify/sparqlify-core"
+
+# Source the dependencies (they become the value of the variable 'artifacts')
+. "$artifactBase.inc"
+
+java -cp "$artifacts:$artifactBase.jar" org.aksw.sparqlify.web.Main $@
+

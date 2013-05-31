@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>sparqlify-debian</artifactId>
+	<!-- <packaging>uberwar</packaging> -->
+	<packaging>jar</packaging>
+
+
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Debian Packaging</name>
+	<url>http://aksw.org/Projects/Sparqlify</url>
+
+
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.6-SNAPSHOT</version>
+	</parent>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- This plugin's configuration must come *before* the Debian Maven 
+					Plugin. -->
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>copy-deb-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>${basedir}/target/deb</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/deb/resources</directory>
+									<!-- Uncomment the following line to enable Velocity filtering. -->
+									<!-- <filtering>true</filtering> -->
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- This plugin's configuration must come *after* the Maven Resources 
+					Plugin, and *before* the Debian Maven Plugin. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>fix-permissions</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<chmod perm="ugo+x">
+									<fileset dir="${basedir}/target/deb">
+										<include name="**/bin/**" />
+										<include name="**/sbin/**" />
+										<include name="DEBIAN/post*" />
+										<include name="DEBIAN/pre*" />
+									</fileset>
+								</chmod>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>net.sf.debian-maven</groupId>
+				<artifactId>debian-maven-plugin</artifactId>
+				<version>1.0.5</version>
+				<configuration>
+					<packageName>sparqlify</packageName>
+					<packagePriority>extra</packagePriority>
+					<packageSection>web</packageSection>
+					<packageDependencies>
+						<packageDependency>openjdk-7-jre | openjdk-6-jre | sun-java6-jre</packageDependency>
+					</packageDependencies>
+					<!-- <packageName>my-package</packageName> <packageVersion>1.0.0</packageVersion> 
+						... -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-core</artifactId>
+		</dependency>
+	</dependencies>
+</project>
+
