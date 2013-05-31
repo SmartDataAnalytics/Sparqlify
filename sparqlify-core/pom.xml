@@ -14,9 +14,9 @@
 		<version>0.6-SNAPSHOT</version>
 	</parent>
 
-	<build>
-		<finalName>sparqlify-core</finalName>
-	</build>
+<!-- 	<build> -->
+<!-- 		<finalName>sparqlify-core</finalName> -->
+<!-- 	</build> -->
 
 	<dependencies>
 		<dependency>
