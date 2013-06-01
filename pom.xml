@@ -27,6 +27,7 @@
 		<module>sparqlify-core</module>
 		<!-- module>sparqlify-server</module -->
 		<module>sparqlify-platform</module>
+		<module>sparqlify-debian</module>
 	</modules>
 
 
