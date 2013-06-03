@@ -87,6 +87,8 @@
 					<packageDependencies>
 						<packageDependency>openjdk-7-jre | openjdk-6-jre | sun-java6-jre</packageDependency>
 					</packageDependencies>
+					<maintainerName>${project.parent.developers[0].name}</maintainerName>
+					<maintainerEmail>${project.parent.developers[0].email}</maintainerEmail>
 					<!-- <packageName>my-package</packageName> <packageVersion>1.0.0</packageVersion> 
 						... -->
 				</configuration>
