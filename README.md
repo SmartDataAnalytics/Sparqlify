@@ -28,6 +28,27 @@ Sparqlify Debian packages can be obtained by following means:
 * Directly from source using maven (read below)
 
 
+
+### Bleeding Edge (WARNING: Do not use this for production!!!)
+For the latest development version (built on every commit) perform the following steps
+
+Create the file
+
+    /etc/apt/sources.list.d/cstadler.aksw.org.list
+
+and add the content
+
+    deb     http://cstadler.aksw.org/repos/apt precise main contrib non-free
+
+Import the public key with
+
+    wget -O - http://cstadler.aksw.org/repos/apt/conf/packages.precise.gpg.key | apt-key add -
+
+
+*TODO* Figure out how to deal with other distros
+
+
+
 ## Building
 Building the repository creates the JAR files providing the `sparqlify-*` tool suite.
 
