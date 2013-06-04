@@ -28,8 +28,17 @@ Sparqlify Debian packages can be obtained by following means:
 * Directly from source using maven (read below)
 
 
+### Public repositories
 
-### Bleeding Edge (WARNING: Do not use this for production!!!)
+After setting up any of the repositories below, you can install sparqlify with apt using
+
+* apt: `sudo apt-get install sparqlify`
+
+#### LOD2 (Releases, this is what you want)
+
+Coming soon!
+
+#### Bleeding Edge (WARNING: Do not use this for production!!!)
 For the latest development version (built on every commit) perform the following steps
 
 Create the file
