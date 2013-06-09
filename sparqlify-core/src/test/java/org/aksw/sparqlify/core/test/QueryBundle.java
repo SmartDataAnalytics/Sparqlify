@@ -3,13 +3,19 @@ package org.aksw.sparqlify.core.test;
 import org.springframework.core.io.Resource;
 
 public class QueryBundle {
+	private String name;
 	private Resource query;
 	private Resource result;
 	
-	public QueryBundle(Resource query, Resource result) {
+	public QueryBundle(String name, Resource query, Resource result) {
 		super();
+		this.name = name;
 		this.query = query;
 		this.result = result;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public Resource getQuery() {

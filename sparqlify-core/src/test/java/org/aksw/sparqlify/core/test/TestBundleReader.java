@@ -30,18 +30,23 @@ class TestBundleReader
 		Arrays.sort(resources, resourceComparator);
 		
 		for (Resource r : resources) {
-			List<TestBundle> tmp = process(r);
-			result.addAll(tmp);
+			//List<TestBundle> tmp = process(r);
+			//result.addAll(tmp);
+			
+			TestBundle tmp = process(r);
+			if(tmp != null) {
+				result.add(tmp);
+			}
 		}
 
 		return result;
 	}
 	
 	// Note treat file pattern r2rml(*).ttl
-	public List<TestBundle> process(Resource r) throws IOException {
+	public TestBundle process(Resource r) throws IOException {
 		//System.out.println(basePath + r.getFilename() + "/create.sql");
 
-		List<TestBundle> result = new ArrayList<TestBundle>();
+		//List<TestBundle> result = new ArrayList<TestBundle>();
 		
 		
 		String spyPathStr = smlBasePath + r.getFilename() + "/";
@@ -51,12 +56,12 @@ class TestBundleReader
 		Resource r2rPathRes = resolver.getResource(r2rPathStr);
 		if(!spyPathRes.exists()) {
 			logger.warn("Resource does not exist " + spyPathStr);
-			return result;
+			return null;
 		}
 
 		if(!r2rPathRes.exists()) {
 			logger.warn("Resource does not exist " + r2rPathStr);
-			return result;
+			return null;
 		}
 		
 		
@@ -79,7 +84,7 @@ class TestBundleReader
 		
 
 		
-		
+		List<MappingBundle> mappingBundles = new ArrayList<MappingBundle>();
 		for(Resource m : r2rmls) {
 			//System.out.println("Got resource: " + m.getURI());
 			
@@ -132,17 +137,22 @@ class TestBundleReader
 					continue;
 				}
 				
-				QueryBundle queryBundle = new QueryBundle(q, expectedResult);
+				QueryBundle queryBundle = new QueryBundle(queryName, q, expectedResult);
 				queryBundles.add(queryBundle);
 			}
 
+			MappingBundle mappingBundle = new MappingBundle(subTest, m, expected, queryBundles);
 			
 //			System.out.println("        " + expected.getFilename());			
 //			System.out.println("    " + m.getFilename());
 			
-			TestBundle bundle = new TestBundle(r.getFilename(), create, m, expected, manifest, queryBundles);
-			result.add(bundle);
+			//TestBundle bundle = new TestBundle(r.getFilename(), create, m, expected, manifest, queryBundles);
+			//result.add(bundle);
+			mappingBundles.add(mappingBundle);
 		}
+		
+		TestBundle result = new TestBundle(r.getFilename(), create, mappingBundles, manifest);
+		
 		
 		return result;
 		//System.out.println(createRes.getURI());

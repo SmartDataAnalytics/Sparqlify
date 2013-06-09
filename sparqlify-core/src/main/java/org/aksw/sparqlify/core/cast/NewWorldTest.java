@@ -516,6 +516,32 @@ public class NewWorldTest {
 			// serializerSystem.addSerializer("+", serializer);
 		}
 
+	}
+	
+	
+	public static void testExprRewrite(TypeSystem typeSystem)
+	{
+		
+		ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
+
+		// Eliminates rdf terms from Expr (this is datatype independent)
+		ExprEvaluator exprEvaluator = SqlTranslationUtils
+				.createDefaultEvaluator();
+
+		// Computes types for Expr, thereby yielding SqlExpr
+		TypedExprTransformer typedExprTransformer = new TypedExprTransformerImpl(
+				typeSystem);
+
+		// Obtain DBMS specific string representation for SqlExpr
+
+		DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
+
+		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
+				typeSerializer);
+		SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
+				typeSerializer, sqlLiteralMapper);
+
+
 		// SqlTranslationUtils;
 
 		// Expr e0 = ExprUtils.parse("?a + ?b = ?a");

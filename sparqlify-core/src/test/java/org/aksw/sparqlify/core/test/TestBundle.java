@@ -4,22 +4,29 @@ import java.util.List;
 
 import org.springframework.core.io.Resource;
 
+
+/**
+ * A test bundle is comprised of:
+ * - A name
+ * - A manifest
+ * - An SQL resource from which a database can be created
+ * - A number of mappings on this database
+ * 
+ * @author Claus Stadler
+ *
+ */
 public class TestBundle {
 	private String name;
 	private Resource sql;
-	private Resource mapping;
-	private Resource expected;
 	private Resource manifest;
-	private List<QueryBundle> queryBundles;
-	
+	private List<MappingBundle> mappingBundles;
 
-	public TestBundle(String name, Resource sql, Resource mapping, Resource expected, Resource manifest, List<QueryBundle> queryBundles) {
+	public TestBundle(String name, Resource sql, List<MappingBundle> mappingBundles, Resource manifest) {
 		super();
 		this.name = name;
 		this.sql = sql;
-		this.mapping = mapping;
-		this.expected = expected;
-		this.queryBundles = queryBundles;
+		this.mappingBundles = mappingBundles;
+		this.manifest = manifest;
 	}
 	
 	public String getName() {
@@ -30,26 +37,11 @@ public class TestBundle {
 		return sql;
 	}
 	
-	public Resource getMapping() {
-		return mapping;
+	public List<MappingBundle> getMappingBundles() {
+		return mappingBundles;
 	}
-
-	public Resource getExpected() {
-		return expected;
-	}
-
+	
 	public Resource getManifest() {
 		return manifest;
-	}
-
-	public List<QueryBundle> getQueryBundles()
-	{
-		return queryBundles;
-	}
-
-	@Override
-	public String toString() {
-		return "TestBundle [sql=" + sql + ", mapping=" + mapping
-				+ ", expected=" + expected + ", manifest=" + manifest + "]";
 	}
 }
