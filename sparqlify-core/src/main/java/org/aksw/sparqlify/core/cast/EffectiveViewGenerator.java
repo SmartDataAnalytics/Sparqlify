@@ -157,7 +157,13 @@ public class EffectiveViewGenerator {
 	
 	public static SqlOp createMinimalSchema(SqlOp sqlOp, VarDefinition varDef) {
 		List<String> refs = varDef.getReferencedNames();
-		Schema newSchema = sqlOp.getSchema().createSubSchema(refs);
+		
+		Schema newSchema;
+		try {
+			newSchema = sqlOp.getSchema().createSubSchema(refs);
+		} catch (Exception e) {
+			throw new RuntimeException("Error processing sqlOp " + sqlOp + ", reason: " + e.getMessage(), e);
+		}
 		
 		SqlOp result = sqlOp.copy(newSchema, null);
 		return result;
