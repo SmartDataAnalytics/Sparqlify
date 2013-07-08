@@ -17,6 +17,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
@@ -24,6 +25,7 @@ import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.aksw.sparqlify.expr.util.SqlExprUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -459,7 +461,38 @@ public class TypedExprTransformerImpl
 					
 				}
 				
-				S_Constant cnst;
+				// Optimize expressions such as equals(str(int), str(int)) to simply equals(int, int)
+				else if(a.isFunction() && b.isFunction()) {
+					SqlExprFunction fnA = a.asFunction();
+					SqlExprFunction fnB = b.asFunction();
+
+					String nameA = fnA.getName();
+					String nameB = fnB.getName();
+
+					if(nameA.equals(nameB)) { // TODO ... and if nameA and nameB are injective...
+
+						
+						//String name = functionModel.getNameById(nameA);
+						
+						List<SqlExpr> argsA = fnA.getArgs();
+						List<SqlExpr> argsB = fnB.getArgs();
+						
+						List<SqlExpr> bb = new ArrayList<SqlExpr>(argsA.size() + argsB.size());
+						bb.addAll(argsA);
+						bb.addAll(argsB);
+						/*
+						//List<TypeToken>
+						List<TypeToken> types = SqlExprUtils.getTypes(fnA.getArgs());
+						List<TypeToken> typesB = SqlExprUtils.getTypes(fnB.getArgs());
+						types.addAll(typesB);
+						
+						CandidateMethod<TypeToken> cd = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, name, types);
+						*/
+						
+						result = processFunction(functionId, bb);
+					}
+				}
+				
 			}
 
 			if(result == null) {

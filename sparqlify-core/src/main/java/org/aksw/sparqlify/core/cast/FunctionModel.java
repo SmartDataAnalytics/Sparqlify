@@ -14,6 +14,7 @@ public interface FunctionModel<T> {
 	Collection<CandidateMethod<T>> lookupByName(String functionName, List<T> argTypes);
 	
 	Collection<String> getIdsByName(String name); 
+	String getNameById(String id);
 	
 	void registerFunction(String id, String name, MethodSignature<T> signature);
 	void registerCoercion(String id, String name, MethodSignature<T> signature);

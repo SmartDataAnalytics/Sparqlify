@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.MapReader;
@@ -68,7 +69,24 @@ public class FunctionModelImpl<T>
 	public Map<String, String> getInverses() {
 		return inverses;
 	}
-	
+
+	// TODO Optimize this lookup!
+	@Override
+	public String getNameById(String id) {
+		String result = null;
+
+		for(Entry<String, String> entry : nameToIds.entries()) {
+			String tmpId = entry.getValue();
+			String name = entry.getKey();
+			if(id.equals(tmpId)) {
+				result = name;
+				break;
+			}
+		}
+		
+		return result;
+	}
+
 
 //	Map<String, Map<String, String>> tags = new HashMap<String, Map<String, String>>();
 //	
@@ -342,6 +360,8 @@ public class FunctionModelImpl<T>
 		
 		return result;
 	}
+
+
 	
 	
 /*
