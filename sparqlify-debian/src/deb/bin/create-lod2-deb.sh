@@ -22,6 +22,8 @@ rm conffiles
 
 cd ..
 
+echo `pwd`
+
 #mv usr debian
 #mv etc debian
 
