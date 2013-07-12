@@ -1,14 +1,31 @@
 #!/bin/bash
 #cd ../../..
 
+# Note: run this from sparqlify-debian/<here> !!!
 echo `pwd`
 
-if [ -f target/deb/DEBIAN/control/control-header ]; then
-    cat target/deb/DEBIAN/control/control-header target/deb/DEBIAN/control > target/deb/DEBIAN/control-tmp
-    mv target/deb/DEBIAN/control-tmp target/deb/DEBIAN/control
-    rm target/deb/DEBIAN/control/control-header
+cd target/deb
+
+if [ -d DEBIAN ]; then
+    mv DEBIAN debian
 fi
 
-cd target/deb
-mv DEBIAN debian
+cd debian
+
+if [ -f control-header ]; then
+    cat control-header control > control-tmp
+    mv control-tmp control
+    rm control-header
+fi
+
+rm conffiles
+
+cd ..
+
+echo `pwd`
+
+#mv usr debian
+#mv etc debian
+
 debuild -kE4D704B8
+

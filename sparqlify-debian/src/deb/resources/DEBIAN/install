@@ -1,3 +1,5 @@
-usr/bin/sparqlify	usr/bin/sparqlify/sparqlify
-usr/bin/sparqlify-csv	usr/bin/sparqlify/sparqlify-csv
-usr/bin/sparqlify/sparqlify-tool	usr/bin/sparqlify/sparqlify-tool
+usr/bin/*	usr/bin
+usr/share/lib/sparqlify/*		usr/share/lib/sparqlify
+usr/share/doc/sparqlify/*		usr/share/doc/sparqlify
+etc/sparqlify/*	etc/sparqlify
+
