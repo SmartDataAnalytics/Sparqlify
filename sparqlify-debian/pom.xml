@@ -32,7 +32,7 @@
 			<id>lod2</id>
 			<properties>
 <project.description>A middleware featuring SPARQL to SQL rewriting over relational databases.
-.
+ .
  LOD2 is a large-scale integrating project co-funded by the European
  Commission within the FP7 Information and Communication Technologies
  Work Programme (Grant Agreement No. 257943). Commencing in September
