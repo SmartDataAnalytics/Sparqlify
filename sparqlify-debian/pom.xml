@@ -82,20 +82,20 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.6</version>
 				<executions>
-					<execution>
-						<id>merge-control</id>
-						<phase>package</phase>
-						<configuration>
-							<target>
-								<exec dir="${basedir}/src/deb/bin" executable="${basedir}/src/deb/bin/merge-control-file.sh"
-									failonerror="true">
-								</exec>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
+<!-- 					<execution> -->
+<!-- 						<id>merge-control</id> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<configuration> -->
+<!-- 							<target> -->
+<!-- 								<exec dir="${basedir}/src/deb/bin" executable="${basedir}/src/deb/bin/merge-control-file.sh" -->
+<!-- 									failonerror="true"> -->
+<!-- 								</exec> -->
+<!-- 							</target> -->
+<!-- 						</configuration> -->
+<!-- 						<goals> -->
+<!-- 							<goal>run</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
 
 					<execution>
 						<id>fix-permissions</id>
