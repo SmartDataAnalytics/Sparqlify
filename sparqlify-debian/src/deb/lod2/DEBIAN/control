@@ -1,0 +1,25 @@
+Source: sparqlify
+Section: web
+Priority: extra
+Maintainer: Claus Stadler <cstadler@informatik.uni-leipzig.de>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.9.3
+Homepage: http://aksw.org/Projects/Sparqlify
+Vcs-Git: git://github.com/AKSW/Sparqlify.git
+Vcs-Browser: https://github.com/AKSW/Sparqlify
+
+Package: sparqlify
+Section: web
+Priority: extra
+Architecture: all
+Depends: openjdk-7-jre | openjdk-6-jre | sun-java6-jre, ${misc:Depends}
+Description: SPARQL->SQL rewriter
+ A middleware featuring SPARQL to SQL rewriting over relational databases.
+ .
+ LOD2 is a large-scale integrating project co-funded by the European
+ Commission within the FP7 Information and Communication Technologies
+ Work Programme (Grant Agreement No. 257943). Commencing in September
+ 2010, this 4-year project comprises leading Linked Open Data technology
+ researchers, companies, and service providers from across 7 European
+ countries and is coordinated by the AKSW research group at the
+ University of Leipzig.
