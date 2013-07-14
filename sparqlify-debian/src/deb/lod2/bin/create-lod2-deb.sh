@@ -24,8 +24,8 @@ fi
 cd debian
 
 if [ -f control-header ]; then
-    cat control-header control > control-tmp
-    mv control-tmp control
+#    cat control-header control > control-tmp
+#    mv control-tmp control
     rm control-header
 fi
 
