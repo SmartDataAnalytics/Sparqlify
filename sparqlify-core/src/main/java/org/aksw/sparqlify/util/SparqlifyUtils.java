@@ -34,6 +34,7 @@ import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
+import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderDummy;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
@@ -368,6 +369,22 @@ public class SparqlifyUtils {
 		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias);
 		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
+		ViewDefinitionFactory result = new ViewDefinitionFactory(parser, syntaxBridge);
+		
+		return result;
+	}
+	
+	/*
+	 * Dummy view definition factory used e.g. for R2RML export
+	 */
+	public static ViewDefinitionFactory createDummyViewDefinitionFactory(Map<String, String> typeAlias) {
+		
+		ConfigParser parser = new ConfigParser();
+		
+		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		SchemaProvider schemaProvider = new SchemaProviderDummy(typeSystem, typeAlias);
+		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
+		
 		ViewDefinitionFactory result = new ViewDefinitionFactory(parser, syntaxBridge);
 		
 		return result;
@@ -797,19 +814,26 @@ public class SparqlifyUtils {
 	}
 	
 	/**
-	 * Creates a full blown SPARQL SQL rewriter object, comprised of:
-	 * - a candidate view selector (TODO rename: actually this object actually returnes a transformed algebra expression; rather than just selecting candidates. 
-	 * - a op 
+	 * Creates a full blown SPARQL SQL rewriter object, comprised of: - a
+	 * candidate view selector (TODO rename: actually this object actually
+	 * returnes a transformed algebra expression; rather than just selecting
+	 * candidates. - a op
 	 * 
 	 * @return
 	 * @throws SQLException
 	 * @throws IOException
 	 */
 	@Deprecated
-	public static SparqlSqlStringRewriter createTestRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem, Schema databaseSchema) throws SQLException, IOException {		
-		
-		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(candidateViewSelector, opMappingRewriter, datatypeSystem, databaseSchema);
-		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(ssoRewriter, datatypeSystem);
+	public static SparqlSqlStringRewriter createTestRewriter(
+			CandidateViewSelector<ViewDefinition> candidateViewSelector,
+			OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem,
+			Schema databaseSchema) throws SQLException, IOException {
+
+		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(
+				candidateViewSelector, opMappingRewriter, datatypeSystem,
+				databaseSchema);
+		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(
+				ssoRewriter, datatypeSystem);
 
 		return result;
 
