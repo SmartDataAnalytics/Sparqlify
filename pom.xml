@@ -390,6 +390,11 @@
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils</artifactId>
 					</exclusion>
+                                        <exclusion>
+                                                <!-- Using org.slf4j:jcl-over-slf4j instead -->
+                                                <groupId>commons-logging</groupId>
+                                                <artifactId>commons-logging</artifactId>
+                                        </exclusion>
 				</exclusions>
 			</dependency>
 
@@ -405,6 +410,11 @@
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils-bean-collections</artifactId>
 					</exclusion>
+                                        <exclusion>
+                                                <!-- Using org.slf4j:jcl-over-slf4j instead -->
+                                                <groupId>commons-logging</groupId>
+                                                <artifactId>commons-logging</artifactId>
+                                        </exclusion>
 				</exclusions>
 			</dependency>
 
@@ -683,6 +693,14 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
 				<version>${spring.version}</version>
+
+				<exclusions>
+					<exclusion>
+						<!-- Using org.slf4j:jcl-over-slf4j instead -->
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
