@@ -1,4 +1,7 @@
 #!/bin/sh
 wd=`dirname $0`
-java -cp "$wd/../target/sparqlify-core-jar-with-dependencies.jar" org.aksw.sparqlify.csv.CsvMapperCliMain $@
+
+jarFile=`find "$wd/../target/" | grep 'sparqlify-core.*jar-with-dependencies.jar$'`
+
+java -cp "$jarFile" org.aksw.sparqlify.csv.CsvMapperCliMain "$@"
 

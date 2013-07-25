@@ -1,0 +1,20 @@
+#compdef sparqlify-csv
+
+# sparqlify-csv zsh completion file
+# Author: Sebastian Tramp <mail@sebastian.tramp.name>
+# License: Apache License 2 <http://opensource.org/licenses/Apache-2.0>
+
+_sparqlify-csv () {
+    typeset -a arguments
+    arguments=(
+        '(-c --config)'{-c,--config}'[Sparqlify config file]:Sparqlify config file:_files' \
+        '-d[CSV field delimiter (default is \")]:CSV field delimiter' \
+        '-e[CSV field escape delimiter (escapes the field delimiter, default is \\)]:CSV field escape delimiter' \
+        '-f[Input data file]:Input data file:_files' \
+        '-h[Use first row as headers]' \
+        '-s[CSV field separator (default is ,)]:CSV field separator' \
+        '-v[View name (only needed if config contains more than one view)]' \
+    )
+    _arguments -s $arguments
+}
+compdef _sparqlify-csv sparqlify-csv

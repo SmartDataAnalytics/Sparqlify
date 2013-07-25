@@ -1,0 +1,27 @@
+#compdef sparqlify
+
+# sparqlify zsh completion file
+# Author: Sebastian Tramp <mail@sebastian.tramp.name>
+# License: Apache License 2 <http://opensource.org/licenses/Apache-2.0>
+#
+_sparqlify () {
+    typeset -a arguments
+    arguments=(
+        '(-B --backlog)'{-B,--backlog}'[maximum number of connections]:number' \
+        '(-c --class)'{-c,--class}'[JDBC driver class]:classname' \
+        '(-C --context)'{-C,--context}'[context e.g. /sparqlify]:context:(/sparqlify /mapping)' \
+        '(-D --dump)'{-D,--dump}'[dump]' \
+        '(-d --database)'{-d,--database}'[database name]:database name' \
+        '(-h --hostname)'{-h,--hostname}'[hostname]:hostname' \
+        '(-h --jdbcurl)'{-j,--jdbcurl}'[JDBC URL]:JDBC URL' \
+        '(-m --mapping)'{-m,--mapping}'[mapping file]:mapping file:_files' \
+        '(-n --resultsetsize)'{-n,--resultsetsize}'[maximum result set size]:number:(10 100 1000 10000)' \
+        '(-P --port)'{-P,--port}'[server port]:port number:(8080 8081 8082)' \
+        '(-p --password)'{-p,--password}'[password]:password' \
+        '(-Q --query)'{-Q,--query}'[query]:query' \
+        '(-t --timeout)'{-t,--timeout}'[maximum query execution timeout]:timeout:(1 5 10 60 100)' \
+        '(-u --username)'{-u,--username}'[username]:username' \
+    )
+    _arguments -s $arguments
+}
+compdef _sparqlify sparqlify
