@@ -25,7 +25,7 @@ cache
 views.sparqlify
 platform.properties
 run-panlex.sh
-
+deptree.txt
 
 
 ## Temporary excludes

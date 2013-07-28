@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.sparqlview;
 
-import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
+import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorRestructify;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;

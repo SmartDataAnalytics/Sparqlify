@@ -5,7 +5,6 @@ import java.net.URLConnection;
 
 import org.aksw.commons.util.strings.StringUtils;
 import org.apache.log4j.lf5.util.StreamUtils;
-import org.junit.Test;
 
 public class ContentNegotiation {
 

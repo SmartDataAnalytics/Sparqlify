@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 
 import javax.ws.rs.core.Context;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.core.spi.component.ComponentContext;

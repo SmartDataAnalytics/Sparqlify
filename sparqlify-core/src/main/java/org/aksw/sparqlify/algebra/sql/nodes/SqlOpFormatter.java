@@ -2,7 +2,7 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.io.ByteArrayOutputStream;
 
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 public class SqlOpFormatter {
 

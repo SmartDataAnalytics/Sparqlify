@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
-
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 

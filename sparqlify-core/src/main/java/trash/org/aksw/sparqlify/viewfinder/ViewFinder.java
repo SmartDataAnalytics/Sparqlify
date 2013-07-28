@@ -1,7 +1,7 @@
 package trash.org.aksw.sparqlify.viewfinder;
 
-import org.aksw.commons.sparql.api.cache.core.QueryString;
-import org.aksw.commons.sparql.api.cache.extra.SqlDaoBase;
+import org.aksw.jena_sparql_api.cache.core.QueryString;
+import org.aksw.jena_sparql_api.cache.extra.SqlDaoBase;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;

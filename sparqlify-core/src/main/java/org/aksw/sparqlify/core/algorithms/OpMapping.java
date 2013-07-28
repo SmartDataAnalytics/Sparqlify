@@ -2,7 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpExt;

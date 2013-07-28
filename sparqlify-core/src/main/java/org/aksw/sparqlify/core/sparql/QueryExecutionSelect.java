@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.commons.collections.IClosable;
-import org.aksw.commons.sparql.api.core.QueryExecutionAdapter;
-import org.aksw.commons.sparql.api.core.ResultSetClosable;
+import org.aksw.jena_sparql_api.core.QueryExecutionAdapter;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;

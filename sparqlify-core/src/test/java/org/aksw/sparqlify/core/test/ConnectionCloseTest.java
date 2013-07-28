@@ -1,12 +1,10 @@
 package org.aksw.sparqlify.core.test;
 
 import java.io.ByteArrayInputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.junit.Assert;

@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 
-import com.hp.hpl.jena.sdb.core.sqlexpr.SqlExpr;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction0;

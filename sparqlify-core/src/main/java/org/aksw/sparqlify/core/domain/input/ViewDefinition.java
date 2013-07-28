@@ -5,14 +5,14 @@ import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.commons.jena.util.QuadUtils;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;

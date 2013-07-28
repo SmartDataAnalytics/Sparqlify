@@ -5,13 +5,13 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 /**
  * Query execution that obtains fresh connections for each query from a datasource
@@ -35,7 +35,7 @@ public class QueryExecutionFactorySparqlifyDs
 	}
 	
 	@Override
-	public QueryExecutionStreaming createQueryExecution(Query query) {
+	public QueryExecution createQueryExecution(Query query) {
 		//System.out.println(query);
 		
 		logger.info("Created qef for query: " + query);
@@ -49,7 +49,7 @@ public class QueryExecutionFactorySparqlifyDs
 			// (at least on PostgreSQL)
 			conn.setAutoCommit(false);
 
-			QueryExecutionStreaming result = new QueryExecutionSparqlify(rewriter, conn, true, query, this);
+			QueryExecution result = new QueryExecutionSparqlify(rewriter, conn, true, query, this);
 			
 			//conn.commit();
 			

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.exprs2;
 
 import org.aksw.sparqlify.core.TypeToken;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 public class S_LessThanOrEqual
 	extends SqlExpr2

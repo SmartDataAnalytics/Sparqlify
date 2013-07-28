@@ -10,8 +10,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.Constraint;
 import org.aksw.sparqlify.util.QuadPatternUtils;
-import org.openjena.atlas.io.IndentedWriter;
-import org.openjena.riot.system.PrefixMap;
+import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.riot.system.PrefixMap;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;

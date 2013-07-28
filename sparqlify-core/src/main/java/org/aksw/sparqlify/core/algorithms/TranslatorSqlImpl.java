@@ -1,12 +1,5 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import java.util.Map;
-
-import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
 
 
 

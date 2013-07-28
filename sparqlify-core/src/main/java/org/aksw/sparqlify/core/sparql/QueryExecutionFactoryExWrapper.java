@@ -1,10 +1,10 @@
 package org.aksw.sparqlify.core.sparql;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionFactoryDecorator;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactoryDecorator;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 
 public class QueryExecutionFactoryExWrapper
@@ -20,14 +20,14 @@ public class QueryExecutionFactoryExWrapper
 	}
 
 	@Override
-	public QueryExecutionStreaming createQueryExecution(QueryEx queryEx) {
+	public QueryExecution createQueryExecution(QueryEx queryEx) {
 		if(queryEx.isExplain()) {
 			throw new RuntimeException("EXPLAIN not supported - query: " + queryEx);
 		}
 		
 		Query query = queryEx.getQuery();
 		
-		QueryExecutionStreaming result = hack.createQueryExecution(query);
+		QueryExecution result = hack.createQueryExecution(query);
 		return result;
 	}
 	

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
-import org.openjena.atlas.io.IndentedWriter;
 
 public abstract class SqlExpr2
 	extends SqlExprFunctionBase

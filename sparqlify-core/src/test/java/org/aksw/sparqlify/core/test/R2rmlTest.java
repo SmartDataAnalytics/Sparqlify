@@ -11,20 +11,21 @@ import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
-import junit.framework.Assert;
-
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.util.StreamUtils;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.apache.jena.atlas.iterator.Iter;
+import org.apache.jena.atlas.iterator.Transform;
+import org.apache.jena.riot.RiotReader;
+import org.apache.jena.riot.lang.LangNQuads;
+import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.riot.system.StreamRDFLib;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.openjena.atlas.iterator.Iter;
-import org.openjena.atlas.iterator.Transform;
-import org.openjena.riot.RiotReader;
-import org.openjena.riot.lang.LangNQuads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -306,7 +307,8 @@ public class R2rmlTest {
 	public static Set<Quad> readNQuads(InputStream in) {
 
 		SinkQuadsToSet quadSink = new SinkQuadsToSet();
-		LangNQuads parser = RiotReader.createParserNQuads(in, quadSink);
+		StreamRDF streamRdf = StreamRDFLib.sinkQuads(quadSink);
+		LangNQuads parser = RiotReader.createParserNQuads(in, streamRdf);
 		parser.parse();
 
 		Set<Quad> result = quadSink.getQuads();

@@ -3,7 +3,7 @@ package org.aksw.sparqlify.config.syntax;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.sparql.lang.Parser;
+import com.hp.hpl.jena.sparql.lang.SPARQLParser;
 
 
 
@@ -26,7 +26,7 @@ public class ConstructViewDefinition {
 		this.query = new Query();
 		
 		query.setPrefixMapping(prefixMapping);
-		Parser parser = Parser.createParser(Syntax.syntaxSPARQL_11);
+		SPARQLParser parser = SPARQLParser.createParser(Syntax.syntaxSPARQL_11);
 		parser.parse(query, queryString);
 		
 		

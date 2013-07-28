@@ -2,9 +2,6 @@ package org.aksw.sparqlify.csv;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.base.Joiner;

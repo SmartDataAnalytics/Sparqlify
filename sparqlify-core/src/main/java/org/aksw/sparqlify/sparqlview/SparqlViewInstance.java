@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 
 import sparql.TwoWayBinding;

@@ -65,7 +65,7 @@ public class OpFilterIndexed
 	}
 
 	@Override
-	public Op copy(Op subOp) {
+	public Op1 copy(Op subOp) {
 		return OpFilterIndexed.filter(new RestrictionManagerImpl(restrictions), subOp);
 	}
 

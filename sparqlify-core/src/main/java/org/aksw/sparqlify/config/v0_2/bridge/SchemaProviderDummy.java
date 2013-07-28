@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.config.v0_2.bridge;
 
-import java.sql.Connection;
 import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;

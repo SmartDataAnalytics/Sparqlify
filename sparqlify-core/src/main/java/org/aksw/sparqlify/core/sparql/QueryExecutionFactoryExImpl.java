@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.core.sparql;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 
 public class QueryExecutionFactoryExImpl
@@ -19,8 +19,8 @@ public class QueryExecutionFactoryExImpl
 	}
 	
 	@Override
-	public QueryExecutionStreaming createQueryExecution(QueryEx queryEx) {
-		QueryExecutionStreaming result;
+	public QueryExecution createQueryExecution(QueryEx queryEx) {
+		QueryExecution result;
 		
 		Query query = queryEx.getQuery();
 		

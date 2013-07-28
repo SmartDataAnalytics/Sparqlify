@@ -10,14 +10,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionAdapter;
+import org.aksw.jena_sparql_api.core.QueryExecutionAdapter;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
-import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;

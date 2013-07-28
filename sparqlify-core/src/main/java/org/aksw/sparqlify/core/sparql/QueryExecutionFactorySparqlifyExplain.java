@@ -2,12 +2,12 @@ package org.aksw.sparqlify.core.sparql;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 public class QueryExecutionFactorySparqlifyExplain
 	extends QueryExecutionFactoryBackQuery
@@ -35,9 +35,9 @@ public class QueryExecutionFactorySparqlifyExplain
 	}
 
 	@Override
-	public QueryExecutionStreaming createQueryExecution(Query query) {
+	public QueryExecution createQueryExecution(Query query) {
 
-		QueryExecutionStreaming result = new QueryExecutionSparqlifyExplain(query, ssoRewriter, sqlOpSerializer, dataSource);
+		QueryExecution result = new QueryExecutionSparqlifyExplain(query, ssoRewriter, sqlOpSerializer, dataSource);
 		
 		return result;
 	}

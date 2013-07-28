@@ -12,10 +12,9 @@ import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.sparqlify.core.algorithms.VarBinding;
 import org.aksw.sparqlify.core.algorithms.ViewInstance;
 import org.aksw.sparqlify.core.algorithms.ViewInstanceJoin;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.algebra.Op;

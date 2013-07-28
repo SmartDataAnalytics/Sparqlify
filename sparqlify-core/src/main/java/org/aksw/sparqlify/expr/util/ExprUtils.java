@@ -275,9 +275,9 @@ public class ExprUtils {
 		} else if(expr.isString()) {
 			result = expr.getString();
 		} else if(expr.isDate()) {
-			result = expr.getDateTime().asCalendar();
+			result = expr.getDateTime().toGregorianCalendar();
 		} else if(expr.isDateTime()) {
-			result = expr.getDateTime().asCalendar();			
+			result = expr.getDateTime().toGregorianCalendar();
 		}
 		/*
 		else if(expr instanceof NodeValueGeom){

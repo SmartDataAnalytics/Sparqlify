@@ -26,7 +26,7 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +60,8 @@ public class SqlOpSerializerImpl
 		IndentedWriter writer = new IndentedWriter(out);
 				
 		serialize(op, writer);
+		writer.flush();
+		writer.close();
 		
 		return out.toString();
 	}

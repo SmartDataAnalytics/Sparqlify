@@ -3,8 +3,8 @@ package org.aksw.sparqlify.views.transform;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.algorithms.OpMapping;

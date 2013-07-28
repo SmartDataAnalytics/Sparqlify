@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;

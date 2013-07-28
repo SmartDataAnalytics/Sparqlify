@@ -6,7 +6,6 @@ import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode;
 

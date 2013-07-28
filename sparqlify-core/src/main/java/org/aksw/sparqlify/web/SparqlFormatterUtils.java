@@ -7,11 +7,11 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import org.aksw.commons.jena.ModelUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.utils.ModelUtils;
 import org.apache.commons.collections15.Transformer;
-import org.openjena.atlas.lib.Sink;
-import org.openjena.riot.out.SinkTripleOutput;
+import org.apache.jena.atlas.lib.Sink;
+import org.apache.jena.riot.out.SinkTripleOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

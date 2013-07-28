@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.platform.config;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.rdf.model.Model;

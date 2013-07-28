@@ -3,10 +3,6 @@ package org.aksw.sparqlify.core.cast;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.TypeToken;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-
 /**
  * Maps datatypeUris to SqlDatatype objects.
  * The SqlDatatype object can map NodeValue to SqlValues.

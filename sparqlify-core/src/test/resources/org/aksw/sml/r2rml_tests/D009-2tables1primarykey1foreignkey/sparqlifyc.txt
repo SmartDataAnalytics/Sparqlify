@@ -7,7 +7,7 @@ Prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 Prefix spy: <http://aksw.org/sparqlify/>
 
-Create TriplesMap1 As
+Create View TriplesMap1 As
   Construct {
     ?s foaf:name ?n
   }

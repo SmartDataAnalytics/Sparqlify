@@ -75,8 +75,7 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
 import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueDate;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueDateTime;
+import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueDT;
 
 
 
@@ -438,11 +437,11 @@ public class PushDown {
 			}
 		} else if(expr.isString()) {
 			result = new SqlExprValue(expr.getString());
-		} else if(expr instanceof NodeValueDate) {
-			result = new SqlExprValue(expr.getDateTime().asCalendar());
-		} else if(expr instanceof NodeValueDateTime) {
-			result = new SqlExprValue(expr.getDateTime().asCalendar());			
-		}
+		} else if(expr instanceof NodeValueDT) {
+			result = new SqlExprValue(expr.getDateTime().toGregorianCalendar());
+		} //else if(expr instanceof NodeValueDateTime) {
+//			result = new SqlExprValue(expr.getDateTime().toGregorianCalendar());
+//		}
 		else if(expr instanceof NodeValueGeom){
 			result = new SqlExprValue(((NodeValueGeom) expr).getGeometry());
 		} else if (expr.isLiteral()) {

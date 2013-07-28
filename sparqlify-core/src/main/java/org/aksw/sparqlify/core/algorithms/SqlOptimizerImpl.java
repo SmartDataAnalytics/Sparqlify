@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.commons.collections.MultiMaps;
-import org.aksw.commons.collections.multimaps.MultimapUtils;
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.jdbc.ColumnsReference;
 import org.aksw.commons.util.jdbc.Index;
@@ -24,7 +22,6 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoinN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpLeaf;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;

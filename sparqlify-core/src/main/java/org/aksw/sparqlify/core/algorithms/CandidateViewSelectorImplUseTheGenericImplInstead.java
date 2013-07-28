@@ -14,10 +14,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.aksw.commons.collections.CartesianProduct;
-import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.commons.util.strings.StringUtils;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;

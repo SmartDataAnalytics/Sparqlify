@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.multimaps.ISetMultimap;
-import org.aksw.commons.jena.util.QuadUtils;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.graph.Node;

@@ -7,10 +7,9 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Iterator;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionDecorator;
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
+import org.aksw.jena_sparql_api.core.QueryExecutionDecorator;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
 import org.aksw.sparqlify.config.lang.ConstructConfigParser;
 import org.aksw.sparqlify.config.syntax.ConstructConfig;
@@ -69,7 +68,7 @@ class TripleIterator
 
 class QueryExecutionStreamingWrapper
 	extends QueryExecutionDecorator
-	implements QueryExecutionStreaming
+	implements QueryExecution
 {
 
 	public QueryExecutionStreamingWrapper(QueryExecution decoratee) {
@@ -77,13 +76,13 @@ class QueryExecutionStreamingWrapper
 	}
 
 	@Override
-	public Iterator<Triple> execConstructStreaming() {
+	public Iterator<Triple> execConstructTriples() {
 		Model model = getDecoratee().execConstruct();
 		return new TripleIterator(model.listStatements());
 	}
 
 	@Override
-	public Iterator<Triple> execDescribeStreaming() {
+	public Iterator<Triple> execDescribeTriples() {
 		Model model = getDecoratee().execDescribe();
 		return new TripleIterator(model.listStatements());
 	}	
@@ -101,12 +100,12 @@ class QueryExecutionFactoryStreamingWrapper
 	}
 	
 	@Override
-	public QueryExecutionStreaming createQueryExecution(String queryString) {
+	public QueryExecution createQueryExecution(String queryString) {
 		return new QueryExecutionStreamingWrapper(delegate.createQueryExecution(queryString));
 	}
 
 	@Override
-	public QueryExecutionStreaming createQueryExecution(Query query) {
+	public QueryExecution createQueryExecution(Query query) {
 		return new QueryExecutionStreamingWrapper(delegate.createQueryExecution(query));
 	}
 

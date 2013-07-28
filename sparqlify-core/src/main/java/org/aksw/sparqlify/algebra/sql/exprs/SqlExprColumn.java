@@ -1,11 +1,9 @@
 package org.aksw.sparqlify.algebra.sql.exprs;
 
 
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVisitor;
 import org.aksw.sparqlify.core.SqlDatatype;
-import org.openjena.atlas.io.IndentedWriter;
-
-import com.hp.hpl.jena.sdb.core.sqlexpr.SqlColumn;
-import com.hp.hpl.jena.sdb.core.sqlexpr.SqlExprVisitor;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 
 public class SqlExprColumn
@@ -57,7 +55,8 @@ public class SqlExprColumn
 	}
     
     public void visit(SqlExprVisitor visitor) {
-    	visitor.visit(new SqlColumn(jenaTable, columnName)) ;
+    	throw new RuntimeException("Something was messed up");
+    	//visitor.visit(new SqlColumn(jenaTable, columnName, null)) ;
     }
 
 	

@@ -1,18 +1,13 @@
 package org.aksw.sparqlify.sparqlview;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
-import org.aksw.sparqlify.core.cast.TypeSystem;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
-import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.sparql.algebra.Op;
 
 public class QueryExecutionFactorySparqlView
@@ -42,7 +37,7 @@ public class QueryExecutionFactorySparqlView
 	}
 
 	@Override
-	public QueryExecutionStreaming createQueryExecution(Query query) {
+	public QueryExecution createQueryExecution(Query query) {
 		Op rewrittenOp = candidateViewSelector.getApplicableViews(query);		
 		Query rewritten = MyOpAsQuery.asQuery(rewrittenOp, dialect);
 		
@@ -52,7 +47,7 @@ public class QueryExecutionFactorySparqlView
 		//Query rewritten = SparqlViewSystem.rewrite(query, system, dialect);
 		//logger.trace("Rewritten query: " + rewritten);
 		//System.out.println("Rewritten query: " + rewritten);
-		QueryExecutionStreaming result = factory.createQueryExecution(rewritten);
+		QueryExecution result = factory.createQueryExecution(rewritten);
 
 		return result;
 	}	

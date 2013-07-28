@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
-import org.aksw.commons.jena.util.QuadUtils;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 
 import sparql.DnfUtils;
 import sparql.FilterCompiler;

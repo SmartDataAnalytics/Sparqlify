@@ -1,7 +1,5 @@
 package exp.sparql;
 
-import org.junit.Test;
-
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;

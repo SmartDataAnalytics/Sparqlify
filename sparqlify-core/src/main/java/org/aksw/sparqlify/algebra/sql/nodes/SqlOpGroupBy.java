@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 public class SqlOpGroupBy
 	extends SqlOpBase1
