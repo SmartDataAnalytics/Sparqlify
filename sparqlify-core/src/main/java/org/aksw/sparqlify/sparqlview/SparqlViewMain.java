@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.sparqlview;
 
+import java.util.List;
+
 import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorRestructify;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
@@ -11,9 +13,16 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.modify.request.UpdateModify;
+import com.hp.hpl.jena.sparql.syntax.Element;
+import com.hp.hpl.jena.update.UpdateFactory;
+import com.hp.hpl.jena.update.UpdateRequest;
 
 
 public class SparqlViewMain {
+	
+	
 	public static void main(String[] args) {
 		//SparqlViewSystem system = new SparqlViewSystem();
 		
@@ -29,7 +38,8 @@ public class SparqlViewMain {
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
 		CandidateViewSelector<SparqlView> candidateViewSelector = new CandidateViewSelectorRestructify(); 
 
-		SparqlView sparqlView = SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o } { ?s a <http://fp7-pp.publicdata.eu/ontology/Project> . ?s ?p ?o . Filter(?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }", Syntax.syntaxSPARQL_11));
+		//SparqlView sparqlView = SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o } { ?s a <http://fp7-pp.publicdata.eu/ontology/Project> . ?s ?p ?o . Filter(?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }", Syntax.syntaxSPARQL_11));
+		SparqlView sparqlView = SparqlView.create("MyView", "Construct { Graph ?g { ?s ?p ?o } } { ?s a <http://fp7-pp.publicdata.eu/ontology/Project> . ?s ?p ?o . Filter(?g != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }");
 		candidateViewSelector.addView(sparqlView);
 		//system.addView(SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o . } { Graph ?g { ?s ?p ?o } Filter(?g != <http://ns.ontowiki.net/SysBase/> ) }", Syntax.syntaxSPARQL_11)));
 		

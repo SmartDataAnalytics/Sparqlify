@@ -11,12 +11,11 @@ import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
-import junit.framework.Assert;
-
 import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,6 +26,7 @@ import org.openjena.riot.RiotReader;
 import org.openjena.riot.lang.LangNQuads;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.query.Query;
@@ -35,11 +35,13 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.engine.binding.BindingUtils;
 import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
+import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
 
 
 
@@ -204,8 +206,35 @@ class TestCaseQuerySelect
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
+		boolean isEqual = true;
+		ResultSetRewindable act = null;
+		ResultSetRewindable exp = null;
+		if (expected != null) {
+			// TODO File in JIRA issue: This impl is bugged (look at the code,
+			// rs1 should be rs1a)
+	        act = ResultSetFactory.makeRewindable(rs);
+	        exp = ResultSetFactory.makeRewindable(expected) ;
+
+			
+			isEqual = ResultSetCompare.equalsByTerm(act, exp);
+			
+			act.reset();
+			exp.reset();
+		}
+
+		if(!isEqual) {
+			String eStr = ResultSetFormatter.asText(exp);
+			System.out.println("Expected");
+			System.out.println("------");
+			System.out.println(eStr);
+			
+			String aStr = ResultSetFormatter.asText(act);
+			System.out.println("Actual");
+			System.out.println("------");
+			System.out.println(aStr);
+		}
 		
-		boolean isEqual = ResultSetCompare.equalsByTerm(rs, expected);
 		Assert.assertTrue(isEqual);
 	}
 }
@@ -388,14 +417,23 @@ public class R2rmlTest {
 
 		for(QueryBundle queryBundle : bundle.getQueryBundles()) {
 			
-			if(true) { continue; }
+			//if(true) { continue; }
 			
 			String queryString = StreamUtils.toString(queryBundle.getQuery().getInputStream()).trim();
-			String queryResult = StreamUtils.toString(queryBundle.getQuery().getInputStream());
+			
+			Resource queryResultRes = queryBundle.getResult();
+			
+			// Note: If there is a query without expected result, then the query is tested for
+			// whether it executed without raising an exception.
+			ResultSet expected = null;
+			if(queryResultRes.exists()) {
+				String queryResult = StreamUtils.toString(queryResultRes.getInputStream());	
+				//System.out.println(queryResult);
+				expected = ResultSetFactory.fromXML(queryResult);
+			}
 
-			Query query = new Query();
-			QueryFactory.create(queryString, Syntax.syntaxSPARQL_11);
-			ResultSet expected = ResultSetFactory.fromXML(queryResult);
+			//Query query = new Query();
+			Query query = QueryFactory.create(queryString, Syntax.syntaxSPARQL_11);
 
 			String name = baseName + queryBundle.getName();
 

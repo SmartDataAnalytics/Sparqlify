@@ -21,6 +21,7 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.trash.RenamerNodes;
+import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,11 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.graph.NodeTransform;
 import com.hp.hpl.jena.sparql.graph.NodeTransformLib;
+import com.hp.hpl.jena.sparql.modify.request.UpdateModify;
+import com.hp.hpl.jena.sparql.syntax.Element;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
+import com.hp.hpl.jena.update.UpdateFactory;
+import com.hp.hpl.jena.update.UpdateRequest;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -141,6 +146,39 @@ public class SparqlView
 		return create("unnamed", str, defaultPrefixes);
 	}
 
+
+	public static SparqlView create(String name, String viewDefStr) {
+		String str = viewDefStr.replaceAll("Construct", "Insert ");
+		System.out.println("Hack replacement: " + str);
+		
+		UpdateRequest request = new UpdateRequest();
+		UpdateFactory.parse(request, str);
+
+		//request.getUpdates().
+		UpdateModify update = (UpdateModify)request.getUpdates().get(0);
+		List<Quad> quads = update.getInsertQuads();
+		Element element = update.getWherePattern();
+		
+		QuadPattern quadPattern = QuadPatternUtils.create(quads);
+		
+		SparqlView result = create(name, quadPattern, element);
+		return result;
+	}
+	
+	public static SparqlView create(String name, QuadPattern quadPattern, Element element) {
+		Op tmp = Algebra.compile(element);
+		Op op = Algebra.toQuadForm(tmp);
+
+		SparqlView result = create(name, quadPattern, op);
+		return result;
+	}
+
+	public static SparqlView create(String name, QuadPattern quadPattern, Op op) {
+		SparqlView result = new SparqlView(name, quadPattern, new ExprList(), new VarDefinition(), op);
+		return result;
+	}
+
+	
 	public static SparqlView create(String name, Query query) {
 		if(!query.isConstructType()) {
 			throw new RuntimeException("Query must be a construct query");
@@ -150,12 +188,15 @@ public class SparqlView
 		Op tmp = Algebra.compile(query.getQueryPattern());
 		Op op = Algebra.toQuadForm(tmp);
 		
-		QuadPattern quadPattern = new QuadPattern();
-		for(Triple triple : query.getConstructTemplate().getTriples()) {
-			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));	
-		} 
+		QuadPattern quadPattern = QuadPatternUtils.toQuadPattern(Quad.defaultGraphNodeGenerated, query.getConstructTemplate().getBGP());
 		
-		SparqlView result = new SparqlView(name, quadPattern, new ExprList(), new VarDefinition(), op);
+//		QuadPattern quadPattern = new QuadPattern();
+//		for(Triple triple : query.getConstructTemplate().getTriples()) {
+//			quadPattern.add(new Quad(Quad.defaultGraphNodeGenerated, triple));	
+//		} 
+		
+		SparqlView result = create(name, quadPattern, op);
+		//SparqlView result = new SparqlView(name, quadPattern, new ExprList(), new VarDefinition(), op);
 		return result;
 	}
 	
