@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.core.TypeToken;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 /**
  * TODO: Serialization expressions should not be part of the SqlExpr hierarchy! Instead, this should be a completely separate process.

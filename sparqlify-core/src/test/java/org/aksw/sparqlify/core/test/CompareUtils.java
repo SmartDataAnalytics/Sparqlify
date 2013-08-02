@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.commons.jena.util.QuadUtils;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.util.QuadPatternUtils;
 
 import com.google.common.collect.Sets;

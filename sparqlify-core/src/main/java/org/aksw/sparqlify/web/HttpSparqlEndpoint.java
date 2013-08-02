@@ -14,11 +14,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
+import org.apache.jena.riot.WebContent;
 import org.springframework.stereotype.Component;
-
-import com.hp.hpl.jena.sparql.engine.http.HttpParams;
 
 
 /**
@@ -181,7 +180,7 @@ public class HttpSparqlEndpoint {
 	//@Produces("application/rdf+xml")
 	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@GET
-	@Produces(HttpParams.contentTypeRDFXML)
+	@Produces(WebContent.contentTypeRDFXML)
 	public StreamingOutput executeQueryRdfXml(@QueryParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_RdfXml);
@@ -190,7 +189,7 @@ public class HttpSparqlEndpoint {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(HttpParams.contentTypeRDFXML)
+	@Produces(WebContent.contentTypeRDFXML)
 	public StreamingOutput executeQueryRdfXmlPost(@FormParam("query") String queryString)
 			throws Exception {
 		return processQuery(queryString, SparqlFormatterUtils.FORMAT_RdfXml);

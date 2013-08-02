@@ -24,8 +24,8 @@ import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 
-import org.aksw.commons.sparql.api.core.ConstructIterator;
-import org.aksw.commons.sparql.api.core.ResultSetClosable;
+import org.aksw.jena_sparql_api.core.ConstructIterator;
+import org.aksw.jena_sparql_api.core.ResultSetClosable;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
@@ -46,8 +46,8 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.StringUtils;
+import org.apache.jena.atlas.lib.MapUtils;
 import org.h2.tools.Csv;
-import org.openjena.atlas.lib.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

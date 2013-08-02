@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.sparqlify.core.interfaces.IViewDef;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpExt;

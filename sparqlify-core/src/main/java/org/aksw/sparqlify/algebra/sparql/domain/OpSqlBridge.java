@@ -42,7 +42,7 @@ public class OpSqlBridge
 	}
 
 	@Override
-	public Op copy() {
+	public Op0 copy() {
 		// TODO Auto-generated method stub
 		return null;
 	}

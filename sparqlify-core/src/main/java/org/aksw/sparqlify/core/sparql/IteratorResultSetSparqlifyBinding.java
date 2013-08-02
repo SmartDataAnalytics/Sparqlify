@@ -16,7 +16,7 @@ import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.aksw.sparqlify.core.MakeExprPermissive;
 import org.aksw.sparqlify.core.MakeNodeValue;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
-import org.openjena.riot.pipeline.normalize.CanonicalizeLiteral;
+import org.apache.jena.riot.process.normalize.CanonicalizeLiteral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

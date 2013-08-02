@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.6.3-SNAPSHOT</version>
+		<version>0.6.4-SNAPSHOT</version>
 	</parent>
 
 
@@ -37,6 +37,7 @@
 
 
 	<dependencies>
+<!--
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
@@ -49,7 +50,7 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-iri</artifactId>
 		</dependency>
-
+-->
 
 
 		<dependency>
@@ -84,6 +85,7 @@
 		</dependency>
 
 		<!-- Spring dependencies -->
+<!--
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -108,7 +110,7 @@
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
 		</dependency>
-
+-->
 		<dependency>
 			<groupId>org.tuckey</groupId>
 			<artifactId>urlrewritefilter</artifactId>

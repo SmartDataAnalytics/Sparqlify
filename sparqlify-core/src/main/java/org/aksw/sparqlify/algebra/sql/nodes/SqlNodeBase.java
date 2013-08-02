@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.core.ConstraintContainer;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

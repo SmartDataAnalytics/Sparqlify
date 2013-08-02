@@ -7,7 +7,6 @@ import java.util.Iterator;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
@@ -53,13 +52,13 @@ public class ProcessQuery {
 	public static StreamingOutput processQuery(QueryEx queryEx, String format, QueryExecutionFactoryEx qeFactory)
 			throws Exception
 	{
-		QueryExecutionStreaming qe = qeFactory.createQueryExecution(queryEx);
+		QueryExecution qe = qeFactory.createQueryExecution(queryEx);
 		StreamingOutput result = processQuery(queryEx, format, qe);
 		
 		return result;
 	}
 	
-	public static StreamingOutput processQuery(QueryEx query, String format, QueryExecutionStreaming qe)
+	public static StreamingOutput processQuery(QueryEx query, String format, QueryExecution qe)
 			throws Exception
 	{
 		try {
@@ -84,7 +83,7 @@ public class ProcessQuery {
 							+ format);
 				}
 	
-				Iterator<Triple> it = qe.execConstructStreaming();
+				Iterator<Triple> it = qe.execConstructTriples();
 				return wrapWriter(qe, writer, it);
 	
 			} else if (query.isSelectType()) {

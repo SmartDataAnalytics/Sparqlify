@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.sparql.expr.Expr;

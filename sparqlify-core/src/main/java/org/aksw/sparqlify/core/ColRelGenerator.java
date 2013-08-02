@@ -3,6 +3,7 @@ package org.aksw.sparqlify.core;
 import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 
+
 public class ColRelGenerator {
 	private Generator columnNameGenerator;
 	private Generator relationNameGenerator;

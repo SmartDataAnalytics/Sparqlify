@@ -1,6 +1,6 @@
 package org.aksw.update;
 
-import org.aksw.commons.sparql.api.model.QueryExecutionFactoryModel;
+import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 
 import com.hp.hpl.jena.rdf.model.Model;
 

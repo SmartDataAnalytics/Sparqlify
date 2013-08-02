@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core.test;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openjena.atlas.lib.Sink;
+import org.apache.jena.atlas.lib.Sink;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 

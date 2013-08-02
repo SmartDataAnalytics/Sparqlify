@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.core.cast;
 
-import org.aksw.sparqlify.core.TypeToken;
 
 
 /**

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.commons.jena.util.QueryUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.utils.QueryUtils;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;

@@ -2,7 +2,7 @@ package org.aksw.sparqlify.algebra.sparql.domain;
 
 
 import org.aksw.sparqlify.core.RdfViewConjunction;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpExt;

@@ -14,13 +14,13 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
-import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.commons.util.jdbc.SqlUtils;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
+import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerCase;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerElse;

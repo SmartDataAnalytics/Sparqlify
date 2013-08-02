@@ -1,9 +1,7 @@
 package org.aksw.sparqlify.core.transformations;
 
-import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -13,7 +11,6 @@ import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
 import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**

@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.core.cast;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
  * TODO Rename to SqlDatatype

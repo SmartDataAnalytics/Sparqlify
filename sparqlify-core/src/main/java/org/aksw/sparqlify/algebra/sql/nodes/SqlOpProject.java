@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.sparqlify.core.TypeToken;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 /**
  * This is actually a combination of extend, rename and project.

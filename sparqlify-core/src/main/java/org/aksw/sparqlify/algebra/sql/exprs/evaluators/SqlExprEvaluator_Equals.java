@@ -11,8 +11,6 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-
 
 /**
  * 

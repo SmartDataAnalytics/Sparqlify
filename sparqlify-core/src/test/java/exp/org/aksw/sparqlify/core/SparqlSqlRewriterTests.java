@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
 
 public class SparqlSqlRewriterTests {
 

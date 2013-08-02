@@ -2,7 +2,7 @@ package org.aksw.sparqlify.csv;
 
 import java.io.PrintStream;
 
-import org.openjena.atlas.lib.Sink;
+import org.apache.jena.atlas.lib.Sink;
 
 import com.hp.hpl.jena.graph.Triple;
 

@@ -2,7 +2,7 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 

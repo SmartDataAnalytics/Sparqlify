@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.core.TypeToken;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 public abstract class SqlExprBase
 	implements SqlExpr

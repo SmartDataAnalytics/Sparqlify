@@ -8,6 +8,7 @@ import com.hp.hpl.jena.sparql.algebra.op.Op0;
 import com.hp.hpl.jena.sparql.algebra.op.Op1;
 import com.hp.hpl.jena.sparql.algebra.op.Op2;
 import com.hp.hpl.jena.sparql.algebra.op.OpExt;
+import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
 import com.hp.hpl.jena.sparql.algebra.op.OpN;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.core.Quad;
@@ -50,6 +51,12 @@ public class IndexOpVisitor
 	@Override
 	protected void visitExt(OpExt op)
 	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void visitFilter(OpFilter op) {
 		// TODO Auto-generated method stub
 		
 	}

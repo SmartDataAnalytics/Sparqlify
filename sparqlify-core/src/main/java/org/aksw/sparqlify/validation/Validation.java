@@ -3,7 +3,7 @@ package org.aksw.sparqlify.validation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aksw.commons.jena.util.QuadUtils;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.slf4j.Logger;

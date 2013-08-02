@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.aksw.commons.collections.IterableCollection;
 import org.aksw.commons.collections.Sample;
-import org.aksw.commons.jena.util.QuadUtils;
 import org.aksw.commons.util.Pair;
+import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.apache.commons.lang.NotImplementedException;
 
 import com.google.common.collect.Sets;

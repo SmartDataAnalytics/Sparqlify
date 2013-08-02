@@ -7,10 +7,6 @@ import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.commons.sparql.api.limit.QueryExecutionFactoryLimit;
-import org.aksw.commons.sparql.api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -21,24 +17,15 @@ import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
-import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
-import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
-import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
-import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExImpl;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
@@ -318,8 +305,8 @@ public class Main {
 				System.out.println(ResultSetFormatter.asText(rs));
 			}
 			else if(queryEx.isConstructType()) {
-				QueryExecutionStreaming qe = (QueryExecutionStreaming)qef.createQueryExecution(queryString);
-				Iterator<Triple> it = qe.execConstructStreaming();
+				QueryExecution qe = qef.createQueryExecution(queryString);
+				Iterator<Triple> it = qe.execConstructTriples();
 				SparqlFormatterUtils.writeText(System.out, it);
 				//model.write(System.out, "N-TRIPLES");
 			}

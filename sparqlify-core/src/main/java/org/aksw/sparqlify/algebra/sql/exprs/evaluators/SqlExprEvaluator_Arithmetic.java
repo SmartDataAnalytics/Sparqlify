@@ -2,9 +2,6 @@ package org.aksw.sparqlify.algebra.sql.exprs.evaluators;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.XSDFuncOp;
-
 /**
  * Process for finding the appropriate op:
  * 

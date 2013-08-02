@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 import java.util.Collections;
 import java.util.List;
 
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 /**
  * Class for holding aggregator functions

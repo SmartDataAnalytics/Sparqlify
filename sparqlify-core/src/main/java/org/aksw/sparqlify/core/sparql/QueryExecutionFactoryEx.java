@@ -1,10 +1,11 @@
 package org.aksw.sparqlify.core.sparql;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+
+import com.hp.hpl.jena.query.QueryExecution;
 
 public interface QueryExecutionFactoryEx
 	extends QueryExecutionFactory
 {
-	QueryExecutionStreaming createQueryExecution(QueryEx query);	
+	QueryExecution createQueryExecution(QueryEx query);	
 }

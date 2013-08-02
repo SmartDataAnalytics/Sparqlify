@@ -1,9 +1,8 @@
 package org.aksw.sparqlify.web;
 
-import org.aksw.commons.sparql.api.compare.QueryExecutionFactoryCompare;
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreamingFactory;
-import org.aksw.commons.sparql.api.http.QueryExecutionFactoryHttp;
+import org.aksw.jena_sparql_api.compare.QueryExecutionFactoryCompare;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -78,7 +77,7 @@ public class CompareMain {
 		QueryExecutionFactory qefB = new QueryExecutionFactoryHttp(serviceUrlB);
 		
 		
-		QueryExecutionFactory qef = new QueryExecutionStreamingFactory(new QueryExecutionFactoryCompare(qefA, qefB, true));
+		QueryExecutionFactory qef = new QueryExecutionFactoryCompare(qefA, qefB, true);
 		
 		
 

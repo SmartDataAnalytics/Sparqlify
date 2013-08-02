@@ -17,7 +17,6 @@ import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.core.ConstraintContainer;
 import org.aksw.sparqlify.core.RdfView;
-import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;

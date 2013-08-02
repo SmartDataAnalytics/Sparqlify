@@ -1,12 +1,5 @@
 package org.aksw.sparqlify.core.transformations;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.aksw.sparqlify.trash.ExprCopy;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
 
 
 //public abstract class ExprTransformerBase

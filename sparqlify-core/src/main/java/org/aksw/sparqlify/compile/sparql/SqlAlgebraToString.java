@@ -31,7 +31,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.SqlNodeBinding;
-import org.openjena.atlas.io.IndentedWriter;
+import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.base.Joiner;
 import com.hp.hpl.jena.query.Query;

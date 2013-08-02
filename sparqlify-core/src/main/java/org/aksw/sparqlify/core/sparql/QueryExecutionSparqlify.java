@@ -4,16 +4,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionBaseSelect;
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
-import org.aksw.commons.sparql.api.core.QueryExecutionTimeoutHelper;
-import org.aksw.commons.sparql.api.core.ResultSetClosable;
+import org.aksw.jena_sparql_api.core.QueryExecutionBaseSelect;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionTimeoutHelper;
+import org.aksw.jena_sparql_api.core.ResultSetClosable;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 // TODO Replace with class from AKSW commons
 /*
@@ -167,9 +167,9 @@ public class QueryExecutionSparqlify
 
 
 	@Override
-	protected QueryExecutionStreaming executeCoreSelectX(Query dummy) {
+	protected QueryExecution executeCoreSelectX(Query dummy) {
 		// TODO This object hardly closes the connection again....
-		QueryExecutionStreaming result = new QueryExecutionSelect(rewriter, conn, dummy, false);
+		QueryExecution result = new QueryExecutionSelect(rewriter, conn, dummy, false);
 		return result;
 	}
 	

@@ -2,11 +2,11 @@ package org.aksw.sparqlify.core.sparql;
 
 import java.sql.Connection;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactoryBackQuery;
-import org.aksw.commons.sparql.api.core.QueryExecutionStreaming;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
 
 public class QueryExecutionFactorySparqlify
 	extends QueryExecutionFactoryBackQuery
@@ -21,7 +21,7 @@ public class QueryExecutionFactorySparqlify
 	}
 	
 	@Override
-	public QueryExecutionStreaming createQueryExecution(Query query) {
+	public QueryExecution createQueryExecution(Query query) {
 		//System.out.println(query);
 		
 		return new QueryExecutionSparqlify(system, conn, false, query, this);

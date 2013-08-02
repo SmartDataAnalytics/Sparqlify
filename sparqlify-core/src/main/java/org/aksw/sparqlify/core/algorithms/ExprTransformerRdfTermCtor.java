@@ -1,9 +1,5 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
 
 // Sigh, the point of the transformer IS to get rid of the RDF term ctors
 // so this class is oxymoronic
