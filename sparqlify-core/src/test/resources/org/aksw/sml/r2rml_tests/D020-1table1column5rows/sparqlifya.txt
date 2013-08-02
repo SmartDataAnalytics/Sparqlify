@@ -12,7 +12,7 @@ Create View TriplesMap1_ex As
     ?s rdf:type foaf:Person
   }
   With
-    ?s = uri(concat("http://example.com/base/", spy:urlEncode(?Name)))
+    ?s = uri("http://example.com/base/", spy:urlEncode(?Name))
   From
     Student 
     

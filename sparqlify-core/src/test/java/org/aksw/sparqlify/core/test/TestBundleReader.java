@@ -129,7 +129,7 @@ class TestBundleReader
 				//String mappingRef = matcher.group(1);
 				String queryNo = queryMatcher.group(2);
 				
-				String expectedResultStr = spyPathStr + "queryresult" + subTest + queryNo + ".txt";
+				String expectedResultStr = spyPathStr + "queryresult" + subTest + queryNo + ".xml";
 				Resource expectedResult = resolver.getResource(expectedResultStr);
 				
 				if(!expectedResult.exists()) {

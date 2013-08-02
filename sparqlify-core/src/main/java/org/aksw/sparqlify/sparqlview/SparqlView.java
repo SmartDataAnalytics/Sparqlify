@@ -30,7 +30,6 @@ import sparql.FilterUtils;
 import sparql.PatternUtils;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.Syntax;
@@ -155,7 +154,7 @@ public class SparqlView
 		UpdateFactory.parse(request, str);
 
 		//request.getUpdates().
-		UpdateModify update = (UpdateModify)request.getUpdates().get(0);
+		UpdateModify update = (UpdateModify)request.getOperations().get(0);
 		List<Quad> quads = update.getInsertQuads();
 		Element element = update.getWherePattern();
 		
