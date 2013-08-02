@@ -2,8 +2,7 @@
 <sparql xmlns="http://www.w3.org/2005/sparql-results#">
 	<head>
 		<variable name="s" />
-		<variable name="p" />
-		<variable name="o" />
+		<variable name="n" />
 	</head>
 	<results>
 <!-- 		<result> -->

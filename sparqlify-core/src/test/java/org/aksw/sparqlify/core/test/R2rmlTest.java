@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
-import org.aksw.commons.sparql.api.core.QueryExecutionFactory;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
