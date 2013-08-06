@@ -1,14 +1,12 @@
 package org.aksw.sparqlify.web;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.aksw.commons.util.MapReader;
-import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
@@ -37,7 +35,6 @@ import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,15 +42,27 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.jolbox.bonecp.BoneCPConfig;
-import com.jolbox.bonecp.BoneCPDataSource;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
+
 public class Main {
+	
+	public static void onErrorPrintHelpAndExit(Options cliOptions, LoggerCount loggerCount, int exitCode) {
+
+		if(loggerCount.getErrorCount() != 0) {
+			//logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+			
+			printHelpAndExit(cliOptions, exitCode);
+			
+			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
+		}
+		
+	}
+	
 	/**
 	 * @param exitCode
 	 */
-	public static void printHelpAndExit(int exitCode) {
+	public static void printHelpAndExit(Options cliOptions, int exitCode) {
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp(HttpSparqlEndpoint.class.getName(), cliOptions);
 		System.exit(exitCode);
@@ -86,6 +95,8 @@ public class Main {
 		cliOptions.addOption("u", "username", true, "");
 		cliOptions.addOption("p", "password", true, "");
 		cliOptions.addOption("h", "hostname", true, "");
+		cliOptions.addOption("c", "class", true, "JDBC driver class");
+		cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
 
 		// Note: Q and D are exclusive. If either is given, no server is started
 		cliOptions.addOption("Q", "query", true, "");
@@ -97,8 +108,6 @@ public class Main {
 		cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout");
 		cliOptions.addOption("n", "resultsetsize", true, "Maximum result set size");
 
-		cliOptions.addOption("c", "class", true, "JDBC driver class");
-		cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
 		
 
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
@@ -111,13 +120,16 @@ public class Main {
 		int port = Integer.parseInt(portStr);
 		//int backLog = Integer.parseInt(backLogStr);
 
-		String hostName = commandLine.getOptionValue("h", "");
-		String dbName = commandLine.getOptionValue("d", "");
-		String userName = commandLine.getOptionValue("u", "");
-		String passWord = commandLine.getOptionValue("p", "");
-
+//		String hostName = commandLine.getOptionValue("h", "");
+//		String dbName = commandLine.getOptionValue("d", "");
+//		String userName = commandLine.getOptionValue("u", "");
+//		String passWord = commandLine.getOptionValue("p", "");
+//		
+//		String jdbcUrl = commandLine.getOptionValue("j", "");
 		
-		String jdbcUrl = commandLine.getOptionValue("j", "");
+		
+		
+		
 		//String driverClassName = commandLine.getOptionValue("c", "");
 		
 		boolean isDump = commandLine.hasOption("D");
@@ -147,92 +159,20 @@ public class Main {
 				? null
 				: Long.parseLong(maxResultSetSizeStr);
 		
-		
-		String configFileStr = commandLine.getOptionValue("m");
 
-		if (configFileStr == null) {
-			loggerCount.error("No mapping file given");
-
-			printHelpAndExit(-1);
-		}
-
-		File configFile = new File(configFileStr);
-		if (!configFile.exists()) {
-			loggerCount.error("File does not exist: " + configFileStr);
-
-			printHelpAndExit(-1);
-		}
-
-		
-		ConfigParser parser = new ConfigParser();
-
-		InputStream in = new FileInputStream(configFile);
-		Config config;
-		try {
-			config = parser.parse(in, loggerCount);
-		} finally {
-			in.close();
-		}
-
-		if(!jdbcUrl.isEmpty() && (!hostName.isEmpty() || !dbName.isEmpty())) {
-			loggerCount.error("Option 'j' is mutually exclusive with 'h' and 'd'");
-		}
-		
-		if(jdbcUrl.isEmpty() && hostName.isEmpty()) {
-			hostName = "localhost";
-		}
+		Config config = SparqlifyCliHelper.parseSmlConfig(commandLine, loggerCount);
+		onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
 
 		/*
 		 * Connection Pool  
 		 */
-		
-		PGSimpleDataSource dataSourceBean = null;
-		
-		if(jdbcUrl.isEmpty()) {
-			dataSourceBean = new PGSimpleDataSource();
-
-			dataSourceBean.setDatabaseName(dbName);
-			dataSourceBean.setServerName(hostName);
-			dataSourceBean.setUser(userName);
-			dataSourceBean.setPassword(passWord);
-		}
-		
-		BoneCPConfig cpConfig = new BoneCPConfig();
-		
-		if(jdbcUrl.isEmpty()) {
-			cpConfig.setDatasourceBean(dataSourceBean);			
-		} else {
-			cpConfig.setJdbcUrl(jdbcUrl);
-			cpConfig.setUsername(userName);
-			cpConfig.setPassword(passWord);
-		}
-		
-		/*
-		cpConfig.setJdbcUrl(dbconf.getDbConnString()); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
-		cpConfig.setUsername(dbconf.getUsername()); 
-		cpConfig.setPassword(dbconf.getPassword());
-		*/
-		
-		cpConfig.setMinConnectionsPerPartition(1);
-		cpConfig.setMaxConnectionsPerPartition(3);
-//		cpConfig.setMinConnectionsPerPartition(1);
-//		cpConfig.setMaxConnectionsPerPartition(1);
-		
-		cpConfig.setPartitionCount(1);
-		//BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool	
-
-		BoneCPDataSource dataSource = new BoneCPDataSource(cpConfig);
-
-		/*
-		ComboPooledDataSource pooledDataSource = new ComboPooledDataSource();
-		pooledDataSource.
-		*/
+		DataSource dataSource = SparqlifyCliHelper.parseDataSource(commandLine, loggerCount);
+		onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);		
 		
 		
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
-		Connection conn = dataSource.getConnection();
 
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
 		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
@@ -241,20 +181,25 @@ public class Main {
 		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
 
-		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
-		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
-
-		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
-		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		
-		
-		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
-
-		
-		//RdfViewSystem system = new RdfViewSystem2();
-		ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, loggerCount);
-
+		Connection conn = dataSource.getConnection();
+		try {
+			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
+	
+			//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
+			MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+			OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+			
+			
+			CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+	
+			
+			//RdfViewSystem system = new RdfViewSystem2();
+			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, loggerCount);
+		}
+		finally {
+			conn.close();
+		}
 
 		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
 		

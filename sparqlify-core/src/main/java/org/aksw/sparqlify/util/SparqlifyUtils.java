@@ -644,8 +644,35 @@ public class SparqlifyUtils {
 
 	//public static QueryExecutionFactory
 	
-
+	
 	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
+		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, maxResultSetSize, maxQueryExecutionTime);
+		
+		SparqlSqlOpRewriter ssoRewriter = rewriter.getSparqlSqlOpRewriter();
+		SqlOpSerializer sqlOpSerializer = rewriter.getSqlOpSerializer();
+		
+		QueryExecutionFactory qefDefault = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+		
+		if(maxQueryExecutionTime != null) {
+			qefDefault = QueryExecutionFactoryTimeout.decorate(qefDefault, maxQueryExecutionTime * 1000);
+		}
+		
+		if(maxResultSetSize != null) {
+			qefDefault = QueryExecutionFactoryLimit.decorate(qefDefault, false, maxResultSetSize);
+		}
+		
+		
+		QueryExecutionFactory qefExplain = new QueryExecutionFactorySparqlifyExplain(dataSource, ssoRewriter, sqlOpSerializer);
+		
+		
+		QueryExecutionFactoryEx result = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
+		
+		return result;
+	
+	}
+
+
+	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();
 
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
@@ -686,32 +713,15 @@ public class SparqlifyUtils {
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
 
 		
-		SparqlSqlStringRewriter rewriter = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);//SparqlifyUtils.createSparqlSqlStringRewriter(ssoRewriter);
+		SparqlSqlStringRewriterImpl rewriter = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);//SparqlifyUtils.createSparqlSqlStringRewriter(ssoRewriter);
 
-		
+		return rewriter;
 		
 		//SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem);
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl(candidateViewSelector, opMappingRewriter, sqlOpSelectBlockCollector, sqlOpSerializer);
 
 		
-		QueryExecutionFactory qefDefault = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
-		
-		if(maxQueryExecutionTime != null) {
-			qefDefault = QueryExecutionFactoryTimeout.decorate(qefDefault, maxQueryExecutionTime * 1000);
-		}
-		
-		if(maxResultSetSize != null) {
-			qefDefault = QueryExecutionFactoryLimit.decorate(qefDefault, false, maxResultSetSize);
-		}
-		
-		
-		QueryExecutionFactory qefExplain = new QueryExecutionFactorySparqlifyExplain(dataSource, ssoRewriter, sqlOpSerializer);
-		
-		
-		QueryExecutionFactoryEx result = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
-		
-		return result;
 	}
 	
 	public static QueryExecutionFactory createDefaultSparqlifyEngineOld(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {

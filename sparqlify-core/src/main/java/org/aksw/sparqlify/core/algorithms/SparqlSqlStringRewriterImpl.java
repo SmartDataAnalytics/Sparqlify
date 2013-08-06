@@ -28,6 +28,17 @@ public class SparqlSqlStringRewriterImpl
 	}
 	
 	
+	public SparqlSqlOpRewriter getSparqlSqlOpRewriter() {
+		return sparqlSqlOpRewriter;
+	}
+
+	public SqlOpSerializer getSqlOpSerializer() {
+		return sqlOpSerializer;
+	}
+
+
+
+
 	@Override
 	public SparqlSqlStringRewrite rewrite(Query query) {
 

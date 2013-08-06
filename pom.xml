@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.aksw.sparqlify</groupId>
@@ -32,14 +33,14 @@
 
 
 	<properties>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
 
 		<gwt.version>2.0.4</gwt.version>
 
 		<jetty.version>7.1.6.v20100715</jetty.version>
 
 		<!-- project defaults -->
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
 		<java.version>1.6</java.version>
 		<java.version.javadoc>http://java.sun.com/javase/6/docs/api/</java.version.javadoc>
 		<file.encoding>UTF-8</file.encoding>
@@ -51,10 +52,10 @@
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<aksw.commons.version>0.7.1</aksw.commons.version>
 
-		<jena-sparql-api.version>2.10.0-6</jena-sparql-api.version>
+		<jena-sparql-api.version>2.10.0-7</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
-		
+
 		<spring.batch.version>2.2.0.RELEASE</spring.batch.version>
 	</properties>
 
@@ -307,30 +308,22 @@
 			<!-- </dependency> -->
 
 
-<!--
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-core</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-server</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
--->
+			<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId> 
+				<version>${jersey.version}</version> </dependency> <dependency> <groupId>com.sun.jersey</groupId> 
+				<artifactId>jersey-server</artifactId> <version>${jersey.version}</version> 
+				</dependency> -->
 
-                        <!-- Jena SPARQL API -->
-                        <dependency>
-                                <groupId>org.aksw.jena-sparql-api</groupId>
-                                <artifactId>jena-sparql-api-core</artifactId>
-                                <version>${jena-sparql-api.version}</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.aksw.jena-sparql-api</groupId>
-                                <artifactId>jena-sparql-api-server</artifactId>
-                                <version>${jena-sparql-api.version}</version>
-                        </dependency>
+			<!-- Jena SPARQL API -->
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-core</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-server</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
 
 
 
@@ -343,14 +336,8 @@
 				<version>${aksw.commons.version}</version>
 				<scope>compile</scope>
 			</dependency>
-<!--
-			<dependency>
-				<groupId>org.aksw.commons</groupId>
-				<artifactId>sparql</artifactId>
-				<version>${aksw.commons.version}</version>
-				<scope>compile</scope>
-			</dependency>
--->
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId> 
+				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>org.aksw.commons</groupId>
 				<artifactId>collections</artifactId>
@@ -411,11 +398,11 @@
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils</artifactId>
 					</exclusion>
-                                        <exclusion>
-                                                <!-- Using org.slf4j:jcl-over-slf4j instead -->
-                                                <groupId>commons-logging</groupId>
-                                                <artifactId>commons-logging</artifactId>
-                                        </exclusion>
+					<exclusion>
+						<!-- Using org.slf4j:jcl-over-slf4j instead -->
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 
@@ -431,11 +418,11 @@
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils-bean-collections</artifactId>
 					</exclusion>
-                                        <exclusion>
-                                                <!-- Using org.slf4j:jcl-over-slf4j instead -->
-                                                <groupId>commons-logging</groupId>
-                                                <artifactId>commons-logging</artifactId>
-                                        </exclusion>
+					<exclusion>
+						<!-- Using org.slf4j:jcl-over-slf4j instead -->
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 
@@ -569,42 +556,42 @@
 				<version>2.9.0-incubating</version> <scope>compile</scope> </dependency> -->
 			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
 				<version>0.9.0-incubating</version> <scope>compile</scope> </dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.apache.jena</groupId> -->
-<!-- 				<artifactId>jena-arq</artifactId> -->
-<!-- 				<version>2.9.0-incubating</version> -->
-<!-- 				<scope>compile</scope> -->
-<!-- 				<exclusions> -->
-<!-- 					<exclusion> -->
-<!-- 						<groupId>xerces</groupId> -->
-<!-- 						<artifactId>xercesImpl</artifactId> -->
-<!-- 					</exclusion> -->
-<!-- 				</exclusions> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.apache.jena</groupId> -->
-<!-- 				<artifactId>jena-core</artifactId> -->
-<!-- 				<version>2.7.0-incubating</version> -->
-<!-- 				<scope>compile</scope> -->
-<!-- 				<exclusions> -->
-<!-- 					<exclusion> -->
-<!-- 						<groupId>xerces</groupId> -->
-<!-- 						<artifactId>xercesImpl</artifactId> -->
-<!-- 					</exclusion> -->
-<!-- 				</exclusions> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.apache.jena</groupId> -->
-<!-- 				<artifactId>jena-iri</artifactId> -->
-<!-- 				<version>0.9.0-incubating</version> -->
-<!-- 				<scope>compile</scope> -->
-<!-- 				<exclusions> -->
-<!-- 					<exclusion> -->
-<!-- 						<groupId>xerces</groupId> -->
-<!-- 						<artifactId>xercesImpl</artifactId> -->
-<!-- 					</exclusion> -->
-<!-- 				</exclusions> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.jena</groupId> -->
+			<!-- <artifactId>jena-arq</artifactId> -->
+			<!-- <version>2.9.0-incubating</version> -->
+			<!-- <scope>compile</scope> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>xerces</groupId> -->
+			<!-- <artifactId>xercesImpl</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.jena</groupId> -->
+			<!-- <artifactId>jena-core</artifactId> -->
+			<!-- <version>2.7.0-incubating</version> -->
+			<!-- <scope>compile</scope> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>xerces</groupId> -->
+			<!-- <artifactId>xercesImpl</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.jena</groupId> -->
+			<!-- <artifactId>jena-iri</artifactId> -->
+			<!-- <version>0.9.0-incubating</version> -->
+			<!-- <scope>compile</scope> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>xerces</groupId> -->
+			<!-- <artifactId>xercesImpl</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
 
 
 			<dependency>
@@ -670,23 +657,11 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
-<!--
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>${jetty.version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
--->
+			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
+				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
+				</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId> 
+				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
+				</dependency> -->
 			<dependency>
 				<groupId>jrexx</groupId>
 				<artifactId>jrexx</artifactId>
@@ -717,45 +692,40 @@
 			</dependency>
 
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-core</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-core</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
 
-<!-- 				<exclusions> -->
-<!-- 					<exclusion> -->
-<!-- 						Using org.slf4j:jcl-over-slf4j instead -->
-<!-- 						<groupId>commons-logging</groupId> -->
-<!-- 						<artifactId>commons-logging</artifactId> -->
-<!-- 					</exclusion> -->
-<!-- 				</exclusions> -->
-<!-- 			</dependency> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- Using org.slf4j:jcl-over-slf4j instead -->
+			<!-- <groupId>commons-logging</groupId> -->
+			<!-- <artifactId>commons-logging</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-context</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-context</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
+			<!-- </dependency> -->
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-web</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-web</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
+			<!-- </dependency> -->
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-beans</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-beans</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
+			<!-- </dependency> -->
 
-<!--
-			<dependency>
-				<groupId>com.sun.jersey.contribs</groupId>
-				<artifactId>jersey-spring</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
--->
+			<!-- <dependency> <groupId>com.sun.jersey.contribs</groupId> <artifactId>jersey-spring</artifactId> 
+				<version>${jersey.version}</version> </dependency> -->
 
 			<dependency>
 				<groupId>org.tuckey</groupId>
@@ -837,59 +807,59 @@
 				<version>3.5.6-Final</version>
 			</dependency>
 
-<!-- 			<dependency> -->
-<!-- 			  <groupId>org.activiti</groupId> -->
-<!-- 			  <artifactId>activiti-engine</artifactId> -->
-<!-- 			  <version>5.13</version> -->
-<!-- 			  <exclusions> -->
-<!-- 			  	<exclusion> -->
-<!-- 			  	<groupId>org.springframework</groupId> -->
-<!-- 			  	<artifactId>spring-context</artifactId> -->
-<!-- 			  	</exclusion> -->
-<!-- 			  </exclusions> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.activiti</groupId> -->
+			<!-- <artifactId>activiti-engine</artifactId> -->
+			<!-- <version>5.13</version> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-context</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+			<!-- </dependency> -->
 
- 		<dependency>
-	        	<groupId>org.springframework</groupId>
-	        	<artifactId>spring-jdbc</artifactId>
-	        	<version>${spring.version}</version>
-                                <exclusions>
-                                        <exclusion>
-                                                <groupId>commons-logging</groupId>
-                                                <artifactId>commons-logging</artifactId>
-                                        </exclusion>
-                                </exclusions>
-      		</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 
-	<!-- Spring Batch dependencies -->
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-core</artifactId>
-			<version>${spring.batch.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-infrastructure</artifactId>
-			<version>${spring.batch.version}</version>
-		</dependency>
+			<!-- Spring Batch dependencies -->
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-core</artifactId>
+				<version>${spring.batch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-infrastructure</artifactId>
+				<version>${spring.batch.version}</version>
+			</dependency>
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-context</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-jdbc</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework</groupId> -->
-<!-- 				<artifactId>spring-tx</artifactId> -->
-<!-- 				<version>${spring.version}</version> -->
-<!-- 			</dependency> -->
-			
-			
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-context</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-jdbc</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.springframework</groupId> -->
+			<!-- <artifactId>spring-tx</artifactId> -->
+			<!-- <version>${spring.version}</version> -->
+			<!-- </dependency> -->
+
+
 
 
 			<!-- <dependency> -->

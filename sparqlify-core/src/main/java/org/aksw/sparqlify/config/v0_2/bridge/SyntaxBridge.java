@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.config.v0_2.bridge;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.trash.ExprCopy;
+import org.aksw.sparqlify.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,6 +220,24 @@ public class SyntaxBridge {
 		
 			
 		org.aksw.sparqlify.core.domain.input.ViewDefinition result = new org.aksw.sparqlify.core.domain.input.ViewDefinition(name, template, null, mapping, viewDefinition);
+		
+		return result;
+	}
+	
+	
+	public static List<org.aksw.sparqlify.core.domain.input.ViewDefinition> bridge(SyntaxBridge bridge, Collection<ViewDefinition> viewDefinitions, Logger logger) {
+
+		List<org.aksw.sparqlify.core.domain.input.ViewDefinition> result = new ArrayList<org.aksw.sparqlify.core.domain.input.ViewDefinition>();
+		for(ViewDefinition item : viewDefinitions) {
+			org.aksw.sparqlify.core.domain.input.ViewDefinition virtualGraph = bridge.create(item);
+			
+			if(logger != null) {
+				Validation.validateView(virtualGraph, logger);
+			}
+			//candidateSelector.addView(virtualGraph);
+			
+			result.add(virtualGraph);
+		}
 		
 		return result;
 	}
