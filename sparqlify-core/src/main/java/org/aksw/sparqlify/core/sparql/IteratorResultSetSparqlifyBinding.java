@@ -31,25 +31,32 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 
+/**
+ * Note: We provider our own RowMapper interface, so we do not have to depend on spring-batch directly.
+ * 
+ * 
+ * @author raven
+ *
+ * @param <T>
+ */
+interface RowMapper<T> {
+	T map(ResultSet rs, long rowId);
+}
 
-public class IteratorResultSetSparqlifyBinding
-	extends SinglePrefetchIterator<Binding>
+class RowMapperSparqlifyBinding
+	implements RowMapper<Binding>
 {
 	private static final Logger logger = LoggerFactory.getLogger(IteratorResultSetSparqlifyBinding.class);
 	
 	// Canonicalize values, e.g. 20.0 -> 2.0e1
-	private CanonicalizeLiteral canonicalizer = CanonicalizeLiteral.get();
+	private static CanonicalizeLiteral canonicalizer = CanonicalizeLiteral.get();
 	
-	private Connection conn;
-	private ResultSet rs;
 	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
 	private Multimap<Var, RestrictedExpr> sparqlVarMap;
 	
-	
-	private long nextRowId;
+	//private long nextRowId;
 	private Var rowIdVar;
 
-	
 	public static boolean isCharType(String typeName) {
 		String tmp = typeName.toLowerCase();
 		
@@ -59,60 +66,38 @@ public class IteratorResultSetSparqlifyBinding
 		return result;
 	}
 
-	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
+	public RowMapperSparqlifyBinding(Multimap<Var, RestrictedExpr> sparqlVarMap)
 	{
-		this(conn, rs, sparqlVarMap, 0, null);
+		this(sparqlVarMap, null);
 	}
 
 
-	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap, long nextRowId, String rowIdName)
+	public RowMapperSparqlifyBinding(Multimap<Var, RestrictedExpr> sparqlVarMap, String rowIdName)
 	{
-		this.conn = conn;
-		this.rs = rs;
 		this.sparqlVarMap = sparqlVarMap;
-		this.nextRowId = nextRowId;
 		this.rowIdVar = rowIdName == null ? null : Var.alloc(rowIdName);
-	}
-
-	
-//	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
-//	{
-//		this.rs = rs;
-//		this.sparqlVarMap = sparqlVarMap;
-//		
-////		ResultSetMetaData meta;
-////		try {
-////			rs.next();
-////			System.out.println("h__4: " + rs.getObject("h__4"));
-////			System.out.println("AGE: " + rs.getObject("AGE"));
-////			
-////			
-////			meta = rs.getMetaData();
-////			for(int i = 1; i <= meta.getColumnCount(); ++i) {
-////				String colName = meta.getColumnName(i);
-////				
-////				System.out.println("Column [" + i + "]: " + colName);
-////			}
-////		} catch (SQLException e) {
-////			// TODO Auto-generated catch block
-////			e.printStackTrace();
-////		}
-//
-//	}
-	
+ 	}
 
 	@Override
-	protected Binding prefetch() throws Exception {
-		if(!rs.next()) {
-			return super.finish();
+	public Binding map(ResultSet rs, long rowId) {
+		Binding result;
+		try {
+			result = _map(rs, rowId);
+		} catch(Exception e) {
+			throw new RuntimeException(e);
 		}
-
-		ResultSetMetaData meta = rs.getMetaData();
+		
+		return result;
+	}
+	
+	public Binding _map(ResultSet rs, long rowId) throws Exception {
 
 		// OPTIMIZE refactor these to attributes
 		//NodeExprSubstitutor substitutor = new NodeExprSubstitutor(sparqlVarMap);
 		BindingMap binding = new BindingHashMap();
 
+		
+		ResultSetMetaData meta = rs.getMetaData();
 		
 		/*
 		for(int i = 1; i <= meta.getColumnCount(); ++i) {
@@ -188,7 +173,6 @@ public class IteratorResultSetSparqlifyBinding
 		// Additional "virtual" columns
 		// FIXME Ideally this should be part of a class "ResultSetExtend" that extends a result set with additional columns
 		if(rowIdVar != null) {
-			long rowId = nextRowId++;
 			Node node = NodeValue.makeInteger(rowId).asNode();
 			
 			binding.add(rowIdVar, node);
@@ -296,6 +280,105 @@ public class IteratorResultSetSparqlifyBinding
 			}
 		}
 
+		return result;
+	}
+	
+}
+
+
+
+public class IteratorResultSetSparqlifyBinding
+	extends SinglePrefetchIterator<Binding>
+{
+	private static final Logger logger = LoggerFactory.getLogger(IteratorResultSetSparqlifyBinding.class);
+	
+	// Canonicalize values, e.g. 20.0 -> 2.0e1
+	//private static CanonicalizeLiteral canonicalizer = CanonicalizeLiteral.get();
+	
+	private Connection conn;
+	private ResultSet rs;
+	//private NodeExprSubstitutor substitutor;// = new NodeExprSubstitutor(sparqlVarMap);
+	//private Multimap<Var, RestrictedExpr> sparqlVarMap;
+	
+	//private transient ResultSetMetaData meta;
+	//private Var rowIdVar;
+	private RowMapper<Binding> rowMapper;
+	
+	private long nextRowId;
+
+	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
+	{
+		this(conn, rs, sparqlVarMap, 0, null);
+	}
+
+
+	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap, long nextRowId, String rowIdName)
+	{
+		this(conn, rs, nextRowId, new RowMapperSparqlifyBinding(sparqlVarMap, rowIdName));
+//		this.conn = conn;
+//		this.rs = rs;
+//		//this.sparqlVarMap = sparqlVarMap;
+//		this.nextRowId = nextRowId;
+//		
+//		this.rowMapper = new RowMapperSparqlifyBinding(sparqlVarMap);
+//		
+//		//this.rowIdVar = rowIdName == null ? null : Var.alloc(rowIdName);
+//		
+//		try {
+//			this.meta = rs.getMetaData();
+//		} catch (SQLException e) {
+//			throw new RuntimeException(e);
+//		}
+	}
+	
+	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, long nextRowId, RowMapper<Binding> rowMapper) {
+		this.conn = conn;
+		this.rs = rs;
+		this.nextRowId = nextRowId;
+		this.rowMapper = rowMapper;
+	}
+
+	
+//	public IteratorResultSetSparqlifyBinding(ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap)
+//	{
+//		this.rs = rs;
+//		this.sparqlVarMap = sparqlVarMap;
+//		
+////		ResultSetMetaData meta;
+////		try {
+////			rs.next();
+////			System.out.println("h__4: " + rs.getObject("h__4"));
+////			System.out.println("AGE: " + rs.getObject("AGE"));
+////			
+////			
+////			meta = rs.getMetaData();
+////			for(int i = 1; i <= meta.getColumnCount(); ++i) {
+////				String colName = meta.getColumnName(i);
+////				
+////				System.out.println("Column [" + i + "]: " + colName);
+////			}
+////		} catch (SQLException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+//
+//	}
+
+//	public static Binding fetchBinding(ResultSetMetaData meta, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap) {
+//		
+//	}
+
+	@Override
+	protected Binding prefetch() throws Exception {
+		if(!rs.next()) {
+			return super.finish();
+		}
+
+		long rowId = nextRowId++;
+
+
+		Binding result = rowMapper.map(rs, rowId);
+		
 		return result;
 	}
 	

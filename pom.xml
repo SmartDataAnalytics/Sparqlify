@@ -54,6 +54,8 @@
 		<jena-sparql-api.version>2.10.0-5</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
+		
+		<spring.batch.version>2.2.0.RELEASE</spring.batch.version>
 	</properties>
 
 	<scm>
@@ -715,19 +717,19 @@
 			</dependency>
 
 
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${spring.version}</version>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework</groupId> -->
+<!-- 				<artifactId>spring-core</artifactId> -->
+<!-- 				<version>${spring.version}</version> -->
 
-				<exclusions>
-					<exclusion>
-						<!-- Using org.slf4j:jcl-over-slf4j instead -->
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+<!-- 				<exclusions> -->
+<!-- 					<exclusion> -->
+<!-- 						Using org.slf4j:jcl-over-slf4j instead -->
+<!-- 						<groupId>commons-logging</groupId> -->
+<!-- 						<artifactId>commons-logging</artifactId> -->
+<!-- 					</exclusion> -->
+<!-- 				</exclusions> -->
+<!-- 			</dependency> -->
 
 <!-- 			<dependency> -->
 <!-- 				<groupId>org.springframework</groupId> -->
@@ -835,17 +837,35 @@
 				<version>3.5.6-Final</version>
 			</dependency>
 
-			<dependency>
-			  <groupId>org.activiti</groupId>
-			  <artifactId>activiti-engine</artifactId>
-			  <version>5.13</version>
-			  <exclusions>
-			  	<exclusion>
-			  	<groupId>org.springframework</groupId>
-			  	<artifactId>spring-context</artifactId>
-			  	</exclusion>
-			  </exclusions>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 			  <groupId>org.activiti</groupId> -->
+<!-- 			  <artifactId>activiti-engine</artifactId> -->
+<!-- 			  <version>5.13</version> -->
+<!-- 			  <exclusions> -->
+<!-- 			  	<exclusion> -->
+<!-- 			  	<groupId>org.springframework</groupId> -->
+<!-- 			  	<artifactId>spring-context</artifactId> -->
+<!-- 			  	</exclusion> -->
+<!-- 			  </exclusions> -->
+<!-- 			</dependency> -->
+
+ 		<dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-jdbc</artifactId>
+        	<version>${spring.version}</version>
+      	</dependency>
+
+	<!-- Spring Batch dependencies -->
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-core</artifactId>
+			<version>${spring.batch.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-infrastructure</artifactId>
+			<version>${spring.batch.version}</version>
+		</dependency>
 
 <!-- 			<dependency> -->
 <!-- 				<groupId>org.springframework</groupId> -->
