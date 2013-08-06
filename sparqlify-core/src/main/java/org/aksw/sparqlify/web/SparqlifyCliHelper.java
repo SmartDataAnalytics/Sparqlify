@@ -79,7 +79,7 @@ public class SparqlifyCliHelper {
 		*/
 		
 		cpConfig.setMinConnectionsPerPartition(1);
-		cpConfig.setMaxConnectionsPerPartition(3);
+		cpConfig.setMaxConnectionsPerPartition(6);
 //		cpConfig.setMinConnectionsPerPartition(1);
 //		cpConfig.setMaxConnectionsPerPartition(1);
 		

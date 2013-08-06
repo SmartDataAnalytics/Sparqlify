@@ -13,9 +13,12 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
+import org.aksw.sparqlify.core.RdfViewSystemOld;
+import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
@@ -23,8 +26,10 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.sparql.RowMapperSparqlifyBinding;
+import org.aksw.sparqlify.csv.TripleUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.antlr.runtime.RecognitionException;
@@ -53,7 +58,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.PassThroughLineAggregator;
-import org.springframework.batch.item.support.PassThroughItemProcessor;
 import org.springframework.batch.repeat.CompletionPolicy;
 import org.springframework.batch.repeat.RepeatOperations;
 import org.springframework.batch.repeat.policy.SimpleCompletionPolicy;
@@ -68,6 +72,7 @@ import org.springframework.transaction.support.AbstractPlatformTransactionManage
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
@@ -109,6 +114,7 @@ class TaskletFactoryDump {
 //	private AbstractPlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	
+	private SqlOpSelectBlockCollector sqlOpSelectBlockCollector;
 	private SqlOpSerializer sqlOpSerializer;
 	private String outBaseDir = "/tmp/";
 
@@ -120,8 +126,9 @@ class TaskletFactoryDump {
 //		this.outBaseDir = outBaseDir;
 //	}
 
-	public TaskletFactoryDump(DataSource dataSource, SqlOpSerializer sqlOpSerializer, String outBaseDir) {
+	public TaskletFactoryDump(DataSource dataSource, SqlOpSelectBlockCollector sqlOpSelectBlockCollector, SqlOpSerializer sqlOpSerializer, String outBaseDir) {
 		this.dataSource = dataSource;
+		this.sqlOpSelectBlockCollector = sqlOpSelectBlockCollector;
 		this.sqlOpSerializer = sqlOpSerializer;
 		this.outBaseDir = outBaseDir;
 	}
@@ -135,13 +142,26 @@ class TaskletFactoryDump {
 		
 		Multimap<Var, RestrictedExpr> sparqlVarMap = viewDefinition.getVarDefinition().getMap();
 		
-		String sqlStr = sqlOpSerializer.serialize(sqlOp);
 		
+		// TODO HACK The select block collector assigns an alias to any SqlOpQuery, which breaks if the initial sqlOp is already of type SqlOpQuery
+		SqlOp tmp;
+		if(sqlOp instanceof SqlOpQuery) {
+			tmp = sqlOp;
+		} else {
+			tmp = sqlOpSelectBlockCollector.transform(sqlOp);
+		}
+		
+		String sqlStr = sqlOpSerializer.serialize(tmp);
+		
+		System.out.println(sqlStr);
 		
 		String baseName = StringUtils.urlEncode(viewDefinition.getName());
 //		String taskletName = "dump-" + baseName;
 		String outFileName = outBaseDir + baseName + ".nt";
 		Resource outResource = new FileSystemResource(outBaseDir + outFileName);
+		
+		
+		System.out.println(outFileName);
 		
 		Tasklet result = createTasklet(dataSource, template, sparqlVarMap, sqlStr, outResource);
 		return result;
@@ -161,12 +181,10 @@ class TaskletFactoryDump {
 	
 	public static Tasklet _createTasklet(DataSource dataSource, QuadPattern template, Multimap<Var, RestrictedExpr> sparqlVarMap, String sqlStr, Resource outResource) throws Exception {
 		
-		QuadPattern quadPattern = new QuadPattern();
-		
 		RowMapper<Binding> coreRowMapper = new RowMapperSparqlifyBinding(sparqlVarMap); 
-		RowMapper<QuadPattern> rowMapper = new RowMapperSparqlify(coreRowMapper, quadPattern);
+		RowMapper<QuadPattern> rowMapper = new RowMapperSparqlify(coreRowMapper, template);
 				
-		JdbcCursorItemReader<String> itemReader = new JdbcCursorItemReader<String>();
+		JdbcCursorItemReader<QuadPattern> itemReader = new JdbcCursorItemReader<QuadPattern>();
 		itemReader.setSql(sqlStr);
 		itemReader.setDataSource(dataSource);
 		itemReader.setRowMapper(rowMapper);
@@ -180,6 +198,7 @@ class TaskletFactoryDump {
 
 		
 		FlatFileItemWriter<String> itemWriter = new FlatFileItemWriter<String>();
+		//itemWriter.set
 		itemWriter.setLineAggregator(new PassThroughLineAggregator<String>());
 		itemWriter.setResource(outResource);
 		itemWriter.afterPropertiesSet();
@@ -187,20 +206,42 @@ class TaskletFactoryDump {
 		itemWriter.open(executionContext);
 		
 		
-		int commitInterval = 10;
+		int commitInterval = 50000;
 		CompletionPolicy completionPolicy = new SimpleCompletionPolicy(commitInterval);
 		RepeatTemplate repeatTemplate = new RepeatTemplate();
 		repeatTemplate.setCompletionPolicy(completionPolicy);
 		//repeatTemplate.set
 
 		RepeatOperations repeatOperations = repeatTemplate;
-		ChunkProvider<String> chunkProvider = new SimpleChunkProvider<String>(itemReader, repeatOperations);
+		ChunkProvider<QuadPattern> chunkProvider = new SimpleChunkProvider<QuadPattern>(itemReader, repeatOperations);
 		//JobStep
 		
-		ItemProcessor<String, String> itemProcessor = new PassThroughItemProcessor<String>();		
-		ChunkProcessor<String> chunkProcessor = new SimpleChunkProcessor<String, String>(itemProcessor, itemWriter);
+		ItemProcessor<QuadPattern, String> itemProcessor = new ItemProcessor<QuadPattern, String>() {
+
+			@Override
+			public String process(QuadPattern quadPattern) throws Exception {
+				
+				String result = "";
+				
+				for(Quad quad : quadPattern.getList()) {
+					Triple triple = quad.asTriple();
+					String tmp = TripleUtils.toNTripleString(triple);
+					
+					if(!result.isEmpty()) {
+						result += "\n";
+					}
+					
+					result += tmp;
+				}
+				
+				return result;
+			}
+		};//new//new PassThroughItemProcessor<String>();
 		
-		Tasklet tasklet = new ChunkOrientedTasklet<String>(chunkProvider, chunkProcessor); //new SplitFilesTasklet();
+		
+		ChunkProcessor<QuadPattern> chunkProcessor = new SimpleChunkProcessor<QuadPattern, String>(itemProcessor, itemWriter);
+		
+		Tasklet tasklet = new ChunkOrientedTasklet<QuadPattern>(chunkProvider, chunkProcessor); //new SplitFilesTasklet();
 		
 		return tasklet;
 	}
@@ -237,6 +278,9 @@ public class MasterDumper {
 	private static final Options cliOptions = new Options();
 	
 	public static void main(String[] args) throws Exception {
+
+		RdfViewSystemOld.initSparqlifyFunctions();
+
 		
 		LoggerCount loggerCount = new LoggerCount(logger);
 		Class.forName("org.postgresql.Driver");
@@ -267,7 +311,11 @@ public class MasterDumper {
 
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
 		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+		
+		SqlOpSelectBlockCollector sqlOpSelectBlockCollector = new SqlOpSelectBlockCollectorImpl();
+		
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
+		
 
 		
 		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
@@ -303,7 +351,7 @@ public class MasterDumper {
 		
 		
 		String outBaseDir = "/tmp/";
-		TaskletFactoryDump taskletFactory = new TaskletFactoryDump(userDataSource, sqlOpSerializer, outBaseDir);
+		TaskletFactoryDump taskletFactory = new TaskletFactoryDump(userDataSource, sqlOpSelectBlockCollector, sqlOpSerializer, outBaseDir);
 		
 		// TODO For each viewDefinition ...
 		SimpleJob job = new SimpleJob("test");
@@ -314,6 +362,7 @@ public class MasterDumper {
 			String baseName = StringUtils.urlEncode(viewDefinition.getName());
 			String taskletName = "dump-" + baseName;
 
+			loggerCount.info("Processing view [" + viewDefinition.getName() + "]");
 			Tasklet tasklet = taskletFactory.createTasklet(viewDefinition) ;
 
 			TaskletStep taskletStep = new TaskletStep(); 
