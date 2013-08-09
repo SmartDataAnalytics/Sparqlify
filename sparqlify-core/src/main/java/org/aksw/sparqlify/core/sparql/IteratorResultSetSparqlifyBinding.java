@@ -14,7 +14,6 @@ import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
-
 public class IteratorResultSetSparqlifyBinding
 	extends SinglePrefetchIterator<Binding>
 {
@@ -42,7 +41,7 @@ public class IteratorResultSetSparqlifyBinding
 
 	public IteratorResultSetSparqlifyBinding(Connection conn, ResultSet rs, Multimap<Var, RestrictedExpr> sparqlVarMap, long nextRowId, String rowIdName)
 	{
-		this(conn, rs, nextRowId, new RowMapperSparqlifyBinding(sparqlVarMap, rowIdName));
+		this(conn, rs, nextRowId, new RowMapperSparqlifyCombined(sparqlVarMap, rowIdName));
 //		this.conn = conn;
 //		this.rs = rs;
 //		//this.sparqlVarMap = sparqlVarMap;

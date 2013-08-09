@@ -264,11 +264,17 @@ public class Main {
 		}
 		
 		
+		startSparqlEndpoint(qef, port);
 		
 		//sparqler = qef; //new QueryExecutionFactorySparqlify(system, conn);
 
 		//QueryExecutionFactoryStreamingProvider provider = new QueryExecutionFactoryStreamingProvider(qef);
 		//QueryExecutionFactoryStreamingProvider.qeFactory = qef;
+
+		// server.stop();
+	}
+	
+	public static Server startSparqlEndpoint(QueryExecutionFactoryEx qef, int port) throws Exception {
 		HttpSparqlEndpoint.sparqler = qef;
 		
 		
@@ -296,7 +302,7 @@ public class Main {
 		context.addServlet(sh, "/*");		
 
 		server.start();
-
-		// server.stop();
+		
+		return server;
 	}
 }

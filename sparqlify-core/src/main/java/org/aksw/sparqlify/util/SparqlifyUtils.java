@@ -879,6 +879,19 @@ public class SparqlifyUtils {
 	*/
 	
 	
+	public static Config parseSmlConfig(InputStream in, Logger logger) throws IOException, RecognitionException {
+		ConfigParser parser = new ConfigParser();
+
+		Config config = null;
+		try {
+			config = parser.parse(in, logger);
+		} finally {
+			in.close();
+		}
+
+		return config;
+	}
+	
 	public static Node getNode(Binding binding, Var var, Node fallbackNode) {
 		Node result = binding.get(var);
 		if(result == null) {

@@ -18,6 +18,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -79,7 +80,8 @@ public class SparqlifyCliHelper {
 		*/
 		
 		cpConfig.setMinConnectionsPerPartition(1);
-		cpConfig.setMaxConnectionsPerPartition(6);
+		cpConfig.setMaxConnectionsPerPartition(60);
+		cpConfig.setConnectionTimeoutInMs(5000);
 //		cpConfig.setMinConnectionsPerPartition(1);
 //		cpConfig.setMaxConnectionsPerPartition(1);
 		
@@ -124,17 +126,10 @@ public class SparqlifyCliHelper {
 			logger.error("File does not exist: " + configFileStr);
 			return null;
 		}
-
-		ConfigParser parser = new ConfigParser();
-
+		
 		InputStream in = new FileInputStream(configFile);
-		Config config = null;
-		try {
-			config = parser.parse(in, logger);
-		} finally {
-			in.close();
-		}
+		Config result = SparqlifyUtils.parseSmlConfig(in, logger);
 
-		return config;
+		return result;
 	}
 }

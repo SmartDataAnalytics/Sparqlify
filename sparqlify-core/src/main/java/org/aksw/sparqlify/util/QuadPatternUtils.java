@@ -1,10 +1,13 @@
 package org.aksw.sparqlify.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.aksw.sparqlify.csv.TripleUtils;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -17,6 +20,26 @@ import com.hp.hpl.jena.sparql.util.NodeComparator;
 import com.hp.hpl.jena.sparql.util.TripleComparator;
 
 public class QuadPatternUtils {
+	
+	public static String toNTripleString(QuadPattern quadPattern) throws Exception {
+		
+		List<Quad> quads = quadPattern.getList();
+		
+		String result = "";
+		
+		for(Quad quad : quads) {
+			Triple triple = quad.asTriple();
+			String tmp = TripleUtils.toNTripleString(triple);
+			
+			if(!result.isEmpty()) {
+				result += "\n";
+			}
+			
+			result += tmp;
+		}
+		
+		return result;
+	}
 	
 	public static QuadPattern create(Iterable<Quad> quads) {
 		QuadPattern result = new QuadPattern();
