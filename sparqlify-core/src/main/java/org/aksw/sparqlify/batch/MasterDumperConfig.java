@@ -3,8 +3,10 @@ package org.aksw.sparqlify.batch;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,17 +42,25 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
@@ -295,6 +305,12 @@ public class MasterDumperConfig {
 	@Autowired
 	private JobLauncher jobLauncher;
 	
+	//@Autowired
+	//private JobExplorer jobExplorer;
+	
+	@Autowired
+	private JobRepository jobRepository;
+	
 //	@Autowired
 //	private Logger logger;
 	
@@ -302,9 +318,48 @@ public class MasterDumperConfig {
 	@Bean
 	public Job job() throws Exception {
 	
-		System.out.println(jobLauncher);
+		JobExplorerFactoryBean jobExplorerFactory = new JobExplorerFactoryBean();
+		jobExplorerFactory.setDataSource(dumpConfig.getJobDataSource());
+		jobExplorerFactory.afterPropertiesSet();
 		
-		String jobName = "dummyJob";
+		JobExplorer jobExplorer = (JobExplorer)jobExplorerFactory.getObject();
+		
+		//System.out.println(jobLauncher);
+		
+		Date endTime = new Date();
+
+		List<String> jobNames = jobExplorer.getJobNames();
+		for(String jobName : jobNames) {
+			List<JobInstance> jobInstances = jobExplorer.getJobInstances(jobName, 0, 1000000);
+			
+			for(JobInstance jobInstance : jobInstances) {
+				List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobInstance);
+				
+				for(JobExecution jobExecution : jobExecutions) {
+					
+					Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
+					for(StepExecution stepExecution : stepExecutions) {
+						BatchStatus stepStatus = stepExecution.getStatus();
+						
+						if(stepStatus.equals(BatchStatus.STARTED)) {
+							stepExecution.setStatus(BatchStatus.STOPPED);
+							stepExecution.setEndTime(endTime);
+							jobRepository.update(stepExecution);
+						}
+					}
+					
+					BatchStatus jobStatus = jobExecution.getStatus();
+					if(jobStatus.equals(BatchStatus.STARTED)) {
+						jobExecution.setStatus(BatchStatus.STOPPED);
+						jobExecution.setEndTime(endTime);
+						jobRepository.update(jobExecution);
+					}
+				}
+			}
+		}
+		
+		
+		String jobName = "dumpJob";
 
 		List<ViewDefinitionStr> viewDefinitionStrs = new ArrayList<ViewDefinitionStr>(dumpConfig.getViewDefinitionStrs());
 		Collections.sort(viewDefinitionStrs, new Comparator<ViewDefinitionStr>() {
@@ -505,13 +560,37 @@ public class MasterDumperConfig {
 		logger.info("Processing init parameters complete, preparing launch ...");
 		
 		DataSource jobDataSource = dumpConfig.getJobDataSource();
-		
+
 		QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(jobDataSource, config, 1000l, 30);
-		Main.startSparqlEndpoint(qef, 5544);
+
+		final Server server = Main.createSparqlEndpoint(qef, 5544); 
 		
-		
-//		ApplicationContext context = new AnnotationConfigApplicationContext(DumpConfigProvider.class, MasterDumperConfig.class);
-//		context.getBean("job");
+		try {
+			Thread thread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						server.start();
+					} catch(Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+				
+			});
+			thread.start();
+	
+			Thread.sleep(2000);
+
+
+			ApplicationContext context = new AnnotationConfigApplicationContext(DumpConfigProvider.class, MasterDumperConfig.class);
+			context.getBean("job");
+		}
+		finally {
+			server.stop();
+		}
+
+
 		//context.
 	}
 }

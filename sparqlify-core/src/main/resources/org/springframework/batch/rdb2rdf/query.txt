@@ -1,0 +1,24 @@
+Prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix sb: <http://ns.aksw.org/spring/batch/>
+
+Select ?jiLabel ?jeId ?seLabel ?status ?readCount ?writeCount ?lastUpdated {
+  ?ji
+    a sb:JobInstance ;
+    sb:id ?jiId ;
+    rdfs:label ?jiLabel ;
+    sb:jobExecution ?je .
+
+  ?je
+    sb:id ?jeId ;
+    sb:stepExecution ?se .
+
+
+  ?se
+    sb:id ?seId ;
+    rdfs:label ?seLabel ;
+    sb:status ?status ;
+    sb:readCount ?readCount ;
+    sb:writeCount ?writeCount ;
+    sb:lastUpdated ?lastUpdated .
+}
+Order By ?jiId ?jeId Desc(?seId)

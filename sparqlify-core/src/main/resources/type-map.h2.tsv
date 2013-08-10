@@ -3,6 +3,7 @@ bool	boolean
 int2	integer
 int4	integer
 int8	integer
+BIGINT	integer
 integer	integer
 varchar	string
 VARCHAR string

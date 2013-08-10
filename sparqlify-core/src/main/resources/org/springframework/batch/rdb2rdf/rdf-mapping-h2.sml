@@ -19,10 +19,10 @@ Create View batchJobExecution As
       sb:status ?status ;
       sb:exitCode ?exitCode ;
       sb:exitMessage ?exitMessage ;
-      dc:modified ?lastUpdated .
+      sb:lastUpdated ?lastUpdated .
       
     ?jobInstance
-      sb:jobInstance ?s .
+      sb:jobExecution ?s .
   }
   With
     ?s           = uri(ns:jobExecution, ?JOB_EXECUTION_ID)
@@ -40,6 +40,7 @@ Create View batchJobExecution As
      BATCH_JOB_EXECUTION
 
 
+/*
 Create View batchJobExecutionContext As
   Construct {
       ?s
@@ -57,6 +58,21 @@ Create View batchJobExecutionContext As
       ?serializedContext = typedLiteral(?SERIALIZED_CONTEXT, xsd:string)
   From
     BATCH_JOB_EXECUTION_CONTEXT 
+*/
+
+Create View batchJobExecutionContext As
+  Construct {
+      ?jobExecution
+        sb:shortContext ?shortContext ;
+        sb:serializedContext ?serializedContext .
+  }
+  With
+      ?jobExecution      = uri(ns:jobExecution, ?JOB_EXECUTION_ID)
+      ?shortContext      = typedLiteral(?SHORT_CONTEXT, xsd:string)
+      ?serializedContext = typedLiteral(?SERIALIZED_CONTEXT, xsd:string)
+  From
+    BATCH_JOB_EXECUTION_CONTEXT 
+
 
 
 Create View batchJobExecutionParams As
@@ -93,7 +109,7 @@ Create View batchJobInstance As
     ?s
       a sb:JobInstance ;
       sb:id ?id ;
-      sb:name ?name ;
+      rdfs:label ?name ;
       sb:version ?version ;
       sb:key ?key .
   }
@@ -130,17 +146,17 @@ Create View batchStepExecution As
       
       sb:exitCode ?exitCode ;
       sb:exitMessage ?exitMessage ;
-      dc:modified ?lastUpdated .
+      sb:lastUpdated ?lastUpdated .
      
    ?jobExecution
-     sb:step ?s .
+     sb:stepExecution ?s .
   }
   With
     ?s           = uri(ns:stepExecution, ?STEP_EXECUTION_ID)
     ?id          = typedLiteral(?STEP_EXECUTION_ID, xsd:long)
     ?version     = typedLiteral(?VERSION, xsd:long)
     ?stepName    = plainLiteral(?STEP_NAME)
-    ?jobInstance = typedLiteral(?JOB_INSTANCE_ID, xsd:long)
+    //?jobInstance = typedLiteral(?JOB_INSTANCE_ID, xsd:long)
     ?startTime   = typedLiteral(?START_TIME, xsd:dateTime)
     ?endTime     = typedLiteral(?END_TIME, xsd:dateTime)
     ?status      = plainLiteral(?STATUS)
@@ -155,10 +171,26 @@ Create View batchStepExecution As
     ?exitCode    = plainLiteral(?EXIT_CODE)
     ?exitMessage = plainLiteral(?EXIT_MESSAGE)
     ?lastUpdated = typedLiteral(?LAST_UPDATED, xsd:dateTime)     
+    
+    ?jobExecution = uri(ns:jobExecution, ?JOB_EXECUTION_ID)
   From
      BATCH_STEP_EXECUTION
 
 
+Create View batchJobExecutionContext As
+  Construct {
+      ?stepExecution
+        sb:shortContext ?shortContext ;
+        sb:serializedContext ?serializedContext .
+  }
+  With
+      ?stepExecution     = uri(ns:stepExecution, ?STEP_EXECUTION_ID)
+      ?shortContext      = typedLiteral(?SHORT_CONTEXT, xsd:string)
+      ?serializedContext = typedLiteral(?SERIALIZED_CONTEXT, xsd:string)
+  From
+    BATCH_STEP_EXECUTION_CONTEXT 
+
+/*
 Create View batchJobExecutionContext As
   Construct {
       ?s
@@ -166,16 +198,17 @@ Create View batchJobExecutionContext As
         sb:shortContext ?shortContext ;
         sb:serializedContext ?serializedContext .
                 
-      ?jobExecution
+      ?stepExecution
         sb:stepExecutionContext ?s .
   }
   With
       ?s                 = uri(ns:stepExecutionContext, ?STEP_EXECUTION_ID)
-      ?jobExecution      = uri(ns:jobExecution, ?STEP_EXECUTION_ID)
+      ?stepExecution      = uri(ns:stepExecution, ?STEP_EXECUTION_ID)
       ?shortContext      = typedLiteral(?SHORT_CONTEXT, xsd:string)
       ?serializedContext = typedLiteral(?SERIALIZED_CONTEXT, xsd:string)
   From
     BATCH_STEP_EXECUTION_CONTEXT 
-
+*/
  
+
  
