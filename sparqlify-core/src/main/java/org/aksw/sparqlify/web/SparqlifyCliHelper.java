@@ -84,7 +84,7 @@ public class SparqlifyCliHelper {
 //		cpConfig.setMinConnectionsPerPartition(1);
 //		cpConfig.setMaxConnectionsPerPartition(1);
 		
-		cpConfig.setPartitionCount(4);
+		cpConfig.setPartitionCount(1);
 		//BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool	
 
 		BoneCPDataSource dataSource = new BoneCPDataSource(cpConfig);
