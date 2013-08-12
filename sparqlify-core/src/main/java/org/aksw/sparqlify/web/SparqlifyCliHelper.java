@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
@@ -92,6 +91,7 @@ public class SparqlifyCliHelper {
 
 		return dataSource;
 	}
+	
 
 	public static List<ViewDefinition> extractViewDefinitions(List<org.aksw.sparqlify.config.syntax.ViewDefinition> viewDefinitions, DataSource dataSource, TypeSystem typeSystem, Map<String, String> typeAlias, Logger logger) throws SQLException {
 //		Connection conn;
@@ -112,6 +112,27 @@ public class SparqlifyCliHelper {
 
 		return result;
 	}
+	
+	public static Integer parseInt(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
+		String valueStr = commandLine.getOptionValue(optName);
+		
+		Integer result = null;
+		if(valueStr == null) {
+			if(mustExist) {
+				logger.error("Argument required for option '" + optName + "'"); //"No mapping file given");			
+			}
+		} else {
+
+			try {
+				 result = Integer.parseInt(valueStr);
+			} catch(Exception e) {
+				logger.error("Integer value expected for argument '" + optName + "', got '" + valueStr + "' instead.");
+			}
+		}
+		
+		return result;
+	}
+
 
 	public static File parseFile(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
 		String fileName = commandLine.getOptionValue(optName);

@@ -21,13 +21,67 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 public class MakeNodeValue
 {
-	public static NodeValue makeNodeValue(Object o)
+	public static NodeValue makeNodeValueWorkingButSlow(Object o)
 	{
 		if(o == null) {
 			return null;
 		}
 		
 		return (NodeValue)MultiMethod.invokeStatic(MakeNodeValue.class, "_makeNodeValue", o);
+	}
+
+	public static NodeValue makeNodeValue(Object o)
+	{
+		NodeValue result;
+		if(o == null) {
+			result = null;
+		}
+		else if(o instanceof Integer) {
+			result = _makeNodeValue((Integer)o);
+		}
+		else if(o instanceof String) {
+			result = _makeNodeValue((String)o);
+		}
+		else if(o instanceof Boolean) {
+			result = _makeNodeValue((Boolean)o);
+		}
+		else if(o instanceof Long) {
+			result = _makeNodeValue((Long)o);
+		}
+		else if(o instanceof Float) {
+			result = _makeNodeValue((Float)o);
+		}
+		else if(o instanceof Double) {
+			result = _makeNodeValue((Double)o);
+		}
+		else if(o instanceof Calendar) {
+			result = _makeNodeValue((Calendar)o);
+		}
+		else if(o instanceof Timestamp) {
+			result = _makeNodeValue((Timestamp)o);
+		}
+		else if(o instanceof Date) {
+			result = _makeNodeValue((Date)o);
+		}
+		else if(o instanceof BigDecimal) {
+			result = _makeNodeValue((BigDecimal)o);
+		}
+		else if(o instanceof byte[]) {
+			result = _makeNodeValue((byte[])o);
+		}
+		else if(o instanceof JdbcClob) {
+			result = _makeNodeValue((JdbcClob)o);
+		}
+		else if(o instanceof PGobject) {
+			result = _makeNodeValue((PGobject)o);
+		} 
+		else {
+			throw new RuntimeException("Unknown argument type " + o.getClass() + " of object " + o);
+		}
+
+		return result;
+		
+		//return (NodeValue)MultiMethod.invokeStatic(MakeNodeValue.class, "_makeNodeValue", o);
 	}
 
 	public static NodeValue _makeNodeValue(byte[] bytes) {
@@ -37,34 +91,35 @@ public class MakeNodeValue
 		return result;
 	}
 	
-	public static NodeValue _makeNodeValue(BigDecimal o) {
-		return NodeValue.makeDecimal(o);
+
+	public static NodeValue _makeNodeValue(Double o) {
+		return NodeValue.makeNodeDouble(o);
 	}
 
 	public static NodeValue _makeNodeValue(Float o) {
 		return NodeValue.makeFloat(o);
 	}
 
+	public static NodeValue _makeNodeValue(BigDecimal o) {
+		return NodeValue.makeDecimal(o);
+	}
+
 	public static NodeValue _makeNodeValue(Boolean o) {
 		return NodeValue.makeBoolean(o);
+	}
+
+	public static NodeValue _makeNodeValue(Long o) {
+		return NodeValue.makeNodeInteger(o);
 	}
 	
 	public static NodeValue _makeNodeValue(Integer o) {
 		return NodeValue.makeNodeInteger(o);
 	}
 
-	public static NodeValue _makeNodeValue(Double o) {
-		return NodeValue.makeNodeDouble(o);
-	}
-
 	public static NodeValue _makeNodeValue(String o) {
 		return NodeValue.makeNodeString(o);
 	}
-	
-	public static NodeValue _makeNodeValue(Long o) {
-		return NodeValue.makeNodeInteger(o);
-	}
-	
+
 	public static NodeValue _makeNodeValue(Calendar o)
 	{
 		return NodeValue.makeDate(o);

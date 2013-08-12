@@ -112,7 +112,11 @@ class DumpConfigProvider {
 		//return new SyncTaskExecutor();
 
 		SimpleAsyncTaskExecutor result = new SimpleAsyncTaskExecutor();
-		result.setConcurrencyLimit(8);
+		result.setDaemon(true);
+		Integer threadCount = dumpConfig.getThreadCount();
+		if(threadCount != null) {
+			result.setConcurrencyLimit(threadCount);
+		}
 
 		return result;
 		/*
@@ -135,15 +139,16 @@ class DumpConfig {
 	private String outBaseDir;
 	
 	private List<ViewDefinitionStr> viewDefinitionStrs;
-
+	private Integer threadCount;
 	
 	public DumpConfig(DataSource jobDataSource, DataSource userDataSource, String outBaseDir,
-			List<ViewDefinitionStr> viewDefinitionStrs) {
+			List<ViewDefinitionStr> viewDefinitionStrs, Integer threadCount) {
 		super();
 		this.jobDataSource = jobDataSource;
 		this.userDataSource = userDataSource;
 		this.outBaseDir = outBaseDir;
 		this.viewDefinitionStrs = viewDefinitionStrs;
+		this.threadCount = threadCount;
 	}
 
 	public Config getConfig() {
@@ -164,6 +169,10 @@ class DumpConfig {
 
 	public List<ViewDefinitionStr> getViewDefinitionStrs() {
 		return viewDefinitionStrs;
+	}
+	
+	public Integer getThreadCount() {
+		return threadCount;
 	}
 }
 
@@ -460,6 +469,7 @@ public class MainSparqlifyBatchDumper {
 
 		});
 	
+
 		
 		DataSource userDataSource = dumpConfig.getUserDataSource();
 		
@@ -551,6 +561,7 @@ public class MainSparqlifyBatchDumper {
 		itemReader.setSql(vds.getSqlQueryString());
 		itemReader.setDataSource(dataSource);
 		itemReader.setRowMapper(rowMapper);
+		itemReader.afterPropertiesSet();
 		//itemReader.setSaveState(true);
 		//itemReader.afterPropertiesSet();
 
@@ -562,7 +573,10 @@ public class MainSparqlifyBatchDumper {
 		itemWriter.setLineAggregator(new PassThroughLineAggregator<String>());
 		itemWriter.setResource(outResource);
 		itemWriter.setShouldDeleteIfExists(false);
-		itemWriter.setForceSync(true);
+		itemWriter.setForceSync(false);
+		itemWriter.setTransactional(false);
+		itemWriter.afterPropertiesSet();
+		
 		
 		//itemWriter.setSaveState(true);
 		//itemWriter.setAppendAllowed(true);
@@ -581,7 +595,6 @@ public class MainSparqlifyBatchDumper {
 		
 
 		ItemProcessor<Binding, String> itemProcessor = new MyItemProcessor(vds.getTemplate(), vds.getSparqlVarMap());
-
 
 		Step result = steps.get(vds.getName())
 				.<Binding, String>chunk(10000)
@@ -614,6 +627,7 @@ public class MainSparqlifyBatchDumper {
 		cliOptions.addOption("c", "class", true, "JDBC driver class");
 		cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
 		cliOptions.addOption("o", "outfolder", true, "Folder where to write the output");
+		cliOptions.addOption("T", "threads", true, "Number of threads to use for dumping views in parallel");
 		
 		// TODO Rename to m for mapping file soon
 		cliOptions.addOption("m", "mapping", true, "Sparqlify mapping file");
@@ -631,7 +645,8 @@ public class MainSparqlifyBatchDumper {
 
 
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
-
+		
+		
 		
 		File outBaseDir = SparqlifyCliHelper.parseFile(commandLine, "o", false, loggerCount);
 		String outBaseDirName = outBaseDir.getAbsolutePath();
@@ -642,6 +657,8 @@ public class MainSparqlifyBatchDumper {
 			outBaseDir.mkdirs();
 		}
 
+		
+		Integer threadCount = SparqlifyCliHelper.parseInt(commandLine, "T", false, loggerCount);
 		
 		DataSource userDataSource = SparqlifyCliHelper.parseDataSource(commandLine, loggerCount);
 		Config config = SparqlifyCliHelper.parseSmlConfig(commandLine, loggerCount);
@@ -682,7 +699,7 @@ public class MainSparqlifyBatchDumper {
 		DataSource jobDataSource = MasterDumper.createJobDataSource("sparqlify-dump");
 		MasterDumper.populateSpringBatchH2(jobDataSource);
 		
-		DumpConfig dumpConfig = new DumpConfig(jobDataSource, userDataSource, outBaseDirName, viewDefinitionStrs);
+		DumpConfig dumpConfig = new DumpConfig(jobDataSource, userDataSource, outBaseDirName, viewDefinitionStrs, threadCount);
 
 		return dumpConfig;
 	}

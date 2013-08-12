@@ -21,4 +21,4 @@ Select ?jiLabel ?jeId ?seLabel ?status ?readCount ?writeCount ?lastUpdated {
     sb:writeCount ?writeCount ;
     sb:lastUpdated ?lastUpdated .
 }
-Order By ?jiId ?jeId Desc(?seId)
+Order By ?status ?jiId ?jeId Desc(?seId)

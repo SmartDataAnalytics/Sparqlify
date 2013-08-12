@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.aksw.sparqlify.core.MakeNodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.hp.hpl.jena.graph.Node;
@@ -19,6 +21,8 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
 public class RowMapperSparqlifyBinding
 	implements RowMapper<Binding>
 {
+	private static final Logger logger = LoggerFactory.getLogger(RowMapperSparqlifyBinding.class);
+	
 	//private long nextRowId;
 	private Var rowIdVar;
 
@@ -100,7 +104,13 @@ public class RowMapperSparqlifyBinding
 				String val = tmp.replace(' ', 'T');
 				nodeValue = NodeValue.makeDateTime(val);
 			} else {
-				nodeValue = MakeNodeValue.makeNodeValue(colValue);
+				try {
+					nodeValue = MakeNodeValue.makeNodeValue(colValue);
+				} catch (Exception e) {
+					logger.error("TODO: Handle unknown column type for " + colValue + " type: " + colValue.getClass());
+					nodeValue = null;
+					//throw new RuntimeException(e);
+				}
 			}
 			
 			if(nodeValue == null) {
