@@ -79,13 +79,13 @@ public class SparqlifyCliHelper {
 		cpConfig.setPassword(dbconf.getPassword());
 		*/
 		
-		cpConfig.setMinConnectionsPerPartition(1);
-		cpConfig.setMaxConnectionsPerPartition(60);
+		cpConfig.setMinConnectionsPerPartition(2);
+		cpConfig.setMaxConnectionsPerPartition(8);
 		cpConfig.setConnectionTimeoutInMs(5000);
 //		cpConfig.setMinConnectionsPerPartition(1);
 //		cpConfig.setMaxConnectionsPerPartition(1);
 		
-		cpConfig.setPartitionCount(1);
+		cpConfig.setPartitionCount(4);
 		//BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool	
 
 		BoneCPDataSource dataSource = new BoneCPDataSource(cpConfig);

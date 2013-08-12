@@ -59,6 +59,15 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.builder.SimpleJobBuilder;
+import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.job.flow.FlowExecutionStatus;
+import org.springframework.batch.core.job.flow.FlowJob;
+import org.springframework.batch.core.job.flow.FlowStep;
+import org.springframework.batch.core.job.flow.support.SimpleFlow;
+import org.springframework.batch.core.job.flow.support.StateTransition;
+import org.springframework.batch.core.job.flow.support.state.EndState;
+import org.springframework.batch.core.job.flow.support.state.SplitState;
+import org.springframework.batch.core.job.flow.support.state.StepState;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemProcessor;
@@ -73,6 +82,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.google.common.collect.Multimap;
@@ -93,6 +104,24 @@ class DumpConfigProvider {
 	@Bean(name="jobDataSource")
 	DataSource createJobDatasource() {
 		return dumpConfig.getJobDataSource();
+	}
+	
+	@Bean
+	TaskExecutor taskExecutor() {
+		//return new SyncTaskExecutor();
+
+		SimpleAsyncTaskExecutor result = new SimpleAsyncTaskExecutor();
+		result.setConcurrencyLimit(8);
+
+		return result;
+		/*
+		ThreadPoolTaskExecutor result = new ThreadPoolTaskExecutor();
+		result.setCorePoolSize(4);
+		result.setMaxPoolSize(4);
+		result.setQueueCapacity(0);
+		result.setRejectedExecutionHandler(new CallerRunsPolicy());
+		return result;
+		*/
 	}
 }
 
@@ -282,6 +311,8 @@ class ViewDefinitionStrFactory
 		
 		String sqlQueryString = sqlOpSerializer.serialize(tmp);
 		
+		sqlQueryString = "Select * from nodes";
+		
 		ViewDefinitionStr result = new ViewDefinitionStr(name, template, sparqlVarMap, sqlQueryString);
 
 		return result;
@@ -311,18 +342,75 @@ public class MasterDumperConfig {
 	@Autowired
 	private JobRepository jobRepository;
 	
+	@Autowired
+	private TaskExecutor taskExecutor;
+	
 //	@Autowired
 //	private Logger logger;
 	
 	
+	public SimpleFlow create(List<Step> steps) throws Exception {
+		
+		List<Flow> flows = new ArrayList<Flow>();
+		int i = 1;
+		for(Step step : steps) {
+			List<StateTransition> stateTransitions = new ArrayList<StateTransition>();
+			
+			
+			String nextStateName = "state-" + i;			
+			
+			StepState stepState = new StepState(step);
+			
+			stateTransitions.add(StateTransition.createStateTransition(stepState, nextStateName));
+			stateTransitions.add(StateTransition.createEndStateTransition(new EndState(FlowExecutionStatus.COMPLETED, nextStateName)));
+			//StateTransition.createStateTransition(stepState, next);
+
+			//StateTransition startToSuccess = StateTransition.createEndStateTransition(new EndState(FlowExecutionStatus.COMPLETED, ));
+			//StateTransition stateToFail = StateTransition.createEndStateTransition(new EndState(FlowExecutionStatus.FAILED, "end3"));
+
+			//stateTransitions.add(stateToFail);
+
+			
+			SimpleFlow flow = new SimpleFlow("flow-" + i);
+			
+			flow.setStateTransitions(stateTransitions);
+			flow.afterPropertiesSet();
+
+			flows.add(flow);
+		}
+		SplitState splitState = new SplitState(flows, "splitState");
+		splitState.setTaskExecutor(taskExecutor);
+
+		
+		
+		SimpleFlow outerFlow = new SimpleFlow("main");
+		List<StateTransition> outerTransitions = new ArrayList<StateTransition>();
+		outerTransitions.add(StateTransition.createStateTransition(splitState, "fullEnd"));
+		outerTransitions.add(StateTransition.createEndStateTransition(new EndState(FlowExecutionStatus.COMPLETED, "fullEnd")));
+
+		outerFlow.setStateTransitions(outerTransitions);
+		outerFlow.afterPropertiesSet();
+		return outerFlow;
+	}
+
+	
+	
 	@Bean
 	public Job job() throws Exception {
+
+		//SimpleJobLauncher simpleJobLauncher = (SimpleJobLauncher) jobLauncher;
+		//simpleJobLauncher.setJobRepository(jobRepository);
+		//simpleJobLauncher.setTaskExecutor(taskExecutor);
+		//jobLauncher = simpleJobLauncher;
+		
 	
 		JobExplorerFactoryBean jobExplorerFactory = new JobExplorerFactoryBean();
 		jobExplorerFactory.setDataSource(dumpConfig.getJobDataSource());
 		jobExplorerFactory.afterPropertiesSet();
 		
 		JobExplorer jobExplorer = (JobExplorer)jobExplorerFactory.getObject();
+		
+		
 		
 		//System.out.println(jobLauncher);
 		
@@ -374,13 +462,24 @@ public class MasterDumperConfig {
 		
 		DataSource userDataSource = dumpConfig.getUserDataSource();
 		
-		JobBuilder jobBuilder = jobs.get(jobName);
-		
+		JobBuilder jobBuilder = jobs.get(jobName);		
 		SimpleJobBuilder sjb = null;
 		
+		FlowJob flowJob = new FlowJob(jobName);
+		
+		List<StateTransition> transitions = new ArrayList<StateTransition>();
+		
+		//SplitBuilder<FlowJobBuilder> sjb = null;
+		
+		boolean isSequentialStepExecution = false;
+
+
+		List<Step> steps = new ArrayList<Step>();
 		for(ViewDefinitionStr vds : viewDefinitionStrs) {
 
-			//String baseName = StringUtils.urlEncode(viewDefinition.getName());
+			String baseName = StringUtils.urlEncode(vds.getName());
+			String flowName = "flow-" + baseName;
+			
 			//String taskletName = "dump-" + baseName;
 
 			//loggerCount.info("Processing view [" + viewDefinition.getName() + "]");
@@ -390,15 +489,42 @@ public class MasterDumperConfig {
 			
 			Step step = createStep("foobar-", userDataSource, vds, dumpConfig.getOutBaseDir()); 
 
-			if(sjb == null) {
-				sjb = jobBuilder.start(step);
+			
+			
+			if(isSequentialStepExecution) {
+
+				if(sjb == null) {
+					sjb = jobBuilder.start(step);
+					//sjb = jobBuilder.flow(step).split(taskExecutor);
+				} else {
+					sjb.next(step);
+					//Flow x = jobBuilder.flow(step).end().build().
+				}
+				
 			} else {
-				sjb.next(step);
+
+				steps.add(step);
+				
 			}
 		}
 		
 
-		Job result  = sjb.build();
+		Job result;
+		if(isSequentialStepExecution) {
+			result  = sjb.build(); 
+		} else {
+			SimpleFlow flow = create(steps);
+			FlowStep flowStep = new FlowStep(flow);
+			flowStep.setFlow(flow);
+			flowStep.setJobRepository(jobRepository);
+			flowStep.afterPropertiesSet();
+		
+			result = jobBuilder.start(flowStep).build();			
+		}
+		
+		
+		
+		//Job result = jobBuilder.
 
 		JobParameters jobParameters = new JobParameters();
 		jobLauncher.run(result, jobParameters);
@@ -417,7 +543,9 @@ public class MasterDumperConfig {
 		RowMapper<Binding> rowMapper = new RowMapperSparqlifyBinding();
 		
 		JdbcCursorItemReader<Binding> itemReader = new JdbcCursorItemReader<Binding>();
-		itemReader.setFetchSize(50000);
+		//itemReader.setFetchSize(10000);
+		itemReader.setSaveState(false);
+		itemReader.setVerifyCursorPosition(false);
 		//itemReader.setSaveState(true);
 		itemReader.setSql(vds.getSqlQueryString());
 		itemReader.setDataSource(dataSource);
@@ -425,6 +553,8 @@ public class MasterDumperConfig {
 		//itemReader.setSaveState(true);
 		//itemReader.afterPropertiesSet();
 
+		
+		// DataSourceTransactionManager
 		
 		FlatFileItemWriter<String> itemWriter = new FlatFileItemWriter<String>();
 		//itemWriter.set
@@ -453,7 +583,7 @@ public class MasterDumperConfig {
 
 
 		Step result = steps.get(vds.getName())
-				.<Binding, String>chunk(10)
+				.<Binding, String>chunk(10000)
 				.reader(itemReader)
 				.processor(itemProcessor)
 				.writer(itemWriter)
