@@ -113,19 +113,41 @@ public class SparqlifyCliHelper {
 		return result;
 	}
 
+	public static File parseFile(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
+		String fileName = commandLine.getOptionValue(optName);
+
+		if (fileName == null) {
+			logger.error("File or folder name required for option '" + optName + "'"); //"No mapping file given");
+			return null;
+		}
+
+		File file = new File(fileName);
+		if (mustExist && !file.exists()) {
+			logger.error("File does not exist: " + fileName);
+			return null;
+		}
+		
+		return file;
+	}
+	
 	public static Config parseSmlConfig(CommandLine commandLine, Logger logger) throws IOException, RecognitionException {
-		String configFileStr = commandLine.getOptionValue("m");
-
-		if (configFileStr == null) {
-			logger.error("No mapping file given");
+		File configFile = parseFile(commandLine, "m", true, logger);
+		if(configFile == null) {
 			return null;
 		}
-
-		File configFile = new File(configFileStr);
-		if (!configFile.exists()) {
-			logger.error("File does not exist: " + configFileStr);
-			return null;
-		}
+		
+//		String configFileStr = commandLine.getOptionValue("m");
+//
+//		if (configFileStr == null) {
+//			logger.error("No mapping file given");
+//			return null;
+//		}
+//
+//		File configFile = new File(configFileStr);
+//		if (!configFile.exists()) {
+//			logger.error("File does not exist: " + configFileStr);
+//			return null;
+//		}
 		
 		InputStream in = new FileInputStream(configFile);
 		Config result = SparqlifyUtils.parseSmlConfig(in, logger);

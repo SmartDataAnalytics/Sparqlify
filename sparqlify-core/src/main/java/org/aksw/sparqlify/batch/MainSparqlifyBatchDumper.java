@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.batch;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ class DumpConfig {
 	private DataSource jobDataSource;
 	private DataSource userDataSource;
 
-	private String outBaseDir = "/tmp/";
+	private String outBaseDir;
 	
 	private List<ViewDefinitionStr> viewDefinitionStrs;
 
@@ -311,7 +312,7 @@ class ViewDefinitionStrFactory
 		
 		String sqlQueryString = sqlOpSerializer.serialize(tmp);
 		
-		sqlQueryString = "Select * from nodes";
+		//sqlQueryString = "Select * from nodes";
 		
 		ViewDefinitionStr result = new ViewDefinitionStr(name, template, sparqlVarMap, sqlQueryString);
 
@@ -323,7 +324,7 @@ class ViewDefinitionStrFactory
 @Configuration
 @EnableBatchProcessing
 //@Import(DataSourceConfig.class)
-public class MasterDumperConfig {
+public class MainSparqlifyBatchDumper {
 	@Autowired
 	private JobBuilderFactory jobs;
 	
@@ -537,13 +538,13 @@ public class MasterDumperConfig {
 
 		String baseName = StringUtils.urlEncode(vds.getName());
 		String outFileName = outBaseDir + baseName + ".nt";
-		Resource outResource = new FileSystemResource(outBaseDir + outFileName);
+		Resource outResource = new FileSystemResource(outFileName);
 
 		
 		RowMapper<Binding> rowMapper = new RowMapperSparqlifyBinding();
 		
 		JdbcCursorItemReader<Binding> itemReader = new JdbcCursorItemReader<Binding>();
-		//itemReader.setFetchSize(10000);
+		itemReader.setFetchSize(50000);
 		itemReader.setSaveState(false);
 		itemReader.setVerifyCursorPosition(false);
 		//itemReader.setSaveState(true);
@@ -612,6 +613,7 @@ public class MasterDumperConfig {
 		cliOptions.addOption("h", "hostname", true, "");
 		cliOptions.addOption("c", "class", true, "JDBC driver class");
 		cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
+		cliOptions.addOption("o", "outfolder", true, "Folder where to write the output");
 		
 		// TODO Rename to m for mapping file soon
 		cliOptions.addOption("m", "mapping", true, "Sparqlify mapping file");
@@ -629,6 +631,17 @@ public class MasterDumperConfig {
 
 
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
+
+		
+		File outBaseDir = SparqlifyCliHelper.parseFile(commandLine, "o", false, loggerCount);
+		String outBaseDirName = outBaseDir.getAbsolutePath();
+		
+		if(outBaseDir.exists() && !outBaseDir.isDirectory()) {
+			loggerCount.error("Folder required; " + outBaseDirName + " is refers to file.");
+		} else if(!outBaseDir.exists()) {
+			outBaseDir.mkdirs();
+		}
+
 		
 		DataSource userDataSource = SparqlifyCliHelper.parseDataSource(commandLine, loggerCount);
 		Config config = SparqlifyCliHelper.parseSmlConfig(commandLine, loggerCount);
@@ -669,9 +682,7 @@ public class MasterDumperConfig {
 		DataSource jobDataSource = MasterDumper.createJobDataSource("sparqlify-dump");
 		MasterDumper.populateSpringBatchH2(jobDataSource);
 		
-
-		String outBaseDir = "/tmp/";
-		DumpConfig dumpConfig = new DumpConfig(jobDataSource, userDataSource, outBaseDir, viewDefinitionStrs);
+		DumpConfig dumpConfig = new DumpConfig(jobDataSource, userDataSource, outBaseDirName, viewDefinitionStrs);
 
 		return dumpConfig;
 	}
@@ -713,7 +724,7 @@ public class MasterDumperConfig {
 			Thread.sleep(2000);
 
 
-			ApplicationContext context = new AnnotationConfigApplicationContext(DumpConfigProvider.class, MasterDumperConfig.class);
+			ApplicationContext context = new AnnotationConfigApplicationContext(DumpConfigProvider.class, MainSparqlifyBatchDumper.class);
 			context.getBean("job");
 		}
 		finally {
