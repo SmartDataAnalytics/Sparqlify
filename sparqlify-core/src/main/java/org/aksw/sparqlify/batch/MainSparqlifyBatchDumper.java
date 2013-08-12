@@ -537,7 +537,7 @@ public class MainSparqlifyBatchDumper {
 	protected Step createStep(String stepName, DataSource dataSource, ViewDefinitionStr vds, String outBaseDir) throws Exception {
 
 		String baseName = StringUtils.urlEncode(vds.getName());
-		String outFileName = outBaseDir + baseName + ".nt";
+		String outFileName = outBaseDir + "/" + baseName + ".nt";
 		Resource outResource = new FileSystemResource(outFileName);
 
 		
