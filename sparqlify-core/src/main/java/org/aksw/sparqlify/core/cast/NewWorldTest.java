@@ -16,6 +16,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalA
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseInt;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_PassThrough;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_SqlRewrite;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
@@ -27,6 +29,7 @@ import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
+import org.aksw.sparqlify.core.transformations.ExprTransformer;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
@@ -42,6 +45,7 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 import com.hp.hpl.jena.vocabulary.XSD;
+import com.thoughtworks.xstream.io.binary.Token;
 
 /* This is the SqlExprTransformer
  interface ExprTypeEvaluator {
@@ -112,6 +116,15 @@ class SparqlEvaluatorTypeSystem implements SqlExprEvaluator {
 }
 
 
+// The question is, whether a SqlValue transformer should be a
+// subClassOf SqlExprEvaluator.
+interface Foo
+	extends SqlExprEvaluator
+{
+	SqlExpr eval(List<SqlExpr> args);
+}
+
+
 interface SqlValueTransformer {
 	SqlValue transform(SqlValue nodeValue) throws CastException;
 }
@@ -156,6 +169,46 @@ class SqlValueTransformerInteger
 	}
 }
 
+
+class SqlValueTransformerFloat
+	implements SqlValueTransformer
+{
+	/**
+	 * TODO The transformer should be able to cast to specific subtypes of int
+	 * so: How to handle e.g. the case: (int2)1234 ???
+	 * 
+	 * In the generic case, we would need something such as e.g.
+	 * castToInt(int byteCount, Object value)
+	 * 
+	 * @param sqlValue
+	 * @return
+	 * @throws CastException
+	 */
+	@Override
+	public SqlValue transform(SqlValue sqlValue) throws CastException {
+		
+		
+		String str = "" + sqlValue.getValue(); 
+		//TypeMapper tm = TypeMapper.getInstance();
+	
+		//String typeName = TypeToken.Int.toString();
+		Float v;
+		try {
+			v = Float.parseFloat(str);
+		} catch(NumberFormatException e) {
+			throw new CastException("Could not cast " + str + " to float");
+		}
+		
+		
+		SqlValue result = new SqlValue(TypeToken.Float, v);
+		// String typeName = XSD.integer.toString();
+		//RDFDatatype dt = tm.getSafeTypeByName(typeName);
+	
+		//Node node = Node.createLiteral(str, dt);
+		//NodeValue result = NodeValue.makeNode(node);
+		return result;
+	}
+}
 
 
 class NodeValueTransformerInteger implements NodeValueTransformer {
@@ -226,6 +279,7 @@ public class NewWorldTest {
 
 			// TODO HACK Do not add types programmatically 
 			physicalTypeMap.put("INTEGER", "int");
+			physicalTypeMap.put("FLOAT", "float");
 			
 			//typeHierarchy.putAll(physicalTypeMap);
 			
@@ -309,6 +363,9 @@ public class NewWorldTest {
 		cs.registerCoercion(TypeToken.String, TypeToken.alloc("int"),
 				new SqlValueTransformerInteger());
 
+		
+		cs.registerCoercion(TypeToken.Int, TypeToken.Float,
+				new SqlValueTransformerFloat());
 		
 		
 		// TODO Finally clean up the TypeSystem 
@@ -456,6 +513,28 @@ public class NewWorldTest {
 		
 		//sqlModel.getInverses().put();
 		sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());
+		
+
+		
+		
+
+		// Geographic
+		TypeToken typeGeometry = TypeToken.alloc("geometry");
+		String bif = "http://www.openlinksw.com/schemas/bif#";
+
+		
+		sqlModel.registerFunction("geometry ST_GeomFromPoint(float, float)", "ST_GeomFromPoint", MethodSignature.create(false, typeGeometry, TypeToken.Float, TypeToken.Float));
+		sparqlSqlDecls.putAll(bif + "st_point", sqlModel.getIdsByName("ST_GeomFromPoint"));
+		sqlImpls.put("geometry ST_GeomFromPoint(float, float)", new SqlExprEvaluator_PassThrough(typeGeometry, "ST_GeomFromPoint"));
+
+		sqlModel.registerFunction("boolean ST_Intersects(geometry, geometry, float)", "ST_Intersects", MethodSignature.create(false, TypeToken.Boolean, typeGeometry, typeGeometry, TypeToken.Float));
+		sparqlSqlDecls.putAll(bif + "st_intersects", sqlModel.getIdsByName("ST_Intersects"));
+		sqlImpls.put("boolean ST_Intersects(geometry, geometry, float)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_Intersects"));
+
+				
+		
+		sqlModel.registerCoercion("float toFloat(int)", "toFloat", MethodSignature.create(false, TypeToken.Float, TypeToken.Int));
+		//sqlImpls.put("float toFloat(int)", new SqlE);
 		
 		
 		

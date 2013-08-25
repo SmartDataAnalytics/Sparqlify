@@ -559,20 +559,26 @@ public class TypedExprTransformerImpl
 		MethodEntry<TypeToken> method = candidate.getMethod();
 		List<CandidateMethod<TypeToken>> coercions = candidate.getCoercions();
 		
-		// Apply coercions
-		List<SqlExpr> newArgs = new ArrayList<SqlExpr>(args.size());
-		for(int i = 0; i < args.size(); ++i) {
-			SqlExpr arg = args.get(i);
-			CandidateMethod<TypeToken> coercion = coercions.get(i);
-			
-			SqlExpr newArg;
-			if(coercion != null) {
-				newArg = createSqlExpr(coercion, Collections.singletonList(arg));
-			} else {
-				newArg = arg;
+		List<SqlExpr> newArgs;
+		if(coercions != null) {
+		
+			// Apply coercions
+			newArgs = new ArrayList<SqlExpr>(args.size());
+			for(int i = 0; i < args.size(); ++i) {
+				SqlExpr arg = args.get(i);
+				CandidateMethod<TypeToken> coercion = coercions.get(i);
+				
+				SqlExpr newArg;
+				if(coercion != null) {
+					newArg = createSqlExpr(coercion, Collections.singletonList(arg));
+				} else {
+					newArg = arg;
+				}
+				
+				newArgs.add(newArg);
 			}
-			
-			newArgs.add(newArg);
+		} else {
+			newArgs = args;
 		}
 		
 		TypeToken returnType = method.getSignature().getReturnType();

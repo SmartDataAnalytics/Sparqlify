@@ -7,6 +7,8 @@ import java.util.List;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 interface CoercionSystemOld<T, M> {
 	M lookup(T source, T target);
@@ -15,6 +17,8 @@ interface CoercionSystemOld<T, M> {
 
 public class TypeHierarchyUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(TypeHierarchyUtils.class);
+	
 	public static <M> Integer getRelation(TypeDistance<M> a, TypeDistance<M> b) {
 
 		int result;
@@ -190,8 +194,9 @@ public class TypeHierarchyUtils {
 		++depth;
 
 		int result = Integer.MAX_VALUE;
+
 		Collection<T> superTypes = DirectSuperTypeProvider.getDirectSuperTypes(given);
-		for (T item : superTypes) {
+		for (T item : superTypes) {			
 			result = Math
 					.min(result, _getDistanceInterface(item, there, depth, DirectSuperTypeProvider));
 		}

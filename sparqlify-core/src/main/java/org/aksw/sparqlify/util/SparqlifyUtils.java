@@ -23,6 +23,7 @@ import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerCase;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerElse;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1Prefix;
@@ -506,6 +507,28 @@ public class SparqlifyUtils {
 			result.addSerializer("str@int", serializer);
 		}
 
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float");
+			result.addSerializer("float toFloat(int)", serializer);
+		}
+
+		{
+			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_GeomFromPoint");
+			result.addSerializer("geometry ST_GeomFromPoint(float, float)", new SqlFunctionSerializer() {				
+				@Override
+				public String serialize(List<String> args) {
+					return "ST_SetSRID(ST_Point(" + args.get(0) + ", " + args.get(1) + "), 4326)";
+				}
+			});
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_DWithin");
+			result.addSerializer("boolean ST_Intersects(geometry, geometry, float)", serializer);
+		}
+		
+		
 		
 		// Cast is built in
 //		{

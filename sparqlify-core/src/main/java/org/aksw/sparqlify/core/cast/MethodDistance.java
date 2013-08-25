@@ -33,4 +33,35 @@ public class MethodDistance {
 		return argTypeDistances;
 	}
 
+
+	@Override
+	public String toString() {
+		return "MethodDistance [" + returnTypeDistance + "; " 
+				+ argTypeDistances + "]";
+	}
+	
+	
+	public Integer compare(MethodDistance that) {
+		Integer result = null;
+		
+		if(this.argTypeDistances.size() == that.argTypeDistances.size()) {
+			
+			result = 0;
+			for(int i = 0; i < this.argTypeDistances.size(); ++i) {
+				ParamDistance a = this.argTypeDistances.get(i);
+				ParamDistance b = that.argTypeDistances.get(i);
+				
+				int d = a.compareTo(b);
+				if(result == -d) {
+					result = null;
+					break;
+				}
+				
+				result = d;
+			}
+		} 
+		
+		return result;
+	}
 }
+

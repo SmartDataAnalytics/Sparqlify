@@ -319,6 +319,12 @@ public class TypeSystemImpl
 			TypeToken subType = TypeToken.alloc(entry.getKey());
 			TypeToken superType = TypeToken.alloc(entry.getValue());
 			
+			// We get an infinite recursion if the super types of a class contain a sub class 
+			if(superType.equals(subType)) {
+				logger.warn("Skipping: " + subType + ", " + superType);
+				continue;
+			}
+
 			
 			//XClass subType = nameToType.get(entry.getKey());
 			//XClass superType = nameToType.get(entry.getValue());
@@ -359,6 +365,10 @@ public class TypeSystemImpl
 		//FunctionModel<T> functionModel = typeSystem.getSqlFunctionModel();
 		
 		Collection<String> sqlFnIds = nameToDecls.get(sparqlFnName);//typeSystem.getSparqlSqlImpls().get(sparqlFnName);
+		if(sqlFnIds.isEmpty()) {
+			logger.debug("No SQL function declarations found for: " + sparqlFnName);
+		}
+		
 		Collection<MethodEntry<T>> sqlFns = new ArrayList<MethodEntry<T>>(sqlFnIds.size());
 		for(String sqlFnId : sqlFnIds) {
 			MethodEntry<T> sqlFn = functionModel.lookupById(sqlFnId);
@@ -372,7 +382,7 @@ public class TypeSystemImpl
 		
 		CandidateMethod<T> result;
 		if(candidates.size() > 1) {
-			throw new RuntimeException("Multiple matching SQL declarations for SPARQL function " + sparqlFnName + " with argument types " + argTypes);
+			throw new RuntimeException("Multiple matching SQL declarations for SPARQL function " + sparqlFnName + " with argument types " + argTypes + ": " + candidates);
 		} else if(candidates.isEmpty()) {
 			result = null;
 		} else {

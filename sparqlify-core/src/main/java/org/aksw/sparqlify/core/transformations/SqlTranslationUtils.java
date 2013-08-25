@@ -16,12 +16,15 @@ import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sparql.DnfUtils;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
@@ -1024,6 +1027,12 @@ public class SqlTranslationUtils {
 
 		transMap.put(XSD.xdouble.getURI(), new ExprTransformerCast());
 
+
+		// Geometry
+		String bif = "http://www.openlinksw.com/schemas/bif#";
+
+		transMap.put(bif + "st_intersects", new ExprTransformerFunction(XSD.xboolean));
+		transMap.put(bif + "st_point", new ExprTransformerFunction(ResourceFactory.createResource("http://www.opengis.net/ont/geosparql#wktLiteral"))); //));
 		
 		return exprTransformer;
 	}
@@ -1032,5 +1041,31 @@ public class SqlTranslationUtils {
 		ExprEvaluatorPartial evaluator = new ExprEvaluatorPartial(FunctionRegistry.get());
 
 		return evaluator;
+	}
+}
+
+
+class ExprTransformerFunction
+	implements ExprTransformer
+{
+	private Resource resultType;
+	
+	public ExprTransformerFunction(Resource resultType) {
+		this.resultType = resultType;
+	}
+	
+	@Override
+	public E_RdfTerm transform(Expr fn, List<E_RdfTerm> exprs) {
+
+		List<Expr> tmp = new ArrayList<Expr>(exprs.size());
+		for(E_RdfTerm expr : exprs) {
+			tmp.add(expr.getLexicalValue());
+		}
+		
+		Expr newVal = ExprCopy.getInstance().copy(fn, tmp);
+		E_RdfTerm result = E_RdfTerm.createTypedLiteral(newVal, resultType);
+		
+
+		return result;
 	}
 }

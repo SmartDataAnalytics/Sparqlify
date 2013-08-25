@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,23 +128,30 @@ public class FunctionModelImpl<T>
 
 		FunctionModel<TypeToken> model = new FunctionModelImpl<TypeToken>(thp);
 		
-		model.registerFunction("plus_int", "+", MethodSignature.create(false, TypeToken.Int, TypeToken.Int, TypeToken.Int));
+		model.registerFunction("plus_float", "+", MethodSignature.create(false, TypeToken.Float, TypeToken.Float, TypeToken.Float));
 		//model.registerCoercion("to_int", "to_int", MethodSignature.create(false, TypeToken.Double, TypeToken.Int));
-		model.registerCoercion("to_int", "to_int", MethodSignature.create(false, TypeToken.Int, TypeToken.Double));
+		model.registerCoercion("to_float", "to_float", MethodSignature.create(false, TypeToken.Float, TypeToken.Int));
 
 		
 		TypeToken Geometry = TypeToken.alloc("geometry");
 		TypeToken Geography = TypeToken.alloc("geography");
 
-		model.registerFunction("st_intersects_geometry", "st_intersects", MethodSignature.create(false, Geometry, Geometry));
-		model.registerFunction("st_intersects_geography", "st_intersects", MethodSignature.create(false, Geography, Geography));
+		model.registerFunction("st_intersects_geometry", "st_intersects", MethodSignature.create(false, TypeToken.Boolean, Geometry, Geometry));
+		model.registerFunction("st_intersects_geography", "st_intersects", MethodSignature.create(false, TypeToken.Boolean, Geography, Geography));
 
 		{
-			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("+", Arrays.asList(Geometry, Geometry));
+			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("st_intersects", Arrays.asList(Geometry, Geometry));
+			System.out.println("Number of candidates: " + cands.size());
+			System.out.println(cands);
+		}
+
+		{
+			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("+", Arrays.asList(TypeToken.Int, TypeToken.Int));
 			System.out.println("Number of candidates: " + cands.size());
 			System.out.println(cands);
 		}
 		
+
 		
 	}
 	
@@ -353,8 +361,9 @@ public class FunctionModelImpl<T>
 
 				MethodDistance distance = new MethodDistance(new ParamDistance(0, false), distances);
 				CandidateMethod<T> tmp = new CandidateMethod<T>(candidate, coercions, distance);
-				
-				result.add(tmp);
+
+				tryInsertCandidate(result, tmp);
+				//result.add(tmp);
 			}
 		}
 		
@@ -362,6 +371,36 @@ public class FunctionModelImpl<T>
 	}
 
 
+	/**
+	 * Inserts a method candidate if it is not subsumed by another one (based on the distance)
+	 * 
+	 * @param result
+	 * @param candidate
+	 */
+	public static <T> void tryInsertCandidate(List<CandidateMethod<T>> result, CandidateMethod<T> candidate) {
+		
+		MethodDistance a = candidate.getDistance();
+		
+		Iterator<CandidateMethod<T>> it = result.iterator();
+		boolean isSubsumed = false;
+		while(it.hasNext()) {
+			CandidateMethod<T> item = it.next();
+			MethodDistance b = item.getDistance();
+			
+			Integer d = a.compare(b);
+			if(d != null) {
+				if(d < 0) {
+					it.remove();
+				} else {
+					isSubsumed = true;
+				}
+			}
+		}
+		
+		if(!isSubsumed) {
+			result.add(candidate);
+		}
+	}
 	
 	
 /*
