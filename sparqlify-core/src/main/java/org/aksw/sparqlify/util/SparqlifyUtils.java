@@ -494,6 +494,11 @@ public class SparqlifyUtils {
 
 		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
+			result.addSerializer("str@float", serializer);
+		}
+
+		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
 			result.addSerializer("str@double", serializer);
 		}
 
@@ -528,6 +533,17 @@ public class SparqlifyUtils {
 			result.addSerializer("boolean ST_Intersects(geometry, geometry, float)", serializer);
 		}
 		
+		{
+			//SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");
+			result.addSerializer(sqlModel.getIdsByName("regex"), new SqlFunctionSerializer() {				
+				@Override
+				public String serialize(List<String> args) {
+					return "(" + args.get(0) + " ~ " + args.get(1) + ")";
+				}
+			});
+			//result.addSerializer(sqlModel.getIdsByName("regex"), serializer);
+		}
+
 		
 		
 		// Cast is built in

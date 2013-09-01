@@ -1013,6 +1013,7 @@ public class SqlTranslationUtils {
 		transMap.put("bound", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
 		transMap.put("cast", new ExprTransformerCast());
 		transMap.put("str", new ExprTransformerStr());
+		transMap.put("regex", new ExprTransformerFunction(XSD.xboolean));
 		
 		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerRdfTermCtor());
 		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerRdfTermCtor());

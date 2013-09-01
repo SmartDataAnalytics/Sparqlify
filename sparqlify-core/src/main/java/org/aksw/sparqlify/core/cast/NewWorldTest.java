@@ -535,7 +535,21 @@ public class NewWorldTest {
 		
 		sqlModel.registerCoercion("float toFloat(int)", "toFloat", MethodSignature.create(false, TypeToken.Float, TypeToken.Int));
 		//sqlImpls.put("float toFloat(int)", new SqlE);
+
 		
+		// Regex: Which function to use depends on the flags given the SPARQL function
+		// Postgres:
+		//   ~ -> case sensitive
+		//   ~* -> case insensitive
+		// However, we could also create a virtual SQL function, and process the regex flags in the SQL impl, or even the serializer
+		// Put differently: Where is the best place to handle this?
+		// - The SQL model should actually model what's there, so a fake SQL model doesn't really make sense.
+		sqlModel.registerFunction("boolean regex(string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
+		sqlModel.registerFunction("boolean regex(string, string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String, TypeToken.String));
+		sparqlSqlDecls.putAll("regex", sqlModel.getIdsByName("regex"));
+		sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
+		sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
+
 		
 		
 		// tag the comparators as comparators...
