@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.expr.old;
 
-import org.aksw.sparqlify.core.Vocab;
+import org.aksw.sparqlify.core.OgcVocab;
 import org.apache.commons.lang.NotImplementedException;
 import org.postgis.Geometry;
 import org.postgis.PGgeometry;
@@ -28,7 +28,7 @@ public class NodeValueGeom
 
 	@Override
 	protected Node makeNode() {
-		RDFDatatype datatype = TypeMapper.getInstance().getSafeTypeByName(Vocab.wktLiteral);
+		RDFDatatype datatype = TypeMapper.getInstance().getSafeTypeByName(OgcVocab.wktLiteral);
 		
 		Geometry g = geometry.getGeometry();
 		Node result = Node.createLiteral(g.getTypeString() + g.getValue(), datatype);

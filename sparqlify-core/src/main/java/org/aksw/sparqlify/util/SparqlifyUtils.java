@@ -54,6 +54,7 @@ import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
 import org.aksw.sparqlify.core.cast.FunctionModel;
+import org.aksw.sparqlify.core.cast.MethodDeclaration;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystemImpl;
@@ -529,9 +530,33 @@ public class SparqlifyUtils {
 		}
 
 		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Boolean, "ST_DWithin", false, TypeToken.Geometry, TypeToken.Geometry, TypeToken.Float);
+
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_DWithin");
-			result.addSerializer("boolean ST_Intersects(geometry, geometry, float)", serializer);
+			result.addSerializer(decl.toString(), serializer);
 		}
+
+		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Boolean, "ST_Intersects", false, TypeToken.Geometry, TypeToken.Geometry);
+
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_Intersects");
+			result.addSerializer(decl.toString(), serializer);
+		}
+
+		
+		{
+			
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Geometry, "ST_GeomFromText", false, TypeToken.String);
+			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {				
+				@Override
+				public String serialize(List<String> args) {
+					return "ST_SetSRID(ST_GeomFromText(" + args.get(0) + "), 4326)";
+				}
+			};
+
+			result.addSerializer(decl.toString(), serializer);
+		}
+
 		
 		{
 			//SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");

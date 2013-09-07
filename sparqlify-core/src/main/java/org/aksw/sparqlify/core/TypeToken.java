@@ -51,6 +51,10 @@ public class TypeToken
 	public static final TypeToken Special = alloc("special");
 	
 	
+	// For convenience, we also cover additional datatypes here
+	public static final TypeToken Geometry = TypeToken.alloc("geometry");
+	
+	
 	
 	@Deprecated // Should not be used, because SqlExpr objects don't treat rdfTerm as a datatype
 	public static final TypeToken rdfTerm = alloc("rdfTerm");

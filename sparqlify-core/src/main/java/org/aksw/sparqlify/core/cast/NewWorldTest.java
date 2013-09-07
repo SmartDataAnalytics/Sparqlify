@@ -68,6 +68,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 
 
+
 /*
  class ExprEvaluatorJena
  implements ExprEvaluator
@@ -540,9 +541,26 @@ public class NewWorldTest {
 		sparqlSqlDecls.putAll(bif + "st_point", sqlModel.getIdsByName("ST_GeomFromPoint"));
 		sqlImpls.put("geometry ST_GeomFromPoint(float, float)", new SqlExprEvaluator_PassThrough(typeGeometry, "ST_GeomFromPoint"));
 
-		sqlModel.registerFunction("boolean ST_Intersects(geometry, geometry, float)", "ST_Intersects", MethodSignature.create(false, TypeToken.Boolean, typeGeometry, typeGeometry, TypeToken.Float));
-		sparqlSqlDecls.putAll(bif + "st_intersects", sqlModel.getIdsByName("ST_Intersects"));
-		sqlImpls.put("boolean ST_Intersects(geometry, geometry, float)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_Intersects"));
+		
+
+		//String stIntersectsName = bif +7/
+		MethodDeclaration<TypeToken> stIntersectsDecl1 = MethodDeclaration.create(TypeToken.Boolean, "ST_Intersects", false, typeGeometry, typeGeometry);
+		MethodDeclaration<TypeToken> stIntersectsDecl2 = MethodDeclaration.create(TypeToken.Boolean, "ST_DWithin", false, typeGeometry, typeGeometry, TypeToken.Float);
+		sqlModel.registerFunction(stIntersectsDecl1);
+		sqlModel.registerFunction(stIntersectsDecl2);
+		
+		sparqlSqlDecls.put(bif + "st_intersects", stIntersectsDecl1.toString());
+		sparqlSqlDecls.put(bif + "st_intersects", stIntersectsDecl2.toString());
+		//sqlImpls.put(stIntersectsDecl1.toString(), new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_Intersects"));
+		//sqlImpls.put(stIntersectsDecl2.toString(), new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_Intersects"));
+		
+		
+		//sqlImpls.put(urlEncodeDecl.toString(), new SqlExprEvaluator_UrlEncode());
+
+		
+		//sqlModel.registerFunction("boolean ST_Intersects(geometry, geometry, float)", "ST_Intersects", MethodSignature.create(false, TypeToken.Boolean, typeGeometry, typeGeometry, TypeToken.Float));
+		//sparqlSqlDecls.putAll(bif + "st_intersects", sqlModel.getIdsByName("ST_Intersects"));
+		//sqlImpls.put("boolean ST_Intersects(geometry, geometry, float)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_Intersects"));
 
 				
 		// TODO: This coercion seems to get applied too often - why?
@@ -563,6 +581,12 @@ public class NewWorldTest {
 		sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
 		sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
 
+
+
+		MethodDeclaration<TypeToken> stGeomFromTextDecl = MethodDeclaration.create(typeGeometry, "ST_GeomFromText", false, TypeToken.String);
+		sqlModel.registerFunction(stGeomFromTextDecl);
+		sparqlSqlDecls.put(bif + "st_geomFromText", stGeomFromTextDecl.toString());
+		//sqlImpls.put(stGeomFromTextDecl.toString(), new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_GeomFromText"));
 
 		MethodDeclaration<TypeToken> urlEncodeDecl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
 		sqlModel.registerFunction(urlEncodeDecl);

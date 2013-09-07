@@ -41,7 +41,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.Vocab;
+import org.aksw.sparqlify.core.OgcVocab;
 import org.aksw.sparqlify.trash.ExprArgs;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.postgis.PGgeometry;
@@ -446,7 +446,7 @@ public class PushDown {
 			result = new SqlExprValue(((NodeValueGeom) expr).getGeometry());
 		} else if (expr.isLiteral()) {
 			Node node = expr.asNode(); 
-			if(node.getLiteralDatatypeURI().equals(Vocab.wktLiteral)) {
+			if(node.getLiteralDatatypeURI().equals(OgcVocab.wktLiteral)) {
 				result = new SqlExprValue(new PGgeometry(node.getLiteralLexicalForm()), DatatypeSystemDefault._GEOMETRY);
 			}
 		} else {

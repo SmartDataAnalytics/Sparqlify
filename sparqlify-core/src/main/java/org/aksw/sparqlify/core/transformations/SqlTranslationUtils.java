@@ -1035,7 +1035,10 @@ public class SqlTranslationUtils {
 		// Geometry
 		String bif = "http://www.openlinksw.com/schemas/bif#";
 
+		Resource virtGeometry = ResourceFactory.createResource("http://www.openlinksw.com/schemas/virtrdf#Geometry");
+		
 		transMap.put(bif + "st_intersects", new ExprTransformerFunction(XSD.xboolean));
+		transMap.put(bif + "st_geomFromText", new ExprTransformerFunction(virtGeometry));
 		transMap.put(bif + "st_point", new ExprTransformerFunction(ResourceFactory.createResource("http://www.opengis.net/ont/geosparql#wktLiteral"))); //));
 		
 		return exprTransformer;
