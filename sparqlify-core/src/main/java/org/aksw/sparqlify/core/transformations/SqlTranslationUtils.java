@@ -1028,6 +1028,9 @@ public class SqlTranslationUtils {
 
 		transMap.put(XSD.xdouble.getURI(), new ExprTransformerCast());
 
+		
+		transMap.put(SparqlifyConstants.urlEncode, new ExprTransformerFunction(XSD.xstring));
+		transMap.put(SparqlifyConstants.urlDecode, new ExprTransformerFunction(XSD.xstring));
 
 		// Geometry
 		String bif = "http://www.openlinksw.com/schemas/bif#";

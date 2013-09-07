@@ -25,13 +25,13 @@ public class ParamDistance
 
 	@Override
 	public String toString() {
-		return "" + distance +  (usesCoercion ? "(w/ coercion)" : "");
+		return "" + distance +  (usesCoercion ? "(with coercion)" : "");
 	}
 	
 	
 	public int compareTo(ParamDistance that) {
 
-		int compareCoercion = (that.usesCoercion ? 1 : -1) - (this.usesCoercion ? 1 : -1);
+		int compareCoercion = (this.usesCoercion ? 1 : -1) - (that.usesCoercion ? 1 : -1);
 		if(compareCoercion != 0) {
 			return compareCoercion;
 		}

@@ -7,15 +7,17 @@ import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.ExprSubstitutorSql;
+import org.aksw.sparqlify.core.cast.MethodDeclaration;
 
 
 public class SparqlFunctionImpl
 	implements SparqlFunction
 {
 	private String name;
+	private MethodSignature<TypeToken> signature;
+
 	private SqlExprEvaluator evaluator;
 	private ExprSubstitutorSql substitutor;
-	private MethodSignature<TypeToken> signature;
 	
 	public SparqlFunctionImpl(String name, SqlExprEvaluator evaluator) {
 		this(name, evaluator, null);
@@ -29,6 +31,21 @@ public class SparqlFunctionImpl
 		this(name, null, evaluator, substitutor);
 	}
 
+	/**
+	 * TODO Switch to using the MethodDeclaration object 
+	 * 
+	 * @param declaration
+	 * @param evaluator
+	 * @param substitutor
+	 */
+	public SparqlFunctionImpl(MethodDeclaration<TypeToken> declaration, SqlExprEvaluator evaluator, ExprSubstitutorSql substitutor) {
+		this.name = declaration.getName();
+		this.signature = declaration.getSignature();
+		this.evaluator = evaluator;
+		this.substitutor = substitutor;
+	}
+
+	
 	public SparqlFunctionImpl(String name, MethodSignature<TypeToken> signature, SqlExprEvaluator evaluator, ExprSubstitutorSql substitutor) {
 		this.name = name;
 		this.signature = signature;

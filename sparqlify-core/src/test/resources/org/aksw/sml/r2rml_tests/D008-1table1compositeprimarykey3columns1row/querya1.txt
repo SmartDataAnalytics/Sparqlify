@@ -1,0 +1,7 @@
+Prefix foaf: <http://xmlns.com/foaf/0.1/>
+Select ?s ?n {
+  Graph ?g {
+    ?s foaf:name ?n .
+  }
+  Filter(?s = <http://example.com/Student/10/Venus%20Williams>)
+}

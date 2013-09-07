@@ -401,6 +401,16 @@ public class FunctionModelImpl<T>
 			result.add(candidate);
 		}
 	}
+
+	@Override
+	public void registerFunction(MethodDeclaration<T> declaration) {
+		this.registerFunction(declaration.toString(), declaration.getName(), declaration.getSignature());
+	}
+
+	@Override
+	public void registerCoercion(MethodDeclaration<T> declaration) {
+		this.registerCoercion(declaration.toString(), declaration.getName(), declaration.getSignature());
+	}
 	
 	
 /*

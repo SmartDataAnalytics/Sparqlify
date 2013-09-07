@@ -17,7 +17,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalN
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseInt;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_PassThrough;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_SqlRewrite;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlDecode;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlEncode;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
@@ -29,7 +30,6 @@ import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
-import org.aksw.sparqlify.core.transformations.ExprTransformer;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
@@ -45,7 +45,6 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 import com.hp.hpl.jena.vocabulary.XSD;
-import com.thoughtworks.xstream.io.binary.Token;
 
 /* This is the SqlExprTransformer
  interface ExprTypeEvaluator {
@@ -86,6 +85,7 @@ import com.thoughtworks.xstream.io.binary.Token;
  }
  }
  */
+
 
 class SparqlEvaluatorChain implements SqlExprEvaluator {
 	@Override
@@ -299,6 +299,18 @@ public class NewWorldTest {
 			map.put(key, value);
 		}
 	}
+	
+	/*
+	
+	class SparqlSqlModel {
+		private FunctionModel<TypeToken> sqlModel;
+
+		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
+		Map<String, SqlExprEvaluator> sqlImpls = typeSystem.getSqlImpls();
+		
+	}
+	*/
+	
 	
 	/**
 	 * Create the SPARQL and SQL models
@@ -515,6 +527,7 @@ public class NewWorldTest {
 		sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());
 		
 
+		//sqlMetaModel.getInverses().put(key, value)
 		
 		
 
@@ -532,7 +545,7 @@ public class NewWorldTest {
 		sqlImpls.put("boolean ST_Intersects(geometry, geometry, float)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_Intersects"));
 
 				
-		
+		// TODO: This coercion seems to get applied too often - why?
 		sqlModel.registerCoercion("float toFloat(int)", "toFloat", MethodSignature.create(false, TypeToken.Float, TypeToken.Int));
 		//sqlImpls.put("float toFloat(int)", new SqlE);
 
@@ -550,6 +563,82 @@ public class NewWorldTest {
 		sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
 		sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
 
+
+		MethodDeclaration<TypeToken> urlEncodeDecl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
+		sqlModel.registerFunction(urlEncodeDecl);
+		sparqlSqlDecls.put(SparqlifyConstants.urlEncode, urlEncodeDecl.toString());
+		sqlImpls.put(urlEncodeDecl.toString(), new SqlExprEvaluator_UrlEncode());
+
+
+		MethodDeclaration<TypeToken> urlDecodeDecl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlDecode, false, TypeToken.String);
+		sqlModel.registerFunction(urlDecodeDecl);
+		sparqlSqlDecls.put(SparqlifyConstants.urlDecode, urlDecodeDecl.toString());
+		sqlImpls.put(urlDecodeDecl.toString(), new SqlExprEvaluator_UrlDecode());
+
+
+		sqlMetaModel.getInverses().put(urlEncodeDecl.toString(), urlDecodeDecl.toString());
+		sqlMetaModel.getInverses().put(urlDecodeDecl.toString(), urlEncodeDecl.toString());
+
+		
+			
+			//sqlImpls.put()
+			
+//			SparqlFunction f = new SparqlFunctionImpl(decl, null, null);
+//			typeSystem.registerSparqlFunction(f);
+
+			
+			/**
+			 * Ok, seems like we need one more iteration to get the type system right:
+			 * - Initially, we start with a SPARQL expression, such as typedLit(?foo, xsd:int) + typedLit(?bar, xsd:float)
+			 * The xsd types must be compatible with the underlying sql type.
+			 * What compatible means needs to be formalized, but essentially it means
+			 * we are mapping to the closest semantic type - and that we are not mapping e.g. strings to integers.
+			 * 
+			 * - Now the TypedExprTransformer does a bottom up evaluation of the expression, and turns each node into an RdfTerm expression
+			 *   typed literal constants and column references are automatically converted to typed literals
+			 * 
+			 * - When the TypedExprTransformer hits an operator, such as '+', '||', '&&' and so on, it invokes any registered
+			 *   ExprTransformer*  --- its signature is:  E_RdfTerm transform(Expr orig, List<E_RdfTerm> exprs);
+			 *  
+			 *   The expr transformer can now yield a now RdfTerm expression
+			 *   and has now the chance to detect type errors, or compute an appropriate datatype language tag, etc.
+			 *   
+			 *   This step is independent of the SQL datatypes - its purpose is to fulfill the functions' and operators' contracts
+			 *   that are set forth by the SPARQL standard.
+			 *   Note that for simplicity we do not allow xsd:datatypes to be dynamic.
+			 *      In theory, we could push down the conditions into the SQL, but this is
+			 *      rather cumbersome and there is no probably no use case that can't be solved in a better way.
+			 *   
+			 *  The resulting expression for a function may be a constant or an arbitray new expression with its own function name.
+			 *  However, in practice, the function name should stay the same as the original one, as the main purpose is to
+			 *  create the appropriate E_RdfTerm object for the encountered symbol.
+			 *  
+			 *  
+			 * After the TypedExprTransformer is done, we end up with a new expression which does not contain any E_RdfTer
+			 * objects anymore except for the root of the expression.
+			 * This means, that we eleminated the RDF specific RDF terms and instead have expressions that only make use of
+			 * plain old SQL datatypes. 
+			 * 
+			 * - The function symbols now no longer refer to the original SPARQL functions, which have to cope with RdfTerm semantics,
+			 *   but rather, their arguments are now SQL types.
+			 *  
+			 *   We can now declare for each function symbol which combinations of SQL typed parameters are valid,
+			 *   thereby *overloading* the symbol with SQL symbols.
+			 *   The plus operator could for instance have the overloads int + (int, int), float + (float, float), etc... 
+			 *   
+			 *   [TODO] We already store literals as java objects, can we just map them to corresponding java methods using reflection?
+			 *   On the other hand, reflection is so fucking expensive which is bad for benchmarks.
+			 *  
+			 *  
+			 * - We could now provide java implementations the evaluate these functions
+			 * 
+			 * - Finally, for each SQL function symbol, the appropriate serializer needs to be used 
+			 *   e.g. double(foo) -&gt; foo::double for postgres, float(bar) -&gt; (cast bar as float) for mysql, ...
+			 *   
+			 *   
+			 * 
+			 */
+
 		
 		
 		// tag the comparators as comparators...
@@ -563,6 +652,12 @@ public class NewWorldTest {
 			typeSystem.registerSparqlFunction(f);
 		}
 
+		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
+
+			SparqlFunction f = new SparqlFunctionImpl(decl, null, null);
+			typeSystem.registerSparqlFunction(f);
+		}
 		
 		
 
@@ -643,9 +738,12 @@ public class NewWorldTest {
 		// Expr e0 = ExprUtils.parse("?a = ?b || ?b = ?a && !(?a = ?a)");
 		//Expr e0 = ExprUtils.parse("?e = '1'");
 
+		
+		Expr e0 = ExprUtils.parse("?f = <http://aksw.org/sparqlify/urlDecode>('foobar')");
+		
 		//Expr e0 = ExprUtils.parse("?c < ?d + 1");
 		//Expr e0 = ExprUtils.parse("(?e + 1) * (?e + 4)");
-		Expr e0 = ExprUtils.parse("?f = <http://foobar>");
+		//Expr e0 = ExprUtils.parse("?f = <http://foobar>");
 		
 		Expr a = ExprUtils.parse("<http://aksw.org/sparqlify/uri>(?website)");
 		// Expr b =

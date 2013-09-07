@@ -16,6 +16,13 @@ public interface FunctionModel<T> {
 	Collection<String> getIdsByName(String name); 
 	String getNameById(String id);
 	
+	
+	void registerFunction(MethodDeclaration<T> declaration);
+	void registerCoercion(MethodDeclaration<T> declaration);
+	
+	
+	// TODO Potentially deprecate the following methods - the MethodDeclaration class reduces duplication and may thus be better suited
+	// But let's first collect some experience and see how this turns out
 	void registerFunction(String id, String name, MethodSignature<T> signature);
 	void registerCoercion(String id, String name, MethodSignature<T> signature);
 	
