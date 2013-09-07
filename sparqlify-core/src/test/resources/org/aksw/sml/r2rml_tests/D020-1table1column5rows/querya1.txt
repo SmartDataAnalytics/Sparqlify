@@ -1,0 +1,4 @@
+Select ?s ?p ?o {
+    ?s ?p ?o .
+    Filter(?s = <http://example.com/base/path%2F..%2FDanny>)
+}

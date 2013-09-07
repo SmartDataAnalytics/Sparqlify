@@ -21,7 +21,6 @@ import org.apache.jena.riot.RiotReader;
 import org.apache.jena.riot.lang.LangNQuads;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFLib;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,216 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import com.google.common.collect.Sets;
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import com.hp.hpl.jena.sparql.engine.binding.BindingUtils;
-import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
-import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
-
-
-
-interface TestCase
-	extends Runnable
-{
-	String getName();
-}
-
-
-
-/**
- * @author raven
- *
- */
-class TestCaseImpl
-	implements TestCase
-{
-	private String name;
-	private Runnable runnable;
-
-	public TestCaseImpl(String name, Runnable runnable) {
-		this.name = name;
-		this.runnable = runnable;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Runnable getRunnable() {
-		return runnable;
-	}
-
-	@Override
-	public String toString() {
-		return "TestCase [name=" + name + ", runnable=" + runnable + "]";
-	}
-
-	@Override
-	public void run() {
-		runnable.run();
-	}
-}
-
-
-class TaskQuerySelect
-	implements Callable<ResultSet>
-{
-	private QueryExecutionFactory qef;
-	private Query query;
-
-	public TaskQuerySelect(QueryExecutionFactory qef, Query query)
-	{
-		this.qef = qef;
-		this.query = query;
-	}
-
-	@Override
-	public ResultSet call() throws Exception {
-		QueryExecution qe = qef.createQueryExecution(query);
-		ResultSet result = qe.execSelect();
-		
-		return result;
-	}
-}
-
-
-class TaskDump
-	implements Callable<Set<Quad>>
-{
-	private QueryExecutionFactory qef;
-
-	public TaskDump(QueryExecutionFactory qef)
-	{
-		this.qef = qef;
-	}
-
-	@Override
-	public Set<Quad> call() throws Exception {
-		Set<Quad> result = SparqlifyUtils.createDumpNQuads(qef);
-		return result;
-	}
-	
-}
-
-
-// TODO: We could distinguish between a task (a callable) and a testcase, that validates the output of the task
-class TestCaseDump
-	implements Runnable
-{
-	private Callable<Set<Quad>> task;
-	private Set<Quad> expected;
-	
-	public TestCaseDump(Callable<Set<Quad>> task, Set<Quad> expected)
-	{ 
-		this.task = task;
-		this.expected = expected;
-	}
-
-	@Override
-	public void run() {
-		Set<Quad> actual;
-		try {
-			actual = task.call();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		//SparqlifyUtils.shutdownH2(ds);
-
-		Set<Quad> alignedActual = CompareUtils.alignActualQuads(expected, actual);
-		
-
-		Set<Quad> excessive = Sets.difference(alignedActual, expected);
-		Set<Quad> missing = Sets.difference(expected, alignedActual);
-
-		if(!excessive.isEmpty() || !missing.isEmpty()) {
-		
-			System.out.println("Expected : " + expected);
-			System.out.println("Actual   : " + alignedActual);
-	
-			System.out.println("Excessive: " + excessive);
-			System.out.println("Missing  : " + missing);
-		}		
-		
-		Assert.assertEquals(expected, alignedActual);
-	}	
-}
-
-
-class TestCaseQuerySelect
-	implements Runnable
-{
-	private Callable<ResultSet> task;
-	private ResultSet expected;
-	
-	public TestCaseQuerySelect(Callable<ResultSet> task, ResultSet expected) {		
-		super();
-		this.task = task;
-		this.expected = expected;
-	}
-
-	public Callable<ResultSet> getTask() {
-		return task;
-	}
-
-	public ResultSet getExpected() {
-		return expected;
-	}
-
-	@Override
-	public String toString() {
-		return "TestCaseQuerySelect [task=" + task + ", expected=" + expected
-				+ "]";
-	}
-
-	@Override
-	public void run() {
-		ResultSet rs;
-		try {
-			rs = task.call();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-		boolean isEqual = true;
-		ResultSetRewindable act = null;
-		ResultSetRewindable exp = null;
-		if (expected != null) {
-			// TODO File in JIRA issue: This impl is bugged (look at the code,
-			// rs1 should be rs1a)
-	        act = ResultSetFactory.makeRewindable(rs);
-	        exp = ResultSetFactory.makeRewindable(expected) ;
-
-			
-			isEqual = ResultSetCompare.equalsByTerm(act, exp);
-			
-			act.reset();
-			exp.reset();
-		}
-
-		if(!isEqual) {
-			String eStr = ResultSetFormatter.asText(exp);
-			System.out.println("Expected");
-			System.out.println("------");
-			System.out.println(eStr);
-			
-			String aStr = ResultSetFormatter.asText(act);
-			System.out.println("Actual");
-			System.out.println("------");
-			System.out.println(aStr);
-		}
-		
-		Assert.assertTrue(isEqual);
-	}
-}
 
 
 

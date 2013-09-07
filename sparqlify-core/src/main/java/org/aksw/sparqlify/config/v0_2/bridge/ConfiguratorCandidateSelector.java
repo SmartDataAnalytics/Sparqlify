@@ -15,6 +15,7 @@ public class ConfiguratorCandidateSelector {
 	private static EffectiveViewGenerator effectiveViewGenerator = new EffectiveViewGenerator();
 	
 	
+	// TODO Use SyntaxBridge.bridge and remove duplicated code here
 	public static void configure(Config config, SyntaxBridge bridge, CandidateViewSelector<org.aksw.sparqlify.core.domain.input.ViewDefinition> candidateSelector, Logger logger) {
 
 		

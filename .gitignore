@@ -45,3 +45,7 @@ sparqlify-benchmark/sp2/config
 
 release.properties
 pom.xml.releaseBackup
+
+sparqlify-dump.h2.db
+sparqlify-dump.trace.db
+trash

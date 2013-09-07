@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+	<head>
+		<variable name="s" />
+		<variable name="n" />
+	</head>
+	<results>
+<!-- 		<result> -->
+<!-- 			<binding name="s"> -->
+<!-- 				<uri>http://linkedgeodata.org/geometry/posSeq35</uri> -->
+<!-- 			</binding> -->
+<!-- 			<binding name="p"> -->
+<!-- 				<uri>http://www.w3.org/1999/02/22-rdf-syntax-ns#_0</uri> -->
+<!-- 			</binding> -->
+<!-- 			<binding name="o"> -->
+<!-- 				<uri>http://linkedgeodata.org/geometry/node200542</uri> -->
+<!-- 			</binding> -->
+<!-- 		</result> -->
+	</results>
+</sparql>
+
