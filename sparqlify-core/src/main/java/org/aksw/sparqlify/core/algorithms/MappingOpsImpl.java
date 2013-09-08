@@ -15,15 +15,20 @@ import java.util.Set;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Coalesce;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_When;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlAggFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
@@ -41,7 +46,13 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.CandidateMethod;
+import org.aksw.sparqlify.core.cast.FunctionModel;
+import org.aksw.sparqlify.core.cast.MethodEntry;
 import org.aksw.sparqlify.core.cast.SqlValue;
+import org.aksw.sparqlify.core.cast.TypeSystem;
+import org.aksw.sparqlify.core.cast.TypeSystemImpl;
+import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
@@ -74,12 +85,54 @@ import com.hp.hpl.jena.sparql.expr.E_Function;
 import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprAggregator;
+import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
 import com.hp.hpl.jena.sparql.expr.aggregate.Aggregator;
 import com.hp.hpl.jena.vocabulary.XSD;
+
+
+class AggCandidate {
+	private List<SqlExprContext> contexts;
+	private List<SqlExpr> args;
+	private List<TypeToken> argTypes;
+	
+	public AggCandidate(List<SqlExprContext> contexts, List<SqlExpr> args,
+			List<TypeToken> argTypes) {
+		super();
+		this.contexts = contexts;
+		this.args = args;
+		this.argTypes = argTypes;
+	}
+
+	public List<SqlExprContext> getContexts() {
+		return contexts;
+	}
+
+	public List<SqlExpr> getArgs() {
+		return args;
+	}
+
+	public List<TypeToken> getArgTypes() {
+		return argTypes;
+	}
+
+
+
+	public static AggCandidate create(List<SqlExprContext> contexts) {
+		List<SqlExpr> args = new ArrayList<SqlExpr>(contexts.size());
+		for(SqlExprContext context : contexts) {
+			args.add(context.getSqlExpr());
+		}
+
+		List<TypeToken> argTypes = org.aksw.sparqlify.expr.util.SqlExprUtils.getTypes(args);
+
+		AggCandidate result = new AggCandidate(contexts, args, argTypes);
+		return result;
+	}
+}
 
 
 //class SqlExprContext {
@@ -127,7 +180,10 @@ class SqlExprContext {
 		return assignment;
 	}
 
-	// Convenience function that return the value field of the rewrite
+	/**
+	 *  Convenience function that return the value field of the rewrite
+	 * @return
+	 */
 	public SqlExpr getSqlExpr() {
 		SqlExpr sqlExpr = SqlTranslatorImpl2.asSqlExpr(exprRewrite);
 		return sqlExpr;
@@ -1797,7 +1853,7 @@ public class MappingOpsImpl
 		for(ExprAggregator ea : aggregators) {
 			
 			Aggregator agg = ea.getAggregator();
-			ExprSqlRewrite rewrite = rewrite(aggSym, agg);
+			ExprSqlRewrite rewrite = rewrite(a, agg, aggSym);
 			
 			
 			Projection ex = new Projection();
@@ -1830,8 +1886,222 @@ public class MappingOpsImpl
 		return result;
 	}
 
+
+	/**
+	 * Convert an aggregator to a function object.
+	 * By this we can use the same infrastructure
+	 * as being used for all other types of functions.
+	 * 
+	 * @param agg
+	 * @return
+	 */
+	public E_Function aggregatorToFunction(Aggregator agg) {
+		Expr arg = agg.getExpr();
+		
+		ExprList args = new ExprList();
+		if(arg != null) {
+			args.add(arg);
+		}
+		
+		String fnName = agg.getClass().getSimpleName();
+		
+		E_Function result = new E_Function(fnName, args);
+		
+		return result;
+	}
+
+	
+	/**
+	 * 
+	 * 
+	 * TODO: Without the toDouble coercion, SUM(int) will be discarded
+	 * even after already been found out as a candidate. However, an error should be raised.
+	 * 
+	 * TODO: If there are no candidates (e.g. sum(?s) where ?s can only be resources),
+	 * we get an incorrect error telling us that no candidate could be decided upon.
+	 * However, there simple was no candidate to decide from.
+	 * 
+	 * @param mapping
+	 * @param agg
+	 * @param generator
+	 * @return
+	 */
+	public ExprSqlRewrite rewrite(Mapping mapping, Aggregator agg, Generator generator) {
+		ExprFunction fn = aggregatorToFunction(agg);
+
+		String sparqlFnName = ExprUtils.getFunctionId(fn);
+		List<Expr> args = fn.getArgs();
+		
+		Map<String, TypeToken> typeMap = mapping.getSqlOp().getSchema().getTypeMap();		
+		VarDefinition varDef = mapping.getVarDefinition();
+
+		
+		
+		// HACK MappingOps should be independent of the typeSystem
+		// TODO Move this code to an appropriate location when its working
+		SqlTranslatorImpl2 tmp = (SqlTranslatorImpl2)sqlTranslator;
+		TypedExprTransformerImpl tet = (TypedExprTransformerImpl)tmp.getTypedExprTransformer();
+		TypeSystem typeSystem = tet.getTypeSystem();
+		
+		FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
+		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
+
+		
+		SqlExpr sqlCoalesce;
+		if(!args.isEmpty()) {
+			
+			// We need to translate all arguments of the aggregate to SQL
+			// Afterwards, find the one overload of the aggregate that accepts the argument types
+			
+			List<List<SqlExprContext>> argContexts = new ArrayList<List<SqlExprContext>>(args.size());
+			
+			for(Expr arg : args) {
+				List<SqlExprContext> contexts = createExprSqlRewrites(arg, varDef, typeMap, sqlTranslator);
+				
+				argContexts.add(contexts);
+			}
 	
 	
+			CartesianProduct<SqlExprContext> cartContexts = CartesianProduct.create(argContexts);
+			
+			
+			// AggCandidate provides convenient access to the paramter lists
+			List<AggCandidate> aggCandidates = new ArrayList<AggCandidate>(cartContexts.size());
+			for(List<SqlExprContext> cartContext : cartContexts) {
+				AggCandidate aggCandidate = AggCandidate.create(cartContext);
+	
+				aggCandidates.add(aggCandidate);
+			}
+			
+			
+			// First, Retrieve all overloads of the aggregate function and
+			// filter out all candidates that have no accepting overload
+			// Then, among the remaining candidates and their respecitve overloads
+			// find the *single* best matching overload.
+			// Example:
+			//    Declarations: sum([int, double])
+			//    Arguments: [int, float, text]
+			//    Best match: sum(double) (note: the argument of type text is discarded, because there is no matching signature)
+			
+			// Note, that this implies the assumption that only one such overload exists.
+			// The assumption is reasonable, as the only way to break it is to have 
+			// overloads of an aggregate for unrelated types, such as:
+			// myAggFn(string) myAggFn(int)
+			
+			
+			// Goal is to have something like this:
+			// SUM( WHEN foo::type THEN bar::type ELSE null::type ) 
+	
+	
+			
+			List<AggCandidate> survivors = new ArrayList<AggCandidate>(aggCandidates.size());
+			Set<MethodEntry<TypeToken>> overloads = new HashSet<MethodEntry<TypeToken>>(); 
+	
+			for(AggCandidate cand : aggCandidates) {
+				
+				List<TypeToken> argTypes = cand.getArgTypes();
+				
+				CandidateMethod<TypeToken> overload = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, sparqlFnName, argTypes);
+				if(overload != null) {
+					survivors.add(cand);
+					overloads.add(overload.getMethod());
+				}
+			}
+	
+			// Find the single best match item among the found overloads
+			// TODO: Actually, maybe we are only looking for the one overload that can be used by all survivors?
+			// So we don't have to take distances into account.
+			
+			MethodEntry<TypeToken> bestMatch = null;
+			List<CandidateMethod<TypeToken>> bestMethods = new ArrayList<CandidateMethod<TypeToken>>(survivors.size());
+			
+			for(MethodEntry<TypeToken> overload : overloads) {
+				
+				boolean isBestMatch = true;
+			
+				for(AggCandidate survivor : survivors) {
+					List<TypeToken> argTypes = survivor.getArgTypes();
+					CandidateMethod<TypeToken> methodCand = TypeSystemImpl.lookupSqlCandidate(functionModel, overload, argTypes, "Candidates for SPARQL aggregate " + sparqlFnName);
+									
+					if(methodCand == null) {
+						isBestMatch = false;
+						bestMethods.clear();
+						break;
+					}
+					
+					bestMethods.add(methodCand);
+				}
+				
+				if(isBestMatch) {
+					if(bestMatch != null) {
+						throw new RuntimeException("Multiple matches for aggregate function");
+					} else {
+						bestMatch = overload;
+					}
+				}			
+			}
+	
+			
+			if(bestMatch == null) {
+				throw new RuntimeException("Could not decide on a best match from a set of candidates");
+			}
+			
+			
+			// Coalesce together all the survivors for each argument of the orginal function
+			int n = survivors.size();
+			List<SqlExpr> coalesceArgs = new ArrayList<SqlExpr>(n);
+			for(int i = 0; i < n; ++i) {			
+				AggCandidate survivor = survivors.get(i);
+				CandidateMethod<TypeToken> method = bestMethods.get(i);
+				
+				
+				List<SqlExpr> sqlArgs = survivor.getArgs();
+				SqlExpr sqlExpr = TypedExprTransformerImpl.createSqlExpr(method, sqlArgs);
+	
+				coalesceArgs.add(sqlExpr);
+			}
+			
+			
+			sqlCoalesce = S_Coalesce.create(coalesceArgs);
+		}
+		else {
+			
+			List<TypeToken> noArgTypes = Collections.emptyList();
+			CandidateMethod<TypeToken> overload = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, sparqlFnName, noArgTypes);
+
+			List<SqlExpr> noArgs = Collections.emptyList();
+			sqlCoalesce = TypedExprTransformerImpl.createSqlExpr(overload, noArgs);
+		}
+			
+		
+
+		
+		String columnAlias = generator.next();
+		
+		//SqlExprFunction sqlFn = S_Function.create(bestMatch.getSignature().getReturnType(), bestMatch.getDeclaration().getName(), sqlCoalesce);
+		
+		
+		//SqlAggFunction aggFn = new SqlAggFunction(sqlFn);
+		//S_Agg sagg = new S_Agg(aggFn);
+		
+		Projection p = new Projection();
+		//p.put(columnAlias, sagg);
+		//p.put(columnAlias, sqlFn);
+		p.put(columnAlias, sqlCoalesce);
+		
+		ExprVar columnRef = new ExprVar(columnAlias);
+		
+		ExprList newArgs = new ExprList();
+		newArgs.add(columnRef);
+		newArgs.add(NodeValue.makeString(XSD.xdouble.getURI()));
+
+		Expr e = new E_Function(SparqlifyConstants.typedLiteralLabel, newArgs);
+
+		ExprSqlRewrite result = new ExprSqlRewrite(e, p);
+
+		return result;
+	}
+
 	
 	/**
 	 * Returns a pair comprised of:
@@ -1839,9 +2109,12 @@ public class MappingOpsImpl
 	 * - A projection 
 	 * // Ignore: the typeMap is implied by the projection - A type map
 	 * 
+	 * 
+	 * 
+	 * 
 	 * @param agg
 	 */
-	public ExprSqlRewrite rewrite(Gensym gensym, Aggregator agg) {
+	public ExprSqlRewrite rewriteOld(Gensym gensym, Aggregator agg) {
 		ExprSqlRewrite result;
 		if(agg instanceof AggCount) {
 			result = rewrite(gensym, (AggCount)agg);
@@ -1877,29 +2150,10 @@ public class MappingOpsImpl
 	
 
 
-	
-	/**
-	 * Two variants:
-	 * - create a case-block for each expression
-	 * - create a union - but with the union we would eval the expression over and over again
-	 * - so we go with the case block 
-	 * 
-	 * 
-	 * 
-	 * @param var
-	 * @param target
-	 * @param source
-	 */
-	public ExprSqlRewrite unifyAlternatives(Expr e, Mapping source)
+	public List<SqlExprContext> createExprContexts(Expr e, Mapping source)
 	{
-		//Collection<RestrictedExpr> restExprs = source.getVarDefinition().getDefinitions(var);
-		
-		Set<Var> varsMentioned = e.getVarsMentioned();
-		
-
 		Map<String, TypeToken> typeMap = source.getSqlOp().getSchema().getTypeMap();
 
-		SqlOp sqlOp = source.getSqlOp();
 		
 		VarDefinition varDef = source.getVarDefinition();
 		
@@ -1917,7 +2171,31 @@ public class MappingOpsImpl
 			return null;
 		}
 		
-		List<SqlExprContext> contexts = createExprSqlRewrites(e, varDef, typeMap, sqlTranslator);
+		List<SqlExprContext> result = createExprSqlRewrites(e, varDef, typeMap, sqlTranslator);
+		return result;
+	}
+	
+	
+	/**
+	 * Two variants:
+	 * - create a case-block for each expression
+	 * - create a union - but with the union we would eval the expression over and over again
+	 * - so we go with the case block 
+	 * 
+	 * 
+	 * 
+	 * @param var
+	 * @param target
+	 * @param source
+	 */
+	public ExprSqlRewrite unifyAlternatives(Expr e, Mapping source)
+	{
+		//Collection<RestrictedExpr> restExprs = source.getVarDefinition().getDefinitions(var);		
+		//Set<Var> varsMentioned = e.getVarsMentioned();
+		//SqlOp sqlOp = source.getSqlOp();
+		
+
+		List<SqlExprContext> contexts = createExprContexts(e, source);
 		
 
 //		List<ExprSqlRewrite> rewrites = new ArrayList<ExprSqlRewrite>(contexts.size());
@@ -1953,7 +2231,7 @@ public class MappingOpsImpl
 //		}
 		
 		
-		// TODO Sort rewrites by number of references columns
+		// TODO IMPORTANT Sort rewrites by number of references columns
 		List<List<S_When>> whens = new ArrayList<List<S_When>>(4);
 		for(int i = 0; i < 4; ++i) {
 			whens.add(new ArrayList<S_When>());

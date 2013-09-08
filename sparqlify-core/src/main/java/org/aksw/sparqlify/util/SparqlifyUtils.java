@@ -436,6 +436,12 @@ public class SparqlifyUtils {
 		}
 
 		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("COALESCE");
+			result.addSerializer("coalesce", serializer);
+		}
+
+		
+		{
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
 			result.addSerializer(sqlModel.getIdsByName("greaterThan"), serializer);
 		}
@@ -520,6 +526,12 @@ public class SparqlifyUtils {
 		}
 
 		{
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float");
+			result.addSerializer("double toDouble(int)", serializer);
+		}
+
+		
+		{
 			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_GeomFromPoint");
 			result.addSerializer("geometry ST_GeomFromPoint(float, float)", new SqlFunctionSerializer() {				
 				@Override
@@ -540,6 +552,32 @@ public class SparqlifyUtils {
 			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Boolean, "ST_Intersects", false, TypeToken.Geometry, TypeToken.Geometry);
 
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_Intersects");
+			result.addSerializer(decl.toString(), serializer);
+		}
+
+		
+		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Long, "Count", false);
+			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Count");
+			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {				
+				@Override
+				public String serialize(List<String> args) {
+					return "Count(*)";
+				}
+			};
+			result.addSerializer(decl.toString(), serializer);
+		}
+
+
+		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Int, "Sum", false, TypeToken.Int);
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Sum");
+			result.addSerializer(decl.toString(), serializer);
+		}
+
+		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Double, "Sum", false, TypeToken.Double);
+			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Sum");
 			result.addSerializer(decl.toString(), serializer);
 		}
 

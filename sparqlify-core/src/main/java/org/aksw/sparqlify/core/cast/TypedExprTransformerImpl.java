@@ -127,6 +127,11 @@ public class TypedExprTransformerImpl
 		//this.functionProvider = functionProvider;
 	}
 	
+	public TypeSystem getTypeSystem() 
+	{
+		return typeSystem;
+	}
+	
 
 	public static List<TypeToken> getTypes(Collection<SqlExpr> sqlExprs) {
 

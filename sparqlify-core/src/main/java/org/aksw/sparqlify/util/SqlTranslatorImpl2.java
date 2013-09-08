@@ -35,6 +35,12 @@ public class SqlTranslatorImpl2
 		this.typedExprTransformer = typedExprTransformer;
 	}
 
+	public TypedExprTransformer getTypedExprTransformer() {
+		return typedExprTransformer;
+	}
+
+	
+	
 	/**
 	 * TODO: There are two use cases:
 	 * a) Rewrite an expression completely to SQL -> result is an SqlExpr object

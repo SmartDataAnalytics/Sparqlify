@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.expr.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
@@ -18,6 +19,24 @@ public class SqlExprUtils {
 		}
 		
 		return argTypes;
+	}
+
+	/**
+	 * Returns a null list for empty argument.
+	 * 
+	 * @param expr
+	 * @return
+	 */
+	public static <T> List<T> exprToList(T expr) {
+		List<T> result;
+		
+		if(expr == null) {
+			result = Collections.emptyList();
+		} else {
+			result = Collections.singletonList(expr);
+		}
+		
+		return result;
 	}
 
 	

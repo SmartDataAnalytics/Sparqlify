@@ -38,6 +38,8 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction2;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
+import com.hp.hpl.jena.sparql.expr.aggregate.AggSum;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.sse.Tags;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -1040,6 +1042,11 @@ public class SqlTranslationUtils {
 		transMap.put(bif + "st_intersects", new ExprTransformerFunction(XSD.xboolean));
 		transMap.put(bif + "st_geomFromText", new ExprTransformerFunction(virtGeometry));
 		transMap.put(bif + "st_point", new ExprTransformerFunction(ResourceFactory.createResource("http://www.opengis.net/ont/geosparql#wktLiteral"))); //));
+		
+		// TODO: The return type of this function depends on which signature is used
+		// So i more sophicsticated transformer is needed
+		transMap.put(AggCount.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
+		transMap.put(AggSum.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
 		
 		return exprTransformer;
 	}

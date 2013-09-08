@@ -10,7 +10,8 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 
 
 /**
- * Interface for translating SPARQL expressions to SQL expressions.
+ * Interface for translating a SPARQL expression to as SQL expressions
+ * via a single binding.
  * 
  * @author raven
  *
@@ -31,4 +32,6 @@ public interface SqlTranslator {
 	
 	
 	ExprSqlRewrite translate(Expr sparqlExpr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap);
+	
+	//ExprSqlRewrite translate(Expr sparqlExpr, )
 }

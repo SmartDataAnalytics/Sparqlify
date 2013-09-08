@@ -15,6 +15,15 @@ import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 
+/**
+ * Expr is a Sparql level expressions, whose variables are
+ * bound by the projection to SQL expressions
+ * 
+ * TODO In there a reason for expr not having type E_RdfTerm???
+ * 
+ * @author raven
+ *
+ */
 public class ExprSqlRewrite {
 	private Expr expr;
 	private Projection projection;

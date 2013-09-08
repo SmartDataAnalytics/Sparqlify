@@ -63,5 +63,43 @@ public class MethodDistance {
 		
 		return result;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((argTypeDistances == null) ? 0 : argTypeDistances.hashCode());
+		result = prime
+				* result
+				+ ((returnTypeDistance == null) ? 0 : returnTypeDistance
+						.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MethodDistance other = (MethodDistance) obj;
+		if (argTypeDistances == null) {
+			if (other.argTypeDistances != null)
+				return false;
+		} else if (!argTypeDistances.equals(other.argTypeDistances))
+			return false;
+		if (returnTypeDistance == null) {
+			if (other.returnTypeDistance != null)
+				return false;
+		} else if (!returnTypeDistance.equals(other.returnTypeDistance))
+			return false;
+		return true;
+	}
 }
 

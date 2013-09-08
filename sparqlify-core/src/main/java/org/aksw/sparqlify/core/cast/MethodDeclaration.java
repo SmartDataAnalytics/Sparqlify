@@ -32,7 +32,16 @@ public class MethodDeclaration<T> {
 		MethodDeclaration<T> result = create(name, signature);
 		return result;
 	}
+	
+	public static <T> MethodDeclaration<T> create(T returnType, String name) {
+		@SuppressWarnings("unchecked")
+		MethodSignature<T> signature = MethodSignature.create(false, returnType);
+		
+		MethodDeclaration<T> result = create(name, signature);
+		return result;
+	}
 
+	
 	public static <T> MethodDeclaration<T> create(String name, MethodSignature<T> signature) {
 		MethodDeclaration<T> result = new MethodDeclaration<T>(name, signature);
 		return result;

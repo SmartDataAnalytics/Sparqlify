@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -377,12 +378,25 @@ public class TypeSystemImpl
 			}
 		}
 		
-		
+
+		CandidateMethod<T> result = lookupSqlCandidate(functionModel, sqlFns, argTypes, "SPARQL function " + sparqlFnName);
+		return result;
+	}
+
+	public static <T> CandidateMethod<T> lookupSqlCandidate(FunctionModel<T> functionModel, MethodEntry<T> sqlFn, List<T> argTypes, String collectionLabel)
+	{
+		Collection<MethodEntry<T>> sqlFns = Collections.singleton(sqlFn);
+		CandidateMethod<T> result = lookupSqlCandidate(functionModel, sqlFns, argTypes, collectionLabel);
+		return result;
+	}
+	
+	public static <T> CandidateMethod<T> lookupSqlCandidate(FunctionModel<T> functionModel, Collection<MethodEntry<T>> sqlFns, List<T> argTypes, String collectionLabel)
+	{
 		Collection<CandidateMethod<T>> candidates = functionModel.lookup(sqlFns, argTypes);
 		
 		CandidateMethod<T> result;
 		if(candidates.size() > 1) {
-			throw new RuntimeException("Multiple matching SQL declarations for SPARQL function " + sparqlFnName + " with argument types " + argTypes + ": " + candidates);
+			throw new RuntimeException("Multiple matching SQL declarations for " + collectionLabel + " with argument types " + argTypes + ": " + candidates);
 		} else if(candidates.isEmpty()) {
 			result = null;
 		} else {
