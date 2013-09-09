@@ -24,6 +24,7 @@ public class E_RdfTerm
 	public static final NodeValue typeTypedLiteral = NodeValue.makeInteger(3);
 
 	
+	
 	public static E_RdfTerm createVar(ExprVar expr) {
 		return new E_RdfTerm(typeVar, expr, NodeValue.nvEmptyString, NodeValue.nvEmptyString);
 	}

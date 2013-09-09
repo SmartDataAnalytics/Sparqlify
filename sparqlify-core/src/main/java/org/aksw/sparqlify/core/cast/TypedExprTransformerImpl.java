@@ -559,6 +559,9 @@ public class TypedExprTransformerImpl
 			// Check if the functionProvider has a definition for the functionId
 			
 
+	public static SqlExpr createSqlExpr(CandidateMethod<TypeToken> candidate, SqlExpr ... args) {
+		return createSqlExpr(candidate, Arrays.asList(args));
+	}
 	
 	public static SqlExpr createSqlExpr(CandidateMethod<TypeToken> candidate, List<SqlExpr> args) {
 		MethodEntry<TypeToken> method = candidate.getMethod();

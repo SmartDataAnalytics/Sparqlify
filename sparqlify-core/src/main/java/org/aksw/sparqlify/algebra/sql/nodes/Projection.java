@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.core.TypeToken;
 
 class ProjectionMulti {
 	private Map<String, Projection> aliasToProjection;
@@ -43,6 +44,16 @@ public class Projection {
 	public Projection(List<String> names, Map<String, SqlExpr> nameToExpr) {
 		this.names = names;
 		this.nameToExpr = nameToExpr;
+	}
+	
+	public Map<String, TypeToken> getTypeMap() {
+		Map<String, TypeToken> result = new HashMap<String, TypeToken>();
+		
+		for(Entry<String, SqlExpr> entry : nameToExpr.entrySet()) {
+			result.put(entry.getKey(), entry.getValue().getDatatype());
+		}
+		
+		return result;
 	}
 	
 	public boolean isEmpty() {

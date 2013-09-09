@@ -228,6 +228,14 @@ public class VarDefinition
 		return result;
 	}
 	
+	public static <T extends Collection<String>> T copyVarNames(T target, Collection<Var> vars) {
+		for(Var var : vars) {
+			target.add(var.getName());
+		}
+		
+		return target;
+	}
+	
 	public Set<Var> getReferencedVars() {
 		Set<Var> result = new HashSet<Var>();
 		
@@ -237,6 +245,55 @@ public class VarDefinition
 			result.addAll(tmp);			
 		}
 		
+		return result;
+	}
+	
+	public Multimap<Var, Expr> withoutRestrictions() {
+		Multimap<Var, Expr> result = HashMultimap.create();
+		for(Entry<Var, RestrictedExpr> entry : this.varToExprs.entries()) {
+			result.put(entry.getKey(), entry.getValue().getExpr());
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Return only the referenced vars for the given vars
+	 * 
+	 * @param vars
+	 * @return
+	 */
+	public Set<Var> getReferencedVars(Collection<Var> vars) {
+		//List<Var> result = new ArrayList<Var>();
+		Set<Var> result = new HashSet<Var>();
+		
+		// Track all columns that contribute to the construction of SQL variables
+		for(Var var : vars) {
+			for(RestrictedExpr def : getDefinitions(var)) {
+				Collection<Var> tmps = def.getExpr().getVarsMentioned(); 
+				result.addAll(tmps);
+				//for(Var item : def.getExpr().getVarsMentioned()) {
+					
+					//String itemName = item.getName();
+					//if(!result.contains(item)) {
+						//result.add(item);
+					//}
+				//}
+			}
+		}
+
+		return result;
+	}
+	
+	public Set<String> getReferencedVarNames(Collection<Var> vars) {
+		Set<Var> tmp = getReferencedVars(vars);
+		Set<String> result = copyVarNames(new HashSet<String>(), tmp);
+		return result;
+	}
+	
+	public <T extends Collection<String>> T getReferencedVarNames(T target, Collection<Var> vars) {
+		Set<Var> tmp = getReferencedVars(vars);
+		T result = copyVarNames(target, tmp);
 		return result;
 	}
 	

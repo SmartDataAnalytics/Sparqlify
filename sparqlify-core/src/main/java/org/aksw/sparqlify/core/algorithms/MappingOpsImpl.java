@@ -15,7 +15,6 @@ import java.util.Set;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
@@ -23,12 +22,9 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Coalesce;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_When;
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlAggFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
@@ -54,6 +50,7 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypeSystemImpl;
 import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
+import org.aksw.sparqlify.core.domain.input.MappingUnion;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -193,6 +190,7 @@ class SqlExprContext {
 		return exprRewrite;
 	}
 	
+		
 	@Override
 	public String toString() {
 		return "SqlExprContext [assignment=" + assignment + ", sqlExpr="
@@ -370,6 +368,20 @@ public class MappingOpsImpl
 	 * 
 	 */
 	
+
+	/**
+	 * Expand an expression based on a set of assignments
+	 * 
+	 * 
+	 * @param expr
+	 * @param assignments
+	 * @return
+	 */
+	/*
+	public List<> getExpandedExprs(Expr expr, Multimap<Var, Expr> assignments) {
+		VarDefinition
+	}
+	*/
 	
 	/**
 	 * Returns a list of Binding-Sql Expr pairs.
@@ -384,7 +396,7 @@ public class MappingOpsImpl
 	 * @param typeMap
 	 * @param sqlTranslator
 	 * @return
-	 */	
+	 */
 	public static List<SqlExprContext> createExprSqlRewrites(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		List<SqlExprContext> result = new ArrayList<SqlExprContext>();
 		
@@ -463,6 +475,13 @@ public class MappingOpsImpl
 		return result;
 		
 	}
+	
+	
+	public static List<SqlExprContext> createExprSqlRewrites(Expr condition, Mapping m, SqlTranslator sqlTranslator) {
+		List<SqlExprContext> result = createExprSqlRewrites(condition, m.getVarDefinition(), m.getSqlOp().getSchema().getTypeMap(), sqlTranslator);
+		return result;
+	}
+
 
 	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		List<SqlExprContext> items = createExprSqlRewrites(condition, varDef, typeMap, sqlTranslator);
@@ -1077,6 +1096,9 @@ public class MappingOpsImpl
 		return result;
 	}
 
+	
+	
+
 
 	/**
 	 * Removes variables from the definitions.
@@ -1086,22 +1108,24 @@ public class MappingOpsImpl
 	@Override
 	public Mapping project(Mapping a, List<Var> vars) {		
 				
-		//List<String> referencedColumns = new HashSet<String>();
-		List<String> referencedColumns = new ArrayList<String>();
+		//List<String> referencedColumns = new ArrayList<String>();
+		
+		//List<String> referencedColumns = getReferencedColumns(a, vars);
+		List<String> referencedColumns = a.getVarDefinition().getReferencedVarNames(new ArrayList<String>(), vars);
 		
 		// Track all columns that contribute to the construction of SQL variables
-		for(Var var : vars) {
-			for(RestrictedExpr def : a.getVarDefinition().getDefinitions(var)) {
-				for(Var item : def.getExpr().getVarsMentioned()) {
-					
-					String itemName = item.getName();
-					if(!referencedColumns.contains(itemName)) {
-						referencedColumns.add(itemName);
-					}
-				}
-			}
-		}
-		
+//		for(Var var : vars) {
+//			for(RestrictedExpr def : a.getVarDefinition().getDefinitions(var)) {
+//				for(Var item : def.getExpr().getVarsMentioned()) {
+//					
+//					String itemName = item.getName();
+//					if(!referencedColumns.contains(itemName)) {
+//						referencedColumns.add(itemName);
+//					}
+//				}
+//			}
+//		}
+//		
 		
 		SqlOpProject sqlOp = SqlOpProject.create(a.getSqlOp(), referencedColumns);
 		VarDefinition newVarDef = a.getVarDefinition().copyProject(vars);		
@@ -1321,6 +1345,40 @@ public class MappingOpsImpl
 		return result;
 	}
 	
+	
+	/*
+	public static Multimap<String, ArgExpr> clusterExprs(Collection<Expr> exprs) {
+		Multimap<String, ArgExpr> result = ArrayListMultimap.create();
+		
+		Map<String, TypeToken> typeMap = member.getSqlOp().getSchema().getTypeMap(); //SqlNodeUtil.getColumnToDatatype(sqlNode);
+		//Integer hash = ExprStructuralHash.hash(def.getExpr(), columnToDatatype);
+		
+		Expr expr = def.getExpr();
+		if(!(expr instanceof E_RdfTerm)) {
+			throw new RuntimeException("Type E_RdfTerm expected, but got: " + expr);
+		}
+		E_RdfTerm e = (E_RdfTerm)expr;
+		
+		// New approach: We change the clustering so that we do not push the rdf term signature into the SQL
+		Expr valueType = exprNormalizer.normalize(e.getLexicalValue(), typeMap);
+		String hash = "" + e.getType() + valueType + e.getDatatype();
+		
+		return result;
+	}
+	*/
+	
+	
+	
+	public static Set<String> getReferencedColumnNames(List<Mapping> mappings) {
+		Set<String> result = new HashSet<String>();
+		for(Mapping member : mappings) {
+			List<String> memberColumnNames = member.getSqlOp().getSchema().getColumnNames();
+			result.addAll(memberColumnNames);
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * 
 	 * [    null,  h: int, i: string,   null ]
@@ -1351,11 +1409,8 @@ public class MappingOpsImpl
 		
 		// Create a column blacklist so that we do not end up extending member projections with column
 		// names that they already have
-		Set<String> columnNameBlacklist = new HashSet<String>();
-		for(Mapping member : members) {
-			List<String> memberColumnNames = member.getSqlOp().getSchema().getColumnNames();
-			columnNameBlacklist.addAll(memberColumnNames);
-		}
+		Set<String> columnNameBlacklist = getReferencedColumnNames(members);
+				
 
 		//List<Mapping> members = rawMembers;
 		
@@ -1471,6 +1526,7 @@ public class MappingOpsImpl
 					singleSizeCluster = true;
 				}
 				
+				
 				int j = 0;
 				for(RestrictedExpr def : exprsForVar) {
 				
@@ -1478,8 +1534,17 @@ public class MappingOpsImpl
 					//Integer hash = ExprStructuralHash.hash(def.getExpr(), columnToDatatype);
 					
 					Expr expr = def.getExpr();
-					Expr datatypeNorm = exprNormalizer.normalize(expr, typeMap);
-					String hash = datatypeNorm.toString();
+					if(!(expr instanceof E_RdfTerm)) {
+						throw new RuntimeException("Type E_RdfTerm expected, but got: " + expr);
+					}
+					E_RdfTerm e = (E_RdfTerm)expr;
+					
+					// New approach: We change the clustering so that we do not push the rdf term signature into the SQL
+					Expr valueType = exprNormalizer.normalize(e.getLexicalValue(), typeMap);
+					String hash = "" + e.getType() + valueType + e.getDatatype();
+					
+					//Expr datatypeNorm = exprNormalizer.normalize(expr, typeMap);
+					//String hash = datatypeNorm.toString();
 					
 					if(singleSizeCluster) {
 						hash = "m" + index + "e" + j + hash;
@@ -1777,14 +1842,31 @@ public class MappingOpsImpl
 	@Override
 	public Mapping groupBy(Mapping a, VarExprList groupVars,
 			List<ExprAggregator> aggregators) {
+		MappingUnion mu = MappingRefactor.groupBy(a, groupVars, aggregators, sqlTranslator, getTypeSystem(), exprNormalizer);
+		
+		List<Mapping> mappings = mu.getMappings();
+		Mapping result = unionIfNeeded(mappings);
+		
+		return result;
+	}
+	
+	//@Override
+	public Mapping groupByOld(Mapping a, VarExprList groupVars,
+			List<ExprAggregator> aggregators) {
 		
 		
 		// TODO Add variables mentioned in aggregators aswell?
 		List<Var> vars = new ArrayList<Var>(groupVars.getVars());
+
+
+		
 		
 		List<Mapping> ms = MappingRefactor.refactorToUnion(a, vars);
 
-		ListMultimap<String, Mapping> groups = MappingRefactor.groupBy(exprNormalizer, ms, vars);
+		
+		
+		
+		ListMultimap<String, Mapping> groups = MappingRefactor.groupByOld(exprNormalizer, ms, vars);
 		
 		
 		List<Mapping> gg = new ArrayList<Mapping>();
@@ -1853,7 +1935,7 @@ public class MappingOpsImpl
 		for(ExprAggregator ea : aggregators) {
 			
 			Aggregator agg = ea.getAggregator();
-			ExprSqlRewrite rewrite = rewrite(a, agg, aggSym);
+			ExprSqlRewrite rewrite = rewrite(a, agg, aggSym, getTypeSystem(), sqlTranslator);
 			
 			
 			Projection ex = new Projection();
@@ -1895,7 +1977,7 @@ public class MappingOpsImpl
 	 * @param agg
 	 * @return
 	 */
-	public E_Function aggregatorToFunction(Aggregator agg) {
+	public static E_Function aggregatorToFunction(Aggregator agg) {
 		Expr arg = agg.getExpr();
 		
 		ExprList args = new ExprList();
@@ -1910,6 +1992,21 @@ public class MappingOpsImpl
 		return result;
 	}
 
+	
+	
+	/**
+	 * TODO HACK Hacky function, get rid of it
+	 * 
+	 * 
+	 * 
+	 */
+	public TypeSystem getTypeSystem() {
+		SqlTranslatorImpl2 tmp = (SqlTranslatorImpl2)sqlTranslator;
+		TypedExprTransformerImpl tet = (TypedExprTransformerImpl)tmp.getTypedExprTransformer();
+		TypeSystem result = tet.getTypeSystem();
+	
+		return result;
+	}
 	
 	/**
 	 * 
@@ -1926,7 +2023,7 @@ public class MappingOpsImpl
 	 * @param generator
 	 * @return
 	 */
-	public ExprSqlRewrite rewrite(Mapping mapping, Aggregator agg, Generator generator) {
+	public static ExprSqlRewrite rewrite(Mapping mapping, Aggregator agg, Generator generator, TypeSystem typeSystem, SqlTranslator sqlTranslator) {
 		ExprFunction fn = aggregatorToFunction(agg);
 
 		String sparqlFnName = ExprUtils.getFunctionId(fn);
@@ -1939,9 +2036,7 @@ public class MappingOpsImpl
 		
 		// HACK MappingOps should be independent of the typeSystem
 		// TODO Move this code to an appropriate location when its working
-		SqlTranslatorImpl2 tmp = (SqlTranslatorImpl2)sqlTranslator;
-		TypedExprTransformerImpl tet = (TypedExprTransformerImpl)tmp.getTypedExprTransformer();
-		TypeSystem typeSystem = tet.getTypeSystem();
+		//TypeSystem typeSystem = getTypeSystem();
 		
 		FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
 		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
@@ -1953,6 +2048,7 @@ public class MappingOpsImpl
 			// We need to translate all arguments of the aggregate to SQL
 			// Afterwards, find the one overload of the aggregate that accepts the argument types
 			
+			// argContext is column wise
 			List<List<SqlExprContext>> argContexts = new ArrayList<List<SqlExprContext>>(args.size());
 			
 			for(Expr arg : args) {
@@ -1968,6 +2064,10 @@ public class MappingOpsImpl
 			// AggCandidate provides convenient access to the paramter lists
 			List<AggCandidate> aggCandidates = new ArrayList<AggCandidate>(cartContexts.size());
 			for(List<SqlExprContext> cartContext : cartContexts) {
+				
+				// TODO Get rid of this once the cartesian product hase been updates
+				cartContext = new ArrayList<SqlExprContext>(cartContext);
+				
 				AggCandidate aggCandidate = AggCandidate.create(cartContext);
 	
 				aggCandidates.add(aggCandidate);
@@ -1993,7 +2093,7 @@ public class MappingOpsImpl
 			// SUM( WHEN foo::type THEN bar::type ELSE null::type ) 
 	
 	
-			
+			// survivors is the set of arguments candidates for which an overload of the aggregate function was found
 			List<AggCandidate> survivors = new ArrayList<AggCandidate>(aggCandidates.size());
 			Set<MethodEntry<TypeToken>> overloads = new HashSet<MethodEntry<TypeToken>>(); 
 	
@@ -2013,6 +2113,8 @@ public class MappingOpsImpl
 			// So we don't have to take distances into account.
 			
 			MethodEntry<TypeToken> bestMatch = null;
+			
+			// For each candidate we keep the best method because we might need its coercions
 			List<CandidateMethod<TypeToken>> bestMethods = new ArrayList<CandidateMethod<TypeToken>>(survivors.size());
 			
 			for(MethodEntry<TypeToken> overload : overloads) {
@@ -2049,20 +2151,57 @@ public class MappingOpsImpl
 			
 			// Coalesce together all the survivors for each argument of the orginal function
 			int n = survivors.size();
-			List<SqlExpr> coalesceArgs = new ArrayList<SqlExpr>(n);
-			for(int i = 0; i < n; ++i) {			
-				AggCandidate survivor = survivors.get(i);
-				CandidateMethod<TypeToken> method = bestMethods.get(i);
-				
-				
-				List<SqlExpr> sqlArgs = survivor.getArgs();
-				SqlExpr sqlExpr = TypedExprTransformerImpl.createSqlExpr(method, sqlArgs);
-	
-				coalesceArgs.add(sqlExpr);
+			
+			
+			// coalesceArgss is columnWise
+			List<List<SqlExpr>> coalesceArgss = new ArrayList<List<SqlExpr>>(args.size());
+			for(int i = 0; i < args.size(); ++i) {
+				coalesceArgss.add(new ArrayList<SqlExpr>(n));
 			}
 			
+			for(int i = 0; i < n; ++i) {
+				
+				AggCandidate survivor = survivors.get(i);
+				CandidateMethod<TypeToken> method = bestMethods.get(i);
+
+				//List<SqlExpr> coalesceArgs = new ArrayList<SqlExpr>(args.size());
+				
+
+				
+				List<SqlExpr> sqlArgs = survivor.getArgs();
+				
+				List<CandidateMethod<TypeToken>> coercions = method.getCoercions();
+				
+				for(int j = 0; j < sqlArgs.size(); ++j) {
+					SqlExpr sqlArg = sqlArgs.get(j);
+					
+					CandidateMethod<TypeToken> coercion = coercions.get(j);
+					
+					SqlExpr sqlExpr;				
+					if(coercion != null) {					
+						sqlExpr = TypedExprTransformerImpl.createSqlExpr(coercion, sqlArg);
+					} else {
+						sqlExpr = sqlArg;
+					}
+						
+					List<SqlExpr> coalesceArgs = coalesceArgss.get(j); 
+					coalesceArgs.add(sqlExpr);
+				}
+			}
 			
-			sqlCoalesce = S_Coalesce.create(coalesceArgs);
+
+			List<SqlExpr> finalArgs = new ArrayList<SqlExpr>(args.size());
+			for(int i = 0; i < args.size(); ++i) {
+				List<SqlExpr> coalesceArgs = coalesceArgss.get(i);
+				
+				SqlExpr finalArg = S_Coalesce.create(coalesceArgs);
+				finalArgs.add(finalArg);
+			}
+			
+			CandidateMethod<TypeToken> cm = new CandidateMethod<TypeToken>(bestMatch, null, null);
+			
+			//SqlExpr sqlExpr
+			sqlCoalesce = TypedExprTransformerImpl.createSqlExpr(cm, finalArgs);			
 		}
 		else {
 			
@@ -2095,7 +2234,8 @@ public class MappingOpsImpl
 		newArgs.add(columnRef);
 		newArgs.add(NodeValue.makeString(XSD.xdouble.getURI()));
 
-		Expr e = new E_Function(SparqlifyConstants.typedLiteralLabel, newArgs);
+		//Expr e = new E_Function(SparqlifyConstants.typedLiteralLabel, newArgs);
+		E_RdfTerm e = E_RdfTerm.createTypedLiteral(columnRef, NodeValue.makeString(XSD.xdouble.getURI()));
 
 		ExprSqlRewrite result = new ExprSqlRewrite(e, p);
 

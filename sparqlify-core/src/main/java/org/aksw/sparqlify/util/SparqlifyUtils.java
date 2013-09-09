@@ -568,6 +568,14 @@ public class SparqlifyUtils {
 			result.addSerializer(decl.toString(), serializer);
 		}
 
+		
+		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
+
+			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_");
+			result.addSerializer(decl.toString(), new SqlFunctionSerializerPassThrough());
+		}
+
 
 		{
 			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Int, "Sum", false, TypeToken.Int);

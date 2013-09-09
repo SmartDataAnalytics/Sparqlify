@@ -62,6 +62,10 @@ public class ExprCommonFactor {
 	public Expr transformHelper(Expr a, Expr b) {
 		// No match found - create a new helper variable
 		
+		if(a.equals(b)) {
+			return a;
+		}
+		
 		Var var = Var.alloc(generator.next());
 		ExprVar result = new ExprVar(var);
 

@@ -129,6 +129,12 @@ public interface TypeSystem
 	Multimap<String, String> getSparqlSqlDecls();
 	Map<String, SqlExprEvaluator> getSqlImpls();
 	
+	
+	/*
+	 * Following attributes 
+	 * 
+	 *
+	 */
 
 	FunctionModel<TypeToken> getSqlFunctionModel();
 	FunctionModelMeta getSqlFunctionMetaModel();

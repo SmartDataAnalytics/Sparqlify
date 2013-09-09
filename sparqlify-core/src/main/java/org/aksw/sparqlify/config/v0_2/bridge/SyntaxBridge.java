@@ -45,6 +45,18 @@ import com.hp.hpl.jena.sparql.expr.ExprVar;
 
 class ExprTransformerUtils
 {
+	public static final Function<Expr, Expr> expandRdfTerms = new Function<Expr, Expr>() {		
+		@Override
+		public Expr apply(@Nullable Expr expr) {
+			Expr result = SqlTranslationUtils.expandAnyToTerm(expr);
+			if(result == null) {
+				throw new RuntimeException("Could not expand rdf terms in " + expr);
+			}
+
+			return result;
+		}
+	};
+	
 	public static final Function<Expr, Expr> injectStrsIntoConcats = new Function<Expr, Expr>() {
 		@Override
 		public Expr apply(@Nullable Expr expr) {
@@ -187,6 +199,10 @@ public class SyntaxBridge {
 		// Add str to concat expressions in order to play safe with Sparqlify's type model
 		varDefinition.applyExprTransform(ExprTransformerUtils.injectStrsIntoConcats);
 
+		// Expand RdfTerms
+		varDefinition.applyExprTransform(ExprTransformerUtils.expandRdfTerms);
+
+		
 		SqlOp relation = viewDefinition.getRelation();
 		
 		// TODO: I think the adapter should be able to resolve the schema at this stage,

@@ -10,10 +10,13 @@ import java.util.Set;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
+import org.aksw.sparqlify.core.TypeToken;
 
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
+import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
  * Expr is a Sparql level expressions, whose variables are
@@ -37,6 +40,53 @@ public class ExprSqlRewrite {
 	public E_RdfTerm getRdfTermExpr() {
 		return (E_RdfTerm)expr;
 	}
+	
+	
+	public E_RdfTerm asConstRdfTerm() {
+		E_RdfTerm tmp = getRdfTermExpr();
+		
+		List<Expr> args = tmp.getArgs();
+
+		List<Expr> newArgs = new ArrayList<Expr>(4);
+		
+		for(int i = 0; i < args.size(); ++i) {
+			Expr arg = args.get(i);
+			
+			// By default, subst is the arg
+			Expr subst = arg;
+			
+			if(arg.isVariable()) {
+				String varName = arg.getVarName();
+				
+				SqlExpr sqlExpr = projection.getNameToExpr().get(varName);
+				if(sqlExpr.isConstant()) {
+					SqlExprConstant con = sqlExpr.asConstant();
+
+					if(i == 0) {
+						//if(con.getDatatype().equals(TypeToken.Int)) {
+						int type = (Integer)con.getValue().getValue();
+						subst = NodeValue.makeInteger(type);
+						
+					} else {
+					
+						if(con.getDatatype().equals(TypeToken.String)) {
+						
+							String str = (String)con.getValue().getValue();
+						
+							subst = NodeValue.makeString(str);
+						}
+					}
+				}
+				
+			}
+			
+			newArgs.add(subst);
+		}
+		
+		E_RdfTerm result = new E_RdfTerm(newArgs);
+		return result;
+	}
+
 	
 	public Expr getExpr() {
 		return expr;
