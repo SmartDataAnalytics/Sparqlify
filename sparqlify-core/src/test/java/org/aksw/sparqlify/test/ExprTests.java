@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.test;
 
 import java.util.HashMap;
 import java.util.Map;

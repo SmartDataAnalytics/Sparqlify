@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.test;
 
 import org.springframework.core.io.Resource;
 

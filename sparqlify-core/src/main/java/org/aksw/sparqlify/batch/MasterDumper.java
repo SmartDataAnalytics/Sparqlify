@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.strings.StringUtils;
+import org.aksw.jena_sparql_api.utils.TripleUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.config.lang.ConfigParser;
@@ -28,7 +29,6 @@ import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.sparql.RowMapperSparqlifyCombined;
-import org.aksw.sparqlify.csv.TripleUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.Main;

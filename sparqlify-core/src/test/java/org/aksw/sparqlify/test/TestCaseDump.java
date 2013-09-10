@@ -1,11 +1,11 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.test;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.aksw.sparqlify.core.test.TestHelper;
 import org.junit.Assert;
 
-import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.core.Quad;
 
 // TODO: We could distinguish between a task (a callable) and a testcase, that validates the output of the task
@@ -31,21 +31,7 @@ public class TestCaseDump
 		}
 		//SparqlifyUtils.shutdownH2(ds);
 
-		Set<Quad> alignedActual = CompareUtils.alignActualQuads(expected, actual);
-		
-
-		Set<Quad> excessive = Sets.difference(alignedActual, expected);
-		Set<Quad> missing = Sets.difference(expected, alignedActual);
-
-		if(!excessive.isEmpty() || !missing.isEmpty()) {
-		
-			System.out.println("Expected : " + expected);
-			System.out.println("Actual   : " + alignedActual);
-	
-			System.out.println("Excessive: " + excessive);
-			System.out.println("Missing  : " + missing);
-		}		
-		
-		Assert.assertEquals(expected, alignedActual);
+		boolean isEqual = TestHelper.isEqual(actual, expected);		
+		Assert.assertTrue(isEqual);
 	}	
 }

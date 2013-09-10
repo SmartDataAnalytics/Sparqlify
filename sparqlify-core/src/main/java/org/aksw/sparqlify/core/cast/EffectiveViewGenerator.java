@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
@@ -22,7 +23,6 @@ import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

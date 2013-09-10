@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.util;
 
 import java.util.HashSet;
 import java.util.Set;

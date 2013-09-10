@@ -4,10 +4,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.aksw.jena_sparql_api.utils.QuadUtils;
-import org.aksw.sparqlify.core.test.R2rmlTest;
+import org.aksw.sparqlify.util.NQuadUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
@@ -21,17 +19,6 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 
 
 
-class FunctionQuadToBinding
-	implements Function<Quad, Binding>
-{
-	@Override
-	public Binding apply(@Nullable Quad quad) {
-		Binding result = QuadUtils.quadToBinding(quad);
-		return result;
-	}
-}
-
-
 /**
  * Converts NQuads to a SPARQL result set.
  * 
@@ -42,7 +29,7 @@ class FunctionQuadToBinding
  */
 public class NQuadsToResultSet {
 	public static ResultSet convert(InputStream in) {
-		Set<Quad> quads = R2rmlTest.readNQuads(in);
+		Set<Quad> quads = NQuadUtils.readNQuads(in);
 		
 		ResultSet result = createResultSet(quads);		
 		return result;

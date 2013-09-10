@@ -1,10 +1,7 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -14,137 +11,27 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.core.test.MappingBundle;
+import org.aksw.sparqlify.core.test.QueryBundle;
+import org.aksw.sparqlify.core.test.TaskDump;
+import org.aksw.sparqlify.core.test.TaskQuerySelect;
+import org.aksw.sparqlify.core.test.TestBundle;
+import org.aksw.sparqlify.util.NQuadUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
-import org.apache.jena.atlas.iterator.Iter;
-import org.apache.jena.atlas.iterator.Transform;
-import org.apache.jena.riot.RiotReader;
-import org.apache.jena.riot.lang.LangNQuads;
-import org.apache.jena.riot.system.StreamRDF;
-import org.apache.jena.riot.system.StreamRDFLib;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.binding.BindingUtils;
 
 
-
-@RunWith(Parameterized.class)
-public class R2rmlTest {
-
-	/**
-	 * 
-	 * TODO Make public in Jena ResultSetCompare
-	 */
-    public static Transform<QuerySolution, Binding> qs2b = new Transform<QuerySolution, Binding> () {
-
-        @Override
-        public Binding convert(QuerySolution item)
-        {
-            return BindingUtils.asBinding(item) ;
-        }
-    } ;
-
-    /**
-     * 
-     * TODO Make public in Jena ResultSetCompare
-     */
-    public static List<Binding> convert(ResultSet rs)
-    {
-        return Iter.iter(rs).map(qs2b).toList() ;
-    }
-
-	
-	
-	private static final Logger logger = LoggerFactory.getLogger(R2rmlTest.class);
-	
-	//private Comparator<Resource> resourceComparator = new ResourceComparator();	
-	//private PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-	private String name;
-	private Runnable task;
-	
-	
-	public R2rmlTest(String name, Runnable task) {
-		this.name = name;
-		this.task = task;
-	}
-	
-//	public TestCase getTask() {
-//		return task;
-//	}
-	
-	@Parameters(name = "Sparqlify R2RML Test {index}: {0}")
-	public static Collection<Object[]> data()
-			throws Exception
-	{
-		TestBundleReader testBundleReader = new TestBundleReader();
-		List<TestBundle> testBundles = testBundleReader.getTestBundles();
-		logger.debug(testBundles.size() + " test bundles detected.");
-		
-		List<TestCase> testCases = collectTestCases(testBundles);
-		logger.debug(testCases.size() + " test cases derived.");
-		
-		for(int i = 0; i < testCases.size(); ++i) {
-			TestCase testCase = testCases.get(i);
-			logger.trace("Test Case #" + i + ": " + testCase);
-		}
-		
-		Object data[][] = new Object[testCases.size()][2];
-		
-		
-		for(int i = 0; i < testCases.size(); ++i) {
-			TestCase testCase = testCases.get(i);
-			data[i][0] = testCase.getName();
-			data[i][1] = testCase;
-		}
-
-		Collection<Object[]> result = Arrays.asList(data); 
-		
-		return result;
-	}
-
-
-	@Test
-	public void run()
-			throws Exception
-	{
-		task.run();
-		
-		
-//		QueryExecutionFactory qef = testBundle.getQueryExecutionFactory();
-//		Query query = testBundle.getQuery();
-//		
-//		ResultSet rs = qef.createQueryExecution(query);
-//		ResultSetCompare.equalsByValue();
-		
-		//runBundle(testBundle);
-	}
-
-	public static Set<Quad> readNQuads(InputStream in) {
-
-		SinkQuadsToSet quadSink = new SinkQuadsToSet();
-		StreamRDF streamRdf = StreamRDFLib.sinkQuads(quadSink);
-		LangNQuads parser = RiotReader.createParserNQuads(in, streamRdf);
-		parser.parse();
-
-		Set<Quad> result = quadSink.getQuads();
-		return result;
-	}
-
-		
-	
+public class TestBundlerConverter {
+	private static final Logger logger = LoggerFactory.getLogger(TestBundlerConverter.class);
 	
 	public static List<TestCase> collectTestCases(List<TestBundle> bundles) throws Exception {
 		List<TestCase> result = new ArrayList<TestCase>();
@@ -203,7 +90,7 @@ public class R2rmlTest {
 		
 		// If there is an expected result for the complete mapping, create a query for it
 		if(bundle.getExpected() != null) {
-			Set<Quad> expected = readNQuads(bundle.getExpected().getInputStream());
+			Set<Quad> expected = NQuadUtils.readNQuads(bundle.getExpected().getInputStream());
 			//ResultSet resultSet = NQuadsToResultSet.createResultSet(expected);
 
 			

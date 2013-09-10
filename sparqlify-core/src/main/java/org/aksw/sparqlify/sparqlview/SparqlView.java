@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
@@ -21,7 +22,6 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.trash.RenamerNodes;
-import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

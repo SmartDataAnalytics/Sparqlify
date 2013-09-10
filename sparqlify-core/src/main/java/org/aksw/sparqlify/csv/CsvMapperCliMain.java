@@ -26,6 +26,7 @@ import jxl.read.biff.BiffException;
 
 import org.aksw.jena_sparql_api.core.ConstructIterator;
 import org.aksw.jena_sparql_api.core.ResultSetClosable;
+import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
@@ -35,7 +36,6 @@ import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.sparql.IteratorResultSetSparqlifyBinding;
-import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.HttpSparqlEndpoint;
 import org.aksw.sparqlify.web.SparqlFormatterUtils;

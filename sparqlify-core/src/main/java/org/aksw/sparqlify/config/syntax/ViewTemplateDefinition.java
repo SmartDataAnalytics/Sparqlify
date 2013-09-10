@@ -3,7 +3,7 @@ package org.aksw.sparqlify.config.syntax;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.util.QuadPatternUtils;
+import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;

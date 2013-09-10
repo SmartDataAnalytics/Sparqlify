@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.test;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -8,22 +9,35 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.aksw.commons.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-class TestBundleReader
+public class TestBundleReader
 {
-	private static final Logger logger = LoggerFactory.getLogger(R2rmlTest.class);	
+	private static final Logger logger = LoggerFactory.getLogger(TestBundleReader.class);	
 	private static final Comparator<Resource> resourceComparator = new ResourceComparator();	
-	private static final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+	private static final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(); //TestBundleReader.class.getClass().getClassLoader());
 	
 	private String smlBasePath = "/org/aksw/sml/r2rml_tests/";
 	private String r2rmlBasePath = "/org/w3c/r2rml_tests/";
 
 	
 	public List<TestBundle> getTestBundles() throws IOException {
+
+//		{
+//			URL url = this.getClass().getResource("/org/aksw/sml/r2rml_tests/D000-1table1column0rows/query1.txt");
+//			System.out.println("content: " + StreamUtils.toString(url.openStream()));
+//			System.out.println(url);
+//			Resource[] resources = resolver.getResources("/org/w3c/r2rml_tests/*"); //"/org/aksw/sml/r2rml_tests/*");
+//			for(Resource r : resources) {
+//				System.out.println("Got: " + r);
+//			}
+//		}
+
+		
 		List<TestBundle> result = new ArrayList<TestBundle>();
 	
 		Resource[] resources = resolver.getResources(r2rmlBasePath + "*");
@@ -160,4 +174,7 @@ class TestBundleReader
 		//System.out.println("create exists? " + createRes.exists());
 		
 	}
+	
 }
+
+

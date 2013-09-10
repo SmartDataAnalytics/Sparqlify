@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.config.lang.Constraint;
-import org.aksw.sparqlify.util.QuadPatternUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.riot.system.PrefixMap;
 

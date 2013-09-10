@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.test;
+package org.aksw.sparqlify.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.aksw.sparqlify.core.test.ResourceComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 
-class TestBundleReaderCsv
+public class TestBundleReaderCsv
 {
 	private static final Logger logger = LoggerFactory.getLogger(TestBundleReaderCsv.class);	
 	private static final Comparator<Resource> resourceComparator = new ResourceComparator();	

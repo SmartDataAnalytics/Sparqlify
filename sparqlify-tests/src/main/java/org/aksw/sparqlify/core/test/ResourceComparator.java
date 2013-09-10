@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import org.springframework.core.io.Resource;
 
-class ResourceComparator
+public class ResourceComparator
 	implements Comparator<Resource>
 {
 	@Override

@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 
@@ -20,7 +20,7 @@ public class TaskDump
 
 	@Override
 	public Set<Quad> call() throws Exception {
-		Set<Quad> result = SparqlifyUtils.createDumpNQuads(qef);
+		Set<Quad> result = QueryExecutionUtils.createDumpNQuads(qef);
 		return result;
 	}
 	
