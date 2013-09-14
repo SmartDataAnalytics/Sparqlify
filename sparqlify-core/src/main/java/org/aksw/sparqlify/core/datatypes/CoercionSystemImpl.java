@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core.datatypes;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+import org.aksw.sparqlify.type_system.MethodSignature;
 
 /**
  * A function can at the same time be registered for the coercion.

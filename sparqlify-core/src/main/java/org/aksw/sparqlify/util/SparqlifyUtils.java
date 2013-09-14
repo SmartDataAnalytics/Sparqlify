@@ -53,8 +53,6 @@ import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
-import org.aksw.sparqlify.core.cast.FunctionModel;
-import org.aksw.sparqlify.core.cast.MethodDeclaration;
 import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystemImpl;
@@ -79,6 +77,8 @@ import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
+import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.MethodDeclaration;
 import org.antlr.runtime.RecognitionException;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
@@ -665,7 +665,7 @@ public class SparqlifyUtils {
 	
 	public static SqlTranslator createSqlRewriter() {
 		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
-		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer();
+		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer(typeSystem);
 		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
 	
 		
@@ -731,7 +731,7 @@ public class SparqlifyUtils {
 	
 	
 	public static MappingOps createDefaultMappingOps(TypeSystem typeSystem) {
-		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer();
+		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer(typeSystem);
 		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
 		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, rdfTermEliminator, exprTransformer);
 		

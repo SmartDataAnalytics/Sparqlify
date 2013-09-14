@@ -1,10 +1,12 @@
-package org.aksw.sparqlify.algebra.sparql.transform;
+package org.aksw.sparqlify.type_system;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * FIXME FunctionSignature would be more concise 
+ * 
+ * TODO Maybe rename to something like TypeSignature, FunctionTypeSignature (preferred), TypeSignatureFunction.
  * 
  * @author Claus Stadler <cstadler@informatik.uni-leipzig.de>
  *

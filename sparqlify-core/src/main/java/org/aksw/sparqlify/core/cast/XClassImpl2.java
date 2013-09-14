@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.type_system.DirectSuperTypeProvider;
+import org.aksw.sparqlify.type_system.TypeHierarchyUtils;
 
 public class XClassImpl2
 	implements XClass
@@ -30,7 +32,7 @@ public class XClassImpl2
 
 	@Override
 	public List<XClass> getDirectSuperClasses() {
-		List<XClass> result = TypeSystemUtils.getDirectSuperClasses(name, hierarchyProvider, typeResolver);
+		List<XClass> result = TypeSystemUtilsOld.getDirectSuperClasses(name, hierarchyProvider, typeResolver);
 		return result;
 	}
 
@@ -42,7 +44,7 @@ public class XClassImpl2
 		
 		XClassImpl2 t = (XClassImpl2)that; 
 		
-		boolean result = TypeSystemUtils.isSuperClassOf(this.name, t.name, hierarchyProvider);
+		boolean result = TypeHierarchyUtils.isSuperClassOf(this.name, t.name, hierarchyProvider);
 		
 		return result;
 	}

@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.type_system;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class CandidateMethod<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CandidateMethod other = (CandidateMethod) obj;
+		CandidateMethod<?> other = (CandidateMethod<?>) obj;
 		if (coercions == null) {
 			if (other.coercions != null)
 				return false;

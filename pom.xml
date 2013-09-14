@@ -24,6 +24,8 @@
 
 
 	<modules>
+		<module>sparqlify-type-system</module>
+
 		<module>sparqlify-core</module>
 		<!-- module>sparqlify-server</module -->
 		<module>sparqlify-platform</module>
@@ -294,6 +296,12 @@
 				<artifactId>sparqlify-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+
+                        <dependency>
+                                <groupId>org.aksw.sparqlify</groupId>
+                                <artifactId>sparqlify-type-system</artifactId>
+                                <version>${project.version}</version>
+                        </dependency>
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>

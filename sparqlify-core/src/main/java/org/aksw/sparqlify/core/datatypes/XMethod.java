@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.datatypes;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.sparqlify.type_system.MethodSignature;
 
 
 /**

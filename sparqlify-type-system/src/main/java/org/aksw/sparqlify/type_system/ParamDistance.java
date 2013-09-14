@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.type_system;
 
 public class ParamDistance
 {	

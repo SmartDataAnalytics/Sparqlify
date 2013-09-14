@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.core.cast;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
+import org.aksw.sparqlify.type_system.MethodSignature;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.sparql.expr.Expr;

@@ -1,10 +1,12 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.type_system;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 
 /**
+ * A class that associates a method declaration with an ID.
+ * Essentially the ID is what Java refers to as the "method descriptor"
+ * or C++ as the linker symbol.
  * 
- * TODO: Refactor. The combination of name + signature is referred to as a MethodDeclaration
+ * The intended use of this class is to assign a unique string to a function declaration.
  * 
  * 
  * @author raven
@@ -17,6 +19,7 @@ public class MethodEntry<T> {
 	//private MethodSignature<T> signature;
 	private MethodDeclaration<T> declaration;
 	
+	@Deprecated
 	public MethodEntry(String id, String name, MethodSignature<T> signature) {
 		this(id, MethodDeclaration.create(name, signature));
 	}
@@ -27,13 +30,16 @@ public class MethodEntry<T> {
 		this.id = id;
 		this.declaration = declaration;		
 	}
+	
+	public static <T> MethodEntry<T> create(String id, MethodDeclaration<T> declaration) {
+		return new MethodEntry<T>(id, declaration);
+	}
 
 	public MethodDeclaration<T> getDeclaration() {
 		return declaration;
 	}
 	
 
-	@Deprecated
 	public String getId() {
 		return id;
 	}
@@ -71,7 +77,7 @@ public class MethodEntry<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MethodEntry other = (MethodEntry) obj;
+		MethodEntry<?> other = (MethodEntry<?>) obj;
 		if (declaration == null) {
 			if (other.declaration != null)
 				return false;

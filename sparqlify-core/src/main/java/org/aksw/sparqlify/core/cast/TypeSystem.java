@@ -11,6 +11,10 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XMethod;
+import org.aksw.sparqlify.type_system.DirectSuperTypeProvider;
+import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.FunctionModelAliased;
+import org.aksw.sparqlify.type_system.FunctionModelMeta;
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.TypeMapper;
@@ -126,6 +130,12 @@ public interface TypeSystem
 	Set<TypeToken> supremumDatatypes(TypeToken from, TypeToken to);
 	
 	
+	
+	FunctionModelAliased<String> getSparqlFunctionModel();
+	
+	// TODO Combine sparqlSqlDecls and the sqlFunctionmodel into a FunctionModelAliased
+	// TODO We should pack the functionModel (functionDeclarationModel) and the implementations
+	// into a combined object.
 	Multimap<String, String> getSparqlSqlDecls();
 	Map<String, SqlExprEvaluator> getSqlImpls();
 	

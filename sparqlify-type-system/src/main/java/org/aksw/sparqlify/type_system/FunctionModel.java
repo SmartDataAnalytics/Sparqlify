@@ -1,10 +1,8 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.type_system;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 
 public interface FunctionModel<T> {
 	//public void registerFunction(String id, String name, MethodSignature<T> signature) {
@@ -16,14 +14,19 @@ public interface FunctionModel<T> {
 	Collection<String> getIdsByName(String name); 
 	String getNameById(String id);
 	
+
+	Collection<MethodEntry<T>> getMethodEntries();
 	
-	void registerFunction(MethodDeclaration<T> declaration);
+	MethodEntry<T> registerFunction(MethodDeclaration<T> declaration);
 	void registerCoercion(MethodDeclaration<T> declaration);
 	
 	
 	// TODO Potentially deprecate the following methods - the MethodDeclaration class reduces duplication and may thus be better suited
 	// But let's first collect some experience and see how this turns out
-	void registerFunction(String id, String name, MethodSignature<T> signature);
+	@Deprecated
+	MethodEntry<T> registerFunction(String id, String name, MethodSignature<T> signature);
+	
+	@Deprecated
 	void registerCoercion(String id, String name, MethodSignature<T> signature);
 	
 	Map<String, String> getInverses();

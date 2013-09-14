@@ -42,9 +42,6 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.core.ArgExpr;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.cast.CandidateMethod;
-import org.aksw.sparqlify.core.cast.FunctionModel;
-import org.aksw.sparqlify.core.cast.MethodEntry;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypeSystemImpl;
@@ -62,6 +59,10 @@ import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
 import org.aksw.sparqlify.trash.ExprCopy;
+import org.aksw.sparqlify.type_system.CandidateMethod;
+import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.MethodEntry;
+import org.aksw.sparqlify.type_system.TypeSystemUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2101,7 +2102,7 @@ public class MappingOpsImpl
 				
 				List<TypeToken> argTypes = cand.getArgTypes();
 				
-				CandidateMethod<TypeToken> overload = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, sparqlFnName, argTypes);
+				CandidateMethod<TypeToken> overload = TypeSystemUtils.lookupSqlCandidate(functionModel, sparqlSqlDecls, sparqlFnName, argTypes);
 				if(overload != null) {
 					survivors.add(cand);
 					overloads.add(overload.getMethod());
@@ -2123,7 +2124,7 @@ public class MappingOpsImpl
 			
 				for(AggCandidate survivor : survivors) {
 					List<TypeToken> argTypes = survivor.getArgTypes();
-					CandidateMethod<TypeToken> methodCand = TypeSystemImpl.lookupSqlCandidate(functionModel, overload, argTypes, "Candidates for SPARQL aggregate " + sparqlFnName);
+					CandidateMethod<TypeToken> methodCand = TypeSystemUtils.lookupSqlCandidate(functionModel, overload, argTypes, "Candidates for SPARQL aggregate " + sparqlFnName);
 									
 					if(methodCand == null) {
 						isBestMatch = false;
@@ -2206,7 +2207,7 @@ public class MappingOpsImpl
 		else {
 			
 			List<TypeToken> noArgTypes = Collections.emptyList();
-			CandidateMethod<TypeToken> overload = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, sparqlFnName, noArgTypes);
+			CandidateMethod<TypeToken> overload = TypeSystemUtils.lookupSqlCandidate(functionModel, sparqlSqlDecls, sparqlFnName, noArgTypes);
 
 			List<SqlExpr> noArgs = Collections.emptyList();
 			sqlCoalesce = TypedExprTransformerImpl.createSqlExpr(overload, noArgs);

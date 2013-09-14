@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.core.datatypes.Invocable;
+import org.aksw.sparqlify.type_system.MethodSignature;
 
 public interface FunctionDecl {
 	

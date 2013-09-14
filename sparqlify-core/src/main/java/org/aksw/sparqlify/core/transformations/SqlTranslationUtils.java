@@ -15,8 +15,10 @@ import org.aksw.sparqlify.compile.sparql.SqlPrePusher;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
+import org.aksw.sparqlify.core.cast.ExprTransformerSparqlFunctionModel;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.aksw.sparqlify.trash.ExprCopy;
+import org.aksw.sparqlify.type_system.FunctionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -991,7 +993,7 @@ public class SqlTranslationUtils {
 		return result;
 	}
 	
-	public static RdfTermEliminatorImpl createDefaultTransformer() {
+	public static RdfTermEliminatorImpl createDefaultTransformer(TypeSystem typeSystem) {
 		RdfTermEliminatorImpl exprTransformer = new RdfTermEliminatorImpl();		
 		
 		Map<String, ExprTransformer> transMap = exprTransformer.getTransformerMap();
@@ -1007,7 +1009,12 @@ public class SqlTranslationUtils {
 		transMap.put(">=", new ExprTransformerRdfTermComparator(XSD.xboolean));
 		transMap.put("<", new ExprTransformerRdfTermComparator(XSD.xboolean));
 		transMap.put("<=", new ExprTransformerRdfTermComparator(XSD.xboolean));
-		transMap.put("+", new ExprTransformerArithmetic(XSD.decimal));
+		//transMap.put("+", new ExprTransformerArithmetic(XSD.decimal));
+		
+		FunctionModel<String> sparqlModel = typeSystem.getSparqlFunctionModel();
+		
+		transMap.put("+", new ExprTransformerSparqlFunctionModel(sparqlModel));
+		
 		transMap.put("-", new ExprTransformerArithmetic(XSD.decimal));
 		transMap.put("*", new ExprTransformerArithmetic(XSD.decimal));
 		transMap.put("/", new ExprTransformerArithmetic(XSD.decimal));
@@ -1055,31 +1062,5 @@ public class SqlTranslationUtils {
 		ExprEvaluatorPartial evaluator = new ExprEvaluatorPartial(FunctionRegistry.get());
 
 		return evaluator;
-	}
-}
-
-
-class ExprTransformerFunction
-	implements ExprTransformer
-{
-	private Resource resultType;
-	
-	public ExprTransformerFunction(Resource resultType) {
-		this.resultType = resultType;
-	}
-	
-	@Override
-	public E_RdfTerm transform(Expr fn, List<E_RdfTerm> exprs) {
-
-		List<Expr> tmp = new ArrayList<Expr>(exprs.size());
-		for(E_RdfTerm expr : exprs) {
-			tmp.add(expr.getLexicalValue());
-		}
-		
-		Expr newVal = ExprCopy.getInstance().copy(fn, tmp);
-		E_RdfTerm result = E_RdfTerm.createTypedLiteral(newVal, resultType);
-		
-
-		return result;
 	}
 }

@@ -1,10 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -19,6 +16,13 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.datatypes.XMethod;
+import org.aksw.sparqlify.type_system.DirectSuperTypeProvider;
+import org.aksw.sparqlify.type_system.DirectSuperTypeProviderBiSetMultimap;
+import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.FunctionModelAliased;
+import org.aksw.sparqlify.type_system.FunctionModelImpl;
+import org.aksw.sparqlify.type_system.FunctionModelMeta;
+import org.aksw.sparqlify.type_system.TypeHierarchyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,18 +58,26 @@ public class TypeSystemImpl
 	private CoercionSystem<TypeToken, SqlValueTransformer> coercionSystem = new CoercionSystemImpl3(this);
 
 	
+	
+	private IBiSetMultimap<String, String> sparqlTypeHierarchy = new BiHashMultimap<String, String>();
+	private DirectSuperTypeProvider<String> sparqlTypeHierarchyProvider = new DirectSuperTypeProviderBiSetMultimap<String>(sparqlTypeHierarchy);
+
+	
 	/**
 	 * Maps SPARQL functions to sets of declarations of SQL functions
 	 * E.g. ogc:st_intersects -> {ST_INSERSECTS(geometry, geometry), ST_INTERSECTS(geography, geography)}
 	 * 
 	 * 
 	 */
+	
 	private FunctionModel<TypeToken> functionModel = new FunctionModelImpl<TypeToken>(typeHierarchyProvider);
 	private Multimap<String, String> sparqlToSqlDecl = HashMultimap.create();
 	private Map<String, SqlExprEvaluator> sqlToImpl = new HashMap<String, SqlExprEvaluator>();
 	private FunctionModelMeta sqlFunctionMetaModel = new FunctionModelMeta();
 	
-	
+	private FunctionModelAliased<String> sparqlFunctionModel = new FunctionModelAliased<String>(new FunctionModelImpl<String>(sparqlTypeHierarchyProvider));
+
+
 	public Multimap<String, String> getSparqlSqlDecls() {
 		return sparqlToSqlDecl;
 	}
@@ -108,6 +120,7 @@ public class TypeSystemImpl
 		// By default use Jena's default TypeMapper
 		this.typeMapper = TypeMapper.getInstance();
 		this.sqlTypeMapper = new SqlTypeMapperImpl();
+		
 	}
 
 	public CoercionSystem<TypeToken, SqlValueTransformer> getCoercionSystem() {
@@ -283,7 +296,7 @@ public class TypeSystemImpl
 
 	@Override
 	public boolean isSuperClassOf(TypeToken a, TypeToken b) {
-		boolean result = TypeSystemUtils.isSuperClassOf(a, b, typeHierarchyProvider);
+		boolean result = TypeHierarchyUtils.isSuperClassOf(a, b, typeHierarchyProvider);
 		return result;
 	}
 
@@ -362,48 +375,10 @@ public class TypeSystemImpl
 	}
 	
 	
-	public static <T> CandidateMethod<T> lookupSqlCandidate(FunctionModel<T> functionModel, Multimap<String, String> nameToDecls, String sparqlFnName, List<T> argTypes) {
-		//FunctionModel<T> functionModel = typeSystem.getSqlFunctionModel();
-		
-		Collection<String> sqlFnIds = nameToDecls.get(sparqlFnName);//typeSystem.getSparqlSqlImpls().get(sparqlFnName);
-		if(sqlFnIds.isEmpty()) {
-			logger.debug("No SQL function declarations found for: " + sparqlFnName);
-		}
-		
-		Collection<MethodEntry<T>> sqlFns = new ArrayList<MethodEntry<T>>(sqlFnIds.size());
-		for(String sqlFnId : sqlFnIds) {
-			MethodEntry<T> sqlFn = functionModel.lookupById(sqlFnId);
-			if(sqlFn != null) {
-				sqlFns.add(sqlFn);
-			}
-		}
-		
 
-		CandidateMethod<T> result = lookupSqlCandidate(functionModel, sqlFns, argTypes, "SPARQL function " + sparqlFnName);
-		return result;
-	}
-
-	public static <T> CandidateMethod<T> lookupSqlCandidate(FunctionModel<T> functionModel, MethodEntry<T> sqlFn, List<T> argTypes, String collectionLabel)
-	{
-		Collection<MethodEntry<T>> sqlFns = Collections.singleton(sqlFn);
-		CandidateMethod<T> result = lookupSqlCandidate(functionModel, sqlFns, argTypes, collectionLabel);
-		return result;
-	}
-	
-	public static <T> CandidateMethod<T> lookupSqlCandidate(FunctionModel<T> functionModel, Collection<MethodEntry<T>> sqlFns, List<T> argTypes, String collectionLabel)
-	{
-		Collection<CandidateMethod<T>> candidates = functionModel.lookup(sqlFns, argTypes);
-		
-		CandidateMethod<T> result;
-		if(candidates.size() > 1) {
-			throw new RuntimeException("Multiple matching SQL declarations for " + collectionLabel + " with argument types " + argTypes + ": " + candidates);
-		} else if(candidates.isEmpty()) {
-			result = null;
-		} else {
-			result = candidates.iterator().next();
-		}
-		
-		return result;
+	@Override
+	public FunctionModelAliased<String> getSparqlFunctionModel() {
+		return sparqlFunctionModel;
 	}
 	
 	

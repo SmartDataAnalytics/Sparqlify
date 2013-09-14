@@ -1,8 +1,6 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.type_system;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,13 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.commons.util.MapReader;
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
-import org.aksw.sparqlify.core.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
@@ -31,9 +22,9 @@ import com.google.common.collect.Multimap;
  * @param <T>
  * @param <I>
  */
-interface SparqlSqlFunctionMap<T> {
-	Collection<MethodEntry<T>> getSqlImpls(String id);
-}
+//interface SparqlSqlFunctionMap<T> {
+//	Collection<MethodEntry<T>> getSqlImpls(String id);
+//}
 
 
 
@@ -50,7 +41,7 @@ public class FunctionModelImpl<T>
 	implements FunctionModel<T>
 {
 
-	private static final Logger logger = LoggerFactory.getLogger(FunctionModel.class);
+	//private static final Logger logger = LoggerFactory.getLogger(FunctionModel.class);
 	
 	//private Multimap<String, MethodEntry<T>> nameToMethodEntry = ArrayListMultimap.create();
 	private Map<String, MethodEntry<T>> idToMethodEntry = new HashMap<String, MethodEntry<T>>();
@@ -70,24 +61,36 @@ public class FunctionModelImpl<T>
 	public Map<String, String> getInverses() {
 		return inverses;
 	}
+	
+	
+	public static <K, V> K getFirstKey(Multimap<K, V> mmap, Object key) {
+		K result = null;
 
-	// TODO Optimize this lookup!
-	@Override
-	public String getNameById(String id) {
-		String result = null;
-
-		for(Entry<String, String> entry : nameToIds.entries()) {
-			String tmpId = entry.getValue();
-			String name = entry.getKey();
-			if(id.equals(tmpId)) {
-				result = name;
+		for(Entry<K, V> entry : mmap.entries()) {
+			V k = entry.getValue();
+			K v = entry.getKey();
+			if(key.equals(k)) {
+				result = v;
 				break;
 			}
 		}
 		
 		return result;
+		
 	}
 
+	@Override
+	public String getNameById(String id) {
+		// TODO Optimize this lookup!
+		String result = getFirstKey(nameToIds, id);
+		
+		return result;
+	}
+
+	
+	public Collection<MethodEntry<T>> getMethodEntries() {
+		return idToMethodEntry.values();
+	}
 
 //	Map<String, Map<String, String>> tags = new HashMap<String, Map<String, String>>();
 //	
@@ -108,52 +111,52 @@ public class FunctionModelImpl<T>
 		return result;
 	}
 
-	public static void main(String[] args) throws IOException {
-		
-		Map<String, String> typeHierarchy = MapReader
-				.readFromResource("/type-hierarchy.default.tsv");
-
-		Map<String, String> typeMap = MapReader
-				.readFromResource("/type-map.h2.tsv");
-
-		// TODO HACK Do not add types programmatically 
-		typeMap.put("INTEGER", "int");
-		
-		typeHierarchy.putAll(typeMap);
-		
-		
-	
-		IBiSetMultimap<TypeToken, TypeToken> h = TypeSystemImpl.createHierarchyMap(typeHierarchy);
-		TypeHierarchyProviderImpl thp = new TypeHierarchyProviderImpl(h);
-
-		FunctionModel<TypeToken> model = new FunctionModelImpl<TypeToken>(thp);
-		
-		model.registerFunction("plus_float", "+", MethodSignature.create(false, TypeToken.Float, TypeToken.Float, TypeToken.Float));
-		//model.registerCoercion("to_int", "to_int", MethodSignature.create(false, TypeToken.Double, TypeToken.Int));
-		model.registerCoercion("to_float", "to_float", MethodSignature.create(false, TypeToken.Float, TypeToken.Int));
-
-		
-		TypeToken Geometry = TypeToken.alloc("geometry");
-		TypeToken Geography = TypeToken.alloc("geography");
-
-		model.registerFunction("st_intersects_geometry", "st_intersects", MethodSignature.create(false, TypeToken.Boolean, Geometry, Geometry));
-		model.registerFunction("st_intersects_geography", "st_intersects", MethodSignature.create(false, TypeToken.Boolean, Geography, Geography));
-
-		{
-			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("st_intersects", Arrays.asList(Geometry, Geometry));
-			System.out.println("Number of candidates: " + cands.size());
-			System.out.println(cands);
-		}
-
-		{
-			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("+", Arrays.asList(TypeToken.Int, TypeToken.Int));
-			System.out.println("Number of candidates: " + cands.size());
-			System.out.println(cands);
-		}
-		
-
-		
-	}
+//	public static void main(String[] args) throws IOException {
+//		
+//		Map<String, String> typeHierarchy = MapReader
+//				.readFromResource("/type-hierarchy.default.tsv");
+//
+//		Map<String, String> typeMap = MapReader
+//				.readFromResource("/type-map.h2.tsv");
+//
+//		// TODO HACK Do not add types programmatically 
+//		typeMap.put("INTEGER", "int");
+//		
+//		typeHierarchy.putAll(typeMap);
+//		
+//		
+//	
+//		IBiSetMultimap<TypeToken, TypeToken> h = TypeSystemImpl.createHierarchyMap(typeHierarchy);
+//		TypeHierarchyProviderImpl thp = new TypeHierarchyProviderImpl(h);
+//
+//		FunctionModel<TypeToken> model = new FunctionModelImpl<TypeToken>(thp);
+//		
+//		model.registerFunction("plus_float", "+", MethodSignature.create(false, TypeToken.Float, TypeToken.Float, TypeToken.Float));
+//		//model.registerCoercion("to_int", "to_int", MethodSignature.create(false, TypeToken.Double, TypeToken.Int));
+//		model.registerCoercion("to_float", "to_float", MethodSignature.create(false, TypeToken.Float, TypeToken.Int));
+//
+//		
+//		TypeToken Geometry = TypeToken.alloc("geometry");
+//		TypeToken Geography = TypeToken.alloc("geography");
+//
+//		model.registerFunction("st_intersects_geometry", "st_intersects", MethodSignature.create(false, TypeToken.Boolean, Geometry, Geometry));
+//		model.registerFunction("st_intersects_geography", "st_intersects", MethodSignature.create(false, TypeToken.Boolean, Geography, Geography));
+//
+//		{
+//			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("st_intersects", Arrays.asList(Geometry, Geometry));
+//			System.out.println("Number of candidates: " + cands.size());
+//			System.out.println(cands);
+//		}
+//
+//		{
+//			Collection<CandidateMethod<TypeToken>> cands = model.lookupByName("+", Arrays.asList(TypeToken.Int, TypeToken.Int));
+//			System.out.println("Number of candidates: " + cands.size());
+//			System.out.println(cands);
+//		}
+//		
+//
+//		
+//	}
 	
 	
 	public void lookupCoercionRec(T argType, T targetType, int depth, Set<CandidateMethod<T>> result) {
@@ -218,7 +221,8 @@ public class FunctionModelImpl<T>
 	}
 	
 
-	public void registerFunction(String id, String name, MethodSignature<T> signature) {
+	@Deprecated
+	public MethodEntry<T> registerFunction(String id, String name, MethodSignature<T> signature) {
 		//Collection<MethodEntry<T>> signatures = nameToMethodEntry.get(name);
 		
 		
@@ -227,16 +231,19 @@ public class FunctionModelImpl<T>
 //			throw new RuntimeException("Function " + name + " with signature " + signature + " already registered");
 //		}
 		
-		MethodEntry<T> entry = new MethodEntry<T>(id, name, signature);
+		MethodEntry<T> entry = new MethodEntry<T>(id, MethodDeclaration.create(name, signature));
 
 		idToMethodEntry.put(id,  entry);
 		
 		//signatures.add(entry);
 		
 		nameToIds.put(name, id);
+		
+		return entry;
 	}
 	
 	
+	@Deprecated
 	public void registerCoercion(String id, String name, MethodSignature<T> signature) {
 		List<T> paramTypes = signature.getParameterTypes();
 		if(paramTypes.size() != 1) {
@@ -246,7 +253,7 @@ public class FunctionModelImpl<T>
 		T sourceType = paramTypes.get(0);
 		Collection<MethodEntry<T>> targets = sourceToTargets.get(sourceType);
 
-		MethodEntry<T> entry = new MethodEntry<T>(id, name, signature);
+		MethodEntry<T> entry = new MethodEntry<T>(id, MethodDeclaration.create(name, signature));
 		
 		targets.add(entry);
 		
@@ -403,8 +410,9 @@ public class FunctionModelImpl<T>
 	}
 
 	@Override
-	public void registerFunction(MethodDeclaration<T> declaration) {
-		this.registerFunction(declaration.toString(), declaration.getName(), declaration.getSignature());
+	public MethodEntry<T> registerFunction(MethodDeclaration<T> declaration) {
+		MethodEntry<T> result = this.registerFunction(declaration.toString(), declaration.getName(), declaration.getSignature());
+		return result;
 	}
 
 	@Override

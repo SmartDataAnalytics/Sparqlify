@@ -1,4 +1,4 @@
-#type-name	java-class
+#aligned-type-name	java-class
 object	http://sparqlify.org/resource/type/object
 
 byte	http://www.w3.org/2001/XMLSchema#byte

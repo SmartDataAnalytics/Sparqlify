@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Map;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
@@ -22,6 +22,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlEncod
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.config.lang.SparqlifyConfigParser.logicalTable_return;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
@@ -33,9 +34,17 @@ import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
+import org.aksw.sparqlify.trash.ExprCopy;
+import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.FunctionModelAliased;
+import org.aksw.sparqlify.type_system.FunctionModelMeta;
+import org.aksw.sparqlify.type_system.MethodDeclaration;
+import org.aksw.sparqlify.type_system.MethodEntry;
+import org.aksw.sparqlify.type_system.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
@@ -88,7 +97,6 @@ import com.hp.hpl.jena.vocabulary.XSD;
  }
  }
  */
-
 
 class SparqlEvaluatorChain implements SqlExprEvaluator {
 	@Override
@@ -280,11 +288,20 @@ public class NewWorldTest {
 			Map<String, String> physicalTypeMap = MapReader
 					.readFromResource("/type-map.h2.tsv");
 
+			
+			
 			// TODO HACK Do not add types programmatically 
 			physicalTypeMap.put("INTEGER", "int");
 			physicalTypeMap.put("FLOAT", "float");
 			
 			//typeHierarchy.putAll(physicalTypeMap);
+
+			
+//			Map<String, String> typeNameToClass = MapReader
+//					.readFromResource("/type-class.tsv");
+
+			
+			
 			
 			
 			TypeSystem result = TypeSystemImpl.create(typeHierarchy, physicalTypeMap);
@@ -435,6 +452,8 @@ public class NewWorldTest {
 		//
 
 		FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
+		
+		
 		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
 		Map<String, SqlExprEvaluator> sqlImpls = typeSystem.getSqlImpls();
 
@@ -607,6 +626,24 @@ public class NewWorldTest {
 		sqlMetaModel.getInverses().put(urlDecodeDecl.toString(), urlEncodeDecl.toString());
 
 		
+		// Maps a sparql symbol to a set of implementing method declarations
+		// This mapping allows the following:
+		// the + symbol maps to { int op:plus_int (int, int), double op:plus_double (double, double) ,... }
+		// Upon transformation, '+' is replaced with the name of a matching declaration
+		// i.e. the name may change
+		// afterwards, each sparql function name may have a set of backing sql declarations.
+		// Note that the set of backing sql declarations is independent of the existing
+		// overload signatures for that name - i.e. it only depends on the name!
+		//
+		// It seems to me, that we should somehow bundle up this MultiMap<FunctionSymbol, FunctionName> map.
+		// Yet again, on the SQL level, we assign a unique ID to each overload
+		// 
+		//
+		//
+		//
+		Multimap<String, String> symbolSparqlDecls = HashMultimap.create();
+
+		
 		// Aggregate function declarations
 		// Note: These function have a hidden 'flags' field (string), e.g. for distinct
 //		MethodDeclaration<TypeToken> aggCountDecl1 = MethodDeclaration.create(TypeToken.Long, "Count");
@@ -672,8 +709,20 @@ public class NewWorldTest {
 		//sqlImpls.put(urlEncodeDecl.toString(), new SqlExprEvaluator_UrlEncode());
 
 		
+		FunctionModelAliased<String> sparqlModel = typeSystem.getSparqlFunctionModel();
+		String fn = "http://www.w3.org/2005/xpath-functions#";
+		String op = "http://www.w3.org/2005/xpath-functions#";
 		
+		String xsdInt = XSD.xint.toString();
+		String xsdDouble = XSD.xdouble.toString();
 		
+		MethodDeclaration<String> numericAddInt = MethodDeclaration.create("+", MethodSignature.create(false, xsdInt, xsdInt, xsdInt)); 		
+		sparqlModel.registerFunction("+", numericAddInt);
+		
+		MethodDeclaration<String> numericAddDouble = MethodDeclaration.create("+", MethodSignature.create(false, xsdDouble, xsdDouble, xsdDouble)); 		
+		sparqlModel.registerFunction("+", numericAddDouble);
+		
+		sparqlModel.registerCoercion(MethodDeclaration.create(xsdDouble, MethodSignature.create(false, xsdDouble, xsdInt)));
 		
 			
 			//sqlImpls.put()
@@ -801,6 +850,86 @@ public class NewWorldTest {
 
 	}
 	
+
+	public static <K, V> V getNotNull(Map<K, V> map, Object key) {
+		V result = map.get(key);
+		if(result == null) {
+			throw new NullPointerException("No entry found for key " + key + " in map " + map);
+		}
+		return result;
+	}
+	
+	public static <I, O> MethodSignature<O> transform(MethodSignature<I> sig, Map<I, O> fn) {
+		O returnType = getNotNull(fn, sig.getReturnType());
+		
+		List<I> items = sig.getParameterTypes();
+		List<O> paramTypes = new ArrayList<O>(items.size());
+		for(I item : items) {
+			O paramType = getNotNull(fn, item);
+			paramTypes.add(paramType);
+		}
+		
+		I vat = sig.getVarArgType();
+		O varArgType = vat == null ? null : getNotNull(fn, vat); 
+		
+		MethodSignature<O> result = MethodSignature.create(returnType, paramTypes, varArgType);
+		
+		return result;
+	}
+
+	
+	//public static Collection<Entry> process(Collection<Entry>)
+	
+//	public static FunctionModel<String> deriveRdfTypeModel(FunctionModel<TypeToken> sqlModel, Map<TypeToken, String> typeToUri) {
+//		// TODO: Derive the type map
+//	
+//		//MethodDeclaration
+//		
+//		Map<String, String> sqlToRdfType = MapReader.readFromResource("/type-uri.tsv");
+//		Map<String, String> sqlTypeHierarchy = MapReader.readFromResource("/type-hierarchy.default.tsv");
+//		
+//		Map<String, String> rdfTypeHierarchy = MapReader.readFromResource("/rdf-type-hierarchy.tsv");
+//		
+//		FunctionModel<String> result = new FunctionModelImpl<String>(typeHierarchyProvider);
+//	}
+
+	public static <I, O> FunctionModel<O> transform(FunctionModel<I> srcModel, FunctionModel<O> dstModel, Map<I, O> map) {//Function<I, O> fn) {
+	
+
+		
+		Collection<MethodEntry<I>> sqlMethods = srcModel.getMethodEntries();
+		
+
+		
+		List<MethodDeclaration<O>> dstDecs = new ArrayList<MethodDeclaration<O>>();
+		for(MethodEntry<I> sqlMethod : sqlMethods) {
+			MethodDeclaration<I> dec = sqlMethod.getDeclaration();
+			
+			// Map the id to the SPARQL function of which the SQL method is an implementation
+			String sqlFnId = sqlMethod.getId();
+
+			String sparqlFnName = null;
+			
+			// Map the name back to the sparql function
+			
+			MethodSignature<I> srcSig = dec.getSignature();
+			
+			MethodSignature<O> dstSig = transform(srcSig, map);
+			
+			MethodDeclaration<O> dstDec = MethodDeclaration.create(sparqlFnName, dstSig);
+			
+			dstDecs.add(dstDec);
+		}
+	
+		// For every sparqlDec, add it to the sparqlModel
+		for(MethodDeclaration<O> sparqlDec : dstDecs) {
+			dstModel.registerFunction(sparqlDec);
+		}
+
+		return dstModel;
+	}
+	
+	
 	
 	public static void testExprRewrite(TypeSystem typeSystem)
 	{
@@ -885,7 +1014,7 @@ public class NewWorldTest {
 		//Expr e2 = exprTransformer.transform(e1);
 		//logger.debug("[ExprRewrite Phase 2]: " + e2);
 
-		RdfTermEliminatorImpl exprTrns = SqlTranslationUtils.createDefaultTransformer();
+		RdfTermEliminatorImpl exprTrns = SqlTranslationUtils.createDefaultTransformer(typeSystem);
 		E_RdfTerm e2 = exprTrns._transform(e1);
 		logger.debug("[ExprRewrite Phase 2]: " + e2);
 		

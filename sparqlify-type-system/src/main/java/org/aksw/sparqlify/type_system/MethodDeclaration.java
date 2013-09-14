@@ -1,6 +1,4 @@
-package org.aksw.sparqlify.core.cast;
-
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
+package org.aksw.sparqlify.type_system;
 
 import com.google.common.base.Joiner;
 
@@ -87,7 +85,7 @@ public class MethodDeclaration<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MethodDeclaration other = (MethodDeclaration) obj;
+		MethodDeclaration<?> other = (MethodDeclaration<?>) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

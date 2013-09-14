@@ -3,10 +3,10 @@ package org.aksw.sparqlify.core.datatypes;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.ExprSubstitutor;
+import org.aksw.sparqlify.type_system.MethodSignature;
 
 
 /**

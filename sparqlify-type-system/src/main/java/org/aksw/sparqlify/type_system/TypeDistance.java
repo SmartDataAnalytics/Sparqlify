@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.type_system;
 
 
 public class TypeDistance<T> {
@@ -43,7 +43,7 @@ public class TypeDistance<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TypeDistance<T> other = (TypeDistance<T>) obj;
+		TypeDistance<?> other = (TypeDistance<?>) obj;
 		if (coercion == null) {
 			if (other.coercion != null)
 				return false;

@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
 import org.aksw.sparqlify.core.datatypes.XClass;
+import org.aksw.sparqlify.type_system.MethodSignature;
 
 public class RegisteredFunction
 {

@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
@@ -26,6 +25,12 @@ import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
+import org.aksw.sparqlify.type_system.CandidateMethod;
+import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.FunctionModelMeta;
+import org.aksw.sparqlify.type_system.MethodEntry;
+import org.aksw.sparqlify.type_system.MethodSignature;
+import org.aksw.sparqlify.type_system.TypeSystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -407,7 +412,7 @@ public class TypedExprTransformerImpl
 		FunctionModel<TypeToken> functionModel = typeSystem.getSqlFunctionModel();
 		Multimap<String, String> sparqlSqlDecls = typeSystem.getSparqlSqlDecls();
 		
-		CandidateMethod<TypeToken> candidate = TypeSystemImpl.lookupSqlCandidate(functionModel, sparqlSqlDecls, functionId, argTypes);
+		CandidateMethod<TypeToken> candidate = TypeSystemUtils.lookupSqlCandidate(functionModel, sparqlSqlDecls, functionId, argTypes);
 		
 		
 		SqlExpr result = null;

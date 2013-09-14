@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.transform.E_SqlFunctionRegistered;
-import org.aksw.sparqlify.algebra.sparql.transform.MethodSignature;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.config.syntax.FunctionDeclarationTemplate;
@@ -14,6 +13,7 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.expr.util.ExprUtils;
+import org.aksw.sparqlify.type_system.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

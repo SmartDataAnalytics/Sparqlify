@@ -20,6 +20,7 @@ import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.trash.ExprCopy;
+import org.aksw.sparqlify.type_system.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
