@@ -44,7 +44,7 @@ public class XClassImpl2
 		
 		XClassImpl2 t = (XClassImpl2)that; 
 		
-		boolean result = TypeHierarchyUtils.isSuperClassOf(this.name, t.name, hierarchyProvider);
+		boolean result = TypeHierarchyUtils.isSuperTypeOf(this.name, t.name, hierarchyProvider);
 		
 		return result;
 	}

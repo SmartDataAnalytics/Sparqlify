@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
@@ -22,7 +23,6 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlEncod
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.config.lang.SparqlifyConfigParser.logicalTable_return;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
@@ -34,7 +34,6 @@ import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
-import org.aksw.sparqlify.trash.ExprCopy;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
@@ -53,6 +52,7 @@ import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
+import com.hp.hpl.jena.sparql.expr.aggregate.AggGroupConcat;
 import com.hp.hpl.jena.sparql.expr.aggregate.AggSum;
 import com.hp.hpl.jena.sparql.util.ExprUtils;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -288,11 +288,16 @@ public class NewWorldTest {
 			Map<String, String> physicalTypeMap = MapReader
 					.readFromResource("/type-map.h2.tsv");
 
+			Map<String, String> rdfTypeHierarchyRaw =
+					MapReader.readFromResource("/rdf-type-hierarchy.tsv");
+			IBiSetMultimap<String, String> rdfTypeHierarchy = TypeSystemImpl.toBidiMap(rdfTypeHierarchyRaw);
+			
 			
 			
 			// TODO HACK Do not add types programmatically 
 			physicalTypeMap.put("INTEGER", "int");
 			physicalTypeMap.put("FLOAT", "float");
+			physicalTypeMap.put("DOUBLE", "double");
 			
 			//typeHierarchy.putAll(physicalTypeMap);
 
@@ -304,8 +309,10 @@ public class NewWorldTest {
 			
 			
 			
-			TypeSystem result = TypeSystemImpl.create(typeHierarchy, physicalTypeMap);
+			TypeSystemImpl result = TypeSystemImpl.create(typeHierarchy, physicalTypeMap);
 
+			result.getSparqlTypeHierarchy().putAll(rdfTypeHierarchy);
+			
 			initSparqlModel(result);
 
 			return result;
@@ -706,6 +713,14 @@ public class NewWorldTest {
 		sparqlSqlDecls.put(AggSum.class.getSimpleName(), aggSumDecl1.toString());
 		sparqlSqlDecls.put(AggSum.class.getSimpleName(), aggSumDecl2.toString());
 
+
+		
+		MethodDeclaration<TypeToken> aggGroupConcatDecl = MethodDeclaration.create(TypeToken.String, "GroupConcat", false, TypeToken.String);
+		sqlModel.registerFunction(aggGroupConcatDecl);
+		sparqlSqlDecls.put(AggGroupConcat.class.getSimpleName(), aggGroupConcatDecl.toString());
+
+		
+		
 		//sqlImpls.put(urlEncodeDecl.toString(), new SqlExprEvaluator_UrlEncode());
 
 		
@@ -714,6 +729,7 @@ public class NewWorldTest {
 		String op = "http://www.w3.org/2005/xpath-functions#";
 		
 		String xsdInt = XSD.xint.toString();
+		String xsdString = XSD.xstring.toString();
 		String xsdDouble = XSD.xdouble.toString();
 		
 		MethodDeclaration<String> numericAddInt = MethodDeclaration.create("+", MethodSignature.create(false, xsdInt, xsdInt, xsdInt)); 		
@@ -723,6 +739,12 @@ public class NewWorldTest {
 		sparqlModel.registerFunction("+", numericAddDouble);
 		
 		sparqlModel.registerCoercion(MethodDeclaration.create(xsdDouble, MethodSignature.create(false, xsdDouble, xsdInt)));
+
+		
+		MethodDeclaration<String> groupConcat = MethodDeclaration.create(AggGroupConcat.class.getSimpleName(), MethodSignature.create(false, xsdString)); 		
+		sparqlModel.registerFunction(AggGroupConcat.class.getSimpleName(), groupConcat);
+		
+		//sparqlModel.registerCoercion(MethodDeclaration.create(xsdDouble, MethodSignature.create(false, xsdDouble, xsdInt)));
 		
 			
 			//sqlImpls.put()

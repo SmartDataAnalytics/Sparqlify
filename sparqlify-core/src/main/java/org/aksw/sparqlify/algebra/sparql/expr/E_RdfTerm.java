@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
+import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -12,6 +13,7 @@ import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 
 public class E_RdfTerm
@@ -23,8 +25,12 @@ public class E_RdfTerm
 	public static final NodeValue typePlainLiteral = NodeValue.makeInteger(2);
 	public static final NodeValue typeTypedLiteral = NodeValue.makeInteger(3);
 
+
+	public static final E_RdfTerm TRUE = E_RdfTerm.createTypedLiteral(NodeValue.TRUE, XSD.xboolean);
+	public static final E_RdfTerm FALSE = E_RdfTerm.createTypedLiteral(NodeValue.FALSE, XSD.xboolean);
+	public static final E_RdfTerm TYPE_ERROR = SqlTranslationUtils.expandConstant(SparqlifyConstants.nvTypeError);
 	
-	
+
 	public static E_RdfTerm createVar(ExprVar expr) {
 		return new E_RdfTerm(typeVar, expr, NodeValue.nvEmptyString, NodeValue.nvEmptyString);
 	}

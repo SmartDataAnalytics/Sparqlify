@@ -1,40 +1,62 @@
-package org.aksw.sparqlify.core.cast;
+package org.aksw.sparqlify.core.transformations;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.transformations.ExprTransformer;
-import org.aksw.sparqlify.type_system.CandidateMethod;
-import org.aksw.sparqlify.type_system.FunctionModel;
-import org.aksw.sparqlify.type_system.MethodDeclaration;
-import org.aksw.sparqlify.type_system.TypeSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aksw.sparqlify.type_system.TypeModel;
 
-import com.hp.hpl.jena.sparql.expr.E_Function;
 import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
-public class ExprTransformerSparqlFunctionModel
-	implements ExprTransformer
+
+/**
+ * Checks whether xsd:numeric is a super class of the given expression
+ * 
+ * 
+ * @author raven
+ *
+ */
+public class ExprTransformerIsNumeric
+	extends ExprTransformerBase1
 {
-	
-	private static final Logger logger = LoggerFactory.getLogger(ExprTransformerSparqlFunctionModel.class);
+	//private static final Logger logger = LoggerFactory.getLogger(ExprTransformerSparqlFunctionModel.class);
 	
 
-	// TODO Move to appropriate place
-	private static E_RdfTerm typeError = E_RdfTerm.createTypedLiteral(SparqlifyConstants.nvTypeError, SparqlifyConstants.nvTypeError);
-	
-	private FunctionModel<String> sparqlModel;
+	private TypeModel<String> typeModel;
 
 	
-	public ExprTransformerSparqlFunctionModel(FunctionModel<String> sparqlModel) {
-		this.sparqlModel = sparqlModel;
+	public ExprTransformerIsNumeric(TypeModel<String> typeModel) {
+		this.typeModel = typeModel;
 	}
+
+	
+	/**
+	 * TODO: IsNumeric implies not null
+	 * 
+	 */
+	@Override
+	public E_RdfTerm transform(Expr orig, E_RdfTerm a) {
+
+		String subType = a.getDatatype().getConstant().asUnquotedString();
+
+		boolean isDecimal = typeModel.isSuperTypeOf(XSD.decimal.toString(), subType);
+		boolean isFloat = typeModel.isSuperTypeOf(XSD.xfloat.toString(), subType);
+		boolean isDouble = typeModel.isSuperTypeOf(XSD.xdouble.toString(), subType);
+		
+		boolean isNumeric = isDecimal || isFloat || isDouble;
+		
+		E_RdfTerm result;
+		if(isNumeric) {
+			result = E_RdfTerm.TRUE;
+		}
+		else {
+			result = E_RdfTerm.FALSE;
+		}
+		
+		return result;
+	}
+	
 	
 	
 	public static List<Expr> getTermValues(List<E_RdfTerm> rdfTerms) {
@@ -48,6 +70,8 @@ public class ExprTransformerSparqlFunctionModel
 		return result;
 	}
 	
+	
+/*
 	@Override
 	public E_RdfTerm transform(Expr orig, List<E_RdfTerm> exprs) {
 		ExprFunction fn = orig.getFunction();
@@ -107,5 +131,5 @@ public class ExprTransformerSparqlFunctionModel
 		
 		return result;
 	}
-	
+*/
 }

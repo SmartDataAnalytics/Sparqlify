@@ -302,7 +302,8 @@ public class MappingRefactor {
 		
 		return result;
 	}
-	
+
+
 	public static MappingUnion groupByWithExprs(Mapping m, VarExprList groupVars, List<ExprAggregator> aggregators, SqlTranslator sqlTranslator, TypeSystem typeSystem, ExprDatatypeNorm exprNormalizer) {
 		MappingUnion result = new MappingUnion();
 
@@ -486,7 +487,7 @@ public class MappingRefactor {
 			List<String> groupColumnNames = new ArrayList<String>();
 			//SqlOpExtend 
 			
-			List<SqlExpr> sqlGroup = new ArrayList<SqlExpr>(vars.size());
+			//List<SqlExpr> sqlGroup = new ArrayList<SqlExpr>(vars.size());
 			Multimap<Var, RestrictedExpr> varDef = HashMultimap.create();
 			for(int i = 0; i < vars.size(); ++i) {
 				Var var = vars.get(i);
@@ -531,6 +532,10 @@ public class MappingRefactor {
 				//System.out.println("" + group + " --- " + sqlExprs);
 			}
 
+			
+			
+			
+			
 			// Get the variables referenced by the aggregators
 			Set<Var> varRefs = new HashSet<Var>();
 			for(ExprAggregator exprAgg : aggregators) {
@@ -632,6 +637,8 @@ public class MappingRefactor {
 	public static Mapping applyAggregators(Mapping mapping, List<ExprAggregator> aggregators, Generator generator, TypeSystem typeSystem, SqlTranslator sqlTranslator) {
 		
 		Multimap<Var, RestrictedExpr> varDef2 = HashMultimap.create();
+		varDef2.putAll(mapping.getVarDefinition().getMap());
+		
 		Projection proj2 = new Projection();
 		for(ExprAggregator exprAgg : aggregators) {
 			Var var = exprAgg.getVar();
@@ -644,6 +651,8 @@ public class MappingRefactor {
 			varDef2.put(var, new RestrictedExpr(rdfTerm));
 			proj2.add(rewrite.getProjection());
 		}
+		
+		
 		
 		//SqlOpExtend sqlOpExtend2 = SqlOpExtend.create(sqlOpExtend, proj2);
 		SqlOpExtend sqlOpExtend2 = SqlOpExtend.create(mapping.getSqlOp(), proj2);

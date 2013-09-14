@@ -1,0 +1,43 @@
+// XML seems to be extremely verbose for our purpose - Maybe JSON would be the better format??
+
+<sparqlifyConfig>
+	<sqlFunctions>
+		<sqlFuction>
+			<signature>int plus(int, int)</signature>
+			<>
+		</sqlFuction>
+	</sqlFunctions>
+
+</sparqlifyConfig>
+
+{ 
+    sqlFunctions: {
+    
+    	'
+    
+    
+    },
+
+
+	sparqldecls: {
+
+		/**
+		 *
+		 *
+		 */
+		'bif:add': [{
+			'numeric add_plus(numeric, numeric)': {
+				transformer: 'beanref://mybean',
+				alias: 'sp_add_plus',
+				sqlImpls: []				
+			}
+		}]
+
+	},
+
+
+
+}
+
+
+

@@ -276,9 +276,17 @@ public class TypeHierarchyUtils {
 		return done;
 	}
 	
-	public static <T> boolean isSuperClassOf(T a, T b, DirectSuperTypeProvider<T> typeHierarchyProvider) {
-		Collection<T> superClasses = getAllSuperTypes(a, typeHierarchyProvider);
-		boolean result = superClasses.contains(b);
+	/**
+	 * Checks whether the first argument is a super type of the second one
+	 * 
+	 * @param subType
+	 * @param superType
+	 * @param typeHierarchyProvider
+	 * @return
+	 */
+	public static <T> boolean isSuperTypeOf(T superType, T subType, DirectSuperTypeProvider<T> typeHierarchyProvider) {
+		Collection<T> superTypes = getAllSuperTypes(subType, typeHierarchyProvider);
+		boolean result = superTypes.contains(superType);
 		
 		return result;
 	}

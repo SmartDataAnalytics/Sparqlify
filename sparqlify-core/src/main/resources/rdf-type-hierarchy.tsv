@@ -37,3 +37,8 @@ http://www.w3.org/2001/XMLSchema#gMonthDay	http://www.w3.org/2001/XMLSchema#anyS
 http://www.w3.org/2001/XMLSchema#gDay	http://www.w3.org/2001/XMLSchema#anySimpleType
 http://www.w3.org/2001/XMLSchema#gMonth	http://www.w3.org/2001/XMLSchema#anySimpleType
 
+
+#http://www.w3.org/2001/XMLSchema#double http://ld.sparqlify.org/resource/type/numeric
+#http://www.w3.org/2001/XMLSchema#float http://ld.sparqlify.org/resource/type/numeric
+#http://www.w3.org/2001/XMLSchema#int http://ld.sparqlify.org/resource/type/numeric
+

@@ -584,6 +584,17 @@ public class SparqlifyUtils {
 		}
 
 		{
+			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, "GroupConcat", false, TypeToken.String, TypeToken.String);
+			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {				
+				@Override
+				public String serialize(List<String> args) {
+					return "string_agg(" + args.get(0) + ", " + args.get(1) + ")";
+				}
+			};
+			result.addSerializer(decl.toString(), serializer);
+		}
+
+		{
 			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Double, "Sum", false, TypeToken.Double);
 			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Sum");
 			result.addSerializer(decl.toString(), serializer);

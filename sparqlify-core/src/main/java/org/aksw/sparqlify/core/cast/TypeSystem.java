@@ -15,6 +15,7 @@ import org.aksw.sparqlify.type_system.DirectSuperTypeProvider;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
+import org.aksw.sparqlify.type_system.TypeModel;
 
 import com.google.common.collect.Multimap;
 import com.hp.hpl.jena.datatypes.TypeMapper;
@@ -150,6 +151,9 @@ public interface TypeSystem
 	FunctionModelMeta getSqlFunctionMetaModel();
 
 	IBiSetMultimap<TypeToken, TypeToken> getPhysicalTypeMap();
+	
+	
+	TypeModel<String> getSparqlTypeModel();
 }
 
 

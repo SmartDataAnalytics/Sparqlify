@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#">
+	<head>
+		<variable name="p" />
+		<variable name="t" />
+	</head>
+	<results>
+
+		<result>
+			<binding name="p">
+				<bnode>Bob_Smith</bnode>
+			</binding>
+			<binding name="t">
+				<literal datatype="http://www.w3.org/2001/XMLSchema#double">6.0E1</literal>
+			</binding>
+		</result>
+
+		<result>
+			<binding name="p">
+				<bnode>Sue_Jones</bnode>
+			</binding>
+			<binding name="t">
+				<literal datatype="http://www.w3.org/2001/XMLSchema#double">2.0E1</literal>
+			</binding>
+		</result>
+
+
+	</results>
+</sparql>
+

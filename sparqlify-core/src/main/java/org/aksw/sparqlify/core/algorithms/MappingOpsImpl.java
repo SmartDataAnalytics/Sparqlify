@@ -130,6 +130,12 @@ class AggCandidate {
 		AggCandidate result = new AggCandidate(contexts, args, argTypes);
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "AggCandidate [contexts=" + contexts + ", args=" + args
+				+ ", argTypes=" + argTypes + "]";
+	}
 }
 
 

@@ -15,10 +15,10 @@ import org.aksw.sparqlify.compile.sparql.SqlPrePusher;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
-import org.aksw.sparqlify.core.cast.ExprTransformerSparqlFunctionModel;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.type_system.FunctionModel;
+import org.aksw.sparqlify.type_system.TypeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,7 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
+import com.hp.hpl.jena.sparql.expr.aggregate.AggGroupConcat;
 import com.hp.hpl.jena.sparql.expr.aggregate.AggSum;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.sse.Tags;
@@ -1050,10 +1051,19 @@ public class SqlTranslationUtils {
 		transMap.put(bif + "st_geomFromText", new ExprTransformerFunction(virtGeometry));
 		transMap.put(bif + "st_point", new ExprTransformerFunction(ResourceFactory.createResource("http://www.opengis.net/ont/geosparql#wktLiteral"))); //));
 		
+		
+		
+		//typeSystem.get
+		TypeModel<String> sparqlTypeModel = typeSystem.getSparqlTypeModel();
+		transMap.put("isNumeric", new ExprTransformerIsNumeric(sparqlTypeModel));
+		//transMap.put("isDecimal", new ET_IsDecimal(sparqlTypeModel));
+
+		
 		// TODO: The return type of this function depends on which signature is used
 		// So i more sophicsticated transformer is needed
 		transMap.put(AggCount.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
 		transMap.put(AggSum.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
+		transMap.put(AggGroupConcat.class.getSimpleName(), new ExprTransformerSparqlFunctionModel(sparqlModel));
 		
 		return exprTransformer;
 	}

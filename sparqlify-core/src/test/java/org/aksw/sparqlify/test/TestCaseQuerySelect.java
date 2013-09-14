@@ -2,6 +2,9 @@ package org.aksw.sparqlify.test;
 
 import java.util.concurrent.Callable;
 
+import org.aksw.sparqlify.core.test.TestHelper;
+import org.junit.Assert;
+
 import com.hp.hpl.jena.query.ResultSet;
 
 
@@ -33,12 +36,14 @@ public class TestCaseQuerySelect
 
 	@Override
 	public void run() {
-		ResultSet rs;
+		ResultSet actual;
 		try {
-			rs = task.call();
+			actual = task.call();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
+		boolean isEqual = TestHelper.isEqual(actual, expected);		
+		Assert.assertTrue(isEqual);
 	}
 }

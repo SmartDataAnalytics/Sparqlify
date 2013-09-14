@@ -1,0 +1,5 @@
+Prefix ious: <http://example.com/base/IOUs#>
+
+Select ?p (sum(?a) As ?t) {
+	?p ious:amount ?a .
+} Group By ?p

@@ -23,6 +23,8 @@ import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelImpl;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.TypeHierarchyUtils;
+import org.aksw.sparqlify.type_system.TypeModel;
+import org.aksw.sparqlify.type_system.TypeModelImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +64,8 @@ public class TypeSystemImpl
 	private IBiSetMultimap<String, String> sparqlTypeHierarchy = new BiHashMultimap<String, String>();
 	private DirectSuperTypeProvider<String> sparqlTypeHierarchyProvider = new DirectSuperTypeProviderBiSetMultimap<String>(sparqlTypeHierarchy);
 
+	private TypeModel<String> sparqlTypeModel = new TypeModelImpl<String>(sparqlTypeHierarchyProvider);
+	
 	
 	/**
 	 * Maps SPARQL functions to sets of declarations of SQL functions
@@ -77,7 +81,10 @@ public class TypeSystemImpl
 	
 	private FunctionModelAliased<String> sparqlFunctionModel = new FunctionModelAliased<String>(new FunctionModelImpl<String>(sparqlTypeHierarchyProvider));
 
-
+	public IBiSetMultimap<String, String> getSparqlTypeHierarchy() {
+		return sparqlTypeHierarchy;
+	}
+	
 	public Multimap<String, String> getSparqlSqlDecls() {
 		return sparqlToSqlDecl;
 	}
@@ -296,7 +303,7 @@ public class TypeSystemImpl
 
 	@Override
 	public boolean isSuperClassOf(TypeToken a, TypeToken b) {
-		boolean result = TypeHierarchyUtils.isSuperClassOf(a, b, typeHierarchyProvider);
+		boolean result = TypeHierarchyUtils.isSuperTypeOf(a, b, typeHierarchyProvider);
 		return result;
 	}
 
@@ -325,6 +332,23 @@ public class TypeSystemImpl
 	}
 
 	
+	
+	/**
+	 * 
+	 * TODO Move to appropriate place
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static <K, V> IBiSetMultimap<K, V> toBidiMap(Map<K, V> map) {
+		IBiSetMultimap<K, V> result = new BiHashMultimap<K, V>();
+
+		for(Entry<K, V> entry : map.entrySet()) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+		
+		return result;
+	}
 	
 	public static IBiSetMultimap<TypeToken, TypeToken> createHierarchyMap(Map<String, String> typeHierarchy) {
 		IBiSetMultimap<TypeToken, TypeToken> subToSuperType = new BiHashMultimap<TypeToken, TypeToken>();
@@ -380,7 +404,11 @@ public class TypeSystemImpl
 	public FunctionModelAliased<String> getSparqlFunctionModel() {
 		return sparqlFunctionModel;
 	}
+
 	
+	public TypeModel<String> getSparqlTypeModel() {
+		return sparqlTypeModel;
+	}
 	
 	
 }
