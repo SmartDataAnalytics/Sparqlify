@@ -25,6 +25,6 @@ dateTime	http://www.w3.org/2001/XMLSchema#dateTime
 timestamp	http://www.w3.org/2001/XMLSchema#dataTime
 string	http://www.w3.org/2001/XMLSchema#string
 
-geometry http://sparqlify.org/resource/type/geometry
+geometry http://www.opengis.net/ont/geosparql#wktLiteral
 geography http://sparqlify.org/resource/type/geography
 

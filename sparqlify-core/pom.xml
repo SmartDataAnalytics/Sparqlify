@@ -18,6 +18,31 @@
 	<!-- <finalName>sparqlify-core</finalName> -->
 	<!-- </build> -->
 
+	<build>
+		<plugins>
+			<plugin>
+				<!-- Any eclipse problem with the plugin should disappear with m2e 1.1 -->
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+<!-- 					<source>${maven.compiler.source}</source> -->
+<!-- 					<target>${maven.compiler.target}</target> -->
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<generatePackage>org.aksw.sparqlify.config.xml</generatePackage>
+				</configuration>
+			</plugin>
+		
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
@@ -152,6 +177,16 @@
 			<artifactId>antlr-runtime</artifactId>
 		</dependency>
 
+		<dependency>
+		    <groupId>org.antlr</groupId>
+		    <artifactId>ST4</artifactId>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.antlr</groupId> -->
+<!-- 			<artifactId>stringtemplate</artifactId> -->
+<!-- 		</dependency> -->
+
+
 		<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
 			</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId> 
 			</dependency> -->
@@ -229,7 +264,7 @@
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-infrastructure</artifactId>
 		</dependency>
-
+            
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.springframework</groupId> -->
 <!-- 			<artifactId>spring-context</artifactId> -->

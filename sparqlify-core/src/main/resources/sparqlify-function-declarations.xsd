@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xs:element name="name" type="xs:string" />
+	<xs:element name="signature" type="xs:string" />
+	<xs:element name="pattern" type="xs:string" />
+
+	<xs:element name="mapping">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="signature" />
+				<xs:element ref="pattern" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="mappings">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="mapping" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:element name="simpleFunction">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name" />
+				<xs:element ref="mappings" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="simpleFunctions">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="simpleFunction" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="sparqlifyConfig">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="simpleFunctions" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

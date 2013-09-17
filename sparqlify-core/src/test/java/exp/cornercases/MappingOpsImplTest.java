@@ -17,7 +17,6 @@ import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -27,6 +26,8 @@ import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.util.ExprRewriteSystem;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
@@ -50,7 +51,10 @@ public class MappingOpsImplTest {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		//TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+		TypeSystem typeSystem = ers.getTypeSystem();
+
 		SqlTranslator sqlTranslator = new SqlTranslatorImpl(typeSystem);
 
 		
@@ -82,7 +86,7 @@ public class MappingOpsImplTest {
 		
 		
 		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		
 		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 		//candidateViewSelector.addView(personView);

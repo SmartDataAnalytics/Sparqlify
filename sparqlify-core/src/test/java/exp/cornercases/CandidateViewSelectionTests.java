@@ -14,12 +14,13 @@ import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewQuad;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.aksw.sparqlify.util.ExprRewriteSystem;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
@@ -55,9 +56,10 @@ public class CandidateViewSelectionTests {
 
 		System.out.println("VD: " + coreVd);
 		
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		//TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
 		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		
 		CandidateViewSelector<ViewDefinition> system = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());		
 		system.addView(coreVd);
@@ -79,7 +81,7 @@ public class CandidateViewSelectionTests {
 		RdfViewSystemOld.initSparqlifyFunctions();
 		
 		
-		TypeSystem datatypeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		TypeSystem datatypeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 
 		
 		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
@@ -95,8 +97,9 @@ public class CandidateViewSelectionTests {
 		ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
 		ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
 
+		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
 		
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(datatypeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		
 		CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());		
 		candidateSelector.addView(personView);

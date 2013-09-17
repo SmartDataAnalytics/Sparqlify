@@ -16,7 +16,6 @@ import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
@@ -25,6 +24,7 @@ import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
+import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
@@ -174,8 +174,11 @@ public class Main {
 		
 		
 
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		//TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		
+		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+		TypeSystem typeSystem = ers.getTypeSystem();
 		
 		// typeAliases for the H2 datatype
 		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
@@ -187,7 +190,8 @@ public class Main {
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 	
 			//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
-			MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+			//MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+			MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 			OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 			
 			

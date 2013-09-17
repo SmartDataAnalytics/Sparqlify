@@ -4,8 +4,8 @@ package exp.org.aksw.sparqlify.core;
 import java.io.IOException;
 
 import org.aksw.sparqlify.config.lang.ConfigParser;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -66,7 +66,7 @@ public class FunctionDeclarationTests {
 		System.out.println(result);
 		*/
 		
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		//SqlDatatype integer = system.getByName("integer");
 		/*
 		SqlDatatype xfloat = system.getByName("float");

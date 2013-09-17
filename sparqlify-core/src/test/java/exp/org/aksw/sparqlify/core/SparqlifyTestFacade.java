@@ -13,7 +13,6 @@ import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -21,6 +20,7 @@ import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
+import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 
@@ -83,9 +83,13 @@ public class SparqlifyTestFacade {
 		
 		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		//TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+		TypeSystem typeSystem = ers.getTypeSystem();
+
+		
 		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
 

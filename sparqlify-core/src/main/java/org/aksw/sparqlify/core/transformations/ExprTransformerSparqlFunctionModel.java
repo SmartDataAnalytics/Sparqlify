@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.type_system.CandidateMethod;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.MethodDeclaration;
@@ -17,6 +18,7 @@ import com.hp.hpl.jena.sparql.expr.Expr;
 import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 public class ExprTransformerSparqlFunctionModel
 	implements ExprTransformer
@@ -66,20 +68,47 @@ public class ExprTransformerSparqlFunctionModel
 				return typeError;
 			}
 			
-			int termTypeVal = termType.getConstant().getDecimal().intValue();
 			
-			if(termTypeVal != 3) {
-				logger.debug("Yielding type error because termType is not 3 (typed literal) in: " + rdfTerm + " from " + orig + " with " + exprs);
-				return typeError;				
-			}
+			int termTypeVal = termType.getConstant().getDecimal().intValue();
 
 			if(!datatype.isConstant()) {
 				logger.debug("Yielding type error because datatype is not a contant in: " + rdfTerm + " from " + orig + " with " + exprs);
 				return typeError;				
 			}
+
+			NodeValue nodeValue = datatype.getConstant();
 			
-			String datatypeVal = datatype.getConstant().getString();
-			argTypes.add(datatypeVal);
+			
+			if(nodeValue.equals(SparqlifyConstants.nvTypeError)) { //SqlValue.TYPE_ERROR)) {
+				logger.debug("Passing on type error for: " + fnName + " " + exprs);
+				return typeError;
+			}
+
+			if(!nodeValue.isString()) {
+				logger.debug("Yielding type error because datatype is not a string for: " + fnName + " " + exprs);
+				return typeError;
+			}
+			
+			String datatypeStr = nodeValue.asUnquotedString();
+			
+			// Convert a plain literal to a typed literal with xsd:string
+			if(termTypeVal == 2) {
+				if(!datatypeStr.trim().isEmpty()) {
+					logger.debug("Yielding type error because termType has a language tag in : " + rdfTerm + " from " + orig + " with " + exprs);
+					return typeError;									 
+				}
+				
+				datatypeStr = XSD.xstring.toString();
+				
+			} else {
+			
+				if(termTypeVal != 3) {
+					logger.debug("Yielding type error because termType is not 3 (typed literal) in: " + rdfTerm + " from " + orig + " with " + exprs);
+					return typeError;				
+				}
+			}
+
+			argTypes.add(datatypeStr);
 		}
 		
 		

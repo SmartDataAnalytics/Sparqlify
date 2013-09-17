@@ -22,7 +22,6 @@ import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.Mapping;
@@ -33,6 +32,7 @@ import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.sparql.ItemProcessorSparqlify;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.RowMapperSparqlifyBinding;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.Main;
@@ -668,7 +668,7 @@ public class MainSparqlifyBatchDumper {
 		
 		//DataSource dataSource = SparqlifyUtils.createDefaultDatabase("batchtest");
 
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
 		
 		SqlOpSelectBlockCollector sqlOpSelectBlockCollector = new SqlOpSelectBlockCollectorImpl();

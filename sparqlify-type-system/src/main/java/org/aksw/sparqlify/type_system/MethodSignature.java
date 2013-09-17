@@ -52,6 +52,10 @@ public class MethodSignature<T>
 	}
 	*/
 
+//	public static <T> MethodSignature<T> create(T returnType, boolean isVarArg, List<T> parameterTypes) {
+//		return new MethodSignature<T>(returnType, parameterTypes, varArgType);
+//	}
+
 	/**
 	 * 
 	 * @param returnType

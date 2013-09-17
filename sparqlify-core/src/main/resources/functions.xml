@@ -1,43 +1,63 @@
-// XML seems to be extremely verbose for our purpose - Maybe JSON would be the better format??
-
 <sparqlifyConfig>
-	<sqlFunctions>
-		<sqlFuction>
-			<signature>int plus(int, int)</signature>
-			<>
-		</sqlFuction>
-	</sqlFunctions>
+
+	<!--  TODO Property... -->
+	<namespaces>
+		<namespace>
+			<prefix>bif</prefix><uri>http://foobar.org/</uri>
+		</namespace>
+	</namespaces>
+
+<!-- Postgis Geometry Constructors -->
+<!-- 	Source: http://postgis.net/docs/reference.html#Geometry_Constructors -->
+
+
+<!-- NOTE: GeomFromPoint already needs a template... -->
+	<simpleFunctions>
+		<simpleFunction>
+			<name>http://www.openlinksw.com/schemas/bif#st_geomFromPoint</name>
+			<mappings>
+				<mapping>
+					<signature>geometry ST_GeomFromPoint(float, float)</signature>
+					<pattern>$name$($1$, $2$, 4326)</pattern>
+				</mapping>
+				<mapping>
+					<signature>geometry ST_GeomFromPoint(float, float, int)</signature>
+	<!-- 				<pattern>$name$($1$, $2$, $3$)</pattern> -->
+				</mapping>
+			</mappings>
+		</simpleFunction>
+	
+		<simpleFunction>
+			<name>http://www.openlinksw.com/schemas/bif#st_geomFromText</name>
+			<mappings>
+				<mapping>
+					<signature>geometry ST_GeomFromText(string)</signature>
+					<pattern>$name$($1$, 4326)</pattern>
+				</mapping>
+				<mapping>
+					<signature>geometry ST_GeomFromText(string, int)</signature>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+
+		<simpleFunction>
+			<name>http://www.openlinksw.com/schemas/bif#st_intersects</name>
+			<mappings>
+				<mapping>
+					<signature>boolean ST_Intersects(geometry, geometry)</signature>
+				</mapping>
+				<mapping>
+					<signature>boolean ST_DWithin(geometry, geometry, float)</signature>
+					<pattern>$name$($1$, $2$, $3$ * 1000.0)</pattern>
+				</mapping>
+			</mappings>		
+		</simpleFunction>
+
+
+	</simpleFunctions>
+
+	
+	
 
 </sparqlifyConfig>
-
-{ 
-    sqlFunctions: {
-    
-    	'
-    
-    
-    },
-
-
-	sparqldecls: {
-
-		/**
-		 *
-		 *
-		 */
-		'bif:add': [{
-			'numeric add_plus(numeric, numeric)': {
-				transformer: 'beanref://mybean',
-				alias: 'sp_add_plus',
-				sqlImpls: []				
-			}
-		}]
-
-	},
-
-
-
-}
-
-
-
+		

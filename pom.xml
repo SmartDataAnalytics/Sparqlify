@@ -54,7 +54,7 @@
 		
 		<!-- prior: 3.1.2.RELEASE -->
 		<spring.version>3.2.4.RELEASE</spring.version>
-		<aksw.commons.version>0.7.1</aksw.commons.version>
+		<aksw.commons.version>0.7.2</aksw.commons.version>
 
 		<jena-sparql-api.version>2.10.0-16</jena-sparql-api.version>
 
@@ -673,6 +673,18 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+
+			<dependency>
+			    <groupId>org.antlr</groupId>
+			    <artifactId>ST4</artifactId>
+			    <version>4.0.7</version>
+			</dependency>			
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.antlr</groupId> -->
+<!-- 				<artifactId>stringtemplate</artifactId> -->
+<!-- 				<version>4.0.2</version> -->
+<!-- 			</dependency> -->
+			
 			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
 				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
 				</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId> 
@@ -822,7 +834,7 @@
 				<artifactId>hibernate-annotations</artifactId>
 				<version>3.5.6-Final</version>
 			</dependency>
-
+            
 			<!-- <dependency> -->
 			<!-- <groupId>org.activiti</groupId> -->
 			<!-- <artifactId>activiti-engine</artifactId> -->

@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -21,16 +19,6 @@ import org.aksw.commons.util.jdbc.SqlUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerCase;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerElse;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1Prefix;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPassThrough;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerWhen;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -39,8 +27,6 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderDummy;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
@@ -53,9 +39,7 @@ import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
-import org.aksw.sparqlify.core.cast.SqlExprSerializerSystemImpl;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapperDefault;
 import org.aksw.sparqlify.core.cast.TypeSystem;
@@ -76,191 +60,20 @@ import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExImpl;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
+import org.aksw.sparqlify.core.transformations.RdfTermEliminatorWriteable;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
-import org.aksw.sparqlify.type_system.FunctionModel;
-import org.aksw.sparqlify.type_system.MethodDeclaration;
 import org.antlr.runtime.RecognitionException;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 
+
 public class SparqlifyUtils {
 
-//	private static final Logger logger = LoggerFactory.getLogger(SparqlifyUtils.class);
-//
-////	public static InputStream getResourceAsStream(String name) {
-////		InputStream result = System.class.getResourceAsStream(name);
-////
-////		return result;
-////	}
-////	
-////	public static Map<String, String> readMapFromResource(String name)
-////			throws IOException
-////	{
-////		InputStream in = getResourceAsStream(name);
-////		if(in == null) {
-////			throw new RuntimeException("Resource not found: " + name);
-////		}
-////
-////		Map<String, String> result = MapReader.read(in);
-////		
-////		return result;
-////	}
-//	
-//	public static DatatypeSystemCustom createDefaultDatatypeSystem() throws IOException {
-//		
-//		//String basePath = "src/main/resources";
-//		Map<String, String> typeNameToClass = MapReader.readFromResource("/type-class.tsv");
-//		Map<String, String> typeNameToUri = MapReader.readFromResource("/type-uri.tsv");
-//		Map<String, String> typeHierarchy = MapReader.readFromResource("/type-hierarchy.default.tsv");
-//		
-//		DatatypeSystemCustom result = DatatypeSystemCustom.create(typeNameToClass, typeNameToUri, typeHierarchy, SparqlifyUtils.logger);
-//	
-//		initDatatypeSystem(result);
-//		
-//		return result;
-//	}
-//	
-//	/**
-//	 * Declares a set of default operators and functions.
-//	 * 
-//	 * @param ds
-//	 */
-//	public static void initDatatypeSystem(TypeSystem ds) {
-//		try {
-//			_initDatatypeSystem(ds);
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
-//
-//	public static void _initDatatypeSystem(TypeSystem ds) throws SecurityException, NoSuchMethodException
-//	{
-//		{
-//			Method m = DefaultCoercions.class.getMethod("toDouble", Integer.class);
-//			XMethod x = XMethodImpl.createFromMethod("toDouble", ds, null, m);
-//			ds.registerCoercion(x);
-//		}
-//		
-//		/*
-//		 * Methods that can only be rewritten
-//		 */
-//		
-//		{
-//			MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeTokenPostgis.Geometry, TypeTokenPostgis.Geometry), null);
-//			
-//			XMethod x = XMethodImpl.create(ds, "ST_INTERSECTS", signature);
-//			ds.registerSqlFunction("http://ex.org/fn/intersects", x);
-//		}		
-//
-//		{
-//			SqlExprEvaluator evaluator = new SqlExprEvaluator_Concat();
-//			ds.createSparqlFunction("concat", evaluator);
-//			
-//			/*
-//			MethodSignature<TypeToken> signature = MethodSignature.create(true, TypeToken.String, TypeToken.Object);
-//			
-//			// TODO: We need a serializer for concat
-//			XMethod x = XMethodImpl.create(ds, "||", signature);
-//			ds.registerSqlFunction("concat", x);
-//			*/
-//		}		
-//
-//		
-//		{
-//			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalAnd();
-//			ds.createSparqlFunction("&&", evaluator);
-//		}
-//
-//		{
-//			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalOr();
-//			ds.createSparqlFunction("||", evaluator);
-//		}
-//		
-//		{
-//			SqlExprEvaluator evaluator = new SqlExprEvaluator_LogicalNot();
-//			ds.createSparqlFunction("!", evaluator);
-//		}
-//
-//		
-//		/*
-//		{
-//			SqlExprEvaluator evaluator = new SqlExprEvaluator_Equals(ds);
-//			ds.createSparqlFunction("=", evaluator);
-//		}
-//		*/
-//		
-//		
-////		{
-////			String[] compareSymbols = new String[]{"<=", "<", "=", ">", ">="};
-////			for(String opSymbol : compareSymbols) {
-////				ds.createSparqlFunction(opSymbol, new SqlExprEvaluator_Compare(opSymbol, ds));
-////			}
-////		}
-//		
-////		{
-////			//MethodSignature<TypeToken> signature = MethodSignature.create(TypeToken.Boolean, Arrays.asList(TypeToken.String, TypeToken.String));
-////			
-////			//XMethod x = XMethodImpl.create(ds, "equalsIgnoreCase", signature);
-////			Method m = Ops.class.getMethod("equalsIgnoreCase", String.class, String.class);
-////			XMethod x = XMethodImpl.createFromMethod("EQUALS_IGNORE_CASE", ds, null, m);
-////			ds.registerSqlFunction("http://ex.org/fn/equalsIgnoreCase", x);
-////		}
-//
-//		
-//		/*
-//		{
-//			Method m = Ops.class.getMethod("myTestFunc", String.class, Double.class);
-//			XMethod x = XMethodImpl.createFromMethod("myTestFunc", ds, null, m);
-//			ds.register(x);
-//		}*/
-//		
-//		//ds.
-//		//SqlExpr result = evaluater.eval(c, null);
-//		//System.out.println("Result: " + result);
-//		
-//		
-//		//DatatypeSystem system = TestUtils.createDefaultDatatypeSystem();
-//		//SqlDatatype integer = system.getByName("integer");
-//		/*
-//		SqlDatatype xfloat = system.getByName("float");
-//		
-//		Set<SqlDatatype> xxx = system.supremumDatatypes(integer, xfloat);
-//		System.out.println(xxx);
-//*/
-//		
-//		FunctionRegistrySql sqlRegistry = new FunctionRegistrySql(ds);
-//
-//		ConfigParser parser = new ConfigParser();
-//
-////		{
-////			/**
-////			 * Actually it is like that:
-////			 * We have an abstract sparql function, which can be overloaded by several SQL functions.
-////			 * E.g. the SPARQL function ogc:intersects can be implemented by ST_Intersects for geometries or for geographies.
-////			 * 
-////			 */
-////			
-////			Config config = parser.parse("PREFIX fn:<http://ex.org/fn/> DECLARE FUNCTION boolean ex:intersects(integer ?a, integer ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
-////			FunctionDeclarationTemplate fnDecl = config.getFunctionDeclarations().get(0);
-////			sqlRegistry.add(fnDecl);
-////		}
-//		{
-//			/*
-//			Config config = parser.parse("PREFIX ex:<http://ex.org/> DECLARE FUNCTION boolean ex:intersects(geometry ?a, geometry ?b) AS ST_INTERSECTS(?a, ?b, 1000 * ?a)", logger);
-//			FunctionDeclaration decl = config.getFunctionDeclarations().get(0);
-//			sqlRegistry.add(decl);
-//			*/
-//		}		
-//	}
-//	
 //
 //	//public Connection
 	public static void initTestDatabase(DataSource ds) throws SQLException {
@@ -356,7 +169,7 @@ public class SparqlifyUtils {
 //
 //
 	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias) throws IOException {
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		
 		ViewDefinitionFactory result = createViewDefinitionFactory(conn, typeSystem, typeAlias);
 		
@@ -383,7 +196,7 @@ public class SparqlifyUtils {
 		
 		ConfigParser parser = new ConfigParser();
 		
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		SchemaProvider schemaProvider = new SchemaProviderDummy(typeSystem, typeAlias);
 		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 		
@@ -393,290 +206,17 @@ public class SparqlifyUtils {
 	}
 	
 	
+	@Deprecated
 	public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
-		DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
-
-		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
-				typeSerializer);
-		SqlExprSerializerSystem result = new SqlExprSerializerSystemImpl(
-				typeSerializer, sqlLiteralMapper);
-		
-		FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("+");
-			result.addSerializer(sqlModel.getIdsByName("numericPlus"), serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("-");
-			result.addSerializer(sqlModel.getIdsByName("numericMinus"), serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("*");
-			result.addSerializer(sqlModel.getIdsByName("numericMultiply"), serializer);
-		}
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("/");
-			result.addSerializer(sqlModel.getIdsByName("numericDivide"), serializer);
-		}
-
-		
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("=");
-			result.addSerializer(sqlModel.getIdsByName("equal"), serializer);
-		}
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializer_Join(" || ");
-			result.addSerializer("concat@str", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("COALESCE");
-			result.addSerializer("coalesce", serializer);
-		}
-
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">");
-			result.addSerializer(sqlModel.getIdsByName("greaterThan"), serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2(">=");
-			result.addSerializer(sqlModel.getIdsByName("greaterThanOrEqual"), serializer);
-		}
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("<");
-			result.addSerializer(sqlModel.getIdsByName("lessThan"), serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("<=");
-			result.addSerializer(sqlModel.getIdsByName("lessThanOrEqual"), serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("AND");
-			result.addSerializer(sqlModel.getIdsByName("logicalAnd"), serializer);
-			result.addSerializer("logicalAnd", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("OR");
-			result.addSerializer(sqlModel.getIdsByName("logicalOr"), serializer);
-			result.addSerializer("logicalOr", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1("NOT");
-			result.addSerializer(sqlModel.getIdsByName("logicalNot"), serializer);
-			result.addSerializer("logicalNot", serializer);
-		}
-
-		
-		// HACK: When isNotNull contraints are added based on the schema,
-		// these expressions are not passed through the SQL rewriting process
-		// Therefore we need this entry
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix(" IS NOT NULL");
-			result.addSerializer("isNotNull", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix(" IS NOT NULL");
-			result.addSerializer(sqlModel.getIdsByName("isNotNull"), serializer);
-		}
-
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float8");
-			result.addSerializer("double@str", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
-			result.addSerializer("str@float", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
-			result.addSerializer("str@double", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
-			result.addSerializer("str@str", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
-			result.addSerializer("str@int", serializer);
-		}
-
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float");
-			result.addSerializer("float toFloat(int)", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::float");
-			result.addSerializer("double toDouble(int)", serializer);
-		}
-
-		
-		{
-			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_GeomFromPoint");
-			result.addSerializer("geometry ST_GeomFromPoint(float, float)", new SqlFunctionSerializer() {				
-				@Override
-				public String serialize(List<String> args) {
-					return "ST_SetSRID(ST_Point(" + args.get(0) + ", " + args.get(1) + "), 4326)";
-				}
-			});
-		}
-
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Boolean, "ST_DWithin", false, TypeToken.Geometry, TypeToken.Geometry, TypeToken.Float);
-
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_DWithin");
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Boolean, "ST_Intersects", false, TypeToken.Geometry, TypeToken.Geometry);
-
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_Intersects");
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Long, "Count", false);
-			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Count");
-			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {				
-				@Override
-				public String serialize(List<String> args) {
-					return "Count(*)";
-				}
-			};
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
-
-			//SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_");
-			result.addSerializer(decl.toString(), new SqlFunctionSerializerPassThrough());
-		}
-
-
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Int, "Sum", false, TypeToken.Int);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Sum");
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, "GroupConcat", false, TypeToken.String, TypeToken.String);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {				
-				@Override
-				public String serialize(List<String> args) {
-					return "string_agg(" + args.get(0) + ", " + args.get(1) + ")";
-				}
-			};
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		{
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Double, "Sum", false, TypeToken.Double);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("Sum");
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		
-		{
-			
-			MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.Geometry, "ST_GeomFromText", false, TypeToken.String);
-			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {				
-				@Override
-				public String serialize(List<String> args) {
-					return "ST_SetSRID(ST_GeomFromText(" + args.get(0) + "), 4326)";
-				}
-			};
-
-			result.addSerializer(decl.toString(), serializer);
-		}
-
-		
-		{
-			//SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");
-			result.addSerializer(sqlModel.getIdsByName("regex"), new SqlFunctionSerializer() {				
-				@Override
-				public String serialize(List<String> args) {
-					return "(" + args.get(0) + " ~ " + args.get(1) + ")";
-				}
-			});
-			//result.addSerializer(sqlModel.getIdsByName("regex"), serializer);
-		}
-
-		
-		
-		// Cast is built in
-//		{
-//			SqlFunctionSerializer serializer = new SqlFunctionSerializerCast();
-//			result.addSerializer("cast", serializer);
-//		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerWhen();
-			//result.addSerializer(sqlModel.getIdsByName("when"), serializer);
-			result.addSerializer("when", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerCase();
-			//result.addSerializer(sqlModel.getIdsByName("case"), serializer);
-			result.addSerializer("case", serializer);
-		}
-
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerElse();
-			//result.addSerializer(sqlModel.getIdsByName("else"), serializer);
-			result.addSerializer("else", serializer);
-		}
-		
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
-			result.addSerializer(SparqlifyConstants.urlEncode, serializer);
-		}
-		
-		{
-			SqlFunctionSerializer serializer = new SqlFunctionSerializer() {
-				@Override
-				public String serialize(List<String> args) {
-					return "COUNT(*)";
-				}
-			};
-			
-			result.addSerializer("org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount", serializer);
-		}
-
+		SqlExprSerializerSystem result = SparqlifyCoreInit.createSerializerSystem(typeSystem);
 
 		return result;
 	}
 	
 	
 	public static SqlTranslator createSqlRewriter() {
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
-		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer(typeSystem);
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+		RdfTermEliminator rdfTermEliminator = SparqlifyCoreInit.createDefaultTransformer(typeSystem);
 		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
 	
 		
@@ -685,6 +225,26 @@ public class SparqlifyUtils {
 	}
 
 		
+	public static SqlTranslator createSqlTranslator(ExprRewriteSystem rewriteSystem) {
+		
+		TypeSystem typeSystem = rewriteSystem.getTypeSystem();
+		RdfTermEliminator rdfTermEliminator = rewriteSystem.getTermEliminator();
+		ExprEvaluator exprTransformer = rewriteSystem.getExprEvaluator();
+		
+		ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
+		
+
+
+		// Computes types for Expr, thereby yielding SqlExpr
+		TypedExprTransformer typedExprTransformer = new TypedExprTransformerImpl(typeSystem);
+
+		
+		//SqlTranslator sqlTranslator = new SqlTranslatorImpl(datatypeSystem);
+		SqlTranslator result = new SqlTranslatorImpl2(exprBindingSubstitutor, rdfTermEliminator, exprTransformer, typedExprTransformer);
+		
+		return result;		
+	}
+	
 	public static SqlTranslator createSqlRewriter(TypeSystem datatypeSystem, RdfTermEliminator rdfTermEliminator, ExprEvaluator exprTransformer) {
 
 		ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
@@ -734,17 +294,17 @@ public class SparqlifyUtils {
 	
 	public static List<String> listTables(Connection conn) throws SQLException {
 		//java.sql.ResultSet rs = conn.createStatement().executeQuery("Select name from STUDENT");
-		java.sql.ResultSet rs = conn.createStatement().executeQuery("SELECT table_name FROM information_schema.tables");
+		//java.sql.ResultSet rs = conn.createStatement().executeQuery("SELECT table_name FROM information_schema.tables");
 		String query = "SELECT table_name FROM information_schema.tables";
 		List<String> result = SqlUtils.executeList(conn, query, String.class);
 		return result;
 	}
 	
 	
-	public static MappingOps createDefaultMappingOps(TypeSystem typeSystem) {
-		RdfTermEliminator rdfTermEliminator = SqlTranslationUtils.createDefaultTransformer(typeSystem);
-		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
-		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, rdfTermEliminator, exprTransformer);
+	public static MappingOps createDefaultMappingOps(ExprRewriteSystem ers) {
+		//RdfTermEliminator rdfTermEliminator = SparqlifyCoreInit.createDefaultTransformer(typeSystem);
+		
+		SqlTranslator sqlTranslator = createSqlRewriter(ers.getTypeSystem(), ers.getTermEliminator(), ers.getExprEvaluator());
 		
 		
 		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();
@@ -755,8 +315,8 @@ public class SparqlifyUtils {
 		return mappingOps;
 	}
 
-	public static OpMappingRewriter createDefaultOpMappingRewriter(TypeSystem typeSystem) {
-		MappingOps mappingOps = createDefaultMappingOps(typeSystem);
+	public static OpMappingRewriter createDefaultOpMappingRewriter(ExprRewriteSystem ers) {
+		MappingOps mappingOps = createDefaultMappingOps(ers);
 		
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 
@@ -793,10 +353,27 @@ public class SparqlifyUtils {
 	}
 
 
+	/**
+	 * This method creates all required intermediary objects
+	 * 
+	 * 
+	 * @param dataSource
+	 * @param config
+	 * @param maxResultSetSize
+	 * @param maxQueryExecutionTime
+	 * @return
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();
 
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		ExprRewriteSystem ers = createExprRewriteSystem();
+		
+		
+		TypeSystem typeSystem = ers.getTypeSystem();
+		
+		
 		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 		
 		// typeAliases for the H2 datatype
@@ -805,7 +382,7 @@ public class SparqlifyUtils {
 
 		Connection conn = dataSource.getConnection();
 
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
 
@@ -830,7 +407,9 @@ public class SparqlifyUtils {
 
 		SparqlSqlOpRewriter ssoRewriter = SparqlifyUtils.createSqlOpRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 		
-		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+		//SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+		SqlExprSerializerSystem serializerSystem = ers.getSerializerSystem();
+		
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
 
 		
@@ -845,73 +424,75 @@ public class SparqlifyUtils {
 		
 	}
 	
-	public static QueryExecutionFactory createDefaultSparqlifyEngineOld(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
-		RdfViewSystemOld.initSparqlifyFunctions();
-		
-		
-		//Connection conn = dataSource.getConnection();
-
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
-		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
-		
-		// typeAliases for the H2 datatype
-		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
-
-
-		Connection conn = dataSource.getConnection();
-
-		
-/*		
-		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
-		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, exprTransformer);
-		
-		
-		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();
-				
-		
-		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
-		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-*/
-		//OpMappingRewriter opMappingRewriter = createDefaultOpMappingRewriter(typeSystem);
-		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
-		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
-
-		CandidateViewSelector<ViewDefinition> candidateViewSelector;
-		Schema databaseSchema;
-		try {
-			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
-			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
-
-			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
-
-		
-			//	RdfViewSystem system = new RdfViewSystem2();
-			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);
-			
-			databaseSchema = Schema.create(conn);
-		} finally {
-			conn.close();
-		}
-
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
-
-		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
-		
-		if(maxQueryExecutionTime != null) {
-			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);
-		}
-		
-		if(maxResultSetSize != null) {
-			qef = QueryExecutionFactoryLimit.decorate(qef, false, maxResultSetSize);
-		}
-		
-		return qef;
-	}
+//	public static QueryExecutionFactory createDefaultSparqlifyEngineOld(DataSource dataSource, Config config, Long maxResultSetSize, Long maxQueryExecutionTime) throws SQLException, IOException {
+//		RdfViewSystemOld.initSparqlifyFunctions();
+//		
+//		
+//		//Connection conn = dataSource.getConnection();
+//
+//		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+//		//TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+//		
+//		// typeAliases for the H2 datatype
+//		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
+//
+//
+//		Connection conn = dataSource.getConnection();
+//
+//		
+///*		
+//		ExprEvaluator exprTransformer = SqlTranslationUtils.createDefaultEvaluator();
+//		SqlTranslator sqlTranslator = createSqlRewriter(typeSystem, exprTransformer);
+//		
+//		
+//		ExprDatatypeNorm exprNormalizer = new ExprDatatypeNorm();
+//				
+//		
+//		MappingOps mappingOps = new MappingOpsImpl(sqlTranslator, exprNormalizer);
+//		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+//*/
+//		//OpMappingRewriter opMappingRewriter = createDefaultOpMappingRewriter(typeSystem);
+//		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
+//		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+//		//CandidateViewSelectorImpl cvs = new CandidateViewSelectorImpl(mappingOps);
+//
+//		CandidateViewSelector<ViewDefinition> candidateViewSelector;
+//		Schema databaseSchema;
+//		try {
+//			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+//			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
+//
+//			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+//
+//		
+//			//	RdfViewSystem system = new RdfViewSystem2();
+//			ConfiguratorCandidateSelector.configure(config, syntaxBridge, candidateViewSelector, null);
+//			
+//			databaseSchema = Schema.create(conn);
+//		} finally {
+//			conn.close();
+//		}
+//
+//		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
+//
+//		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+//		
+//		if(maxQueryExecutionTime != null) {
+//			qef = QueryExecutionFactoryTimeout.decorate(qef, maxQueryExecutionTime * 1000);
+//		}
+//		
+//		if(maxResultSetSize != null) {
+//			qef = QueryExecutionFactoryLimit.decorate(qef, false, maxResultSetSize);
+//		}
+//		
+//		return qef;
+//	}
 	
+
 	
 	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter, TypeSystem typeSystem)  {
 
+		
 		SqlExprSerializerSystem serializerSystem = createSerializerSystem(typeSystem);
 		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
 
@@ -1036,4 +617,24 @@ public class SparqlifyUtils {
 		return result;
 	}
 
+	
+	
+	
+	public static ExprRewriteSystem createExprRewriteSystem() {
+
+		RdfViewSystemOld.initSparqlifyFunctions();
+
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+		RdfTermEliminatorWriteable exprTransformer = SparqlifyCoreInit.createDefaultTransformer(typeSystem);
+		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+		ExprEvaluator exprEvaluator = SqlTranslationUtils.createDefaultEvaluator();
+		
+		ExprRewriteSystem result = new ExprRewriteSystem(typeSystem, exprTransformer, exprEvaluator, serializerSystem);
+	
+		
+		SparqlifyCoreInit.loadExtensionFunctions(typeSystem, exprTransformer, serializerSystem);
+		
+		return result;
+	}
+	
 }

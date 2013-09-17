@@ -17,6 +17,7 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
+
 /**
  * This transformer is mainly intended for "local" transforms
  * of functions.
@@ -26,7 +27,7 @@ import com.hp.hpl.jena.sparql.expr.NodeValue;
  *
  */
 public class RdfTermEliminatorImpl
-	implements RdfTermEliminator
+	implements RdfTermEliminatorWriteable
 {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RdfTermEliminatorImpl.class);
@@ -125,5 +126,10 @@ public class RdfTermEliminatorImpl
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void register(String functionSymbol, ExprTransformer exprTransformer) {
+		idToTransformer.put(functionSymbol, exprTransformer);
 	}
 }

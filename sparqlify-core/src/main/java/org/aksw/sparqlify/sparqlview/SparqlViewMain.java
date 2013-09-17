@@ -2,9 +2,9 @@ package org.aksw.sparqlify.sparqlview;
 
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorRestructify;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
@@ -26,7 +26,7 @@ public class SparqlViewMain {
 		//system.addView(SparqlView.create("MyView", QueryFactory.create("Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/> Construct { ?s a ?t . } { ?s a ?t . }", Syntax.syntaxSPARQL_11)));
 		//system.addView(SparqlView.create("MyView", QueryFactory.create("Prefix ft:<http://fintrans.publicdata.eu/ec/ontology/> Construct { ?s a ft:LabeledThing . } { ?s <"  + RDFS.label + "> ?x }", Syntax.syntaxSPARQL_11)));
 		
-		TypeSystem typeSystem = NewWorldTest.createDefaultDatatypeSystem();
+		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		CandidateViewSelector<SparqlView> candidateViewSelector = new CandidateViewSelectorRestructify(); 
 
 		//SparqlView sparqlView = SparqlView.create("MyView", QueryFactory.create("Construct { ?s ?p ?o } { ?s a <http://fp7-pp.publicdata.eu/ontology/Project> . ?s ?p ?o . Filter(?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>) }", Syntax.syntaxSPARQL_11));

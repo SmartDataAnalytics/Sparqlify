@@ -512,7 +512,7 @@ public class TypedExprTransformerImpl
 			
 		} else {
 			// Type error
-			logger.info("Yielding Type error because to signature found for: " + functionId + " with arguments " + argTypes);
+			logger.info("Yielding type error because no signature found for: " + functionId + " with arguments " + argTypes);
 			result = S_Constant.TYPE_ERROR;
 			//throw new RuntimeException("Type error.... needs to be handled - No function found: " + functionId + " with argtypes " + argTypes);
 		}

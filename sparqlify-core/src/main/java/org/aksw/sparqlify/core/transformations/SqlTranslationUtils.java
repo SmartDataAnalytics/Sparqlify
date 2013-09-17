@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
@@ -15,18 +14,13 @@ import org.aksw.sparqlify.compile.sparql.SqlPrePusher;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
-import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.aksw.sparqlify.type_system.FunctionModel;
-import org.aksw.sparqlify.type_system.TypeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sparql.DnfUtils;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
 import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
@@ -40,12 +34,8 @@ import com.hp.hpl.jena.sparql.expr.ExprFunction2;
 import com.hp.hpl.jena.sparql.expr.ExprList;
 import com.hp.hpl.jena.sparql.expr.FunctionLabel;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggGroupConcat;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggSum;
 import com.hp.hpl.jena.sparql.function.FunctionRegistry;
 import com.hp.hpl.jena.sparql.sse.Tags;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 
 /**
@@ -994,80 +984,6 @@ public class SqlTranslationUtils {
 		return result;
 	}
 	
-	public static RdfTermEliminatorImpl createDefaultTransformer(TypeSystem typeSystem) {
-		RdfTermEliminatorImpl exprTransformer = new RdfTermEliminatorImpl();		
-		
-		Map<String, ExprTransformer> transMap = exprTransformer.getTransformerMap();
-		
-		transMap.put("concat", new ExprTransformerConcat());
-		transMap.put("lang", new ExprTransformerLang());
-		
-		transMap.put("langMatches", new ExprTransformerLangMatches());
-
-		
-		transMap.put("=", new ExprTransformerRdfTermComparator(XSD.xboolean));
-		transMap.put(">", new ExprTransformerRdfTermComparator(XSD.xboolean));
-		transMap.put(">=", new ExprTransformerRdfTermComparator(XSD.xboolean));
-		transMap.put("<", new ExprTransformerRdfTermComparator(XSD.xboolean));
-		transMap.put("<=", new ExprTransformerRdfTermComparator(XSD.xboolean));
-		//transMap.put("+", new ExprTransformerArithmetic(XSD.decimal));
-		
-		FunctionModel<String> sparqlModel = typeSystem.getSparqlFunctionModel();
-		
-		transMap.put("+", new ExprTransformerSparqlFunctionModel(sparqlModel));
-		
-		transMap.put("-", new ExprTransformerArithmetic(XSD.decimal));
-		transMap.put("*", new ExprTransformerArithmetic(XSD.decimal));
-		transMap.put("/", new ExprTransformerArithmetic(XSD.decimal));
-		
-		transMap.put("bound", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
-		transMap.put("cast", new ExprTransformerCast());
-		transMap.put("str", new ExprTransformerStr());
-		transMap.put("regex", new ExprTransformerFunction(XSD.xboolean));
-		
-		transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerRdfTermCtor());
-		transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerRdfTermCtor());
-		transMap.put(SparqlifyConstants.plainLiteralLabel, new ExprTransformerRdfTermCtor());
-		transMap.put(SparqlifyConstants.typedLiteralLabel, new ExprTransformerRdfTermCtor());
-		transMap.put(SparqlifyConstants.rdfTermLabel, new ExprTransformerRdfTermCtor());
-
-		transMap.put("&&", new ExprTransformerLogicalConjunction());
-		transMap.put("||", new ExprTransformerLogicalConjunction());
-		transMap.put("!", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
-		//transMap.put("||", new ExprTransformerLogicalAn());
-
-		transMap.put(XSD.xdouble.getURI(), new ExprTransformerCast());
-
-		
-		transMap.put(SparqlifyConstants.urlEncode, new ExprTransformerFunction(XSD.xstring));
-		transMap.put(SparqlifyConstants.urlDecode, new ExprTransformerFunction(XSD.xstring));
-
-		// Geometry
-		String bif = "http://www.openlinksw.com/schemas/bif#";
-
-		Resource virtGeometry = ResourceFactory.createResource("http://www.openlinksw.com/schemas/virtrdf#Geometry");
-		
-		transMap.put(bif + "st_intersects", new ExprTransformerFunction(XSD.xboolean));
-		transMap.put(bif + "st_geomFromText", new ExprTransformerFunction(virtGeometry));
-		transMap.put(bif + "st_point", new ExprTransformerFunction(ResourceFactory.createResource("http://www.opengis.net/ont/geosparql#wktLiteral"))); //));
-		
-		
-		
-		//typeSystem.get
-		TypeModel<String> sparqlTypeModel = typeSystem.getSparqlTypeModel();
-		transMap.put("isNumeric", new ExprTransformerIsNumeric(sparqlTypeModel));
-		//transMap.put("isDecimal", new ET_IsDecimal(sparqlTypeModel));
-
-		
-		// TODO: The return type of this function depends on which signature is used
-		// So i more sophicsticated transformer is needed
-		transMap.put(AggCount.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
-		transMap.put(AggSum.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
-		transMap.put(AggGroupConcat.class.getSimpleName(), new ExprTransformerSparqlFunctionModel(sparqlModel));
-		
-		return exprTransformer;
-	}
-
 	public static ExprEvaluator createDefaultEvaluator() {
 		ExprEvaluatorPartial evaluator = new ExprEvaluatorPartial(FunctionRegistry.get());
 
