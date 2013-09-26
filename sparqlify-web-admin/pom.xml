@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>sparqlify-web-admin</artifactId>
+	<!-- <packaging>uberwar</packaging> -->
+	<packaging>war</packaging>
+
+
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Web Admin</name>
+	<url>http://aksw.org/Projects/Sparqlify</url>
+
+
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.6.5-SNAPSHOT</version>
+	</parent>
+
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>typescript-maven-plugin</id>
+			<url>https://github.com/maxlapp/typescript-maven-plugin/tree/master/repo</url>
+<!-- 			<url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url> -->
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId> 
+					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath> 
+					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
+					</excludes> </overlay> </overlays> </configuration> -->
+			</plugin>
+			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId> 
+				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor> 
+				</configuration> </plugin> -->
+
+			<plugin>
+				<!-- This plugin's configuration must come *after* the Maven Resources 
+					Plugin, and *before* the Debian Maven Plugin. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+
+
+					<execution>
+						<id>create-symlinks</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+<!-- 								<mkdir dir="${project.build.directory}/${project.build.finalName}/" /> -->
+								<symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.finalName}" />
+<!-- 								<symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.directory}/${project.build.finalName}" /> -->
+<!-- 									resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war"  -->
+<!-- 									resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+
+<!-- TypeScript plugin for goal mvn typescript:tsc -->
+<!-- http://ppedregal.github.io/typescript-maven-plugin/plugin-info.html -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>com.ppedregal.typescript</groupId> -->
+<!-- 				<artifactId>typescript-maven-plugin</artifactId> -->
+<!--                 <version>0.0.1-SNAPSHOT</version> -->
+<!-- 				<groupId>ru.maxlapp</groupId> -->
+<!-- 				<artifactId>typescript-maven-plugin</artifactId> -->
+<!--                 <version>0.1.2</version> -->
+<!-- 				<configuration> -->
+<!-- 					<sourceDirectory>src/main/webapp/resources/ts</sourceDirectory> -->
+<!-- 					<targetDirectory>target/ts</targetDirectory> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId> 
+			</dependency> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId> 
+			</dependency> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
+			</dependency> -->
+
+		<dependency>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-core</artifactId>
+				</dependency>
+		
+		
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+			</dependency>
+		
+
+           <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.aksw.sparqlify</groupId> -->
+		<!-- <artifactId>sparqlify-core</artifactId> -->
+		<!-- </dependency> -->
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aksw.sparqlify</groupId> -->
+<!-- 			<artifactId>sparqlify-platform</artifactId> -->
+<!-- 			<type>war</type> -->
+<!-- 		</dependency> -->
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aksw.sparqlify</groupId> -->
+<!-- 			<artifactId>sparqlify-platform</artifactId> -->
+<!-- 			<classifier>classes</classifier> -->
+<!-- 		</dependency> -->
+
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.aksw.sparqlify</groupId> -->
+		<!-- <artifactId>sparqlify-server</artifactId> -->
+		<!-- <type>war</type> -->
+		<!-- <version>${parent.version}</version> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>de.fuberlin.wiwiss</groupId> -->
+		<!-- <artifactId>pubby</artifactId> -->
+		<!-- <type>war</type> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>de.fuberlin.wiwiss</groupId> -->
+		<!-- <artifactId>pubby</artifactId> -->
+		<!-- <classifier>classes</classifier> -->
+		<!-- </dependency> -->
+
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.kurtjx.snorql</groupId> -->
+		<!-- <artifactId>snorql-webapp</artifactId> -->
+		<!-- <type>war</type> -->
+		<!-- </dependency> -->
+
+		<!-- Spring dependencies -->
+		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-core</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-web</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-beans</artifactId> 
+			</dependency> <dependency> <groupId>com.sun.jersey.contribs</groupId> <artifactId>jersey-spring</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+
+
+	</dependencies>
+</project>
+

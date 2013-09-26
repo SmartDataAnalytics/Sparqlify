@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<!--
+
+    Configuration file for UrlRewriteFilter
+    http://www.tuckey.org/urlrewrite/
+
+
+	Quick link to probably most relevant docs:
+	http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/index.html#tips
+-->
+<urlrewrite>
+
+	<!-- TODO HACK, It feels like a hack having to rely on URL rewriting for -->
+	<!-- accomplishing a welcome page, but at least it works :/ -->
+	<rule>
+		<from>^/$</from>
+		<to>/index-sparqlify-admin.do</to>
+	</rule>
+</urlrewrite>
+

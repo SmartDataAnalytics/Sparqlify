@@ -239,10 +239,10 @@
 		<!-- <groupId>org.hibernate</groupId> -->
 		<!-- <artifactId>hibernate</artifactId> -->
 		<!-- </dependency> -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.hibernate</groupId> -->
+<!-- 			<artifactId>hibernate-annotations</artifactId> -->
+<!-- 		</dependency> -->
 
 		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-entitymanager</artifactId> 
 			</dependency> -->
@@ -263,6 +263,11 @@
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-infrastructure</artifactId>
+		</dependency>
+            
+        <dependency>
+		    <groupId>net.sf.jsqlparser</groupId>
+		    <artifactId>jsqlparser</artifactId>
 		</dependency>
             
 <!-- 		<dependency> -->
