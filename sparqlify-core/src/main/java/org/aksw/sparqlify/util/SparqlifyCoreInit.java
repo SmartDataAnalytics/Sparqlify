@@ -946,7 +946,9 @@ public class SparqlifyCoreInit {
 			
 			String xsdInt = XSD.xint.toString();
 			String xsdString = XSD.xstring.toString();
+			String xsdFloat = XSD.xfloat.toString();
 			String xsdDouble = XSD.xdouble.toString();
+			String xsdDecimal = XSD.decimal.toString();
 			
 			MethodDeclaration<String> numericAddInt = MethodDeclaration.create("+", MethodSignature.create(false, xsdInt, xsdInt, xsdInt)); 		
 			sparqlModel.registerFunction("+", numericAddInt);
@@ -955,7 +957,12 @@ public class SparqlifyCoreInit {
 			sparqlModel.registerFunction("+", numericAddDouble);
 			
 			sparqlModel.registerCoercion(MethodDeclaration.create(xsdDouble, MethodSignature.create(false, xsdDouble, xsdInt)));
-	
+
+			// Decimal -> Float
+			// Decimal -> Double
+			sparqlModel.registerCoercion(MethodDeclaration.create(xsdFloat, MethodSignature.create(false, xsdFloat, xsdDecimal)));
+			sparqlModel.registerCoercion(MethodDeclaration.create(xsdDouble, MethodSignature.create(false, xsdDouble, xsdDecimal)));
+
 			
 			MethodDeclaration<String> groupConcat = MethodDeclaration.create(AggGroupConcat.class.getSimpleName(), MethodSignature.create(false, xsdString)); 		
 			sparqlModel.registerFunction(AggGroupConcat.class.getSimpleName(), groupConcat);

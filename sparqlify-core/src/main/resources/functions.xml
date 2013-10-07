@@ -17,16 +17,30 @@
 			<name>http://www.openlinksw.com/schemas/bif#st_geomFromPoint</name>
 			<mappings>
 				<mapping>
-					<signature>geometry ST_GeomFromPoint(float, float)</signature>
-					<pattern>$name$($1$, $2$, 4326)</pattern>
+					<signature>geometry ST_Point(float, float)</signature>
+					<pattern>ST_SetSRID($name$($1$, $2$), 4326)</pattern>
 				</mapping>
 				<mapping>
-					<signature>geometry ST_GeomFromPoint(float, float, int)</signature>
-	<!-- 				<pattern>$name$($1$, $2$, $3$)</pattern> -->
+					<signature>geometry ST_Point(float, float, int)</signature>
+					<pattern>ST_SetSRID($name$($1$, $2$), $3$)</pattern>
 				</mapping>
 			</mappings>
 		</simpleFunction>
 	
+		<simpleFunction>
+			<name>http://www.openlinksw.com/schemas/bif#st_point</name>
+			<mappings>
+				<mapping>
+					<signature>geometry ST_Point(float, float)</signature>
+					<pattern>ST_SetSRID($name$($1$, $2$), 4326)</pattern>
+				</mapping>
+				<mapping>
+					<signature>geometry ST_Point(float, float, int)</signature>
+					<pattern>ST_SetSRID($name$($1$, $2$), $3$)</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+		
 		<simpleFunction>
 			<name>http://www.openlinksw.com/schemas/bif#st_geomFromText</name>
 			<mappings>
