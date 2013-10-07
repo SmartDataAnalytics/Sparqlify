@@ -56,7 +56,7 @@
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<aksw.commons.version>0.7.2</aksw.commons.version>
 
-		<jena-sparql-api.version>2.10.0-18-SNAPSHOT</jena-sparql-api.version>
+		<jena-sparql-api.version>2.10.0-18</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 
