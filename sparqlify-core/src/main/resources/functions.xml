@@ -62,7 +62,7 @@
 				</mapping>
 				<mapping>
 					<signature>boolean ST_DWithin(geometry, geometry, float)</signature>
-					<pattern>$name$($1$, $2$, $3$ * 1000.0)</pattern>
+					<pattern>$name$($1$, $2$, $3$)</pattern>
 				</mapping>
 			</mappings>		
 		</simpleFunction>
