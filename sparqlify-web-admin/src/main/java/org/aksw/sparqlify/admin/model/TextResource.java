@@ -12,19 +12,19 @@ public class TextResource
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
-	private String type;
-	private String format;
+	private Integer id;
+	private String type; // logical type
+	private String format; // mime type / physical type
 	private String data;
 	
 	public TextResource() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

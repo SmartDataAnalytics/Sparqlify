@@ -8,13 +8,17 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -52,13 +56,10 @@ public class WebAppConfig {
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-		dataSource.setDriverClassName(env
-				.getRequiredProperty(JDBC_DRIVER));
+		dataSource.setDriverClassName(env.getRequiredProperty(JDBC_DRIVER));
 		dataSource.setUrl(env.getRequiredProperty(JDBC_URL));
-		dataSource.setUsername(env
-				.getRequiredProperty(JDBC_USERNAME));
-		dataSource.setPassword(env
-				.getRequiredProperty(JDBC_PASSWORD));
+		dataSource.setUsername(env.getRequiredProperty(JDBC_USERNAME));
+		dataSource.setPassword(env.getRequiredProperty(JDBC_PASSWORD));
 
 		return dataSource;
 	}
@@ -76,12 +77,9 @@ public class WebAppConfig {
 
 	private Properties hibProperties() {
 		Properties properties = new Properties();
-		properties.put(HIBERNATE_DIALECT,
-				env.getRequiredProperty(HIBERNATE_DIALECT));
-		properties.put(HIBERNATE_SHOW_SQL,
-				env.getRequiredProperty(HIBERNATE_SHOW_SQL));
-		properties.put(HIBERNATE_HBM2DDL_AUTO,
-				env.getRequiredProperty(HIBERNATE_HBM2DDL_AUTO));
+		properties.put(HIBERNATE_DIALECT, env.getRequiredProperty(HIBERNATE_DIALECT));
+		properties.put(HIBERNATE_SHOW_SQL, env.getRequiredProperty(HIBERNATE_SHOW_SQL));
+		properties.put(HIBERNATE_HBM2DDL_AUTO, env.getRequiredProperty(HIBERNATE_HBM2DDL_AUTO));
 		
 		properties.put("hibernate.current_session_context_class", "thread");
 		
@@ -90,8 +88,18 @@ public class WebAppConfig {
 
 	@Bean
 	public HibernateTransactionManager transactionManager() {
+
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 		transactionManager.setSessionFactory(sessionFactory().getObject());
+
+		// Force creation of the schema
+		Session session = transactionManager.getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		tx.commit();
+		
+		session.close();
+		
+		
 		return transactionManager;
 	}
 
@@ -112,6 +120,7 @@ public class WebAppConfig {
 	 * @throws Exception
 	 */
 	@Bean
+	@DependsOn("transactionManager")
 	public QueryExecutionFactory managerApiQef()
 		throws Exception
 	{

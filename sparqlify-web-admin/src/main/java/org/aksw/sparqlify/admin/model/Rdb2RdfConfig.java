@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.admin.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,28 +8,31 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Rdb2RdbConfig
+public class Rdb2RdfConfig
 	extends ResourceBase
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	
-	@ManyToOne
+	// The context path on which to host the SPARQL services
+	private String contextPath;
+	
+	@ManyToOne(cascade=CascadeType.ALL)
 	private JdbcDataSource jdbcDataSource;
 	
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	private TextResource textResource;
 	
-	public Rdb2RdbConfig() {
+	public Rdb2RdfConfig() {
 		
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -36,7 +40,7 @@ public class Rdb2RdbConfig
 		return jdbcDataSource;
 	}
 
-	public void setJdbcDatasource(JdbcDataSource jdbcDataSource) {
+	public void setJdbcDataSource(JdbcDataSource jdbcDataSource) {
 		this.jdbcDataSource = jdbcDataSource;
 	}
 
@@ -48,11 +52,21 @@ public class Rdb2RdbConfig
 		this.textResource = textResource;
 	}
 
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + id;
+		result = prime * result
+				+ ((contextPath == null) ? 0 : contextPath.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((jdbcDataSource == null) ? 0 : jdbcDataSource.hashCode());
 		result = prime * result
@@ -68,8 +82,16 @@ public class Rdb2RdbConfig
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Rdb2RdbConfig other = (Rdb2RdbConfig) obj;
-		if (id != other.id)
+		Rdb2RdfConfig other = (Rdb2RdfConfig) obj;
+		if (contextPath == null) {
+			if (other.contextPath != null)
+				return false;
+		} else if (!contextPath.equals(other.contextPath))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (jdbcDataSource == null) {
 			if (other.jdbcDataSource != null)
@@ -86,7 +108,8 @@ public class Rdb2RdbConfig
 
 	@Override
 	public String toString() {
-		return "Rdb2RdbConfig [id=" + id + ", jdbcDatasource=" + jdbcDataSource
-				+ ", textResource=" + textResource + "]";
-	}
+		return "Rdb2RdfConfig [id=" + id + ", contextPath=" + contextPath
+				+ ", jdbcDataSource=" + jdbcDataSource + ", textResource="
+				+ textResource + "]";
+	}	
 }

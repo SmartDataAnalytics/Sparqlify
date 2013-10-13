@@ -14,11 +14,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
+import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
+import org.aksw.sparqlify.admin.model.TextResource;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
 
 @Path("/api/action")
 @Service
@@ -54,24 +58,22 @@ public class ServletManager
 		JdbcDataSource dataSource = new JdbcDataSource();
 		dataSource.setJdbcUrl("jdbc:postgresql//foobar");
 		dataSource.setUsername("postgres");
-		dataSource.setPassword("postgres".toCharArray());
+		dataSource.setPassword("postgres"); //.toCharArray());
 		dataSource.setPrimaryLabel("My datasource");
 		dataSource.setPrimaryComment("");
 
-		
 		session.saveOrUpdate(dataSource);
 		
 		tx.commit();
 		
 		Criteria c = session.createCriteria(JdbcDataSource.class); //.add(Restrictions.eq("", "test spec"));
-		List l = c.list();
+		List<?> l = c.list();
 		for(Object o : l) {
 			System.out.println(o);
 		}
 				
-		
-		session.close();
 
+		session.close();
 		
 		
 //		res.setContentType("text/plain");
@@ -115,8 +117,52 @@ public class ServletManager
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/create")
-	public String createInstance(@FormParam("name") String name) {
+	@Path("/createContext")
+	public String createInstance(
+			@FormParam("data") String json
+			/*
+			@FormParam("path") String path,
+			@FormParam("hostname") String hostname,
+			@FormParam("dbname") String dbname,
+			@FormParam("username") String username,
+			@FormParam("password") String password,
+			@FormParam("mappingText") String mappingText
+			*/
+		) {
+		
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+
+		Gson gson = new Gson();
+		Rdb2RdfConfig rdb2rdfConfig = gson.fromJson(json, Rdb2RdfConfig.class);
+		System.out.println(json);
+		System.out.println(rdb2rdfConfig);
+		
+		/*
+		JdbcDataSource dataSource = new JdbcDataSource();
+		dataSource.setJdbcUrl("jdbc:postgresql//foobar");
+		dataSource.setUsername("postgres");
+		dataSource.setPassword("postgres".toCharArray());
+		dataSource.setPrimaryLabel("My datasource");
+		dataSource.setPrimaryComment("");
+
+		TextResource textResource = new TextResource();
+		textResource.setData(mappingText);
+		textResource.setFormat("application/rdb2rdf-sml");
+		textResource.setType("sml");
+		textResource.setPrimaryComment("no comment");
+		textResource.setPrimaryLabel("no label");
+
+ 
+		Rdb2RdfConfig rdb2rdfConfig = new Rdb2RdfConfig();
+		rdb2rdfConfig.setJdbcDatasource(jdbcDataSource);
+		rdb2rdfConfig.setTextResource(textResource);
+		*/
+
+		session.saveOrUpdate(rdb2rdfConfig);
+
+		tx.commit();
+		
 		return "{}";
 	}
 

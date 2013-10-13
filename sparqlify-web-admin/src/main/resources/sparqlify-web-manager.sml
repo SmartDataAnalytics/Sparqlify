@@ -13,6 +13,7 @@ Prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 Prefix o: <http://example.org/ontology/>
 Prefix r: <http://example.org/resource/>
 
+
 Create View jdbcDataSource As
   Construct {
     ?s
@@ -25,7 +26,7 @@ Create View jdbcDataSource As
       .
   }
   With
-    ?s = uri(o:, ?id)
+    ?s = uri(r:, 'jdbcDataSource', ?id)
     ?i = typedLiteral(?id, xsd:int)
     ?l = plainLiteral(?primarylabel)
     ?c = plainLiteral(?primarycomment)
@@ -48,7 +49,7 @@ Create View textResource As
       .
   }
   With
-    ?s = uri(o:, ?id)
+    ?s = uri(r:, 'textResource', ?id)
     ?i = typedLiteral(?id, xsd:int)
     ?l = plainLiteral(?primarylabel)
     ?c = plainLiteral(?primarycomment)
@@ -57,3 +58,22 @@ Create View textResource As
     ?d = plainLiteral(?data)
   From
     "textresource"
+
+    
+Create View rdb2rdfConfig As
+  Construct {
+    ?s
+      a o:Rdb2RdfConfig ;
+      o:contextPath ?p ;
+      o:dataSource ?d ;
+      o:resource ?r ;
+      .
+  }
+  With
+    ?s = uri(r:, 'rdb2RdfConfig', ?id)
+    ?p = plainLiteral(?contextpath)
+    ?d = uri(r:, 'jdbcDataSource', ?jdbcdatasource_id)
+    ?r = uri(r:, 'textResource', ?textresource_id)
+  From
+    "rdb2rdfconfig"
+    

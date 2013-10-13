@@ -3,7 +3,7 @@ package org.aksw.sparqlify.admin.model;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class ResourceBase {
+public abstract class ResourceBase {
 	private String primaryLabel;
 	private String primaryComment;
 
