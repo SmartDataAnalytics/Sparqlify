@@ -82,7 +82,7 @@ for profilePath in "${profilePaths[@]}"; do
 	profileFile="$profilePath/$profileName.conf"
 	profileFileDist="$profileFile.dist"
 
-	echo "Searching for profile: $profileFile"
+	echoerr "Searching for profile: $profileFile"
         [ -f "$profileFileDist" ] && source "$profileFileDist"
 	[ -f "$profileFile" ] && source "$profileFile"
 done

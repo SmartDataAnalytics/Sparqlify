@@ -64,6 +64,7 @@ Create View rdb2rdfConfig As
   Construct {
     ?s
       a o:Rdb2RdfConfig ;
+      o:id ?i ;
       o:contextPath ?p ;
       o:dataSource ?d ;
       o:resource ?r ;
@@ -71,6 +72,7 @@ Create View rdb2rdfConfig As
   }
   With
     ?s = uri(r:, 'rdb2RdfConfig', ?id)
+    ?i = typedLiteral(?id, xsd:int)
     ?p = plainLiteral(?contextpath)
     ?d = uri(r:, 'jdbcDataSource', ?jdbcdatasource_id)
     ?r = uri(r:, 'textResource', ?textresource_id)

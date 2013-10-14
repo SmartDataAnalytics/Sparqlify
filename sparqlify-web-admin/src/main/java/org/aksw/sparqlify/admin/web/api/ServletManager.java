@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
-import org.aksw.sparqlify.admin.model.TextResource;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -114,6 +113,23 @@ public class ServletManager
 	}
 
 	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/deleteContext")
+	public String deleteContext(@FormParam("id") Integer id) {
+		
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+
+		Rdb2RdfConfig proto = new Rdb2RdfConfig();
+		proto.setId(id);
+		session.delete(proto);
+		
+		tx.commit();
+		
+		
+		return "{}";
+	}
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)

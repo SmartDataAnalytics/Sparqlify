@@ -1,6 +1,11 @@
 <!doctype html>
 <html ng-app="SparqlifyWebAdmin">
 <head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<title>Sparqlify Web Admin</title>
+	<link rel="stylesheet" href="resources/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" />
 
 	<script src="resources/libs/jquery/1.9.1/jquery.js"></script>
 	<script src="resources/libs/underscore/1.4.4/underscore.js"></script>
@@ -40,6 +45,7 @@
 			name: 'contexts',
 			template: [{
 				id: '?s',
+				_id: '?id',
 				contextPath: '?path',
 				dataSource: {
 					id: '?d',
@@ -51,7 +57,7 @@
 					data: '?rdata'
 				}
 			}],
-			from: '?s a o:Rdb2RdfConfig ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
+			from: '?s a o:Rdb2RdfConfig ; o:id ?id ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
 		});
 			
 
@@ -117,6 +123,10 @@
 		        
 		        createContext: function(data) {
 		        	return this.doPostRequest('manager/api/action/createContext', data);
+		        },
+		        
+		        deleteContext: function(id) {
+		        	return this.doPostRequest('manager/api/action/deleteContext', {id: id});
 		        }
 		   };
 		});
@@ -129,6 +139,11 @@
 			$scope.init = function() {
 				$scope.doFilterContexts();
 			};
+			
+	        $scope.deleteContext = function(id) {
+	        	return contextService.deleteContext(id);
+	        };
+
 		});
 
 		
@@ -198,6 +213,8 @@
 					<th>Jdbc Url</th>
 					<th>Username</th>
 					<th>Mapping</th>
+					<th>Status</th>
+					<th>Actions</th>
 				</thead>
 				<tr ng-repeat="context in contexts">
 <!-- 					<td>{{context.id}}</td> -->
@@ -205,28 +222,37 @@
 					<td>{{context.dataSource.jdbcUrl}}</td>
 					<td>{{context.dataSource.username}}</td>
 					<td>{{context.resource.data}}</td>
+					<td>-</td>
+					<td><a href="" ng-click="editContext(context._id)">Edit</a> <a href="" ng-click="deleteContext(context._id)">Delete</a></td>
 				</tr>
 			</table>
 
 		</div>
 	</div>
 
-	<div ng-controller="CreateMappingCtrl">
-		<form novalidate class="css-form">
-			Path: <input type="text" ng-model="path" required /><br />
-			Hostname: <input type="text" ng-model="hostname" required /><br />
-			Database: <input type="text" ng-model="dbname" required /><br />
-
-			Username: <input type="text" ng-model="username" required /><br />
-			Password: <input type="password" ng-model="password" required /><br />
-
-			Mapping: <textarea rows="25" cols="80" ng-model="mappingText" required></textarea>
-			
-<!-- 			URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
-			<br />
-			<button ng-click="cancel()">Cancel</button>
-			<button ng-click="create()">Create</button>
-		</form>
+	<div class="row-fluid">
+		<div class="span6 offset3">
+		
+			<div ng-controller="CreateMappingCtrl">
+				<form novalidate class="css-form">
+					<table class="table table-condensed">
+					<tr><td>Path:</td><td><input type="text" style="width:95%" ng-model="path" required /></td></tr>
+					<tr><td>Hostname:</td><td><input type="text" ng-model="hostname" required /></td></tr>
+					<tr><td>Database:</td><td><input type="text" ng-model="dbname" required /></td></tr>
+		
+					<tr><td>Username:</td><td><input type="text" ng-model="username" required /></td></tr>
+					<tr><td>Password:</td><td><input type="password" ng-model="password" required /></td></tr>
+		
+					<tr><td>Mapping:</td><td><textarea rows="25" cols="80" ng-model="mappingText" required></textarea></td></tr>
+					
+		<!-- 			URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
+		
+					<tr><td></td><td><button ng-click="cancel()">Cancel</button>
+					<button ng-click="create()">Create</button></td></tr>
+					</table>
+				</form>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
