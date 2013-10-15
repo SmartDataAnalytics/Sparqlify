@@ -1,11 +1,14 @@
 package org.aksw.sparqlify.admin.model;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 public class LogMessage {
 
 	private String level;
+	
+	@Column(columnDefinition = "varchar(65536)")
 	private String text;
 
 	public LogMessage() {

@@ -30,7 +30,7 @@ public class ServiceLauncherRdb2Rdf
 
 	
 	@Override
-	public ServiceExecution<QueryExecutionFactory> launch(Rdb2RdfConfig serviceConfig, EntityHolder<Rdb2RdfExecution> context) {
+	public ServiceExecution<QueryExecutionFactory> launch(Rdb2RdfConfig serviceConfig, EntityHolder<Rdb2RdfExecution> context, boolean isRestart) {
 
 //		String serviceName = serviceConfig.getContextPath();
 //		ServiceExecution<?> serviceExecution = nameToExecution.get(serviceName);

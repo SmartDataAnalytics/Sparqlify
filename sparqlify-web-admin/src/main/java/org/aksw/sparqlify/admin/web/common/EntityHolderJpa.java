@@ -31,9 +31,14 @@ public class EntityHolderJpa<T>
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
 	
-		em.persist(entity);
+		em.merge(entity);
+
+		// TODO This flush is probably superfluous
+		em.flush();
 
 		em.getTransaction().commit();
 		em.close();
+
+
 	}
 }

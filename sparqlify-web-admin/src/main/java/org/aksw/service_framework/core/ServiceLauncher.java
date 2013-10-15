@@ -11,5 +11,14 @@ import org.aksw.sparqlify.admin.web.common.EntityHolder;
  * @param <S> The execution context class
  */
 public interface ServiceLauncher<C, S, E> {
-	ServiceExecution<S> launch(C config, EntityHolder<E> context);
+	
+	/**
+	 * 
+	 * 
+	 * @param config
+	 * @param context
+	 * @param isRestart Indicates whether the service is being resumed from a prior execution context
+	 * @return
+	 */
+	ServiceExecution<S> launch(C config, EntityHolder<E> context, boolean isRestart);
 }

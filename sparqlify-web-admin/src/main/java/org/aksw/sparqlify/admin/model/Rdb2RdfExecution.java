@@ -5,17 +5,19 @@ import java.util.List;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
 public class Rdb2RdfExecution
 {	
-//	@Id
-//	@GeneratedValue(strategy=GenerationType.IDENTITY)
-//	private Integer id;
-
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+
+	//@Id
 	private String name;
 
 	private String status;
@@ -27,7 +29,15 @@ public class Rdb2RdfExecution
 	//@ManyToOne
 	@OneToOne
 	private Rdb2RdfConfig config;
-	
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -62,8 +72,9 @@ public class Rdb2RdfExecution
 
 	@Override
 	public String toString() {
-		return "Rdb2RdfExecution [name=" + name + ", status=" + status
-				+ ", logMessages=" + logMessages + ", config=" + config + "]";
+		return "Rdb2RdfExecution [id=" + id + ", name=" + name + ", status="
+				+ status + ", logMessages=" + logMessages + ", config="
+				+ config + "]";
 	}
 
 	@Override
@@ -71,14 +82,13 @@ public class Rdb2RdfExecution
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((config == null) ? 0 : config.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((logMessages == null) ? 0 : logMessages.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
-
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -93,6 +103,11 @@ public class Rdb2RdfExecution
 			if (other.config != null)
 				return false;
 		} else if (!config.equals(other.config))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (logMessages == null) {
 			if (other.logMessages != null)
@@ -110,18 +125,5 @@ public class Rdb2RdfExecution
 		} else if (!status.equals(other.status))
 			return false;
 		return true;
-	}
-	
-	
-	
-//	public Integer getId() {
-//		return id;
-//	}
-//
-//	public void setId(Integer id) {
-//		this.id = id;
-//	}
-	
-
-	
+	}	
 }

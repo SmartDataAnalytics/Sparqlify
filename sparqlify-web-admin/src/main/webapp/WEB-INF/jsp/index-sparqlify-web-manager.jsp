@@ -62,7 +62,7 @@
 			
 		
 		var parseJdbcUrl = function(url) {
-			var re = //
+			//var re = //
 		};
 
 		/*
