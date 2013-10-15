@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 
 @Entity
@@ -17,11 +18,13 @@ public class ConfigToExecution {
 	
 	private String configClassName;
 	
+	@Lob
 	private Serializable configId;
 	private String configIdStr;
 	
 	private String executionContextClassName;
 	
+	@Lob
 	private Serializable executionContextId;
 	private String executionContextIdStr;
 

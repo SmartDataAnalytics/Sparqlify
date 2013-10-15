@@ -1,7 +1,5 @@
 package org.aksw.service_framework.jpa.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -260,22 +258,34 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 		return result;
 	}
 	
-	public static byte[] serialize(Object o) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(o);
-	
-			oos.flush();
-			oos.close();
-			
-			byte[] result = baos.toByteArray();
-			return result;
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
+//	public static Object deserialize(byte[] data) {
+//		try {
+//			ByteArrayInputStream bain = new ByteArrayInputStream(data);
+//			ObjectInputStream oin = new ObjectInputStream(bain);
+//			Object result = oin.readObject();
+//			oin.close();
+//			return result;
+//		} catch(Exception e) {
+//			throw new RuntimeException(e);
+//		}
+//	}
+//	
+//	public static byte[] serialize(Object o) {
+//		try {
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			ObjectOutputStream oos = new ObjectOutputStream(baos);
+//			oos.writeObject(o);
+//	
+//			oos.flush();
+//			oos.close();
+//			
+//			byte[] result = baos.toByteArray();
+//			return result;
+//		} catch(Exception e) {
+//			throw new RuntimeException(e);
+//		}
+//	}
+//	
 	public ConfigToExecution newCte(EntityManager em, Object configId, E executionContext) {
 
 		Object executionContextId = emf.getPersistenceUnitUtil().getIdentifier(executionContext);
@@ -284,11 +294,13 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 		
 		ConfigToExecution result = new ConfigToExecution();
 		result.setConfigClassName(configClass.getName());
-		result.setConfigId((Serializable)configId); //(Serializable)serialize(configId));
+		result.setConfigId((Serializable)configId);
+		//result.setConfigId(serialize(configId));
 		result.setConfigIdStr(configId.toString());
 		
 		result.setExecutionContextClassName(executionContextClass.getName());
-		result.setExecutionContextId((Serializable)executionContextId); //(Serializable)serialize(executionContextId));
+		result.setExecutionContextId((Serializable)executionContextId);
+		//result.setExecutionContextId(serialize(executionContextId));
 		result.setExecutionContextIdStr(executionContextId.toString());
 		
 		
@@ -331,7 +343,8 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 				for(ConfigToExecution cte : ctes) {
 					
 					// Delete associated execution contexts
-					E tmp = em.find(executionContextClass, cte.getExecutionContextId());
+					Object cteId = cte.getExecutionContextId(); //deserialize(cte.getExecutionContextId());
+					E tmp = em.find(executionContextClass, cteId);
 					em.remove(tmp);
 					
 					em.remove(cte);
@@ -351,7 +364,8 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 			}
 			else if(ctes.size() == 1) {
 				cte = ctes.get(0);
-				executionContext = em.find(executionContextClass, "" + cte.getExecutionContextId());
+				Object cteId = cte.getExecutionContextId(); //deserialize(cte.getExecutionContextId());
+				executionContext = em.find(executionContextClass, cteId);
 
 				// If we failed to retrieve an execution context, just create a new one
 				if(executionContext == null) {
