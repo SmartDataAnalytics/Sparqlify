@@ -46,8 +46,11 @@ public class ServiceLauncherRdb2Rdf
 		context.getEntity().setStatus(ContextStateFlags.STARTING);
 		context.getEntity().getLogMessages().clear();
 		context.getEntity().getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
+		context.getEntity().setConfig(serviceConfig);
 
-		//context.commit();
+		context.commit();
+
+		context.openSession();
 		
 		
 		ServiceExecution<QueryExecutionFactory> result = null;
@@ -95,10 +98,12 @@ public class ServiceLauncherRdb2Rdf
 			
 			//nameToExecution.put(serviceName, sparqlServiceExecution);
 			context.getEntity().setStatus(ContextStateFlags.RUNNING);
+			context.getEntity().getLogMessages().add(new LogMessage("info", "Service successfully started."));
 
 		} catch(Exception e) {
 			context.getEntity().setStatus(ContextStateFlags.STOPPED);
 			context.getEntity().getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
+			context.getEntity().getLogMessages().add(new LogMessage("info", "Service failed to start."));
 		}
 		finally {
 			context.commit();
