@@ -24,7 +24,7 @@ import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class ServiceLauncherRdb2Rdf
-	implements ServiceLauncher<Rdb2RdfConfig, QueryExecutionFactory, Rdb2RdfExecution>
+	implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory>
 {
 	private static final Logger logger = LoggerFactory.getLogger(SparqlServiceManagerImpl.class);
 
@@ -38,13 +38,16 @@ public class ServiceLauncherRdb2Rdf
 //			throw new RuntimeException("A service with the name " + serviceName + " is already executing");
 //		}
 		String serviceName = "foobar";
-		Rdb2RdfExecution serviceState = context.getEntity();
+		
+		context.openSession();
+		//Rdb2RdfExecution serviceState = context.getEntity();
 		
 		//serviceState.setName(serviceName);
-		serviceState.setStatus(ContextStateFlags.STARTING);
-		serviceState.getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
+		context.getEntity().setStatus(ContextStateFlags.STARTING);
+		context.getEntity().getLogMessages().clear();
+		context.getEntity().getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
 
-		context.save();
+		//context.commit();
 		
 		
 		ServiceExecution<QueryExecutionFactory> result = null;
@@ -78,7 +81,7 @@ public class ServiceLauncherRdb2Rdf
 			
 			
 			if(loggerCount.getErrorCount() != 0) {
-				serviceState.getLogMessages().addAll(lm);
+				context.getEntity().getLogMessages().addAll(lm);
 				throw new RuntimeException("Errors encountered during parsing of the mapping");
 			}
 			
@@ -91,14 +94,14 @@ public class ServiceLauncherRdb2Rdf
 			result = new ServiceExecutionRdb2Rdf(serviceName, dataSource, qef);
 			
 			//nameToExecution.put(serviceName, sparqlServiceExecution);
-			serviceState.setStatus(ContextStateFlags.RUNNING);
+			context.getEntity().setStatus(ContextStateFlags.RUNNING);
 
 		} catch(Exception e) {
-			serviceState.setStatus(ContextStateFlags.STOPPED);
-			serviceState.getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
+			context.getEntity().setStatus(ContextStateFlags.STOPPED);
+			context.getEntity().getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
 		}
 		finally {
-			context.save();
+			context.commit();
 		}
 		
 		return result;

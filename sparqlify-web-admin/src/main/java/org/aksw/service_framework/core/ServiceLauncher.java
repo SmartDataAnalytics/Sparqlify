@@ -10,7 +10,7 @@ import org.aksw.sparqlify.admin.web.common.EntityHolder;
  * @param <S> The service class
  * @param <S> The execution context class
  */
-public interface ServiceLauncher<C, S, E> {
+public interface ServiceLauncher<C, E, S> {
 	
 	/**
 	 * 

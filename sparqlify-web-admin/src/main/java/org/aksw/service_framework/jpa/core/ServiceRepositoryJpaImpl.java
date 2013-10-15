@@ -13,7 +13,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.aksw.service_framework.core.ServiceExecution;
-import org.aksw.service_framework.core.ServiceExecutionContextFactory;
 import org.aksw.service_framework.core.ServiceLauncher;
 import org.aksw.service_framework.core.ServiceRepository;
 import org.aksw.service_framework.jpa.model.ConfigToExecution;
@@ -57,8 +56,8 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 	private Class<E> executionContextClass;
 	private Class<C> configClass;
 
-	private ServiceLauncher<C, S, E> serviceLauncher;	
-	private ServiceExecutionContextFactory<E> executionContextFactory;
+	private ServiceLauncher<C, E, S> serviceLauncher;	
+//	private ServiceExecutionContextFactory<E> executionContextFactory;
 	
 	// TODO We can map configs to their respective executions
 	// But how can we retrieve a service by its name?
@@ -72,7 +71,7 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 			Class<C> configClass,
 			Class<E> executionContextClass,
 			//Class<S> serviceClass,
-			ServiceLauncher<C, S, E> serviceLauncher)
+			ServiceLauncher<C, E, S> serviceLauncher)
 	{
 		this.emf = emf;
 
@@ -80,14 +79,14 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 		this.executionContextClass = executionContextClass;
 		this.serviceLauncher = serviceLauncher;
 		
-		executionContextFactory = new ServiceExecutionContextFactoryJpa<E>(emf, executionContextClass);
+//		executionContextFactory = new ServiceExecutionContextFactoryJpa<E>(emf, executionContextClass);
 	}
 
 	public static <C, E, S> ServiceRepositoryJpaImpl<C, E, S> create(
 		EntityManagerFactory emf,
 		Class<C> configClass,
 		Class<E> executionContextClass,
-		ServiceLauncher<C, S, E> serviceLauncher
+		ServiceLauncher<C, E, S> serviceLauncher
 	)
 	{
 		ServiceRepositoryJpaImpl<C, E, S> result = new ServiceRepositoryJpaImpl<C, E, S>(emf, configClass, executionContextClass, serviceLauncher);
@@ -372,7 +371,7 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 					em.remove(cte);
 					
 					executionContext = newEntity(em, executionContextClass);
-					cte = newCte(em, configId, executionContext);		
+					cte = newCte(em, configId, executionContext);
 				}
 				else {
 					isRestart = true;
@@ -382,11 +381,13 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 				throw new RuntimeException("Multiple execution contexts after delete for " + config);
 			}
 			
+			Serializable executionContextId = (Serializable)emf.getPersistenceUnitUtil().getIdentifier(executionContext);
+			
 			em.getTransaction().commit();
 			em.close();
 			
 			
-			EntityHolder<E> holder = new EntityHolderJpa<E>(executionContext, emf);			
+			EntityHolder<E> holder = new EntityHolderJpa<E>(emf, executionContextClass, executionContextId);
 			serviceExecution = serviceLauncher.launch(config, holder, isRestart);
 			idToServiceExecution.put(configId, serviceExecution);
 		}
