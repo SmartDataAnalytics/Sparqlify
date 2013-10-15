@@ -27,7 +27,7 @@
 
 	<servlet-mapping>
 		<servlet-name>mvc-dispatcher</servlet-name>
-<!-- 		<url-pattern>/</url-pattern> -->
+		<!-- <url-pattern>/</url-pattern> -->
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
 
@@ -50,15 +50,56 @@
 	</servlet-mapping>
 
 
-<!-- 	<servlet> -->
-<!-- 		<servlet-name>staticAssets</servlet-name> -->
-<!-- 		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class> -->
-<!-- 	</servlet> -->
+	
+	<servlet>
+		<servlet-name>sparqlify-admin-endpoints</servlet-name>
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
 
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>org.aksw.sparqlify.admin.web.endpoint</param-value>
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>sparqlify-admin-endpoints</servlet-name>
+		<url-pattern>/endpoints/*</url-pattern>
+	</servlet-mapping>
+	
+
+	<!-- Atmosphere -->
+<!-- 	<servlet> -->
+<!-- 		<description>AtmosphereServlet</description> -->
+<!-- 		<servlet-name>AtmosphereServlet</servlet-name> -->
+<!-- 		<servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class> -->
+<!-- 		<init-param> -->
+<!-- 			<param-name>com.sun.jersey.config.property.packages</param-name> -->
+<!-- 			<param-value>org.aksw.sparqlify.web.admin</param-value> -->
+<!-- 		</init-param> -->
+<!-- 		<init-param> -->
+<!-- 			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name> -->
+<!-- 			<param-value>true</param-value> -->
+<!-- 		</init-param> -->
+<!-- 		<load-on-startup>0</load-on-startup> -->
+<!-- 	</servlet> -->
 <!-- 	<servlet-mapping> -->
-<!-- 		<servlet-name>staticAssets</servlet-name> -->
-<!-- 		<url-pattern>/static/*</url-pattern> -->
+<!-- 		<servlet-name>AtmosphereServlet</servlet-name> -->
+<!-- 		<url-pattern>/endpoints</url-pattern> -->
 <!-- 	</servlet-mapping> -->
+
+
+
+	<!-- <servlet> -->
+	<!-- <servlet-name>staticAssets</servlet-name> -->
+	<!-- <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class> -->
+	<!-- </servlet> -->
+
+	<!-- <servlet-mapping> -->
+	<!-- <servlet-name>staticAssets</servlet-name> -->
+	<!-- <url-pattern>/static/*</url-pattern> -->
+	<!-- </servlet-mapping> -->
 
 
 

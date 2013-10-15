@@ -60,6 +60,10 @@
 			from: '?s a o:Rdb2RdfConfig ; o:id ?id ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
 		});
 			
+		
+		var parseJdbcUrl = function(url) {
+			var re = //
+		};
 
 		/*
 		 * Angular JS

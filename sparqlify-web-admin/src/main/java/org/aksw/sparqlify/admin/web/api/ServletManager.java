@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.admin.web.api;
 
-import java.util.List;
-
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
@@ -15,20 +15,16 @@ import javax.ws.rs.core.MediaType;
 
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-@Path("/api/action")
 @Service
+@Path("/api/action")
 public class ServletManager
 {
-	@Resource(name="sessionFactory")
-	private SessionFactory sessionFactory;
+	@Resource(name="entityManagerFactory")
+	private EntityManagerFactory emf;
 	
 	
 	@GET
@@ -51,8 +47,8 @@ public class ServletManager
 	@Path("/testCreate")
 	public String testCreate(@Context HttpServletRequest req, @Context HttpServletResponse res) {
 
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
 
 		JdbcDataSource dataSource = new JdbcDataSource();
 		dataSource.setJdbcUrl("jdbc:postgresql//foobar");
@@ -61,18 +57,18 @@ public class ServletManager
 		dataSource.setPrimaryLabel("My datasource");
 		dataSource.setPrimaryComment("");
 
-		session.saveOrUpdate(dataSource);
+		em.persist(dataSource);
 		
-		tx.commit();
+		em.getTransaction().commit();
 		
-		Criteria c = session.createCriteria(JdbcDataSource.class); //.add(Restrictions.eq("", "test spec"));
-		List<?> l = c.list();
-		for(Object o : l) {
-			System.out.println(o);
-		}
+//		Criteria c = session.createCriteria(JdbcDataSource.class); //.add(Restrictions.eq("", "test spec"));
+//		List<?> l = c.list();
+//		for(Object o : l) {
+//			System.out.println(o);
+//		}
 				
 
-		session.close();
+		em.close();
 		
 		
 //		res.setContentType("text/plain");
@@ -118,14 +114,15 @@ public class ServletManager
 	@Path("/deleteContext")
 	public String deleteContext(@FormParam("id") Integer id) {
 		
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
 
 		Rdb2RdfConfig proto = new Rdb2RdfConfig();
 		proto.setId(id);
-		session.delete(proto);
+		em.remove(proto);
 		
-		tx.commit();
+		em.getTransaction().commit();
+		em.close();
 		
 		
 		return "{}";
@@ -146,8 +143,8 @@ public class ServletManager
 			*/
 		) {
 		
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
 
 		Gson gson = new Gson();
 		Rdb2RdfConfig rdb2rdfConfig = gson.fromJson(json, Rdb2RdfConfig.class);
@@ -175,9 +172,11 @@ public class ServletManager
 		rdb2rdfConfig.setTextResource(textResource);
 		*/
 
-		session.saveOrUpdate(rdb2rdfConfig);
+		em.persist(rdb2rdfConfig);
 
-		tx.commit();
+		em.getTransaction().commit();
+		em.close();
+
 		
 		return "{}";
 	}
