@@ -427,7 +427,30 @@ public class TypedExprTransformerImpl
 			FunctionModelMeta sqlMetaModel = typeSystem.getSqlFunctionMetaModel();
 
 			String opId = candidate.getMethod().getId();
-			if(sqlMetaModel.getComparators().contains(opId)) {
+			
+			// TODO Perform short cut evaluation of logical operators
+			if(sqlMetaModel.getLogicalAnds().contains(opId)) {
+				SqlExpr a = newArgs.get(0);
+				SqlExpr b = newArgs.get(1);
+				
+				if(b.isConstant()) {
+					SqlExpr tmp = a;
+					a = b;
+					b = tmp;
+				}
+				
+				if(a.isConstant() && a.asConstant().equals(S_Constant.TRUE)) {
+					result = b;
+				}
+				
+			}
+//			else if(sqlMetaModel.getLogicalOrs().contains(opId)) {
+//				
+//			}
+//			else if(sqlMetaModel.getLogicalNots().contains(opId)) {
+//				
+//			}
+			else if(sqlMetaModel.getComparators().contains(opId)) {
 				
 				// TODO: We need the name of the comparator
 				//typeSystem.getSparqlSqlDecls()

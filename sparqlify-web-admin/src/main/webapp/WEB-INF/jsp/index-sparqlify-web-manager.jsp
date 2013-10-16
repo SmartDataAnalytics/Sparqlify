@@ -118,7 +118,7 @@
 	 				
 //					criteria = {};
 					var promise = store.contexts.find(criteria).asList();
-					promise.done(function(x) {console.log('data', x)});
+					//promise.done(function(x) {console.log('data', x); });
 					var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
 					return result;
 		        },
@@ -141,12 +141,28 @@
 		        	return promise;
 		        },
 		        
+		        // TODO Rename to service
 		        createContext: function(data) {
 		        	return this.doPostRequest('manager/api/action/createContext', data);
 		        },
 		        
 		        deleteContext: function(id) {
 		        	return this.doPostRequest('manager/api/action/deleteContext', {id: id});
+		        },
+		        
+		        startService: function(id) {
+		        	return this.doPostRequest('manager/api/action/startService', {id: id});
+		        },
+
+		        stopService: function(id) {
+		        	return this.doPostRequest('manager/api/action/stopService', {id: id});
+		        },
+		        
+		        restartService: function(id) {
+		        	var self = this;
+		        	this.stopService(id).then(function() {
+		        		self.startService(id);
+		        	});
 		        }
 		   };
 		});
@@ -245,9 +261,9 @@
 					<td>{{context.config.resource.data}}</td>
 					<td>{{context.status}}</td>
 					<td>
-						<a href="" ng-show="{{context.status=='STOPPED'}}" ng-click="startService(context._id)">Start</a>
-						<a href="" ng-show="{{context.status!='STOPPED'}}" ng-click="stopService(context._id)">Stop</a>
-						<a href="" ng-click="restartService(context._id)">Restart</a>
+						<a href="" ng-show="context.status=='STOPPED'" ng-click="startService(context._id)">Start</a>
+						<a href="" ng-show="context.status!='STOPPED'" ng-click="stopService(context._id)">Stop</a>
+						<a href="" ng-click="restartService(context.id)">Restart</a>
 					</td>
 					<td>
 						<a href="" ng-click="editContext(context._id)">Edit</a>

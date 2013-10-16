@@ -735,6 +735,9 @@ public class SparqlifyCoreInit {
 			sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("greaterThanOrEqual"));
 			sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("greaterThan"));
 			
+			sqlMetaModel.getLogicalAnds().addAll(sqlModel.getIdsByName("logicalAnd"));
+			sqlMetaModel.getLogicalOrs().addAll(sqlModel.getIdsByName("logicalOr"));
+			sqlMetaModel.getLogicalNots().addAll(sqlModel.getIdsByName("logicalNot"));
 			
 			//sqlModel.getInverses().put();
 			sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());

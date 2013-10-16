@@ -326,16 +326,16 @@ public class SparqlifyUtils {
 	//public static QueryExecutionFactory
 	
 	
-	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
-		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, maxResultSetSize, maxQueryExecutionTime);
+	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
+		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, maxResultSetSize, maxQueryExecutionTimeInSeconds);
 		
 		SparqlSqlOpRewriter ssoRewriter = rewriter.getSparqlSqlOpRewriter();
 		SqlOpSerializer sqlOpSerializer = rewriter.getSqlOpSerializer();
 		
 		QueryExecutionFactory qefDefault = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 		
-		if(maxQueryExecutionTime != null) {
-			qefDefault = QueryExecutionFactoryTimeout.decorate(qefDefault, maxQueryExecutionTime * 1000);
+		if(maxQueryExecutionTimeInSeconds != null) {
+			qefDefault = QueryExecutionFactoryTimeout.decorate(qefDefault, maxQueryExecutionTimeInSeconds * 1000);
 		}
 		
 		if(maxResultSetSize != null) {
@@ -580,6 +580,12 @@ public class SparqlifyUtils {
 	}
 	*/
 	
+	public static Config parseSmlConfig(String str, Logger logger) throws IOException, RecognitionException {
+		ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes());
+		Config result = parseSmlConfig(in, logger);
+		
+		return result;
+	}
 	
 	public static Config parseSmlConfig(InputStream in, Logger logger) throws IOException, RecognitionException {
 		ConfigParser parser = new ConfigParser();
