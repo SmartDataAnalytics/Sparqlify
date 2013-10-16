@@ -332,6 +332,8 @@ public class SqlOptimizerImpl
 			
 			
 			// From here search for expressions of the form S_Equals(ai.col = aj.col)
+			// TODO: Instead for checking S_Equals, we need to check the SqlModel whether
+			// the expression is an equals constraint
 			if(!(expr instanceof S_Equals)) {
 				continue;
 			}

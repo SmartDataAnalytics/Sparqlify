@@ -20,6 +20,14 @@
 			</roles>
 			<organizationUrl>http://aksw.org</organizationUrl>
 		</developer>
+		<developer>
+			<name>Patrick Westphal</name>
+			<email>pwestphal@informatik.uni-leipzig.de</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<organizationUrl>http://aksw.org</organizationUrl>
+		</developer>
 	</developers>
 
 
@@ -31,6 +39,8 @@
 		<module>sparqlify-platform</module>
 		<module>sparqlify-debian</module>
 		<module>sparqlify-tests</module>
+		
+		<module>sparqlify-update</module>
 	</modules>
 
 

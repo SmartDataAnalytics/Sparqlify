@@ -1,0 +1,26 @@
+#type-name	java-class
+byte	java.lang.Byte
+short	java.lang.Short
+int	java.lang.Integer
+integer	java.lang.Integer
+long	java.lang.Long
+decimal	java.math.BigDecimal
+
+unsignedByte	java.lang.Short
+unsignedShort	java.lang.Integer
+unsignedInt	java.lang.Long
+unsignedLong	java.math.BigDecimal
+#positiveInteger
+#nonNegativeInteger
+#nonPositiveIngere
+#negativeInteger
+float	java.lang.Float
+double	java.lang.Double
+numeric	java.lang.Number
+boolean	java.lang.Boolean
+date	java.util.Date
+#dateTime
+timestamp	java.util.GregorianCalendar
+string	java.lang.String
+#geometry
+#geography

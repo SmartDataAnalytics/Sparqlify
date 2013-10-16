@@ -316,82 +316,87 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 	public void startAllServices() {
 		List<C> configs = getConfigs();
 		for(C config : configs) {
-			
-			EntityManager em = emf.createEntityManager();
-			em.getTransaction().begin();
-
-			
-			Object configId = emf.getPersistenceUnitUtil().getIdentifier(config);
-			
-			// If the service is already running, skip it
-			ServiceExecution<S> serviceExecution = idToServiceExecution.get(configId);
-			if(serviceExecution != null) {
-				continue;
-			}
-
-			
-			// Check if there is already is a service execution object
-			List<ConfigToExecution> ctes = getMappings(em, configId);
-			
-			//List<E> executionContexts = getExecutionContexts(config); 
-			
-			if(ctes.size() > 1) {
-				logger.warn("Deleting multiple execution contexts for config " + config);
-				//deleteAll(emf, executionContextClass);
-				
-				for(ConfigToExecution cte : ctes) {
-					
-					// Delete associated execution contexts
-					Object cteId = cte.getExecutionContextId(); //deserialize(cte.getExecutionContextId());
-					E tmp = em.find(executionContextClass, cteId);
-					em.remove(tmp);
-					
-					em.remove(cte);
-				}
-				
-				// Should be empty now
-				ctes = getMappings(em, configId);
-			}
-			
-			ConfigToExecution cte;
-			E executionContext;
-			boolean isRestart = false;
-			
-			if(ctes.isEmpty()) {
-				executionContext = newEntity(em, executionContextClass);
-				cte = newCte(em, configId, executionContext);
-			}
-			else if(ctes.size() == 1) {
-				cte = ctes.get(0);
-				Object cteId = cte.getExecutionContextId(); //deserialize(cte.getExecutionContextId());
-				executionContext = em.find(executionContextClass, cteId);
-
-				// If we failed to retrieve an execution context, just create a new one
-				if(executionContext == null) {
-					em.remove(cte);
-					
-					executionContext = newEntity(em, executionContextClass);
-					cte = newCte(em, configId, executionContext);
-				}
-				else {
-					isRestart = true;
-				}
-			}
-			else {
-				throw new RuntimeException("Multiple execution contexts after delete for " + config);
-			}
-			
-			Serializable executionContextId = (Serializable)emf.getPersistenceUnitUtil().getIdentifier(executionContext);
-			
-			em.getTransaction().commit();
-			em.close();
-			
-			
-			EntityHolder<E> holder = new EntityHolderJpa<E>(emf, executionContextClass, executionContextId);
-			serviceExecution = serviceLauncher.launch(config, holder, isRestart);
-			idToServiceExecution.put(configId, serviceExecution);
+			startFromConfig(config);
 		}
 	}
 
+	public ServiceExecution<S> startFromConfig(C config) {
+		
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+
+		
+		Object configId = emf.getPersistenceUnitUtil().getIdentifier(config);
+		
+		// If the service is already running, skip it
+		ServiceExecution<S> serviceExecution = idToServiceExecution.get(configId);
+		if(serviceExecution != null) {
+			return null;
+		}
+
+		
+		// Check if there is already is a service execution object
+		List<ConfigToExecution> ctes = getMappings(em, configId);
+		
+		//List<E> executionContexts = getExecutionContexts(config); 
+		
+		if(ctes.size() > 1) {
+			logger.warn("Deleting multiple execution contexts for config " + config);
+			//deleteAll(emf, executionContextClass);
+			
+			for(ConfigToExecution cte : ctes) {
+				
+				// Delete associated execution contexts
+				Object cteId = cte.getExecutionContextId(); //deserialize(cte.getExecutionContextId());
+				E tmp = em.find(executionContextClass, cteId);
+				em.remove(tmp);
+				
+				em.remove(cte);
+			}
+			
+			// Should be empty now
+			ctes = getMappings(em, configId);
+		}
+		
+		ConfigToExecution cte;
+		E executionContext;
+		boolean isRestart = false;
+		
+		if(ctes.isEmpty()) {
+			executionContext = newEntity(em, executionContextClass);
+			cte = newCte(em, configId, executionContext);
+		}
+		else if(ctes.size() == 1) {
+			cte = ctes.get(0);
+			Object cteId = cte.getExecutionContextId(); //deserialize(cte.getExecutionContextId());
+			executionContext = em.find(executionContextClass, cteId);
+
+			// If we failed to retrieve an execution context, just create a new one
+			if(executionContext == null) {
+				em.remove(cte);
+				
+				executionContext = newEntity(em, executionContextClass);
+				cte = newCte(em, configId, executionContext);
+			}
+			else {
+				isRestart = true;
+			}
+		}
+		else {
+			throw new RuntimeException("Multiple execution contexts after delete for " + config);
+		}
+		
+		Serializable executionContextId = (Serializable)emf.getPersistenceUnitUtil().getIdentifier(executionContext);
+		
+		em.getTransaction().commit();
+		em.close();
+		
+		
+		EntityHolder<E> holder = new EntityHolderJpa<E>(emf, executionContextClass, executionContextId);
+		ServiceExecution<S> result = serviceLauncher.launch(config, holder, isRestart);
+		idToServiceExecution.put(configId, result);
+		
+		return result;
+	}
 
 }

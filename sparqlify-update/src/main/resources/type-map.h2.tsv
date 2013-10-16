@@ -1,0 +1,17 @@
+#h2-type-name	aligned-type-name
+bool	boolean
+int2	integer
+int4	integer
+int8	integer
+integer	integer
+varchar	string
+text	string
+text	string
+bpchar	string
+float4	float
+float8	double
+float	float
+date	dateTime
+foat	timestamp
+geography	geography
+geometry	geometry

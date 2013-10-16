@@ -1,0 +1,18 @@
+# sub-type	super-type
+byte	short
+short	int
+int	long
+long	decimal
+decimal	integer
+
+unsignedByte	unsignedShort
+unsignedInt	unsignedLong
+unsignedLong	nonNegativeInteger
+nonNegativeInteger	integer
+
+negativeInteger	nonPositiveInteger
+nonPositiveInteger	integer
+
+integer	numeric
+float	numeric
+double	numeric

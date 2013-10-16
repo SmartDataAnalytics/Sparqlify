@@ -1,0 +1,28 @@
+#type-name	java-class
+byte	http://www.w3.org/2001/XMLSchema#byte
+short	http://www.w3.org/2001/XMLSchema#short
+int	http://www.w3.org/2001/XMLSchema#int
+integer	http://www.w3.org/2001/XMLSchema#integer
+long	http://www.w3.org/2001/XMLSchema#long
+decimal	http://www.w3.org/2001/XMLSchema#decimal
+
+unsignedByte	http://www.w3.org/2001/XMLSchema#unsignedBype
+unsignedShort	http://www.w3.org/2001/XMLSchema#unsignedShort
+unsignedInt	http://www.w3.org/2001/XMLSchema#unsignedInt
+unsignedLong	http://www.w3.org/2001/XMLSchema#unsignedLong
+positiveInteger	http://www.w3.org/2001/XMLSchema#positiveInteger
+nonNegativeInteger http://www.w3.org/2001/XMLSchema#nonNegativeInteger
+nonPositiveInteger	http://www.w3.org/2001/XMLSchema#nonPositiveInteger
+negativeInteger	http://www.w3.org/2001/XMLSchema#negativeInteger
+float	http://www.w3.org/2001/XMLSchema#float
+double	http://www.w3.org/2001/XMLSchema#double
+#numeric	http://www.w3.org/2001/XMLSchema#numeric
+boolean	http://www.w3.org/2001/XMLSchema#boolean
+date	http://www.w3.org/2001/XMLSchema#date
+dateTime	http://www.w3.org/2001/XMLSchema#dateTime
+timestamp	http://www.w3.org/2001/XMLSchema#dataTime
+string	http://www.w3.org/2001/XMLSchema#string
+
+geometry http://sparqlify.org/resource/type/geometry
+geography http://sparqlify.org/resource/type/geography
+
