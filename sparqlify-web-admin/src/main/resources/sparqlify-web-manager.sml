@@ -79,3 +79,21 @@ Create View rdb2rdfConfig As
   From
     "rdb2rdfconfig"
     
+Create View rdb2rdfExecution As
+  Construct {
+    ?s
+      a o:Rdb2RdfExecution ;
+      o:id ?i ;
+      o:config ?c ;
+      o:status ?st ;
+      .
+  }
+  With
+    ?s = uri(r:, 'rdb2RdfExecution', ?id)
+    ?i = typedLiteral(?id, xsd:int)
+    ?c = uri(r:, 'rdb2RdfConfig', ?config_id)
+    ?st = plainLiteral(?status)
+  From
+    "rdb2rdfexecution"
+
+    

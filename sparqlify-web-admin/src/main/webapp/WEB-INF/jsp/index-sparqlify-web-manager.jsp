@@ -11,7 +11,10 @@
 	<script src="resources/libs/underscore/1.4.4/underscore.js"></script>
 	<script src="resources/libs/underscore.string/2.3.0/underscore.string.js"></script>
 	<script src="resources/libs/prototype/1.7.1/prototype.js"></script>
-	<script src="resources/libs/angularjs/1.0.8/angular.js"></script>
+	
+<!-- 	<script src="resources/libs/angularjs/1.0.8/angular.js"></script> -->
+	
+	<script src="resources/libs/angularjs/1.2.0-rc.2/angular.js"></script>
 	<script src="resources/libs/jassa/0.1/jassa.js"></script>
 
 <!-- 	<script src="resources/js/sparqlify-web-manager/app.js"></script> -->
@@ -45,19 +48,24 @@
 			name: 'contexts',
 			template: [{
 				id: '?s',
-				_id: '?id',
-				contextPath: '?path',
-				dataSource: {
-					id: '?d',
-					jdbcUrl: '?durl',
-					username: '?duser'
-				},
-				resource: {
-					id: '?r',
-					data: '?rdata'
+				_id: '?sid',
+				status: '?status',
+				config: {
+					id: '?c',
+					_id: '?cid',
+					contextPath: '?path',
+					dataSource: {
+						id: '?d',
+						jdbcUrl: '?durl',
+						username: '?duser'
+					},
+					resource: {
+						id: '?r',
+						data: '?rdata'
+					}
 				}
 			}],
-			from: '?s a o:Rdb2RdfConfig ; o:id ?id ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
+			from: '?s a o:Rdb2RdfExecution ; o:id ?sid ; o:status ?status ; o:config ?c . ?c o:id ?cid ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
 		});
 			
 		
@@ -74,20 +82,27 @@
 			return {
 				getContexts: function(filterText) {
 					var criteria = {};
-					if(filterText != null && filterText.length > 0) {						
+					if(filterText != null && filterText.length > 0) {
+						// TODO: This is essentially a 'filter-any' for which there should be a util method
 						criteria = {
 							$or: [{
-								contextPath: {$regex: filterText}
-							}, {
-								dataSource: {
+								config: {
 									$or: [{
-										jdbcUrl: {$regex: filterText}
+										contextPath: {$regex: filterText}
 									}, {
-										username: {$regex: filterText}
+										dataSource: {
+											$or: [{
+												jdbcUrl: {$regex: filterText}
+											}, {
+												username: {$regex: filterText}
+											}]
+										}
+									}, {
+										resource: {data : {$regex: filterText}}
 									}]
-								}
+								},
 							}, {
-								resource: {data : {$regex: filterText}}
+								status: {$regex: filterText}
 							}]
 						};
 						//criteria = {name: {$or: [{$regex: filterText}, {$regex: 'orp'}]}};
@@ -103,6 +118,7 @@
 	 				
 //					criteria = {};
 					var promise = store.contexts.find(criteria).asList();
+					promise.done(function(x) {console.log('data', x)});
 					var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
 					return result;
 		        },
@@ -218,16 +234,25 @@
 					<th>Username</th>
 					<th>Mapping</th>
 					<th>Status</th>
-					<th>Actions</th>
+					<th>Service</th>
+					<th>Config</th>
 				</thead>
 				<tr ng-repeat="context in contexts">
 <!-- 					<td>{{context.id}}</td> -->
-					<td>{{context.contextPath}}</td>
-					<td>{{context.dataSource.jdbcUrl}}</td>
-					<td>{{context.dataSource.username}}</td>
-					<td>{{context.resource.data}}</td>
-					<td>-</td>
-					<td><a href="" ng-click="editContext(context._id)">Edit</a> <a href="" ng-click="deleteContext(context._id)">Delete</a></td>
+					<td>{{context.config.contextPath}}</td>
+					<td>{{context.config.dataSource.jdbcUrl}}</td>
+					<td>{{context.config.dataSource.username}}</td>
+					<td>{{context.config.resource.data}}</td>
+					<td>{{context.status}}</td>
+					<td>
+						<a href="" ng-show="{{context.status=='STOPPED'}}" ng-click="startService(context._id)">Start</a>
+						<a href="" ng-show="{{context.status!='STOPPED'}}" ng-click="stopService(context._id)">Stop</a>
+						<a href="" ng-click="restartService(context._id)">Restart</a>
+					</td>
+					<td>
+						<a href="" ng-click="editContext(context._id)">Edit</a>
+						<a href="" ng-click="deleteContext(context._id)">Delete</a>						
+					</td>
 				</tr>
 			</table>
 
