@@ -44,7 +44,6 @@ import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.TypeSystem;
-import org.aksw.sparqlify.core.cast.TypeSystemImpl;
 import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.MappingUnion;
@@ -489,25 +488,30 @@ public class MappingOpsImpl
 		return result;
 	}
 
-
-	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
+	public static List<SqlExpr> createSqlConditionItems(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		List<SqlExprContext> items = createExprSqlRewrites(condition, varDef, typeMap, sqlTranslator);
 		
-		List<SqlExpr> combines = new ArrayList<SqlExpr>();
+		List<SqlExpr> result = new ArrayList<SqlExpr>();
 		for(SqlExprContext item : items) {
 			SqlExpr sqlExpr = item.getSqlExpr();
 			
-			if(sqlExpr.equals(S_Constant.TRUE)) {
-				return S_Constant.TRUE;
-			}
-			
-			if(sqlExpr.equals(S_Constant.FALSE)) {
-				continue;
-			}
+//			if(sqlExpr.equals(S_Constant.TRUE)) {
+//				return S_Constant.TRUE;
+//			}
+//			
+//			if(sqlExpr.equals(S_Constant.FALSE)) {
+//				continue;
+//			}
 
-			combines.add(sqlExpr);			
+			result.add(sqlExpr);			
 		}
+
+		return result;
+	}
+
+	public static SqlExpr createSqlCondition(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
 		
+		List<SqlExpr> combines = createSqlConditionItems(condition, varDef, typeMap, sqlTranslator);
 		
 		boolean isNegated = condition instanceof E_LogicalNot;
 		
