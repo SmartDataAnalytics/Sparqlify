@@ -118,6 +118,13 @@ class QueryExecutionFactoryStreamingWrapper
 	public String getState() {
 		return delegate.getState();
 	}
+
+	@Override
+	public <T> T unwrap(Class<T> clazz) {
+		@SuppressWarnings("unchecked")
+		T result = getClass().isAssignableFrom(clazz) ? (T)this : null;
+		return result;
+	}
 	
 }
 

@@ -21,6 +21,7 @@ import com.hp.hpl.jena.sparql.expr.ExprList;
  *
  */
 public interface MappingOps {
+	
 	Mapping createMapping(ViewInstance<ViewDefinition> viewInstance);
 	
 	/**

@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.update;
+package org.aksw.sparqlify.inverse;
 
 import java.util.Map;
 
@@ -43,7 +43,6 @@ public class SparqlSqlInverseMap
 	public Map<S_ColumnRef, SqlValue> getColumnToValue() {
 		return columnToValue;
 	}
-
 	
 	
 	@Override

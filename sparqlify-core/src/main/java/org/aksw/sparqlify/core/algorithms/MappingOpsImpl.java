@@ -291,6 +291,15 @@ public class MappingOpsImpl
 		this.exprNormalizer = exprNormalizer;
 		//this.exprNormalizer = new ExprDatatypeNorm(datatypeSystem)
 	}
+	
+	
+	public SqlTranslator getSqlTranslator() {
+		return this.sqlTranslator;
+	}
+	
+	public ExprDatatypeNorm exprNormalizer() {
+		return this.exprNormalizer;
+	}
 
 	/*
 	public MappingOpsImpl(ExprDatatypeNorm exprNormalizer) {

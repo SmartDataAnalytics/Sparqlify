@@ -39,6 +39,8 @@
 		<module>sparqlify-platform</module>
 		<module>sparqlify-debian</module>
 		<module>sparqlify-tests</module>
+
+		<module>sparqlify-jpa</module>
 		
 		<module>sparqlify-update</module>
 	</modules>
@@ -66,7 +68,7 @@
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<aksw.commons.version>0.7.2</aksw.commons.version>
 
-		<jena-sparql-api.version>2.10.0-18</jena-sparql-api.version>
+		<jena-sparql-api.version>2.10.0-20</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 
@@ -306,12 +308,12 @@
 				<artifactId>sparqlify-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
-                        <dependency>
-                                <groupId>org.aksw.sparqlify</groupId>
-                                <artifactId>sparqlify-type-system</artifactId>
-                                <version>${project.version}</version>
-                        </dependency>
+			
+			<dependency>
+		        <groupId>org.aksw.sparqlify</groupId>
+		        <artifactId>sparqlify-type-system</artifactId>
+		        <version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
@@ -333,6 +335,18 @@
 				<classifier>classes</classifier>
 			</dependency>
 
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>sparqlify-update</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>sparqlify-jpa</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+						
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.aksw.sparqlify</groupId> -->

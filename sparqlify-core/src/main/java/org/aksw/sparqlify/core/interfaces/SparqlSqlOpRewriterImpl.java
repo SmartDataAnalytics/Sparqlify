@@ -50,6 +50,21 @@ public class SparqlSqlOpRewriterImpl
 		this.sqlOptimizer = new SqlOptimizerImpl(databaseSchema);
 	}
 	
+	public CandidateViewSelector<? extends IViewDef> getCandidateViewSelector() {
+		return candidateViewSelector;
+	}
+	
+	public OpMappingRewriter getOpMappingRewriter() {
+		return opMappingRewriter;
+	}
+	
+	public SqlOpSelectBlockCollector getSqlOpSelectBlockCollector() {
+		return sqlOpSelectBlockCollector;
+	}
+	
+	public SqlOptimizerImpl getSqlOptimizer() {
+		return sqlOptimizer;
+	}
 	
 	@Override
 	public SparqlSqlOpRewrite rewrite(Query query) {

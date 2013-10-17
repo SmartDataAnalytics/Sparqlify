@@ -29,7 +29,7 @@ public class ConnectionCloseTest {
 		ds.setMinConnectionsPerPartition(1);
 		ds.setMaxConnectionsPerPartition(2);
 		
-		String str = "Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?ID)) ?t = plainLiteral(?NAME) From PERSON";
+		String str = "Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?id)) ?t = plainLiteral(?name) From person";
 			
 		
 		ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes());

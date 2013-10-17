@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.update;
+package org.aksw.sparqlify.inverse;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -35,6 +35,13 @@ public abstract class QueryExecutionFactoryExBase
 		return result;
 	}
 
+	
+	@Override
+	public <T> T unwrap(Class<T> clazz) {
+		@SuppressWarnings("unchecked")
+		T result = getClass().isAssignableFrom(clazz) ? (T)this : null;
+		return result;
+	}
 	//public abstract QueryExecutionStreaming createQueryExecution(QueryEx query);
 
 	/*

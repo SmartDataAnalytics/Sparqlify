@@ -97,9 +97,9 @@
 			</dependency> -->
 
 		<dependency>
-		<groupId>org.aksw.sparqlify</groupId>
-		<artifactId>sparqlify-core</artifactId>
-				</dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-jpa</artifactId>
+		</dependency>
 		
 		
 			<dependency>

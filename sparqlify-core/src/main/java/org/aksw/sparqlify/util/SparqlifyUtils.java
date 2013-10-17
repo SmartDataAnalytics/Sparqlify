@@ -632,7 +632,7 @@ public class SparqlifyUtils {
 
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		RdfTermEliminatorWriteable exprTransformer = SparqlifyCoreInit.createDefaultTransformer(typeSystem);
-		SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+		SqlExprSerializerSystem serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem);
 		ExprEvaluator exprEvaluator = SqlTranslationUtils.createDefaultEvaluator();
 		
 		ExprRewriteSystem result = new ExprRewriteSystem(typeSystem, exprTransformer, exprEvaluator, serializerSystem);

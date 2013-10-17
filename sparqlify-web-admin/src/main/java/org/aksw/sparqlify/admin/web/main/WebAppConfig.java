@@ -19,9 +19,19 @@ import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
+import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
+import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
+import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
+import org.aksw.sparqlify.inverse.SparqlSqlInverseMapperImpl;
+import org.aksw.sparqlify.jpa.EntityInverseMapper;
+import org.aksw.sparqlify.jpa.EntityInverseMapperImplHibernate;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Mappings;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
@@ -31,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -189,7 +198,6 @@ public class WebAppConfig {
 	 */
 	@Bean
 	@Autowired
-	@DependsOn("transactionManager")
 	public QueryExecutionFactory managerApiQef(DataSource dataSource)
 		throws Exception
 	{
@@ -204,10 +212,11 @@ public class WebAppConfig {
 		QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, 1000l, 60);
 		return result;
 	}
+
+	
 	
 	@Bean
 	@Autowired
-	@DependsOn("transactionManager")
 	public SparqlServiceManager sparqlServiceConfig(JpaTransactionManager txManager) {
 		
 		
@@ -226,60 +235,83 @@ public class WebAppConfig {
 		//SparqlServiceManager result = new SparqlServiceManagerImpl(emf);
 		return null;
 	}
-	
+
+
+	@Bean
+	@Autowired
+	public SessionFactory sessionFactory(JpaTransactionManager txManager) {
+		EntityManagerFactory emf = txManager.getEntityManagerFactory();
+		SessionFactory result = ((HibernateEntityManagerFactory)emf).getSessionFactory();
+		return result;
+	}
+
 	
 	@Bean
 	@Autowired
-	@DependsOn("transactionManager")
-	public Object getTableClassMap(JpaTransactionManager txManager) {
-
-		EntityManagerFactory emf = txManager.getEntityManagerFactory();
-		SessionFactory sessionFactory = ((HibernateEntityManagerFactory)emf).getSessionFactory();
-		
-		
-//		//System.out.println("emf class: " + emf.getClass().getName());
-		Metamodel metamodel = emf.getMetamodel();
-		Set<EntityType<?>> entities = metamodel.getEntities();
-		for(EntityType<?> entity : entities) {
-			Class<?> entityClass = entity.getJavaType();
-
-			ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass.getName());
-			if (classMetadata == null) {
-				throw new RuntimeException("Could not retrieve metadata for an entity: " + entity.getName());
-			}
-			if (classMetadata instanceof AbstractEntityPersister) {
-			     AbstractEntityPersister persister = (AbstractEntityPersister)classMetadata;
-			     String tableName = persister.getTableName();
-			     System.out.println("Table name: " + tableName);
-
-			     //persister.
-//			     Mappings x;
-//			     x.getClass("foobar").getProperty("bar").get
-			     //x.getClass(entityName)
-			     //persister.getProperty
-			     //persister.getPropertyColumnNames(propertyName)
-			     
-			     //String[] columnNames = persister.getKeyColumnNames();
-			}
-		}
-
-//			System.out.println("entity info");
-//			System.out.println(entity.getName());
-//			System.out.println(entity.getJavaType().getName());
-//			System.out.println(entity);
-//			System.out.println("---");
-//			//org.hibernate.ejb.metamodel.EntityTypeImpl<X>
-//		}
-//		
-//		for(ManagedType<?> type : metamodel.getManagedTypes()) {
-//			type.
-//		}
-		
-		
-		return null;
-//		EntityManagerFactory emf;
-//		emf.getMetamodel().managedType(null);
+	public SparqlSqlOpRewriterImpl sparqlSqlOpRewriter(QueryExecutionFactory qef) {
+		SparqlSqlOpRewriterImpl result = unwrapOpRewriter(qef);
+		return result;
 	}
+
+	@Bean
+	@Autowired
+	public SqlTranslator sqlTranslator(SparqlSqlOpRewriterImpl opRewriter) {
+		SqlTranslator result = unwrapSqlTransformer(opRewriter);
+		return result;
+	}
+
+	@Bean
+	@Autowired
+	public CandidateViewSelectorImpl candidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
+		CandidateViewSelectorImpl result = unwrapCandidateViewSelector(opRewriter);
+		return result;
+	}
+
+	
+	@Bean
+	@Autowired
+	public SparqlSqlInverseMapper inverseMapper(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
+		SparqlSqlInverseMapper result = new SparqlSqlInverseMapperImpl(candidateViewSelector, sqlTranslator);
+		
+		return result;
+	}
+	
+	@Bean
+	@Autowired
+	public EntityInverseMapper getTableClassMap(SessionFactory sessionFactory, SparqlSqlInverseMapper inverseMapper) {
+		EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
+		return result;
+	}
+	
+
+	
+	
+	
+	// TODO Replace this ugly unwrapping by creating the Sparqlify Query Execution
+	// in spring bean style
+	
+	public static SparqlSqlOpRewriterImpl unwrapOpRewriter(QueryExecutionFactory qef) {
+		QueryExecutionFactorySparqlifyDs q = qef.unwrap(QueryExecutionFactorySparqlifyDs.class);
+		SparqlSqlStringRewriterImpl strRewriter = (SparqlSqlStringRewriterImpl)q.getRewriter();
+		SparqlSqlOpRewriterImpl result = (SparqlSqlOpRewriterImpl)strRewriter.getSparqlSqlOpRewriter();
+
+		return result;
+	}
+	
+	public static CandidateViewSelectorImpl unwrapCandidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
+		CandidateViewSelectorImpl result = (CandidateViewSelectorImpl) opRewriter.getCandidateViewSelector();
+		return result;
+	}
+	
+	public static SqlTranslator unwrapSqlTransformer(SparqlSqlOpRewriterImpl opRewriter) {
+
+		OpMappingRewriterImpl opMappingRewriter = (OpMappingRewriterImpl)opRewriter.getOpMappingRewriter();
+		MappingOpsImpl mappingOps = (MappingOpsImpl)opMappingRewriter.getMappingOps();
+		SqlTranslator result = mappingOps.getSqlTranslator();
+
+		return result;
+	}
+
 }
 
 

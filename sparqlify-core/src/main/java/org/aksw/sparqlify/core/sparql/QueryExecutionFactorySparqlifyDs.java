@@ -34,6 +34,14 @@ public class QueryExecutionFactorySparqlifyDs
 		this.dataSource = dataSource;
 	}
 	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	
+	public SparqlSqlStringRewriter getRewriter() {
+		return rewriter;
+	}
+	
 	@Override
 	public QueryExecution createQueryExecution(Query query) {
 		//System.out.println(query);
