@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ServiceRepositoryJpaImpl<C, E, S>
-	implements ServiceRepository<S>
+	implements ServiceRepositoryJpa<S>
 {
 	private static final Logger logger = LoggerFactory.getLogger(ServiceRepositoryJpaImpl.class);
 	
@@ -93,6 +93,10 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 		return result;
 	}
 	
+	@Override
+	public EntityManagerFactory getEntityManagerFactory() {
+		return this.emf;
+	}
 	
 	public void killAll() {
 	}

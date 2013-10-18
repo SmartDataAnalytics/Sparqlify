@@ -83,6 +83,7 @@ Create View rdb2rdfExecution As
   Construct {
     ?s
       a o:Rdb2RdfExecution ;
+      a o:ServiceExecution ;
       o:id ?i ;
       o:config ?c ;
       o:status ?st ;

@@ -26,7 +26,7 @@ import com.jolbox.bonecp.BoneCPDataSource;
 public class ServiceLauncherRdb2Rdf
 	implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory>
 {
-	private static final Logger logger = LoggerFactory.getLogger(SparqlServiceManagerImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceLauncherRdb2Rdf.class);
 
 	
 	@Override

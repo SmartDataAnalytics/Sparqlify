@@ -123,7 +123,7 @@
 					return result;
 		        },
 
-		        doPostRequest: function(url, data) {
+		        doPostRequest: function(url, data, preventJson) {
 		        	console.log('data: ', data);
 		        	var promise = $http({
 		        	    method: 'POST',
@@ -131,8 +131,17 @@
 		        	    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 		        	    transformRequest: function(obj) {
 		        	        var str = [];
-		        	        for(var p in obj)
-		        	        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(JSON.stringify(obj[p])));
+		        	        for(var p in obj) {
+		        	        	var k = encodeURIComponent(p);
+		        	        	
+		        	        	var o = obj[p];
+		        	        	if(!preventJson) {
+		        	        		o = JSON.stringify(o);
+		        	        	}
+		        	        	var v = encodeURIComponent(o);
+		        	        	str.push(k + '=' + v);
+		        	        	console.log('v = ', v);
+		        	        }
 		        	        return str.join("&");
 		        	    },
 		        	    data: data
@@ -151,11 +160,11 @@
 		        },
 		        
 		        startService: function(id) {
-		        	return this.doPostRequest('manager/api/action/startService', {id: id});
+		        	return this.doPostRequest('manager/api/action/startService', {id: id}, true);
 		        },
 
 		        stopService: function(id) {
-		        	return this.doPostRequest('manager/api/action/stopService', {id: id});
+		        	return this.doPostRequest('manager/api/action/stopService', {id: id}, true);
 		        },
 		        
 		        restartService: function(id) {
@@ -180,6 +189,13 @@
 	        	return contextService.deleteContext(id);
 	        };
 
+	        $scope.startService = function(id) {
+	        	return contextService.startService(id);
+	        };
+
+	        $scope.stopService = function(id) {
+	        	return contextService.stopService(id);
+	        };
 		});
 
 		
@@ -261,8 +277,8 @@
 					<td>{{context.config.resource.data}}</td>
 					<td>{{context.status}}</td>
 					<td>
-						<a href="" ng-show="context.status=='STOPPED'" ng-click="startService(context._id)">Start</a>
-						<a href="" ng-show="context.status!='STOPPED'" ng-click="stopService(context._id)">Stop</a>
+						<a href="" ng-show="context.status=='STOPPED'" ng-click="startService(context.id.slice(1, -1))">Start</a>
+						<a href="" ng-show="context.status!='STOPPED'" ng-click="stopService(context.id.slice(1, -1))">Stop</a>
 						<a href="" ng-click="restartService(context.id)">Restart</a>
 					</td>
 					<td>

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.util;
 
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 
 public class SqlOpUtils {
 	
@@ -14,8 +14,8 @@ public class SqlOpUtils {
 	 */
 	public static String getTableName(SqlOp sqlOp) {
 		String result = null;
-		if(sqlOp instanceof SqlTable) {
-			SqlTable sqlTable = (SqlTable)sqlOp;
+		if(sqlOp instanceof SqlOpTable) {
+			SqlOpTable sqlTable = (SqlOpTable)sqlOp;
 			
 			result = sqlTable.getTableName();
 		}

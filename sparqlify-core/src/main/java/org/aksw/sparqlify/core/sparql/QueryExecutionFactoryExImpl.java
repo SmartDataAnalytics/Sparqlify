@@ -18,6 +18,15 @@ public class QueryExecutionFactoryExImpl
 		this.qefExplain = qefExplain;
 	}
 	
+	public QueryExecutionFactory getDefaultQef() {
+		return qefDefault;
+	}
+
+	public QueryExecutionFactory getExplainQef() {
+		return qefExplain;
+	}
+
+	
 	@Override
 	public QueryExecution createQueryExecution(QueryEx queryEx) {
 		QueryExecution result;

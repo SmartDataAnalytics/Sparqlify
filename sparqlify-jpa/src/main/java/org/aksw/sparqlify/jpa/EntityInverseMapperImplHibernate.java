@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.jpa;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.aksw.sparqlify.util.SqlOpUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 
@@ -21,6 +24,8 @@ import com.hp.hpl.jena.sparql.core.Quad;
 public class EntityInverseMapperImplHibernate
 	implements EntityInverseMapper
 {
+	private static final Logger logger = LoggerFactory.getLogger(EntityInverseMapperImplHibernate.class);
+	
 	private SparqlSqlInverseMapper inverseMapper;
 
 	private Map<String, AbstractEntityPersister> tableNameToPersister;
@@ -32,14 +37,19 @@ public class EntityInverseMapperImplHibernate
 	}
 	
 	@Override
-	public EntityRef map(Quad quad) {
+	public List<EntityRef> map(Quad quad) {
 		List<SparqlSqlInverseMap> invMaps = inverseMapper.map(quad);
 		
+		List<EntityRef> result = new ArrayList<EntityRef>(invMaps.size());
+		
 		for(SparqlSqlInverseMap invMap : invMaps) {
-			map(invMap);
+			EntityRef entityRef = map(invMap);
+			if(entityRef != null) {
+				result.add(entityRef);
+			}
 		}
 
-		return null;
+		return result;
 	}
 
 	public EntityRef map(SparqlSqlInverseMap invMap) {
@@ -52,9 +62,14 @@ public class EntityInverseMapperImplHibernate
 	
 	public static EntityRef map(SparqlSqlInverseMap invMap, Map<String, AbstractEntityPersister> metadata) {
 		String tableName = SqlOpUtils.getTableName(invMap.getViewDefinition().getMapping().getSqlOp());
-		Map<String, Object> columnToValue = makeSimple(invMap.getColumnToValue());
 		
-		EntityRef result = map(tableName, columnToValue, metadata);
+		EntityRef result = null;
+		if(tableName != null) {
+			Map<String, Object> columnToValue = makeSimple(invMap.getColumnToValue());
+			
+			result = map(tableName, columnToValue, metadata);			
+		}
+		
 		return result;
 	}
 	
@@ -87,16 +102,70 @@ public class EntityInverseMapperImplHibernate
 	}
 	
 	public static EntityRef map(String tableName, Map<String, Object> columnConstraints, Map<String, AbstractEntityPersister> metadata) {
+		
 		AbstractEntityPersister persister = metadata.get(tableName);
+
+		if(persister == null) {
+			return null;
+		}
+
+		
+		
+		Map<String, String> columnToProperty = new HashMap<String, String>();
+		
+		
+		String idPropertyName = persister.getIdentifierPropertyName();
+		String[] idColumnNames = persister.getIdentifierColumnNames();
+		if(idColumnNames.length > 1 || idColumnNames.length == 0) {
+			return null;
+		}
+		
+		String idColumnName = idColumnNames[0];
+		columnToProperty.put(idColumnName, idPropertyName);
+//		
+//		String[] propertyNames = persister.getPropertyNames();
+//		
+//		for(String propertyName : propertyNames) {
+//			String propertyTableName = persister.getPropertyTableName(propertyName);
+//
+//			System.out.println(propertyTableName);
+//			
+//			String[] columnNames = persister.getPropertyColumnNames(propertyName);
+//			if(columnNames.length > 1 || columnNames.length == 0) {
+//				// Skip multi column properties for now
+//				continue;
+//			}
+//			
+//			String columnName = columnNames[0];
+//			
+//			columnToProperty.put(columnName, propertyName);
+//			
+//		}
+		
+		Map<String, Object> propertyToValue = new HashMap<String, Object>();
+		
+		boolean allMatch = true;
 		for(Entry<String, Object> constraint : columnConstraints.entrySet()) {
 			String columnName = constraint.getKey();
 			Object value = constraint.getValue();
 			
-			System.out.println("TODO How to deal with compound keys? How to map column names to properties? Probably we have to iterate all the properties and see whether the columns contribute to it");
+			
+			String propertyName = columnToProperty.get(columnName);
+			if(propertyName == null) {
+				allMatch = false;
+				break;
+			}
+			
+			propertyToValue.put(propertyName, value);
+			
+			//System.out.println("TODO How to deal with compound keys? How to map column names to properties? Probably we have to iterate all the properties and see whether the columns contribute to it");
 			//persister.getPropert
 		}
-		
-		return null;
+
+		Class<?> entityClass = persister.getMappedClass();
+		EntityRef result = allMatch ? new EntityRef(entityClass, propertyToValue) : null;
+				
+		return result;
 	}
 	
 	
@@ -119,7 +188,11 @@ public class EntityInverseMapperImplHibernate
 			
 			AbstractEntityPersister persister = (AbstractEntityPersister)classMetadata;
 			
-			String tableName = persister.getTableName();
+			String tmpTableName = persister.getTableName();
+			String tableName = tmpTableName.toLowerCase();
+			logger.warn("[HACK] Converted table name '" + tmpTableName  +"' to '" + tableName + "', but this should be done via the SQL dialect or something");
+			//tableName = tableName.toLowerCase();
+
 			result.put(tableName, persister);
 		}
 		

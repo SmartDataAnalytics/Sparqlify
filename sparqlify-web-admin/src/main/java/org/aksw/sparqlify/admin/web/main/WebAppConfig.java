@@ -2,30 +2,23 @@ package org.aksw.sparqlify.admin.web.main;
 
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.service_framework.core.ServiceLauncherRdb2Rdf;
-import org.aksw.service_framework.core.ServiceRepository;
-import org.aksw.service_framework.core.SparqlServiceManager;
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
+import org.aksw.sparqlify.admin.web.api.ServiceManager;
+import org.aksw.sparqlify.admin.web.api.ServiceManagerImpl;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
-import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
-import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapperImpl;
 import org.aksw.sparqlify.jpa.EntityInverseMapper;
@@ -33,8 +26,6 @@ import org.aksw.sparqlify.jpa.EntityInverseMapperImplHibernate;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,26 +205,41 @@ public class WebAppConfig {
 	}
 
 	
+	@Bean
+	@Autowired
+	public SparqlSqlInverseMapper sparqlSqlInverseMapper(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
+		SparqlSqlInverseMapper result = new SparqlSqlInverseMapperImpl(candidateViewSelector, sqlTranslator);
+		
+		return result;
+	}
 	
 	@Bean
 	@Autowired
-	public SparqlServiceManager sparqlServiceConfig(JpaTransactionManager txManager) {
-		
-		
+	public EntityInverseMapper entityInverseMapper(SessionFactory sessionFactory, SparqlSqlInverseMapper inverseMapper) {
+		EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
+		return result;
+	}
+
+	
+	@Bean
+	@Autowired
+	public ServiceManager sparqlServiceConfig(JpaTransactionManager txManager, EntityInverseMapper entityInverseMapper) {
+
 		EntityManagerFactory emf = txManager.getEntityManagerFactory();
 		
-		ServiceRepository<QueryExecutionFactory> serviceRepo =
+		ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo =
 			ServiceRepositoryJpaImpl.create(
-				emf,
-				Rdb2RdfConfig.class,
-				Rdb2RdfExecution.class,
-				new ServiceLauncherRdb2Rdf()
-			);
+					emf,
+					Rdb2RdfConfig.class,
+					Rdb2RdfExecution.class,
+					new ServiceLauncherRdb2Rdf()
+					);
 
 		serviceRepo.startAll();
 
-		//SparqlServiceManager result = new SparqlServiceManagerImpl(emf);
-		return null;
+		ServiceManager serviceManager = ServiceManagerImpl.create(serviceRepo, entityInverseMapper);
+
+		return serviceManager;
 	}
 
 
@@ -246,71 +252,30 @@ public class WebAppConfig {
 	}
 
 	
+	// TODO Possibly replace this ugly unwrapping by creating the Sparqlify Query Execution
+	// in spring bean style
+	
 	@Bean
 	@Autowired
 	public SparqlSqlOpRewriterImpl sparqlSqlOpRewriter(QueryExecutionFactory qef) {
-		SparqlSqlOpRewriterImpl result = unwrapOpRewriter(qef);
+		SparqlSqlOpRewriterImpl result = SparqlifyUtils.unwrapOpRewriter(qef);
 		return result;
 	}
 
 	@Bean
 	@Autowired
 	public SqlTranslator sqlTranslator(SparqlSqlOpRewriterImpl opRewriter) {
-		SqlTranslator result = unwrapSqlTransformer(opRewriter);
+		SqlTranslator result = SparqlifyUtils.unwrapSqlTransformer(opRewriter);
 		return result;
 	}
 
 	@Bean
 	@Autowired
 	public CandidateViewSelectorImpl candidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
-		CandidateViewSelectorImpl result = unwrapCandidateViewSelector(opRewriter);
-		return result;
-	}
-
-	
-	@Bean
-	@Autowired
-	public SparqlSqlInverseMapper inverseMapper(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
-		SparqlSqlInverseMapper result = new SparqlSqlInverseMapperImpl(candidateViewSelector, sqlTranslator);
-		
+		CandidateViewSelectorImpl result = SparqlifyUtils.unwrapCandidateViewSelector(opRewriter);
 		return result;
 	}
 	
-	@Bean
-	@Autowired
-	public EntityInverseMapper getTableClassMap(SessionFactory sessionFactory, SparqlSqlInverseMapper inverseMapper) {
-		EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
-		return result;
-	}
-	
-
-	
-	
-	
-	// TODO Replace this ugly unwrapping by creating the Sparqlify Query Execution
-	// in spring bean style
-	
-	public static SparqlSqlOpRewriterImpl unwrapOpRewriter(QueryExecutionFactory qef) {
-		QueryExecutionFactorySparqlifyDs q = qef.unwrap(QueryExecutionFactorySparqlifyDs.class);
-		SparqlSqlStringRewriterImpl strRewriter = (SparqlSqlStringRewriterImpl)q.getRewriter();
-		SparqlSqlOpRewriterImpl result = (SparqlSqlOpRewriterImpl)strRewriter.getSparqlSqlOpRewriter();
-
-		return result;
-	}
-	
-	public static CandidateViewSelectorImpl unwrapCandidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
-		CandidateViewSelectorImpl result = (CandidateViewSelectorImpl) opRewriter.getCandidateViewSelector();
-		return result;
-	}
-	
-	public static SqlTranslator unwrapSqlTransformer(SparqlSqlOpRewriterImpl opRewriter) {
-
-		OpMappingRewriterImpl opMappingRewriter = (OpMappingRewriterImpl)opRewriter.getOpMappingRewriter();
-		MappingOpsImpl mappingOps = (MappingOpsImpl)opMappingRewriter.getMappingOps();
-		SqlTranslator result = mappingOps.getSqlTranslator();
-
-		return result;
-	}
 
 }
 

@@ -9,7 +9,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.web.SparqlEndpointBase;
-import org.aksw.service_framework.core.SparqlServiceManager;
 import org.springframework.stereotype.Service;
 
 import com.hp.hpl.jena.query.Query;
@@ -21,8 +20,8 @@ import com.hp.hpl.jena.query.QueryExecution;
 public class SparqlEndpointDispatcher
 	extends SparqlEndpointBase
 {
-	@Resource(name="sparqlServiceConfig")
-	private SparqlServiceManager sparqlServiceConfig;
+//	@Resource(name="sparqlServiceConfig")
+//	private SparqlServiceManager sparqlServiceConfig;
 
 	@Context
 	private UriInfo uriInfo;
@@ -30,20 +29,20 @@ public class SparqlEndpointDispatcher
 	@Override
 	public QueryExecution createQueryExecution(Query query,
 			HttpServletRequest req) {
-		//WebContent.
-		//RDFDataMgr.
+
+		return null;
 		
-		MultivaluedMap<String, String> params = uriInfo.getPathParameters();
-		String path = params.getFirst("path");
-		
-		QueryExecutionFactory qef = null; //sparqlServiceConfig.getServiceMap().get(path);
-		if(qef == null) {
-			throw new RuntimeException("No service registered for " + path);
-		}
-		
-		QueryExecution result = qef.createQueryExecution(query);
-		
-		return result;
+//		MultivaluedMap<String, String> params = uriInfo.getPathParameters();
+//		String path = params.getFirst("path");
+//		
+//		QueryExecutionFactory qef = null; //sparqlServiceConfig.getServiceMap().get(path);
+//		if(qef == null) {
+//			throw new RuntimeException("No service registered for " + path);
+//		}
+//		
+//		QueryExecution result = qef.createQueryExecution(query);
+//		
+//		return result;
 	}
 }
 

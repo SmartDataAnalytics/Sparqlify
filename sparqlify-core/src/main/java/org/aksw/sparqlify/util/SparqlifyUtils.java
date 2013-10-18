@@ -642,5 +642,36 @@ public class SparqlifyUtils {
 		
 		return result;
 	}
+
+	public static SparqlSqlOpRewriterImpl unwrapOpRewriter(QueryExecutionFactory qef) {
+		QueryExecutionFactoryExImpl tmp = qef.unwrap(QueryExecutionFactoryExImpl.class);
+		QueryExecutionFactorySparqlifyDs q = tmp.getDefaultQef().unwrap(QueryExecutionFactorySparqlifyDs.class);
+		
+		//QueryExecutionFactorySparqlifyExplain q = qef.unwrap(QueryExecutionFactorySparqlifyExplain.class);
+		
+		SparqlSqlStringRewriterImpl sssRewriter = (SparqlSqlStringRewriterImpl)q.getRewriter();
+		SparqlSqlOpRewriterImpl result = (SparqlSqlOpRewriterImpl)sssRewriter.getSparqlSqlOpRewriter();
+		//SparqlSqlOpRewriterImpl result = (SparqlSqlOpRewriterImpl)q.getRewriter();
+		
+		//QueryExecutionFactorySparqlifyDs q = qef.unwrap(QueryExecutionFactorySparqlifyDs.class);
+//		SparqlSqlStringRewriterImpl strRewriter = (SparqlSqlStringRewriterImpl)q.getRewriter();
+//		SparqlSqlOpRewriterImpl result = (SparqlSqlOpRewriterImpl)strRewriter.getSparqlSqlOpRewriter();
+	
+		return result;
+	}
+
+	public static SqlTranslator unwrapSqlTransformer(SparqlSqlOpRewriterImpl opRewriter) {
+	
+		OpMappingRewriterImpl opMappingRewriter = (OpMappingRewriterImpl)opRewriter.getOpMappingRewriter();
+		MappingOpsImpl mappingOps = (MappingOpsImpl)opMappingRewriter.getMappingOps();
+		SqlTranslator result = mappingOps.getSqlTranslator();
+	
+		return result;
+	}
+
+	public static CandidateViewSelectorImpl unwrapCandidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
+		CandidateViewSelectorImpl result = (CandidateViewSelectorImpl) opRewriter.getCandidateViewSelector();
+		return result;
+	}
 	
 }

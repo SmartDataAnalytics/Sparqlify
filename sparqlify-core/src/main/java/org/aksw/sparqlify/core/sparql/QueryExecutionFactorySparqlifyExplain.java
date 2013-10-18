@@ -23,6 +23,18 @@ public class QueryExecutionFactorySparqlifyExplain
 		this.ssoRewriter = ssoRewriter;
 		this.sqlOpSerializer = sqlOpSerializer;
 	}
+	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	
+	public SparqlSqlOpRewriter getRewriter() {
+		return ssoRewriter;
+	}
+	
+	public SqlOpSerializer getSerializer() {
+		return sqlOpSerializer;
+	}
 
 	@Override
 	public String getId() {

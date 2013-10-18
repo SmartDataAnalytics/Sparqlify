@@ -15,9 +15,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
+import org.aksw.sparqlify.jpa.EntityInverseMapper;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+
 
 @Service
 @Path("/api/action")
@@ -26,6 +28,8 @@ public class ServletManager
 	@Resource(name="entityManagerFactory")
 	private EntityManagerFactory emf;
 	
+	@Resource
+	private ServiceManager serviceManager;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -180,5 +184,33 @@ public class ServletManager
 		
 		return "{}";
 	}
+
+	@Resource()
+	private EntityInverseMapper inverseMapper;
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/startService")
+	public String startService(@FormParam("id") String id) {
+	
+		serviceManager.startService(id);
+		
+		
+		return "{}";
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/stopService")
+	public String stopService(@FormParam("id") String id) {
+	
+		//serviceManager.getExecution(id);
+		//ServiceExecution se = serviceManager.getExecution(id);
+		//se.close();
+		serviceManager.stopService(id);
+		
+		return "{}";
+	}
+
 
 }
