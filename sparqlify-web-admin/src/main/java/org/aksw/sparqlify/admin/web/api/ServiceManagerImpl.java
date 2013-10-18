@@ -1,9 +1,13 @@
 package org.aksw.sparqlify.admin.web.api;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnitUtil;
 
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
 import org.aksw.sparqlify.jpa.EntityInverseMapper;
@@ -31,11 +35,22 @@ public class ServiceManagerImpl<C, E, S>
 		return result;
 	}
 	
-	@Override
-	public void startService(String id) {
-		Node uri = Node.createURI(id);
-		Quad quad = new Quad(Quad.defaultGraphNodeGenerated, uri, RDF.type.asNode(), ServiceVocab.ServiceExecution.asNode());
+	public static Set<Object> extractIds(EntityManagerFactory emf, Collection<?> entities) {
+		PersistenceUnitUtil puu = emf.getPersistenceUnitUtil();
 		
+		Set<Object> result = new HashSet<Object>();
+		for(Object entity : entities) {
+			Object id = puu.getIdentifier(entity);
+
+			result.add(id);
+		}
+		return result;
+	}
+	
+	public Set<Object> getEntityIds(String serviceUriStr) {
+		Node uri = Node.createURI(serviceUriStr);
+		Quad quad = new Quad(Quad.defaultGraphNodeGenerated, uri, RDF.type.asNode(), ServiceVocab.ServiceExecution.asNode());
+
 		List<EntityRef> entityRef = inverseMapper.map(quad);
 
 		EntityManagerFactory emf = serviceRepository.getEntityManagerFactory();
@@ -43,21 +58,25 @@ public class ServiceManagerImpl<C, E, S>
 		em.getTransaction().begin();
 		
 		List<?> entities = EntityRefUtils.fetchEntities(em, entityRef); 
-				
-		for(Object entity : entities) {
-			System.out.println(entity);
-		}
+		Set<Object> result = extractIds(emf, entities);
 		
+				
 		em.getTransaction().commit();
 		em.close();
 		
-		
+		return result;
 	}
 
 	@Override
-	public void stopService(String id) {
-		// TODO Auto-generated method stub
-		
+	public void startService(String serviceUriStr) {
+		Set<Object> ids = getEntityIds(serviceUriStr);
+		serviceRepository.startExecutions(ids);
+	}
+
+	@Override
+	public void stopService(String serviceUriStr) {
+		Set<Object> ids = getEntityIds(serviceUriStr);
+		serviceRepository.stopExecutions(ids);
 	}
 	
 }

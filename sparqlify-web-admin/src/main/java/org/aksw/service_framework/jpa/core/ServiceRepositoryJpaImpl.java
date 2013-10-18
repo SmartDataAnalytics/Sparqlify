@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,7 +15,6 @@ import javax.persistence.criteria.Root;
 
 import org.aksw.service_framework.core.ServiceExecution;
 import org.aksw.service_framework.core.ServiceLauncher;
-import org.aksw.service_framework.core.ServiceRepository;
 import org.aksw.service_framework.jpa.model.ConfigToExecution;
 import org.aksw.sparqlify.admin.web.common.EntityHolder;
 import org.aksw.sparqlify.admin.web.common.EntityHolderJpa;
@@ -401,6 +401,17 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 		idToServiceExecution.put(configId, result);
 		
 		return result;
+	}
+
+	
+	@Override
+	public void startExecutions(Set<?> executionIds) {
+		throw new RuntimeException("YAY" + executionIds);
+	}
+
+	@Override
+	public void stopExecutions(Set<?> executionIds) {
+		throw new RuntimeException("YAY" + executionIds);
 	}
 
 }
