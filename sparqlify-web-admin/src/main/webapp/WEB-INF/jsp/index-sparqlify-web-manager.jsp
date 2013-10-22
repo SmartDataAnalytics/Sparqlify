@@ -169,7 +169,7 @@
 		        
 		        restartService: function(id) {
 		        	var self = this;
-		        	this.stopService(id).then(function() {
+		        	return this.stopService(id).then(function() {
 		        		self.startService(id);
 		        	});
 		        }
@@ -189,13 +189,20 @@
 	        	return contextService.deleteContext(id);
 	        };
 
+	        //$scope.serviceCtrl = contextService;
+	        
 	        $scope.startService = function(id) {
-	        	return contextService.startService(id);
+	        	return contextService.startService(id).then($scope.doFilterContexts);
 	        };
 
 	        $scope.stopService = function(id) {
-	        	return contextService.stopService(id);
+	        	return contextService.stopService(id).then($scope.doFilterContexts);
 	        };
+	        
+	        $scope.restartService = function(id) {
+	        	return contextService.stopService(id).then($scope.doFilterContexts);	        	
+	        };
+
 		});
 
 		

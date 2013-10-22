@@ -10,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
 
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
+import org.aksw.service_framework.jpa.core.ServiceState;
 import org.aksw.sparqlify.jpa.EntityInverseMapper;
 import org.aksw.sparqlify.jpa.EntityRef;
 
@@ -69,14 +70,26 @@ public class ServiceManagerImpl<C, E, S>
 
 	@Override
 	public void startService(String serviceUriStr) {
-		Set<Object> ids = getEntityIds(serviceUriStr);
-		serviceRepository.startExecutions(ids);
+		Set<Object> executionContextIds = getEntityIds(serviceUriStr);
+		for(Object executionContextId : executionContextIds) {
+			ServiceState state = serviceRepository.getStateByExecutionContextId(executionContextId);
+			Object configId = state != null ? state.getConfigId() : null;
+			
+			serviceRepository.startByConfigId(configId);
+			
+		}		
 	}
 
 	@Override
 	public void stopService(String serviceUriStr) {
-		Set<Object> ids = getEntityIds(serviceUriStr);
-		serviceRepository.stopExecutions(ids);
+		Set<Object> executionContextIds = getEntityIds(serviceUriStr);
+		for(Object executionContextId : executionContextIds) {
+			ServiceState state = serviceRepository.getStateByExecutionContextId(executionContextId);
+			Object configId = state != null ? state.getConfigId() : null;
+			
+			serviceRepository.stopByConfigId(configId);
+			
+		}		
 	}
 	
 }

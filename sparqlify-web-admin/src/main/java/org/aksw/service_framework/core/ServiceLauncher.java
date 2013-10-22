@@ -1,6 +1,8 @@
 package org.aksw.service_framework.core;
 
-import org.aksw.sparqlify.admin.web.common.EntityHolder;
+import javax.persistence.EntityManagerFactory;
+
+import org.aksw.service_framework.jpa.core.ServiceProvider;
 
 /**
  * 
@@ -20,5 +22,5 @@ public interface ServiceLauncher<C, E, S> {
 	 * @param isRestart Indicates whether the service is being resumed from a prior execution context
 	 * @return
 	 */
-	ServiceExecution<S> launch(C config, EntityHolder<E> context, boolean isRestart);
+	ServiceProvider<S> launch(EntityManagerFactory emf, C config, E context, boolean isRestart);
 }

@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.admin.web.endpoint;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
@@ -23,26 +25,30 @@ public class SparqlEndpointDispatcher
 //	@Resource(name="sparqlServiceConfig")
 //	private SparqlServiceManager sparqlServiceConfig;
 
+	//private Map<String, ServiceControl<QueryExecutionFactory>> nameToService;
+	
+	@Resource(name="sparqlServiceMap")
+	private Map<String, QueryExecutionFactory> nameToService;
+	
 	@Context
 	private UriInfo uriInfo;
 	
 	@Override
 	public QueryExecution createQueryExecution(Query query,
 			HttpServletRequest req) {
-
-		return null;
 		
-//		MultivaluedMap<String, String> params = uriInfo.getPathParameters();
-//		String path = params.getFirst("path");
-//		
-//		QueryExecutionFactory qef = null; //sparqlServiceConfig.getServiceMap().get(path);
-//		if(qef == null) {
-//			throw new RuntimeException("No service registered for " + path);
-//		}
-//		
-//		QueryExecution result = qef.createQueryExecution(query);
-//		
-//		return result;
+		MultivaluedMap<String, String> params = uriInfo.getPathParameters();
+		String path = params.getFirst("path");
+		
+		
+		QueryExecutionFactory qef = nameToService.get(path); //sparqlServiceConfig.getServiceMap().get(path);
+		if(qef == null) {
+			throw new RuntimeException("No service registered for " + path);
+		}
+		
+		QueryExecution result = qef.createQueryExecution(query);
+		
+		return result;
 	}
 }
 

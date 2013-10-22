@@ -1,6 +1,9 @@
 package org.aksw.sparqlify.admin.web.main;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -13,6 +16,7 @@ import org.aksw.service_framework.core.ServiceLauncherRdb2Rdf;
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
+import org.aksw.sparqlify.admin.web.api.ServiceEventListenerRegister;
 import org.aksw.sparqlify.admin.web.api.ServiceManager;
 import org.aksw.sparqlify.admin.web.api.ServiceManagerImpl;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -223,7 +227,7 @@ public class WebAppConfig {
 	
 	@Bean
 	@Autowired
-	public ServiceManager sparqlServiceConfig(JpaTransactionManager txManager, EntityInverseMapper entityInverseMapper) {
+	public ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> sparqlServiceRepo(JpaTransactionManager txManager) {
 
 		EntityManagerFactory emf = txManager.getEntityManagerFactory();
 		
@@ -236,7 +240,26 @@ public class WebAppConfig {
 					);
 
 		serviceRepo.startAll();
+		
+		return serviceRepo;
+	}
+	
 
+	@Bean
+	@Autowired
+	public Map<String, QueryExecutionFactory> sparqlServiceMap(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo) {
+		Map<String, QueryExecutionFactory> result = Collections.synchronizedMap(new HashMap<String, QueryExecutionFactory>());
+		
+		ServiceEventListenerRegister listener = new ServiceEventListenerRegister(result);
+		serviceRepo.getServiceEventListeners().add(listener);
+		
+		return result;
+	}
+
+	
+	@Bean
+	@Autowired
+	public ServiceManager sparqlServiceManager(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo, EntityInverseMapper entityInverseMapper) {
 		ServiceManager serviceManager = ServiceManagerImpl.create(serviceRepo, entityInverseMapper);
 
 		return serviceManager;

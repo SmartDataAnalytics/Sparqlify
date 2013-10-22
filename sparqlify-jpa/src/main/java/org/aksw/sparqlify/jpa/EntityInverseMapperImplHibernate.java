@@ -109,7 +109,7 @@ public class EntityInverseMapperImplHibernate
 			return null;
 		}
 
-		
+		//TODO Only works on entity ids yet, however should be extended to work on arbitrary properties
 		
 		Map<String, String> columnToProperty = new HashMap<String, String>();
 		

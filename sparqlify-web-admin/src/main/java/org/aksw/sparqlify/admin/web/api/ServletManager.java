@@ -187,26 +187,24 @@ public class ServletManager
 
 	@Resource()
 	private EntityInverseMapper inverseMapper;
-	
+
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/startService")
 	public String startService(@FormParam("id") String id) {
 	
-		serviceManager.startService(id);
-		
+		serviceManager.startService(id);		
 		
 		return "{}";
 	}
+
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/stopService")
 	public String stopService(@FormParam("id") String id) {
-	
-		//serviceManager.getExecution(id);
-		//ServiceExecution se = serviceManager.getExecution(id);
-		//se.close();
+
 		serviceManager.stopService(id);
 		
 		return "{}";

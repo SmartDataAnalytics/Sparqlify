@@ -79,6 +79,29 @@ Create View rdb2rdfConfig As
   From
     "rdb2rdfconfig"
     
+
+/*
+Create View rdb2rdfExecution As
+  Construct {
+    ?s
+      a o:Rdb2RdfExecution ;
+      a o:ServiceExecution ;
+      o:id ?i ;
+//      o:config ?c ;
+      o:status ?st ;
+      .
+  }
+  With
+    ?s = uri(r:, 'serviceExecution', ?id)
+    ?i = typedLiteral(?id, xsd:int)
+//    ?c = uri(r:, 'rdb2RdfConfig', ?config_id)
+    ?st = plainLiteral(?status)
+  From
+    [[SELECT id, status FROM configtoexecution WHERE configclassname='org.aksw.sparqlify.admin.model.Rdb2RdfConfig']]
+
+*/
+
+// Note: Actually this view maps the execution context (i.e. the execution's associated persistence entity), not the execution itself
 Create View rdb2rdfExecution As
   Construct {
     ?s

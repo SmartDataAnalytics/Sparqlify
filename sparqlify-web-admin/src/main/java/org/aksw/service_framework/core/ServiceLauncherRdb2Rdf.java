@@ -2,17 +2,21 @@ package org.aksw.service_framework.core;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.service_framework.jpa.core.ServiceProvider;
+import org.aksw.service_framework.jpa.core.ServiceProviderJpaRdbRdf;
 import org.aksw.service_framework.utils.LogUtils;
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
 import org.aksw.sparqlify.admin.model.LogMessage;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
 import org.aksw.sparqlify.admin.web.common.ContextStateFlags;
-import org.aksw.sparqlify.admin.web.common.EntityHolder;
 import org.aksw.sparqlify.admin.web.common.LoggerMem;
-import org.aksw.sparqlify.admin.web.common.ServiceExecutionRdb2Rdf;
+import org.aksw.sparqlify.admin.web.common.ServiceProviderRdb2Rdf;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -23,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 
+
 public class ServiceLauncherRdb2Rdf
 	implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory>
 {
@@ -30,30 +35,45 @@ public class ServiceLauncherRdb2Rdf
 
 	
 	@Override
-	public ServiceExecution<QueryExecutionFactory> launch(Rdb2RdfConfig serviceConfig, EntityHolder<Rdb2RdfExecution> context, boolean isRestart) {
-
+	//public ServiceExecution<QueryExecutionFactory> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
+	public ServiceProvider<QueryExecutionFactory> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
+		
 //		String serviceName = serviceConfig.getContextPath();
 //		ServiceExecution<?> serviceExecution = nameToExecution.get(serviceName);
 //		if(serviceExecution != null) {
 //			throw new RuntimeException("A service with the name " + serviceName + " is already executing");
 //		}
 		String serviceName = "foobar";
+
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
 		
-		context.openSession();
+		Object configId = emf.getPersistenceUnitUtil().getIdentifier(serviceConfig);
+		Object executionContextId = emf.getPersistenceUnitUtil().getIdentifier(context);
+		
+
+		serviceConfig = em.find(Rdb2RdfConfig.class, configId);
+		context = em.find(Rdb2RdfExecution.class, executionContextId);
+		
+//		em.merge(context);
+//		em.merge(serviceConfig);
+
 		//Rdb2RdfExecution serviceState = context.getEntity();
 		
 		//serviceState.setName(serviceName);
-		context.getEntity().setStatus(ContextStateFlags.STARTING);
-		context.getEntity().getLogMessages().clear();
-		context.getEntity().getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
-		context.getEntity().setConfig(serviceConfig);
+		context.setStatus(ContextStateFlags.STARTING);
+		context.getLogMessages().clear();
+		context.getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
+		context.setConfig(serviceConfig);
 
-		context.commit();
+		em.getTransaction().commit();
+		em.getTransaction().begin();
+		//context.commit();
 
-		context.openSession();
+		//context.openSession();
 		
 		
-		ServiceExecution<QueryExecutionFactory> result = null;
+		ServiceProvider<QueryExecutionFactory> result = null;
 		
 		try {
 			//
@@ -84,7 +104,7 @@ public class ServiceLauncherRdb2Rdf
 			
 			
 			if(loggerCount.getErrorCount() != 0) {
-				context.getEntity().getLogMessages().addAll(lm);
+				context.getLogMessages().addAll(lm);
 				throw new RuntimeException("Errors encountered during parsing of the mapping");
 			}
 			
@@ -94,19 +114,23 @@ public class ServiceLauncherRdb2Rdf
 			// A Test Query
 			qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
 	
-			result = new ServiceExecutionRdb2Rdf(serviceName, dataSource, qef);
+			result = new ServiceProviderRdb2Rdf(serviceName, dataSource, qef);
+	
+			result = new ServiceProviderJpaRdbRdf<QueryExecutionFactory>(result, emf, context);
 			
 			//nameToExecution.put(serviceName, sparqlServiceExecution);
-			context.getEntity().setStatus(ContextStateFlags.RUNNING);
-			context.getEntity().getLogMessages().add(new LogMessage("info", "Service successfully started."));
+			context.setStatus(ContextStateFlags.RUNNING);
+			context.getLogMessages().add(new LogMessage("info", "Service successfully started."));
 
 		} catch(Exception e) {
-			context.getEntity().setStatus(ContextStateFlags.STOPPED);
-			context.getEntity().getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
-			context.getEntity().getLogMessages().add(new LogMessage("info", "Service failed to start."));
+			context.setStatus(ContextStateFlags.STOPPED);
+			context.getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
+			context.getLogMessages().add(new LogMessage("info", "Service failed to start."));
 		}
 		finally {
-			context.commit();
+			em.getTransaction().commit();
+			em.close();
+			//context.commit();
 		}
 		
 		return result;
