@@ -3,70 +3,81 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 
-	<display-name>Sparqlify Admin</display-name>
+    <filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+    
+<!-- 	<display-name>Sparqlify Admin</display-name> -->
 
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext.xml</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>contextConfigLocation</param-name> -->
+<!-- 		<param-value>/WEB-INF/applicationContext.xml</param-value> -->
+<!-- 	</context-param> -->
 
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+<!-- 	<listener> -->
+<!-- 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> -->
+<!-- 	</listener> -->
 
-	<listener>
-		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-	</listener>
-
-
-	<servlet>
-		<servlet-name>mvc-dispatcher</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>mvc-dispatcher</servlet-name>
-		<!-- <url-pattern>/</url-pattern> -->
-		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
+<!-- 	<listener> -->
+<!-- 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class> -->
+<!-- 	</listener> -->
 
 
-	<servlet>
-		<servlet-name>sparqlify-admin-api</servlet-name>
-		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>mvc-dispatcher</servlet-name> -->
+<!-- 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> -->
+<!-- 		<load-on-startup>1</load-on-startup> -->
+<!-- 	</servlet> -->
 
-		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>org.aksw.sparqlify.admin.web.api</param-value>
-		</init-param>
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>mvc-dispatcher</servlet-name> -->
+ 		<!-- <url-pattern>/</url-pattern> -->
+<!-- 		<url-pattern>*.do</url-pattern> -->
+<!-- 	</servlet-mapping> -->
 
-		<load-on-startup>1</load-on-startup>
-	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>sparqlify-admin-api</servlet-name>
-		<url-pattern>/manager/*</url-pattern>
-	</servlet-mapping>
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>sparqlify-admin-api</servlet-name> -->
+<!-- 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class> -->
+
+<!-- 		<init-param> -->
+<!-- 			<param-name>com.sun.jersey.config.property.packages</param-name> -->
+<!-- 			<param-value>org.aksw.sparqlify.admin.web.api</param-value> -->
+<!-- 		</init-param> -->
+
+<!-- 		<load-on-startup>1</load-on-startup> -->
+<!-- 	</servlet> -->
+
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>sparqlify-admin-api</servlet-name> -->
+<!-- 		<url-pattern>/manager/*</url-pattern> -->
+<!-- 	</servlet-mapping> -->
 
 
 	
-	<servlet>
-		<servlet-name>sparqlify-admin-endpoints</servlet-name>
-		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+<!-- 	<servlet> -->
+<!-- 		<servlet-name>sparqlify-admin-endpoints</servlet-name> -->
+<!-- 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class> -->
 
-		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>org.aksw.sparqlify.admin.web.endpoint</param-value>
-		</init-param>
+<!-- 		<init-param> -->
+<!-- 			<param-name>com.sun.jersey.config.property.packages</param-name> -->
+<!-- 			<param-value>org.aksw.sparqlify.admin.web.endpoint</param-value> -->
+<!-- 		</init-param> -->
 
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+<!-- 		<load-on-startup>1</load-on-startup> -->
+<!-- 	</servlet> -->
 
-	<servlet-mapping>
-		<servlet-name>sparqlify-admin-endpoints</servlet-name>
-		<url-pattern>/endpoints/*</url-pattern>
-	</servlet-mapping>
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>sparqlify-admin-endpoints</servlet-name> -->
+<!-- 		<url-pattern>/endpoints/*</url-pattern> -->
+<!-- 	</servlet-mapping> -->
 	
 
 	<!-- Atmosphere -->
@@ -100,19 +111,6 @@
 	<!-- <servlet-name>staticAssets</servlet-name> -->
 	<!-- <url-pattern>/static/*</url-pattern> -->
 	<!-- </servlet-mapping> -->
-
-
-
-	<filter>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
 
 
 </web-app>

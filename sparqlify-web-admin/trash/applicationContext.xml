@@ -11,7 +11,7 @@
     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
 	<!-- :::: Packages for which to process Spring annotations -->
-	<context:component-scan base-package="org.aksw.sparqlify.admin.web" />
+<!-- 	<context:component-scan base-package="org.aksw.sparqlify.admin.web" /> -->
 
 	<!-- Use Java configuration instead - search for WebAppConfig.java -->
 

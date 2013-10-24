@@ -8,18 +8,18 @@
  http://www.springframework.org/schema/context
  http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:component-scan base-package="org.aksw.sparqlify.admin.web.controller" />
+<!-- 	<context:component-scan base-package="org.aksw.sparqlify.admin.web.controller" /> -->
 
-	<mvc:annotation-driven />
-	<mvc:resources mapping="/resources/**" location="/resources/" />
+<!-- 	<mvc:annotation-driven /> -->
+<!-- 	<mvc:resources mapping="/resources/**" location="/resources/" /> -->
 
 
-	<bean id="viewResolver1"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<!-- 	<bean id="viewResolver1" -->
+<!-- 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"> -->
+<!-- 		<property name="prefix"><value>/WEB-INF/jsp/</value></property> -->
+<!-- 		<property name="suffix"><value>.jsp</value></property> -->
 <!-- 		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property> -->
-		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
-		<property name="suffix"><value>.jsp</value></property>
-	</bean>
+<!-- 	</bean> -->
 
 <!-- 	<mvc:view-controller path="/" view-name="welcome.do"/> -->
 

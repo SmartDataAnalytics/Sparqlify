@@ -5,17 +5,14 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-//@RequestMapping("/welcome")
 @Controller
-public class ControllerManager {
+@RequestMapping("/{path : ([^/]+)?}/snorql")
+public class ControllerSnorql {
 
-		
-	// @RequestMapping(method = RequestMethod.GET)
-	@RequestMapping(value = "/index-sparqlify-admin.do", method = RequestMethod.GET)
+	//@RequestMapping(value = "/index-sparqlify-admin.do", method = RequestMethod.GET)
 	public String showIndexPage(ModelMap model) {
 
-		return "index-sparqlify-web-manager";
+		return "snorql/index";
 	}
-	
-	//@RequestMapping
+
 }

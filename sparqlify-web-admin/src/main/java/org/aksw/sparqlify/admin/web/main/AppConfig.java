@@ -47,19 +47,15 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.view.JstlView;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @ComponentScan("org.aksw.sparqlify.admin.web") //.api
-@EnableWebMvc
+//@EnableWebMvc
 @EnableTransactionManagement
 @PropertySource("classpath:config/jdbc/jdbc.properties")
-public class WebAppConfig {
-	
-	
-	private static final Logger logger = LoggerFactory.getLogger(WebAppConfig.class);
+public class AppConfig
+{		
+	private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
 	
 	private static final String JDBC_DRIVER = "jdbc.driver";
 	private static final String JDBC_PASSWORD = "jdbc.password";
@@ -127,17 +123,15 @@ public class WebAppConfig {
 //		return transactionManager;
 //	}
 
-	@Bean
-	public UrlBasedViewResolver setupViewResolver() {
-		UrlBasedViewResolver resolver = new UrlBasedViewResolver();
-		resolver.setPrefix("/WEB-INF/pages/");
-		resolver.setSuffix(".jsp");
-		resolver.setViewClass(JstlView.class);
-		return resolver;
-	}
-	
-	
-	
+//	@Bean
+//	public UrlBasedViewResolver setupViewResolver() {
+//		UrlBasedViewResolver resolver = new UrlBasedViewResolver();
+//		resolver.setPrefix("/WEB-INF/pages/");
+//		resolver.setSuffix(".jsp");
+//		resolver.setViewClass(JstlView.class);
+//		return resolver;
+//	}
+
     @Bean
     public HibernateExceptionTranslator hibernateExceptionTranslator() {
         return new HibernateExceptionTranslator();

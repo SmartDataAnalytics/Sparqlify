@@ -15,6 +15,7 @@
 <!-- 	<script src="resources/libs/angularjs/1.0.8/angular.js"></script> -->
 	
 	<script src="resources/libs/angularjs/1.2.0-rc.2/angular.js"></script>
+	<script src="resources/libs/ui-router/0.2.0/angular-ui-router.js"></script>
 	<script src="resources/libs/jassa/0.1/jassa.js"></script>
 
 <!-- 	<script src="resources/js/sparqlify-web-manager/app.js"></script> -->
@@ -76,173 +77,233 @@
 		/*
 		 * Angular JS
 		 */	
-		var myModule = angular.module('SparqlifyWebAdmin', []);
+		var myModule = angular.module('SparqlifyWebAdmin', ['ui.router']);
+
+		myModule.config(function($stateProvider, $urlRouterProvider) {
+			
+			$urlRouterProvider.otherwise("/dashboard");
+			
+
+			// Now set up the states
+			$stateProvider.state('dashboard', {
+				url : "/dashboard",
+				templateUrl : "resources/partials/execution-list.html",
+				
+			}).state('dashboard.list', {
+				url : "/list",
+				templateUrl : "partials/state1.list.html",
+				controller : function($scope) {
+					$scope.items = [ "A", "List", "Of", "Items" ];
+				}
+			});
+
+// 			$routeProvider.when('/', {
+// 				templateUrl : 'resources/partials/executionist.html'
+// 			});
+		});
 
 		myModule.factory('contextService', function($rootScope, $q, $http) {
 			return {
-				getContexts: function(filterText) {
-					var criteria = {};
-					if(filterText != null && filterText.length > 0) {
-						// TODO: This is essentially a 'filter-any' for which there should be a util method
-						criteria = {
-							$or: [{
-								config: {
-									$or: [{
-										contextPath: {$regex: filterText}
-									}, {
-										dataSource: {
-											$or: [{
-												jdbcUrl: {$regex: filterText}
-											}, {
-												username: {$regex: filterText}
-											}]
+				getContexts : function(filterText) {
+				var criteria = {};
+				if (filterText != null && filterText.length > 0) {
+					// TODO: This is essentially a 'filter-any' for which there should be a util method
+					criteria = {
+						$or : [{
+							config : {
+							$or : [{
+								contextPath : {
+									$regex : filterText
+								}
+							}, {
+								dataSource : {
+									$or : [{
+										jdbcUrl : {
+											$regex : filterText
 										}
 									}, {
-										resource: {data : {$regex: filterText}}
+										username : {
+											$regex : filterText
+										}
 									}]
-								},
+								}
 							}, {
-								status: {$regex: filterText}
+								resource : {
+									data : {
+										$regex : filterText
+									}
+								}
 							}]
-						};
-						//criteria = {name: {$or: [{$regex: filterText}, {$regex: 'orp'}]}};
+						},
+					}, {
+						status : {
+							$regex : filterText
+						}
+					}]
+				};
+					//criteria = {name: {$or: [{$regex: filterText}, {$regex: 'orp'}]}};
 
-						//criteria = {owners: {$elemMatch: {name: {$regex: filterText}}}};
+					//criteria = {owners: {$elemMatch: {name: {$regex: filterText}}}};
 
-// 						criteria = {
-// 								$or: [
-// 								      {name: {$regex: filterText}},
-// 								      {owners: {$elemMatch: {name: {$regex: filterText}}}}
-// 						]};
-					}
-	 				
-//					criteria = {};
-					var promise = store.contexts.find(criteria).asList();
-					//promise.done(function(x) {console.log('data', x); });
-					var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
-					return result;
-		        },
+					// 						criteria = {
+					// 								$or: [
+					// 								      {name: {$regex: filterText}},
+					// 								      {owners: {$elemMatch: {name: {$regex: filterText}}}}
+					// 						]};
+				}
 
-		        doPostRequest: function(url, data, preventJson) {
-		        	console.log('data: ', data);
-		        	var promise = $http({
-		        	    method: 'POST',
-		        	    url: url,
-		        	    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-		        	    transformRequest: function(obj) {
-		        	        var str = [];
-		        	        for(var p in obj) {
-		        	        	var k = encodeURIComponent(p);
-		        	        	
-		        	        	var o = obj[p];
-		        	        	if(!preventJson) {
-		        	        		o = JSON.stringify(o);
-		        	        	}
-		        	        	var v = encodeURIComponent(o);
-		        	        	str.push(k + '=' + v);
-		        	        	console.log('v = ', v);
-		        	        }
-		        	        return str.join("&");
-		        	    },
-		        	    data: data
-		        	});
+				//					criteria = {};
+				var promise = store.contexts.find(criteria)
+						.asList();
+				//promise.done(function(x) {console.log('data', x); });
+				var result = sponate.angular.bridgePromise(
+						promise, $q.defer(), $rootScope);
+				return result;
+			},
 
-		        	return promise;
-		        },
-		        
-		        // TODO Rename to service
-		        createContext: function(data) {
-		        	return this.doPostRequest('manager/api/action/createContext', data);
-		        },
-		        
-		        deleteContext: function(id) {
-		        	return this.doPostRequest('manager/api/action/deleteContext', {id: id});
-		        },
-		        
-		        startService: function(id) {
-		        	return this.doPostRequest('manager/api/action/startService', {id: id}, true);
-		        },
+			doPostRequest : function(url, data, preventJson) {
+				console.log('data: ', data);
+				var promise = $http({
+					method : 'POST',
+					url : url,
+					headers : {
+						'Content-Type' : 'application/x-www-form-urlencoded'
+					},
+					transformRequest : function(obj) {
+						var str = [];
+						for ( var p in obj) {
+							var k = encodeURIComponent(p);
 
-		        stopService: function(id) {
-		        	return this.doPostRequest('manager/api/action/stopService', {id: id}, true);
-		        },
-		        
-		        restartService: function(id) {
-		        	var self = this;
-		        	return this.stopService(id).then(function() {
-		        		self.startService(id);
-		        	});
-		        }
-		   };
+							var o = obj[p];
+							if (!preventJson) {
+								o = JSON.stringify(o);
+							}
+							var v = encodeURIComponent(o);
+							str.push(k + '=' + v);
+							console.log('v = ', v);
+						}
+						return str.join("&");
+					},
+					data : data
+				});
+
+				return promise;
+			},
+
+			// TODO Rename to service
+			createContext : function(data) {
+				return this.doPostRequest(
+						'manager/api/action/createContext',
+						data);
+			},
+
+			deleteContext : function(id) {
+				return this.doPostRequest(
+						'manager/api/action/deleteContext',
+						{
+							id : id
+						});
+			},
+
+			startService : function(id) {
+				return this.doPostRequest(
+						'manager/api/action/startService',
+						{
+							id : id
+						}, true);
+			},
+
+			stopService : function(id) {
+				return this.doPostRequest(
+						'manager/api/action/stopService', {
+							id : id
+						}, true);
+			},
+
+			restartService : function(id) {
+				var self = this;
+				return this.stopService(id).then(
+						function() {
+							self.startService(id);
+						});
+				}
+			};
 		});
 
-		myModule.controller('ContextListCtrl', function($scope, contextService) {
-			$scope.doFilterContexts = function() {
-				$scope.contexts = contextService.getContexts($scope.filterText);
-			};
-			
-			$scope.init = function() {
-				$scope.doFilterContexts();
-			};
-			
-	        $scope.deleteContext = function(id) {
-	        	return contextService.deleteContext(id);
-	        };
+		myModule.controller('ContextListCtrl',
+				function($scope, contextService) {
+					$scope.doFilterContexts = function() {
+						$scope.contexts = contextService
+								.getContexts($scope.filterText);
+					};
 
-	        //$scope.serviceCtrl = contextService;
-	        
-	        $scope.startService = function(id) {
-	        	return contextService.startService(id).then($scope.doFilterContexts);
-	        };
+					$scope.init = function() {
+						$scope.doFilterContexts();
+					};
 
-	        $scope.stopService = function(id) {
-	        	return contextService.stopService(id).then($scope.doFilterContexts);
-	        };
-	        
-	        $scope.restartService = function(id) {
-	        	return contextService.stopService(id).then($scope.doFilterContexts);	        	
-	        };
+					$scope.deleteContext = function(id, path) {
+						var decision = confirm('Really delete context at ' + path + ' with id ' + id + '?');
+						if(decision === true) { 
+							contextService.deleteContext(id);
+						}
+					};
 
-		});
+					//$scope.serviceCtrl = contextService;
 
-		
-		myModule.controller('CreateMappingCtrl', function($scope, contextService) {
-// 			$scope.doFilterContexts = function() {
-// 				$scope.contexts = contextService.getContexts($scope.filterText);
-// 			};
-			
+					$scope.startService = function(id) {
+						return contextService.startService(id).then(
+								$scope.doFilterContexts);
+					};
+
+					$scope.stopService = function(id) {
+						return contextService.stopService(id).then(
+								$scope.doFilterContexts);
+					};
+
+					$scope.restartService = function(id) {
+						return contextService.stopService(id).then(
+								$scope.doFilterContexts);
+					};
+
+				});
+
+		myModule.controller('CreateMappingCtrl', function($scope,
+				contextService) {
+			// 			$scope.doFilterContexts = function() {
+			// 				$scope.contexts = contextService.getContexts($scope.filterText);
+			// 			};
+
 			$scope.create = function() {
 				var data = {
-					contextPath: $scope.path,
-					textResource: {
-						data: $scope.mappingText,
-						type: 'rdb-rdf-mapping',
-						format: 'sml'
+					contextPath : $scope.path,
+					textResource : {
+						data : $scope.mappingText,
+						type : 'rdb-rdf-mapping',
+						format : 'sml'
 					},
-					jdbcDataSource: {
-						jdbcUrl: 'jdbc:postgresql://' + $scope.hostname + '/' + $scope.dbname,
-						username: $scope.username,
-						password: $scope.password
+					jdbcDataSource : {
+						jdbcUrl : 'jdbc:postgresql://' + $scope.hostname + '/'
+								+ $scope.dbname,
+						username : $scope.username,
+						password : $scope.password
 					}
 				};
-				
+
 				var postData = {
-					data: data
+					data : data
 				};
-				
+
 				var promise = contextService.createContext(postData);
 				promise.success(function() {
 					alert('yay');
 				}).error(function() {
 					alert('fail');
 				});
-				
-				
+
 				//$scope.doFilterContexts();
 			};
 		});
 
-		
 		// Utility filter for comma separated values
 		// Source: http://stackoverflow.com/questions/16673439/comma-separated-p-angular
 		myModule.filter('map', function() {
@@ -252,51 +313,12 @@
 				});
 			};
 		});
-		
 	</script>
 </head>
 
 <body ng-controller="ContextListCtrl" data-ng-init="init()">
 
-	<div class="row-fluid">
-		<div class="span8 offset2">
-			<form ng-submit="doFilterContexts()">
-		    	<input type="text" ng-model="filterText" />
-				<input class="btn-primary" type="submit" value="Filter" />
-			</form>
-		
-			<table class="table table-striped">
-				<thead>
-<!-- 					<th>Id</th> -->
-					<th>Path</th>
-					<th>Jdbc Url</th>
-					<th>Username</th>
-					<th>Mapping</th>
-					<th>Status</th>
-					<th>Service</th>
-					<th>Config</th>
-				</thead>
-				<tr ng-repeat="context in contexts">
-<!-- 					<td>{{context.id}}</td> -->
-					<td>{{context.config.contextPath}}</td>
-					<td>{{context.config.dataSource.jdbcUrl}}</td>
-					<td>{{context.config.dataSource.username}}</td>
-					<td>{{context.config.resource.data}}</td>
-					<td>{{context.status}}</td>
-					<td>
-						<a href="" ng-show="context.status=='STOPPED'" ng-click="startService(context.id.slice(1, -1))">Start</a>
-						<a href="" ng-show="context.status!='STOPPED'" ng-click="stopService(context.id.slice(1, -1))">Stop</a>
-						<a href="" ng-click="restartService(context.id)">Restart</a>
-					</td>
-					<td>
-						<a href="" ng-click="editContext(context._id)">Edit</a>
-						<a href="" ng-click="deleteContext(context._id)">Delete</a>						
-					</td>
-				</tr>
-			</table>
-
-		</div>
-	</div>
+	<div ui-view></div>
 
 	<div class="row-fluid">
 		<div class="span6 offset3">
