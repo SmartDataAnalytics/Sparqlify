@@ -4,7 +4,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
@@ -38,20 +37,20 @@ public class WebAppInitializer
 		
 		// Register and map the dispatcher servlet
 		ServletRegistration.Dynamic dispatcherServlet = servletContext.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
-		dispatcherServlet.setLoadOnStartup(1);
+		//dispatcherServlet.addMapping("/*");
+		dispatcherServlet.addMapping("");
 		dispatcherServlet.addMapping("*.do");
-		
+		dispatcherServlet.setLoadOnStartup(1);
 		
 		ServletRegistration.Dynamic adminServlet = servletContext.addServlet("sparqlify-admin-api", new SpringServlet());
 		adminServlet.setInitParameter("com.sun.jersey.config.property.packages", "org.aksw.sparqlify.admin.web.api");
-		adminServlet.setLoadOnStartup(1);
 		adminServlet.addMapping("/manager/*");
+		adminServlet.setLoadOnStartup(1);
 		
 		ServletRegistration.Dynamic endpointServlet = servletContext.addServlet("sparqlify-endpoints", new SpringServlet());
 		endpointServlet.setInitParameter("com.sun.jersey.config.property.packages", "org.aksw.sparqlify.admin.web.endpoint");
 		endpointServlet.setLoadOnStartup(1);
-		endpointServlet.addMapping("/endpoints/*");		
-		
+		endpointServlet.addMapping("/services/*");		
 	}	
 }
 

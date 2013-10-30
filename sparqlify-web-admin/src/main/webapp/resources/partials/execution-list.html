@@ -18,7 +18,7 @@
 				</thead>
 				<tr ng-repeat="context in contexts">
 <!-- 					<td>{{context.id}}</td> -->
-					<td><a href="endpoints/{{context.config.contextPath}}/sparql" target="_blank">{{context.config.contextPath}}</a></td>
+					<td><a href="services/{{context.config.contextPath}}/sparql" target="_blank">{{context.config.contextPath}}</a></td>
 					<td>{{context.config.dataSource.jdbcUrl}}</td>
 					<td>{{context.config.dataSource.username}}</td>
 					<td>{{context.config.resource.data}}</td>

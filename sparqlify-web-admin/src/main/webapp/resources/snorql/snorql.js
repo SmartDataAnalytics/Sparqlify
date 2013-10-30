@@ -10,7 +10,8 @@ String.prototype.startsWith = function(str) {
 
 function Snorql() {
     // modify this._endpoint to point to your SPARQL endpoint
-    this._endpoint = document.location.href.match(/^([^?]*)snorql\//)[1] + 'sparql';
+    //this._endpoint = document.location.href.match(/^([^?]*)snorql\//)[1] + 'sparql';
+	this._endpoint = document.location.href;
     // modify these to your likeing
     this._poweredByLink = 'http://aksw.org/Projects/Sparqlify';
     this._poweredByLabel = 'Sparqlify Server';
@@ -31,7 +32,7 @@ function Snorql() {
         var match = document.location.href.match(/\?(.*)/);
         var queryString = match ? match[1] : '';
         if (!queryString) {
-            document.getElementById('querytext').value = 'SELECT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
+            document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
             this._updateGraph(null, false);
             return;
         }
@@ -40,6 +41,13 @@ function Snorql() {
         this._updateGraph(graph, false);
         var browse = queryString.match(/browse=([^&]*)/);
         var querytext = null;
+        if (browse && browse[1] == 'superclasses') {
+            var resultTitle = 'List of all super classes:';
+            var querytext = 'SELECT DISTINCT ?class\n' +
+                    'WHERE { [] rdfs:subClassOf ?class }\n' +
+                    'ORDER BY ?class';
+            var query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' + querytext;
+        }
         if (browse && browse[1] == 'classes') {
             var resultTitle = 'List of all classes:';
             var query = 'SELECT DISTINCT ?class\n' +

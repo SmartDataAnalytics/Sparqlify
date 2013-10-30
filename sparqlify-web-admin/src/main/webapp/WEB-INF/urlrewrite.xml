@@ -13,11 +13,20 @@
 -->
 <urlrewrite>
 
-	<!-- TODO HACK, It feels like a hack having to rely on URL rewriting for -->
-	<!-- accomplishing a welcome page, but at least it works :/ -->
+<!-- 	<rule> -->
+<!-- 		<from>^(.*)/sparql([^/].*)?$</from> -->
+<!-- 		<to type="temporary-redirect" qsappend="true">$1/sparql/$2</to> -->
+<!-- 	</rule> -->
 	<rule>
-		<from>^/$</from>
-		<to>/index-sparqlify-admin.do</to>
+		<from>^(.*)/sparql$</from>
+		<to type="temporary-redirect">$1/sparql/$2?%{query-string}</to>
 	</rule>
+
+	<rule>
+		<from>^(.*)/sparql/(.*\.(css|js|png))$</from>
+<!-- 		<from>^(.*)/sparql/(.*\..*)$</from> -->
+		<to>/resources/snorql/$2</to>
+	</rule>
+	
 </urlrewrite>
 

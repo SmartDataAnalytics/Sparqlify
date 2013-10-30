@@ -13,7 +13,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 
 
 @Service
-@Path("/api/sparql")
+@Path("/api/sparql/")
 public class SparqlifyManagerSparqlEndpoint
 	extends SparqlEndpointBase
 {

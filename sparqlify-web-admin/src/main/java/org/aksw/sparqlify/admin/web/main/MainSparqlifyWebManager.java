@@ -4,8 +4,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
 import org.aksw.sparqlify.validation.LoggerCount;
@@ -17,12 +15,12 @@ import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.bio.SocketConnector;
-import org.eclipse.jetty.server.handler.ContextHandler.Context;
+import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.component.LifeCycle.Listener;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -96,20 +94,7 @@ public class MainSparqlifyWebManager {
 		final WebAppContext webAppContext = new WebAppContext();
 		//Context servletContext = webAppContext.getServletContext();
 		
-		webAppContext.addLifeCycleListener(new Listener() {
-			
-			@Override
-			public void lifeCycleStopping(LifeCycle arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void lifeCycleStopped(LifeCycle arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+		webAppContext.addLifeCycleListener(new AbstractLifeCycleListener() {
 			@Override
 			public void lifeCycleStarting(LifeCycle arg0) {
 				WebAppInitializer initializer = new WebAppInitializer();
@@ -118,18 +103,6 @@ public class MainSparqlifyWebManager {
 				} catch (ServletException e) {
 					throw new RuntimeException(e);
 				}
-			}
-			
-			@Override
-			public void lifeCycleStarted(LifeCycle arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void lifeCycleFailure(LifeCycle arg0, Throwable arg1) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 
