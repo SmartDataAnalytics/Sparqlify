@@ -5550,6 +5550,7 @@ var Jassa = {
 			
 			
 			// TODO: We need to deal with references
+			var self = this;
 			var processResult = function(it) {
 				var instancer = new ns.AggregatorFacade(pattern);
 				//var instancer = new sponate.PatternVisitorData(pattern);
@@ -5594,7 +5595,7 @@ var Jassa = {
 			};
 
 			
-			var result = service.execSelect(query).pipe(processResult);			
+			var result = self.service.execSelect(query).pipe(processResult);			
 			
 			return result;
 			//console.log('' + query);
@@ -6907,7 +6908,7 @@ or simply: Angular + Magic Sparql = Angular Marql
 				throw 'Bailing out';
 			}
 			
-			this[name] = new ns.Store(service, this.context, name);
+			this[name] = new ns.Store(this.service, this.context, name);
 		},
 		
 		/*

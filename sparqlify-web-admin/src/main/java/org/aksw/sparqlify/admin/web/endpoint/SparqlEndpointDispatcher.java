@@ -25,16 +25,11 @@ import com.hp.hpl.jena.query.QueryExecution;
 
 
 @Service
-//@Path("/{path : ([^/]+)?}/sparql/")
 @Path("/{path}/sparql/")
+//@Path("/{path : ([^/]+)?}/sparql/")
 public class SparqlEndpointDispatcher
 	extends SparqlEndpointBase
-{
-//	@Resource(name="sparqlServiceConfig")
-//	private SparqlServiceManager sparqlServiceConfig;
-
-	//private Map<String, ServiceControl<QueryExecutionFactory>> nameToService;
-	
+{	
 	@Resource(name="sparqlServiceMap")
 	private Map<String, QueryExecutionFactory> nameToService;
 	
@@ -83,6 +78,5 @@ public class SparqlEndpointDispatcher
 		System.out.println("Resource is " + r);
 		return Response.ok(r, MediaType.TEXT_HTML).build();
 	}
-
 }
 

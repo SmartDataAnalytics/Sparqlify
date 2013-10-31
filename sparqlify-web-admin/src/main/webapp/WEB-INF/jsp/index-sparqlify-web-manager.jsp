@@ -5,7 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 	<title>Sparqlify Web Admin</title>
-	<link rel="stylesheet" href="resources/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="resources/libs/twitter-bootstrap/3.0.1/css/bootstrap.css" />
 
 	<script src="resources/libs/jquery/1.9.1/jquery.js"></script>
 	<script src="resources/libs/underscore/1.4.4/underscore.js"></script>
@@ -30,13 +30,36 @@
 			'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
 			'owl': 'http://www.w3.org/2002/07/owl#',
 			'o': 'http://example.org/ontology/',
-			'r': 'http://example.org/resource/'
+			'r': 'http://example.org/resource/',
+			'ldso': 'http://linkeddata.org/integrated-stack-schema/'
 		};
 	
 		var rdf = Jassa.rdf;
 		var sparql = Jassa.sparql;
 		var sponate = Jassa.sponate;
 	
+		/*
+		 * GeoKnow Generator data source integration
+		 */
+		    var service2 = sponate.ServiceUtils.createSparqlHttp('http://generator.geoknow.eu:8890/sparql');	
+			var store2 = new sponate.StoreFacade(service2, prefixes);
+		
+			store2.addMap({
+				name: 'rdbs',
+				template: [{
+					id: '?s',
+					dbType: '?t',
+					dbName: '?n',
+					dbHost: '?h',
+					dbPort: '?p',
+					dbUser: '?u',
+					dbPass: '?w'
+				}],
+				from: '?s a ldso:Database ; ldso:dbType ?t ; ldso:dbName ?n ; ldso:dbHost ?h ; ldso:dbPort ?p ; ldso:dbUser ?u ; ldso:dbPassword ?w .'
+			});
+
+			store2.rdbs.find().asList().done(function(items) { alert(JSON.stringify(items)); });
+		
 		/*
 		 * Sponate
 		 */
@@ -105,59 +128,57 @@
 		myModule.factory('contextService', function($rootScope, $q, $http) {
 			return {
 				getContexts : function(filterText) {
-				var criteria = {};
-				if (filterText != null && filterText.length > 0) {
-					// TODO: This is essentially a 'filter-any' for which there should be a util method
-					criteria = {
-						$or : [{
-							config : {
+					var criteria = {};
+					if (filterText != null && filterText.length > 0) {
+						// TODO: This is essentially a 'filter-any' for which there should be a util method
+						criteria = {
 							$or : [{
-								contextPath : {
-									$regex : filterText
-								}
-							}, {
-								dataSource : {
+								config : {
 									$or : [{
-										jdbcUrl : {
+										contextPath : {
 											$regex : filterText
 										}
 									}, {
-										username : {
-											$regex : filterText
+										dataSource : {
+											$or : [{
+												jdbcUrl : {
+													$regex : filterText
+												}
+											}, {
+												username : {
+													$regex : filterText
+												}
+											}]
+										}
+									}, {
+										resource : {
+											data : {
+												$regex : filterText
+											}
 										}
 									}]
-								}
-							}, {
-								resource : {
-									data : {
-										$regex : filterText
-									}
-								}
-							}]
-						},
-					}, {
-						status : {
-							$regex : filterText
-						}
-					}]
-				};
-					//criteria = {name: {$or: [{$regex: filterText}, {$regex: 'orp'}]}};
-
-					//criteria = {owners: {$elemMatch: {name: {$regex: filterText}}}};
-
-					// 						criteria = {
-					// 								$or: [
-					// 								      {name: {$regex: filterText}},
-					// 								      {owners: {$elemMatch: {name: {$regex: filterText}}}}
-					// 						]};
+								},
+						}, {
+							status : {
+								$regex : filterText
+							}
+						}]
+					};
+						//criteria = {name: {$or: [{$regex: filterText}, {$regex: 'orp'}]}};
+	
+						//criteria = {owners: {$elemMatch: {name: {$regex: filterText}}}};
+	
+						// 						criteria = {
+						// 								$or: [
+						// 								      {name: {$regex: filterText}},
+						// 								      {owners: {$elemMatch: {name: {$regex: filterText}}}}
+						// 						]};
 				}
 
 				//					criteria = {};
-				var promise = store.contexts.find(criteria)
-						.asList();
+				var promise = store.contexts.find(criteria).asList();
 				//promise.done(function(x) {console.log('data', x); });
-				var result = sponate.angular.bridgePromise(
-						promise, $q.defer(), $rootScope);
+				var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
 				return result;
 			},
 
@@ -232,9 +253,8 @@
 
 		myModule.controller('ContextListCtrl',
 				function($scope, contextService) {
-					$scope.doFilterContexts = function() {
-						$scope.contexts = contextService
-								.getContexts($scope.filterText);
+					$scope.doFilterContexts = function(filterText) {
+						$scope.contexts = contextService.getContexts(filterText);
 					};
 
 					$scope.init = function() {
@@ -318,29 +338,35 @@
 
 <body ng-controller="ContextListCtrl" data-ng-init="init()">
 
-	<div ui-view></div>
-
-	<div class="row-fluid">
-		<div class="span6 offset3">
-		
-			<div ng-controller="CreateMappingCtrl">
-				<form novalidate class="css-form">
-					<table class="table table-condensed">
-					<tr><td>Path:</td><td><input type="text" style="width:95%" ng-model="path" required /></td></tr>
-					<tr><td>Hostname:</td><td><input type="text" ng-model="hostname" required /></td></tr>
-					<tr><td>Database:</td><td><input type="text" ng-model="dbname" required /></td></tr>
-		
-					<tr><td>Username:</td><td><input type="text" ng-model="username" required /></td></tr>
-					<tr><td>Password:</td><td><input type="password" ng-model="password" required /></td></tr>
-		
-					<tr><td>Mapping:</td><td><textarea rows="25" cols="80" ng-model="mappingText" required></textarea></td></tr>
-					
-		<!-- 			URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
-		
-					<tr><td></td><td><button ng-click="cancel()">Cancel</button>
-					<button ng-click="create()">Create</button></td></tr>
-					</table>
-				</form>
+	<div class="container">
+		<h2>Sparqlify Service Management</h2>
+<!-- 		ng-include="template.url" -->
+		<button class="btn btn-large btn-primary">Add New Service</button>
+		<h3>Existing Services</h3>
+		<div ui-view></div>
+	
+		<div class="row-fluid">
+			<div class="span6 offset3">
+			
+				<div ng-controller="CreateMappingCtrl">
+					<form novalidate class="css-form">
+						<table class="table table-condensed">
+						<tr><td>Path:</td><td><input type="text" style="width:95%" ng-model="path" required /></td></tr>
+						<tr><td>Hostname:</td><td><input type="text" ng-model="hostname" required /></td></tr>
+						<tr><td>Database:</td><td><input type="text" ng-model="dbname" required /></td></tr>
+			
+						<tr><td>Username:</td><td><input type="text" ng-model="username" required /></td></tr>
+						<tr><td>Password:</td><td><input type="password" ng-model="password" required /></td></tr>
+			
+						<tr><td>Mapping:</td><td><textarea rows="25" cols="80" ng-model="mappingText" required></textarea></td></tr>
+						
+			<!-- 			URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
+			
+						<tr><td></td><td><button ng-click="cancel()">Cancel</button>
+						<button ng-click="create()">Create</button></td></tr>
+						</table>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>

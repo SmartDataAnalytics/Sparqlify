@@ -118,16 +118,16 @@ public class ServletManager
 	@Path("/deleteContext")
 	public String deleteContext(@FormParam("id") Integer id) {
 		
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-
-		Rdb2RdfConfig proto = new Rdb2RdfConfig();
-		proto.setId(id);
-		em.remove(proto);
-		
-		em.getTransaction().commit();
-		em.close();
-		
+//		EntityManager em = emf.createEntityManager();
+//		em.getTransaction().begin();
+//
+//		Rdb2RdfConfig proto = new Rdb2RdfConfig();
+//		proto.setId(id);
+//		em.remove(proto);
+//		
+//		em.getTransaction().commit();
+//		em.close();
+//		
 		
 		return "{}";
 	}

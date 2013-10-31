@@ -232,8 +232,6 @@ public class AppConfig
 					Rdb2RdfExecution.class,
 					new ServiceLauncherRdb2Rdf()
 					);
-
-		serviceRepo.startAll();
 		
 		return serviceRepo;
 	}
@@ -246,7 +244,9 @@ public class AppConfig
 		
 		ServiceEventListenerRegister listener = new ServiceEventListenerRegister(result);
 		serviceRepo.getServiceEventListeners().add(listener);
-		
+
+		serviceRepo.startAll();
+
 		return result;
 	}
 
