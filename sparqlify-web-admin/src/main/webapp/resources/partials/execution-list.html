@@ -22,6 +22,9 @@
 					<th>Username</th>
 					<th>Mapping</th>
 				</thead>
+				<tr ng-show="!contexts.length">
+					<td colspan="7" style="text-align: center"><span>(empty table)</span></td>
+				</tr>
 				<tr ng-repeat="context in contexts">
 <!-- 					<td>{{context.id}}</td> -->
 					<td>

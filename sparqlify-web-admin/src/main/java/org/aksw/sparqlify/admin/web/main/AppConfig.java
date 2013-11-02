@@ -32,13 +32,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -49,8 +51,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan("org.aksw.sparqlify.admin.web") //.api
-//@EnableWebMvc
+@ComponentScan("org.aksw.sparqlify.admin.web")
 @EnableTransactionManagement
 @PropertySource("classpath:config/jdbc/jdbc.properties")
 public class AppConfig
@@ -70,6 +71,26 @@ public class AppConfig
 	@Resource
 	private Environment env;
 	
+//	@Bean
+//	public JndiObjectFactoryBean jndiObjectFactory() {
+//		
+//		String jndiName = "java:comp/env/jdbc/sparqlifyWebAdminDs";
+//		
+//		
+//		JndiTemplate jndiTemplate = new JndiTemplate();
+//		jndiTemplate.lookup(name)
+//		
+//		JndiObjectFactoryBean result = new JndiObjectFactoryBean();
+//		result.setJndiName();
+//		return result;
+//	}
+	
+	//@Bean
+//	public DataSource dataSource2() {
+//		JndiObjectFactoryBean jndiObjectFactory = new JndiObjectFactoryBean();
+//		
+//	}
+	
 	@Bean
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -83,7 +104,7 @@ public class AppConfig
 	}
 
 //	@Bean
-//	@Autowired
+//	
 //	public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
 //		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
 //		sessionFactoryBean.setDataSource(dataSource);
@@ -106,7 +127,7 @@ public class AppConfig
 	}
 
 //	@Bean
-//	@Autowired
+//	
 //	public HibernateTransactionManager transactionManager(LocalSessionFactoryBean sessionFactory) {
 //
 //		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
@@ -138,7 +159,6 @@ public class AppConfig
     }
  
     @Bean
-    @Autowired
     public EntityManagerFactory entityManagerFactory(DataSource dataSource) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
@@ -167,7 +187,6 @@ public class AppConfig
     }
  
     @Bean
-    @Autowired
     public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager txManager = new JpaTransactionManager();
         JpaDialect jpaDialect = new HibernateJpaDialect();
@@ -180,13 +199,13 @@ public class AppConfig
 	
 	/**
 	 * 
-	 * TODO We must ensure that the schema exists prior to mapping it
+	 * Note: We must ensure that the schema exists prior to mapping it
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	@Bean
-	@Autowired
+	@DependsOn("entityManagerFactory")
 	public QueryExecutionFactory managerApiQef(DataSource dataSource)
 		throws Exception
 	{
@@ -204,7 +223,6 @@ public class AppConfig
 
 	
 	@Bean
-	@Autowired
 	public SparqlSqlInverseMapper sparqlSqlInverseMapper(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
 		SparqlSqlInverseMapper result = new SparqlSqlInverseMapperImpl(candidateViewSelector, sqlTranslator);
 		
@@ -212,7 +230,6 @@ public class AppConfig
 	}
 	
 	@Bean
-	@Autowired
 	public EntityInverseMapper entityInverseMapper(SessionFactory sessionFactory, SparqlSqlInverseMapper inverseMapper) {
 		EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
 		return result;
@@ -220,7 +237,6 @@ public class AppConfig
 
 	
 	@Bean
-	@Autowired
 	public ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> sparqlServiceRepo(JpaTransactionManager txManager) {
 
 		EntityManagerFactory emf = txManager.getEntityManagerFactory();
@@ -238,7 +254,6 @@ public class AppConfig
 	
 
 	@Bean
-	@Autowired
 	public Map<String, QueryExecutionFactory> sparqlServiceMap(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo) {
 		Map<String, QueryExecutionFactory> result = Collections.synchronizedMap(new HashMap<String, QueryExecutionFactory>());
 		
@@ -252,7 +267,6 @@ public class AppConfig
 
 	
 	@Bean
-	@Autowired
 	public ServiceManager sparqlServiceManager(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo, EntityInverseMapper entityInverseMapper) {
 		ServiceManager serviceManager = ServiceManagerImpl.create(serviceRepo, entityInverseMapper);
 
@@ -261,7 +275,6 @@ public class AppConfig
 
 
 	@Bean
-	@Autowired
 	public SessionFactory sessionFactory(JpaTransactionManager txManager) {
 		EntityManagerFactory emf = txManager.getEntityManagerFactory();
 		SessionFactory result = ((HibernateEntityManagerFactory)emf).getSessionFactory();
@@ -273,21 +286,18 @@ public class AppConfig
 	// in spring bean style
 	
 	@Bean
-	@Autowired
 	public SparqlSqlOpRewriterImpl sparqlSqlOpRewriter(QueryExecutionFactory qef) {
 		SparqlSqlOpRewriterImpl result = SparqlifyUtils.unwrapOpRewriter(qef);
 		return result;
 	}
 
 	@Bean
-	@Autowired
 	public SqlTranslator sqlTranslator(SparqlSqlOpRewriterImpl opRewriter) {
 		SqlTranslator result = SparqlifyUtils.unwrapSqlTransformer(opRewriter);
 		return result;
 	}
 
 	@Bean
-	@Autowired
 	public CandidateViewSelectorImpl candidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
 		CandidateViewSelectorImpl result = SparqlifyUtils.unwrapCandidateViewSelector(opRewriter);
 		return result;
