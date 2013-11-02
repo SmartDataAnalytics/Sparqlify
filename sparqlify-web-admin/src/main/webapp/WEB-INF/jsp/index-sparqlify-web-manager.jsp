@@ -8,14 +8,19 @@
 	<link rel="stylesheet" href="resources/libs/twitter-bootstrap/3.0.1/css/bootstrap.css" />
 
 	<script src="resources/libs/jquery/1.9.1/jquery.js"></script>
+	
+	<script src="resources/libs/twitter-bootstrap/3.0.1/js/bootstrap.js"></script>
+
+	<script src="resources/libs/angularjs/1.2.0-rc.2/angular.js"></script>
+	<script src="resources/libs/ui-router/0.2.0/angular-ui-router.js"></script>
+	<script src="resources/libs/angular-ui/0.6.0/ui-bootstrap-tpls-0.6.0.js"></script>
+	
 	<script src="resources/libs/underscore/1.4.4/underscore.js"></script>
 	<script src="resources/libs/underscore.string/2.3.0/underscore.string.js"></script>
 	<script src="resources/libs/prototype/1.7.1/prototype.js"></script>
 	
 <!-- 	<script src="resources/libs/angularjs/1.0.8/angular.js"></script> -->
 	
-	<script src="resources/libs/angularjs/1.2.0-rc.2/angular.js"></script>
-	<script src="resources/libs/ui-router/0.2.0/angular-ui-router.js"></script>
 	<script src="resources/libs/jassa/0.1/jassa.js"></script>
 
 <!-- 	<script src="resources/js/sparqlify-web-manager/app.js"></script> -->
@@ -58,7 +63,7 @@
 				from: '?s a ldso:Database ; ldso:dbType ?t ; ldso:dbName ?n ; ldso:dbHost ?h ; ldso:dbPort ?p ; ldso:dbUser ?u ; ldso:dbPassword ?w .'
 			});
 
-			store2.rdbs.find().asList().done(function(items) { alert(JSON.stringify(items)); });
+			//store2.rdbs.find().asList().done(function(items) { alert(JSON.stringify(items)); });
 		
 		/*
 		 * Sponate
@@ -100,7 +105,7 @@
 		/*
 		 * Angular JS
 		 */	
-		var myModule = angular.module('SparqlifyWebAdmin', ['ui.router']);
+		var myModule = angular.module('SparqlifyWebAdmin', ['ui.router', 'ui.bootstrap']);
 
 		myModule.config(function($stateProvider, $urlRouterProvider) {
 			
@@ -333,6 +338,25 @@
 				});
 			};
 		});
+		
+
+
+		var TabsDemoCtrl = function ($scope) {
+		  $scope.tabs = [
+		    { title:"Dynamic Title 1", content:"Dynamic content 1" },
+		    { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
+		  ];
+
+		  $scope.alertMe = function() {
+		    setTimeout(function() {
+		      alert("You've selected the alert tab!");
+		    });
+		  };
+
+		  $scope.navType = 'pills';
+		};
+
+
 	</script>
 </head>
 
@@ -340,18 +364,21 @@
 
 	<div class="container">
 		<h2>Sparqlify Service Management</h2>
-<!-- 		ng-include="template.url" -->
-		<button class="btn btn-large btn-primary">Add New Service</button>
-		<h3>Existing Services</h3>
-		<div ui-view></div>
-	
-		<div class="row-fluid">
-			<div class="span6 offset3">
+		<div ng-controller="CreateMappingCtrl">
+
+			<button class="btn btn-large btn-primary" ng-click="newRdb2RdfService();" data-toggle="modal" data-target="#rdb2RdfService">Add New Service</button>
 			
-				<div ng-controller="CreateMappingCtrl">
+			<div id="rdb2RdfService" class="modal fade">
+			  <div class="modal-dialog">
+    <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h5 class="modal-title green bold">{{modaltitle}}</h5>
+    			</div>
+    			<div class="modal-body">
 					<form novalidate class="css-form">
 						<table class="table table-condensed">
-						<tr><td>Path:</td><td><input type="text" style="width:95%" ng-model="path" required /></td></tr>
+						<tr><td>Path:</td><td><input type="text" ng-model="path" required /></td></tr>
 						<tr><td>Hostname:</td><td><input type="text" ng-model="hostname" required /></td></tr>
 						<tr><td>Database:</td><td><input type="text" ng-model="dbname" required /></td></tr>
 			
@@ -362,13 +389,45 @@
 						
 			<!-- 			URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
 			
-						<tr><td></td><td><button ng-click="cancel()">Cancel</button>
-						<button ng-click="create()">Create</button></td></tr>
+<!-- 						<tr><td></td><td><button ng-click="cancel()">Cancel</button> -->
+<!-- 						<button ng-click="create()">Create</button></td></tr> -->
 						</table>
 					</form>
 				</div>
+				<div class="modal-footer">
+<!-- 				ng-disabled="endpointForm.$invalid || isUnchanged(endpoint) -->
+      				<button type="submit" class="btn-sm btn-success" ng-click="create()">Save</button>
+      				<button type="button" class="btn-sm btn-default" ng-click="cancel()" data-dismiss="modal" >Cancel</button>
+    			</div>
+			</div>
+			</div>
 			</div>
 		</div>
+
+		
+		<h3>Existing Services</h3>
+		<div ui-view></div>
+	
+		<div class="row-fluid">
+			<div class="span6 offset3">
+			
+			
+  <tabset>
+    <tab heading="Static title">Static content</tab>
+    <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+      {{tab.content}}
+    </tab>
+    <tab select="alertMe()">
+      <tab-heading>
+        <i class="icon-bell"></i> Select me for alert!
+      </tab-heading>
+      I've got an HTML heading, and a select callback. Pretty cool!
+    </tab>
+  </tabset>
+			
+			</div>
+		</div>
+
 	</div>
 </body>
 </html>
