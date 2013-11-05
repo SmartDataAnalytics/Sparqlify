@@ -3,11 +3,13 @@ package org.aksw.sparqlify.admin.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -22,7 +24,8 @@ public class Rdb2RdfExecution
 
 	private String status;
 	
-	@ElementCollection
+	//@ElementCollection
+	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	private List<LogMessage> logMessages = new ArrayList<LogMessage>();
 
 	// A reference to the configuration from which this execution was created

@@ -256,6 +256,34 @@ public class ServiceRepositoryJpaImpl<C, E, S>
 		em.close();
 	}
 	
+	/**
+	 * Stops a service and removes its execution record
+	 * 
+	 * @param configId
+	 */
+	public void deleteByConfigId(Object configId) {
+		ServiceState state = configIdToState.get(configId);
+		
+		stopByConfigId(configId);
+		
+
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		
+		List<ConfigToExecution> ctes = getMappings(em, configId);
+		
+		E executionContext = em.find(executionContextClass, state.getExecutionContextId());
+		em.remove(executionContext);
+		
+		
+		for(ConfigToExecution cte : ctes) {
+			em.remove(cte);
+		}
+		
+		em.getTransaction().commit();
+		em.close();
+	}
+	
 	
 	public List<ConfigToExecution> getMappings(EntityManager em, Object configId) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

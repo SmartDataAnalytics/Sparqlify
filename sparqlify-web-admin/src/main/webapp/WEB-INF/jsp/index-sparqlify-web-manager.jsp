@@ -217,15 +217,15 @@
 			},
 
 			// TODO Rename to service
-			createContext : function(data) {
+			createService : function(data) {
 				return this.doPostRequest(
-						'manager/api/action/createContext',
+						'manager/api/action/createService',
 						data);
 			},
 
-			deleteContext : function(id) {
+			deleteService : function(id) {
 				return this.doPostRequest(
-						'manager/api/action/deleteContext',
+						'manager/api/action/deleteService',
 						{
 							id : id
 						});
@@ -266,28 +266,25 @@
 						$scope.doFilterContexts();
 					};
 
-					$scope.deleteContext = function(id, path) {
+					$scope.deleteService = function(id, path) {
 						var decision = confirm('Really delete context at ' + path + ' with id ' + id + '?');
 						if(decision === true) { 
-							contextService.deleteContext(id);
+							contextService.deleteService(id).then($scope.doFilterContexts)
 						}
 					};
 
 					//$scope.serviceCtrl = contextService;
 
 					$scope.startService = function(id) {
-						return contextService.startService(id).then(
-								$scope.doFilterContexts);
+						return contextService.startService(id).then($scope.doFilterContexts);
 					};
 
 					$scope.stopService = function(id) {
-						return contextService.stopService(id).then(
-								$scope.doFilterContexts);
+						return contextService.stopService(id).then($scope.doFilterContexts);
 					};
 
 					$scope.restartService = function(id) {
-						return contextService.stopService(id).then(
-								$scope.doFilterContexts);
+						return contextService.stopService(id).then($scope.doFilterContexts);
 					};
 
 				});
@@ -298,7 +295,7 @@
 			// 				$scope.contexts = contextService.getContexts($scope.filterText);
 			// 			};
 
-			$scope.create = function() {
+			$scope.createService = function() {
 				var data = {
 					contextPath : $scope.path,
 					textResource : {
@@ -318,8 +315,9 @@
 					data : data
 				};
 
-				var promise = contextService.createContext(postData);
+				var promise = contextService.createService(postData);
 				promise.success(function() {
+					$scope.doFilterContexts();
 					alert('yay');
 				}).error(function() {
 					alert('fail');
@@ -396,8 +394,8 @@
 				</div>
 				<div class="modal-footer">
 <!-- 				ng-disabled="endpointForm.$invalid || isUnchanged(endpoint) -->
-      				<button type="submit" class="btn-sm btn-success" ng-click="create()">Save</button>
-      				<button type="button" class="btn-sm btn-default" ng-click="cancel()" data-dismiss="modal" >Cancel</button>
+      				<button type="submit" class="btn-sm btn-success" ng-click="createService()">Save</button>
+      				<button type="button" class="btn-sm btn-default" ng-click="cancel()" data-dismiss="modal">Cancel</button>
     			</div>
 			</div>
 			</div>

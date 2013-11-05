@@ -67,29 +67,79 @@ public class ServiceManagerImpl<C, E, S>
 		
 		return result;
 	}
+	
+	public Set<Object> getConfigIds(String serviceUriStr) {
+		Set<Object> result = new HashSet<Object>();
 
-	@Override
-	public void startService(String serviceUriStr) {
 		Set<Object> executionContextIds = getEntityIds(serviceUriStr);
 		for(Object executionContextId : executionContextIds) {
 			ServiceState state = serviceRepository.getStateByExecutionContextId(executionContextId);
 			Object configId = state != null ? state.getConfigId() : null;
 			
+			if(state != null) {
+				result.add(configId);
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void startService(String serviceUriStr) {
+		Set<Object> configIds = getConfigIds(serviceUriStr);
+		for(Object configId : configIds) {
 			serviceRepository.startByConfigId(configId);
-			
-		}		
+		}
 	}
 
 	@Override
 	public void stopService(String serviceUriStr) {
-		Set<Object> executionContextIds = getEntityIds(serviceUriStr);
-		for(Object executionContextId : executionContextIds) {
-			ServiceState state = serviceRepository.getStateByExecutionContextId(executionContextId);
-			Object configId = state != null ? state.getConfigId() : null;
-			
+		Set<Object> configIds = getConfigIds(serviceUriStr);
+		for(Object configId : configIds) {
 			serviceRepository.stopByConfigId(configId);
-			
-		}		
+		}
 	}
+
+	@Override
+	public void deleteService(String serviceUriStr) {
+		Set<Object> configIds = getConfigIds(serviceUriStr);
+		for(Object configId : configIds) {
+			serviceRepository.deleteByConfigId(configId);
+		}
+	}
+
+	@Override
+	public String registerService(Object configId) {
+		serviceRepository.startByConfigId(configId);
+		
+		// TODO Currently we cannot map a configId to its URI
+		return null;
+	}
+
+	@Override
+	public Object getConfigId(String serviceUriStr) {
+		Set<Object> configIds = getConfigIds(serviceUriStr);
+		
+		if(configIds.size() > 1) {
+			throw new RuntimeException("Multiple ids not expected");
+		}
+		
+		Object result = configIds.isEmpty() ? null : configIds.iterator().next();
+				
+		return result;
+	}
+
 	
+//	@Override
+//	public void deleteService(String serviceUriStr) {
+//		Set<Object> executionContextIds = getEntityIds(serviceUriStr);
+//		for(Object executionContextId : executionContextIds) {
+//			ServiceState state = serviceRepository.getStateByExecutionContextId(executionContextId);
+//			Object configId = state != null ? state.getConfigId() : null;
+//			
+//			serviceRepository.stopByConfigId(configId);
+//			
+//		}		
+//	}
+
 }

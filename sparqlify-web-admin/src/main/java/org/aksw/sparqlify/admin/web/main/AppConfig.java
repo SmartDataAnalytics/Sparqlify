@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.admin.web.main;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +40,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jndi.JndiObjectFactoryBean;
-import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -93,6 +92,10 @@ public class AppConfig
 	
 	@Bean
 	public DataSource dataSource() {
+		
+//		URL location = AppConfig.class.getProtectionDomain().getCodeSource().getLocation();
+//        System.out.println(location.getFile());
+		
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
 		dataSource.setDriverClassName(env.getRequiredProperty(JDBC_DRIVER));

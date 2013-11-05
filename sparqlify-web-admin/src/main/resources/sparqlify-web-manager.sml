@@ -120,4 +120,23 @@ Create View rdb2rdfExecution As
   From
     "rdb2rdfexecution"
 
-    
+
+/*
+Create View rdb2rdfExecution_logmessages As
+  Construct {
+    ?s
+      a o:LogEntry ;
+      o:for ?e ;
+      rdfs:label ?l ; 
+      o:level ?lvl ;
+      .
+  }
+  With
+    ?s = uri(r:, 'rdb2RdfExecutionLogMessage', ?rdb2rdfexecution_id)
+    ?e = uri(r:, 'rdb2RdfExecution', ?rdb2rdfexecution_id)
+    ?l = plainLiteral(?text)
+    ?lvl = plainLiteral(?level)    
+  From
+    "rdb2rdfexecution_logmessages"
+*/
+  

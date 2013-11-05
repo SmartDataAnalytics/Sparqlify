@@ -1,11 +1,20 @@
 package org.aksw.sparqlify.admin.model;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-@Embeddable
+//@Embeddable
+@Entity
 public class LogMessage {
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+
+	
 	private String level;
 	
 	@Column(columnDefinition = "varchar(65536)")
@@ -14,11 +23,19 @@ public class LogMessage {
 	public LogMessage() {
 		
 	}
-	
+		
 	public LogMessage(String level, String text) {
 		super();
 		this.level = level;
 		this.text = text;
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getLevel() {

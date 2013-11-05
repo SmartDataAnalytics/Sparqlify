@@ -13,12 +13,35 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.aksw.service_framework.core.ServiceRepository;
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
-import org.aksw.sparqlify.jpa.EntityInverseMapper;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+
+
+class CollectionJpa<T> {
+	private EntityManagerFactory emf;
+	private Class<T> clazz;
+	
+	public CollectionJpa(Class<T> clazz, EntityManagerFactory emf) {
+		this.emf = emf;
+		this.clazz = clazz;
+	}
+	
+	public T get(Object id) {
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		
+		T result = em.find(clazz, id);
+		
+		em.getTransaction().commit();
+		em.close();
+		
+		return result;
+	}
+}
 
 
 @Service
@@ -30,6 +53,9 @@ public class ServletManager
 	
 	@Resource
 	private ServiceManager serviceManager;
+	
+	@Resource
+	private ServiceRepository<?> serviceRepo;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -113,28 +139,34 @@ public class ServletManager
 	}
 
 	
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/deleteContext")
-	public String deleteContext(@FormParam("id") Integer id) {
-		
-//		EntityManager em = emf.createEntityManager();
-//		em.getTransaction().begin();
-//
-//		Rdb2RdfConfig proto = new Rdb2RdfConfig();
-//		proto.setId(id);
-//		em.remove(proto);
+//	@POST
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Path("/deleteContext")
+//	public String deleteContext(@FormParam("id") Integer id) {
 //		
-//		em.getTransaction().commit();
-//		em.close();
+////		EntityManager em = emf.createEntityManager();
+////		em.getTransaction().begin();
+////
+////		Rdb2RdfConfig proto = new Rdb2RdfConfig();
+////		proto.setId(id);
+////		em.remove(proto);
+////		
+////		em.getTransaction().commit();
+////		em.close();
+////		
 //		
-		
-		return "{}";
-	}
+//		return "{}";
+//	}
 	
+	/**
+	 * Create a new service based on the given configuration
+	 * 
+	 * @param json
+	 * @return
+	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/createContext")
+	@Path("/createService")
 	public String createInstance(
 			@FormParam("data") String json
 			/*
@@ -145,7 +177,10 @@ public class ServletManager
 			@FormParam("password") String password,
 			@FormParam("mappingText") String mappingText
 			*/
-		) {
+		)
+	{
+		// configCollection.add(rdb2rdfConfig)
+		// 
 		
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
@@ -178,17 +213,46 @@ public class ServletManager
 
 		em.persist(rdb2rdfConfig);
 
+		em.flush();
 		em.getTransaction().commit();
 		em.close();
 
+		//serviceManager.registerService(rdb2rdfConfig);
+		serviceRepo.startByConfigId(rdb2rdfConfig.getId());
+		//serviceManager.startService(rdb2rdfConfig.getId());
 		
 		return "{}";
 	}
 
-	@Resource()
-	private EntityInverseMapper inverseMapper;
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/deleteService")
+	public String deleteService(@FormParam("id") String id) {
+		
+		// Remove the config object
+		Object configId = serviceManager.getConfigId(id);
+		if(configId == null) {
+			throw new RuntimeException("No config found for id " + id);
+		}
+		
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
 
-
+		//serviceManager.deleteService(id);
+		
+		Rdb2RdfConfig config = em.find(Rdb2RdfConfig.class, configId);
+		em.remove(config);
+		
+		em.getTransaction().commit();
+		em.close();
+				
+		
+		serviceManager.deleteService(id);
+		
+		return "{}";
+	}
+	
+	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/startService")
