@@ -228,7 +228,7 @@
 						'manager/api/action/deleteService',
 						{
 							id : id
-						});
+						}, true);
 			},
 
 			startService : function(id) {
@@ -267,7 +267,7 @@
 					};
 
 					$scope.deleteService = function(id, path) {
-						var decision = confirm('Really delete context at ' + path + ' with id ' + id + '?');
+						var decision = confirm('Really delete service with id ' + id + '?');
 						if(decision === true) { 
 							contextService.deleteService(id).then($scope.doFilterContexts)
 						}

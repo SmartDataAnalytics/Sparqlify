@@ -35,11 +35,11 @@
 						<button title="Restart Service" class="btn btn-default btn-xs" ng-click="restartService(context.id)"><span class="glyphicon glyphicon-refresh"></span></a>
 					</td>
 					<td>
-						<button title="Edit" type="button" class="btn btn-default btn-xs" ng-click="editContext(context._id)"><span class="glyphicon glyphicon-edit"></span></button>
-						<button title="Delete" type="button" class="btn btn-default btn-xs" ng-click="deleteContext(context._id, context.config.contextPath)"><span class="glyphicon glyphicon-trash"></span></button>					
+						<button title="Edit" type="button" class="btn btn-default btn-xs" ng-click="editService(context._id)"><span class="glyphicon glyphicon-edit"></span></button>
+						<button title="Delete" type="button" class="btn btn-default btn-xs" ng-click="deleteService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-trash"></span></button>					
 					</td>
 					<td>
-						<button title="View Details" type="button" class="btn btn-default btn-xs" ng-click="viewDetailsContext(context._id)"><span class="glyphicon glyphicon-eye-open"></span></button>
+						<button title="View Details" type="button" class="btn btn-default btn-xs" ng-click="viewServiceDetails(context._id)"><span class="glyphicon glyphicon-eye-open"></span></button>
 					</td>
 					<td><a href="services/{{context.config.contextPath}}/sparql" target="_blank">{{context.config.contextPath}}</a></td>
 					<td>{{context.status}}</td>

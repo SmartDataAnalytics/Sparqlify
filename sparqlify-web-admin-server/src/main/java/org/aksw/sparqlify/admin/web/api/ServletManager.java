@@ -235,6 +235,9 @@ public class ServletManager
 			throw new RuntimeException("No config found for id " + id);
 		}
 		
+		serviceManager.deleteService(id);
+
+		
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
 
@@ -246,9 +249,7 @@ public class ServletManager
 		em.getTransaction().commit();
 		em.close();
 				
-		
-		serviceManager.deleteService(id);
-		
+				
 		return "{}";
 	}
 	
