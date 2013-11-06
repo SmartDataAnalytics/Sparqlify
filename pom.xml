@@ -43,7 +43,9 @@
 		<module>sparqlify-jpa</module>
 		
 		<module>sparqlify-update</module>
-		<module>sparqlify-web-admin</module>
+
+		<module>sparqlify-web-admin-client</module>
+		<module>sparqlify-web-admin-server</module>
 	</modules>
 
 
@@ -348,6 +350,13 @@
 				<version>${project.version}</version>
 			</dependency>
 						
+                        <dependency>
+                                <groupId>org.aksw.sparqlify</groupId>
+                                <artifactId>sparqlify-web-admin-client</artifactId>
+                                <version>${project.version}</version>
+				<type>war</type>
+                        </dependency>
+
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.aksw.sparqlify</groupId> -->

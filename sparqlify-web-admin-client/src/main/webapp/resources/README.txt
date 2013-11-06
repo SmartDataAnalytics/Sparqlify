@@ -1,0 +1,3 @@
+I tried to separate the client from the server module, however,
+this makes programmatic launching of the web admin from *eclipse*
+difficult, as the dependencies first need to be resolved by maven... 

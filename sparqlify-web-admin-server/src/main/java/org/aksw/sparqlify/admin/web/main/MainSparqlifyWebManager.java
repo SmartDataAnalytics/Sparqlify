@@ -113,12 +113,13 @@ public class MainSparqlifyWebManager {
 		URL location = protectionDomain.getCodeSource().getLocation();
 		String externalForm = location.toExternalForm();
 		
+		logger.debug("External form: " + externalForm);
 		
 		// Try to detect whether we are being run from an
 		// archive (uber jar / war) or just from compiled classes
 		if(externalForm.endsWith("/classes/")) {
 			externalForm = "src/main/webapp";
-			//externalForm = "target/sparqlify-web-admin/";
+			//externalForm = "target/sparqlify-web-admin-server";
 		}
 		
 		
