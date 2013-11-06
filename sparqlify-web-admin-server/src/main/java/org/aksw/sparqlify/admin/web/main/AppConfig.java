@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.admin.web.main;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +68,13 @@ public class AppConfig
 
 	@Resource
 	private Environment env;
+	
+	/**
+	 * When starting the server from the command line,
+	 * this attribute can be set to override any other means of creating a data source
+	 */
+	public static DataSource cliDataSource = null;
+	
 	
 //	@Bean
 //	public JndiObjectFactoryBean jndiObjectFactory() {

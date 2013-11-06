@@ -20,6 +20,7 @@ import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 
@@ -27,6 +28,17 @@ import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class SparqlifyCliHelper {
+	
+	public static void addDatabaseOptions(Options cliOptions) {
+		cliOptions.addOption("t", "type", true,
+				"Database type (posgres, mysql,...)");
+		cliOptions.addOption("d", "database", true, "Database name");
+		cliOptions.addOption("u", "username", true, "");
+		cliOptions.addOption("p", "password", true, "");
+		cliOptions.addOption("h", "hostname", true, "");
+		cliOptions.addOption("c", "class", true, "JDBC driver class");
+		cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
+	}
 	
 	public static DataSource parseDataSource(CommandLine commandLine, Logger logger) {
 		

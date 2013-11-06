@@ -1,5 +1,5 @@
 	
-<div style="border-style:solid; border-width: 1px; padding: 5px; border-color: #dddddd">
+<div class="frame">
 	<div class="row-fluid">
 		<div class="span8 offset2">
 			<form ng-submit="doFilterContexts(filterText)">
@@ -15,20 +15,23 @@
 				</colgroup>
 				<thead>
 <!-- 					<th>Id</th> -->
+					<th>View</th>
 					<th>Service</th>
 					<th>Config</th>
-					<th>Details</th>
 					<th>Path</th>
 					<th>Status</th>
 					<th>Jdbc Url</th>
 					<th>Username</th>
-					<th>Mapping</th>
+					<th>Mappings</th>
 				</thead>
 				<tr ng-show="!contexts.length">
 					<td colspan="7" style="text-align: center"><span>(empty table)</span></td>
 				</tr>
 				<tr ng-repeat="context in contexts">
 <!-- 					<td>{{context.id}}</td> -->
+					<td>
+						<button title="View Details" type="button" class="btn btn-default btn-xs" ng-click="showServiceDetails(context.id)"><span class="glyphicon glyphicon-eye-open"></span></button>
+					</td>
 					<td>
 						<button title="Start Service" class="btn btn-default btn-xs" ng-show="context.status=='STOPPED'" ng-click="startService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-play"></span></button>
 						<button title="Stop Service" class="btn btn-default btn-xs" ng-show="context.status!='STOPPED'" ng-click="stopService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-stop"></span></button>
@@ -38,14 +41,11 @@
 						<button title="Edit" type="button" class="btn btn-default btn-xs" ng-click="editService(context._id)"><span class="glyphicon glyphicon-edit"></span></button>
 						<button title="Delete" type="button" class="btn btn-default btn-xs" ng-click="deleteService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-trash"></span></button>					
 					</td>
-					<td>
-						<button title="View Details" type="button" class="btn btn-default btn-xs" ng-click="viewServiceDetails(context._id)"><span class="glyphicon glyphicon-eye-open"></span></button>
-					</td>
 					<td><a href="services/{{context.config.contextPath}}/sparql" target="_blank">{{context.config.contextPath}}</a></td>
 					<td>{{context.status}}</td>
 					<td>{{context.config.dataSource.jdbcUrl}}</td>
 					<td>{{context.config.dataSource.username}}</td>
-					<td>{{context.config.resource.data}}</td>
+					<td>Not implemented yet</td>
 				</tr>
 				<tfoot></tfoot>
 			</table>

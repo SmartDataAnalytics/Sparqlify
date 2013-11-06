@@ -6,6 +6,7 @@
 
 	<title>Sparqlify Web Admin</title>
 	<link rel="stylesheet" href="resources/libs/twitter-bootstrap/3.0.1/css/bootstrap.css" />
+	<link rel="stylesheet" href="resources/css/app.css" />
 
 	<script src="resources/libs/jquery/1.9.1/jquery.js"></script>
 	
@@ -187,6 +188,13 @@
 				return result;
 			},
 
+			findServices: function(criteria) {
+				var promise = store.contexts.find(criteria).asList();
+				//promise.done(function(x) {console.log('data', x); });
+				var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+				return result;
+			},
+			
 			doPostRequest : function(url, data, preventJson) {
 				console.log('data: ', data);
 				var promise = $http({
@@ -255,6 +263,7 @@
 				}
 			};
 		});
+		
 
 		myModule.controller('ContextListCtrl',
 				function($scope, contextService) {
@@ -285,6 +294,17 @@
 
 					$scope.restartService = function(id) {
 						return contextService.stopService(id).then($scope.doFilterContexts);
+					};
+					
+					
+					$scope.showServiceDetails = function(id) {
+						contextService.findServices({id: id}).then(function(items) {
+							console.log('selectedItemData: ', items);
+							if(items && items.length > 0) {
+								$scope.selectedItemId = id;
+								$scope.selectedItemData = items[0];
+							}
+						});
 					};
 
 				});
@@ -410,18 +430,38 @@
 			<div class="span6 offset3">
 			
 			
-  <tabset>
-    <tab heading="Static title">Static content</tab>
-    <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
-      {{tab.content}}
-    </tab>
-    <tab select="alertMe()">
-      <tab-heading>
-        <i class="icon-bell"></i> Select me for alert!
-      </tab-heading>
-      I've got an HTML heading, and a select callback. Pretty cool!
-    </tab>
-  </tabset>
+		<div ng-show="selectedItemId">
+			<h3>Details for <i>{{selectedItemData.config.contextPath}}</i> <button class="btn" ng-click="selectedItemId = null">Hide</button></h3>
+		
+			<div class="frame">
+				<tabset>
+					<tab heading="Info">
+					</tab>
+					<tab heading="Mapping">
+						<pre>{{selectedItemData.config.resource.data}}</pre>
+					</tab>
+					<tab heading="Log">
+						{{selectedItemData.log}}
+					</tab>
+				</tabset>
+			</div>
+		</div>
+	
+<!--     <tab heading="Static title">Static content</tab> -->
+<!-- 		<tab ng-repeat="tab in tabs" active="tab.active" disabled="tab.disabled"> -->
+<!-- 			<tab-heading> -->
+<!-- 				{{tab.heading}} -->
+<!-- 			</tab-heading> -->
+<!-- 			{{tab.content}}	 -->
+<!-- <!-- 			<div ng-include={{tab.content}}" /> -->
+<!-- 		</tab> -->
+		
+<!--     <tab select="alertMe()"> -->
+<!--       <tab-heading> -->
+<!--         <i class="icon-bell"></i> Select me for alert! -->
+<!--       </tab-heading> -->
+<!--       I've got an HTML heading, and a select callback. Pretty cool! -->
+<!--     </tab> -->
 			
 			</div>
 		</div>

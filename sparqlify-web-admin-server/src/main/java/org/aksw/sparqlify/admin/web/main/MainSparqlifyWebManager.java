@@ -5,6 +5,7 @@ import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
 
 import javax.servlet.ServletException;
+import javax.sql.DataSource;
 
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.SparqlifyCliHelper;
@@ -42,6 +43,12 @@ public class MainSparqlifyWebManager {
 	
 	private static final Options cliOptions = new Options();
 
+	static {
+		SparqlifyCliHelper.addDatabaseOptions(cliOptions);
+
+		cliOptions.addOption("P", "port", true, "");
+		//SparqlifyCliHelper.addPortOption(cliOptions);
+	}
 	
 	public static void printClassPath() {
 		ClassLoader cl = ClassLoader.getSystemClassLoader();
@@ -57,29 +64,28 @@ public class MainSparqlifyWebManager {
 	// http://eclipsesource.com/blogs/2009/10/02/executable-wars-with-jetty/
 	public static void main(String[] args) throws Exception {
 
-		//System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
-		
-		//printClassPath();
-		//if(true) { System.exit(0); }
 		LoggerCount loggerCount = new LoggerCount(logger);
 
-//		Class.forName("org.postgresql.Driver");
-//		
-		cliOptions.addOption("P", "port", true, "");
-
-//		cliOptions.addOption("d", "database", true, "Database name");
-//		cliOptions.addOption("u", "username", true, "");
-//		cliOptions.addOption("p", "password", true, "");
-//		cliOptions.addOption("h", "hostname", true, "");
-//
-//		
+		Class.forName("org.postgresql.Driver");
+		
 		CommandLineParser cliParser = new GnuParser();
+
 		CommandLine commandLine = cliParser.parse(cliOptions, args);
 
+		DataSource dataSource = SparqlifyCliHelper.parseDataSource(commandLine, logger);
+
+		AppConfig.cliDataSource = dataSource;
+
+	
 		//SparqlifyCliHelper.parseDataSource(commandLine, loggerCount);
 		Integer port = SparqlifyCliHelper.parseInt(commandLine, "P", false, loggerCount);
 		
 		port = (port == null) ? 7531 : port;
+		
+		startServer(port);
+	}
+	
+	public static void startServer(int port) {
 		
 		
 		Server server = new Server();

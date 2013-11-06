@@ -1,0 +1,16 @@
+
+/**
+ * Required for angular bootstrap to show proper mouse cursor on tabs and other controls
+ * that have an underlying 'a' element
+ */
+a {
+	cursor:pointer;
+}
+
+.frame {
+	border-style:solid;
+	border-width: 1px;
+	padding: 5px;
+	border-color: #dddddd;
+}
+
