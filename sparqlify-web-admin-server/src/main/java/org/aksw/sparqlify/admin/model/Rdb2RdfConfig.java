@@ -17,6 +17,9 @@ public class Rdb2RdfConfig
 	
 	// The context path on which to host the SPARQL services
 	private String contextPath;
+
+	private Integer maxResultSetRows;
+	private Integer maxExecutionTimeInSeconds;
 	
 	@ManyToOne(cascade=CascadeType.ALL)
 	private JdbcDataSource jdbcDataSource;
@@ -60,6 +63,22 @@ public class Rdb2RdfConfig
 		this.contextPath = contextPath;
 	}
 
+	public Integer getMaxResultSetRows() {
+		return maxResultSetRows;
+	}
+
+	public void setMaxResultSetRows(Integer maxResultSetRows) {
+		this.maxResultSetRows = maxResultSetRows;
+	}
+
+	public Integer getMaxExecutionTimeInSeconds() {
+		return maxExecutionTimeInSeconds;
+	}
+
+	public void setMaxExecutionTimeInSeconds(Integer maxExecutionTimeInSeconds) {
+		this.maxExecutionTimeInSeconds = maxExecutionTimeInSeconds;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -69,6 +88,13 @@ public class Rdb2RdfConfig
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((jdbcDataSource == null) ? 0 : jdbcDataSource.hashCode());
+		result = prime
+				* result
+				+ ((maxExecutionTimeInSeconds == null) ? 0
+						: maxExecutionTimeInSeconds.hashCode());
+		result = prime
+				* result
+				+ ((maxResultSetRows == null) ? 0 : maxResultSetRows.hashCode());
 		result = prime * result
 				+ ((textResource == null) ? 0 : textResource.hashCode());
 		return result;
@@ -98,6 +124,17 @@ public class Rdb2RdfConfig
 				return false;
 		} else if (!jdbcDataSource.equals(other.jdbcDataSource))
 			return false;
+		if (maxExecutionTimeInSeconds == null) {
+			if (other.maxExecutionTimeInSeconds != null)
+				return false;
+		} else if (!maxExecutionTimeInSeconds
+				.equals(other.maxExecutionTimeInSeconds))
+			return false;
+		if (maxResultSetRows == null) {
+			if (other.maxResultSetRows != null)
+				return false;
+		} else if (!maxResultSetRows.equals(other.maxResultSetRows))
+			return false;
 		if (textResource == null) {
 			if (other.textResource != null)
 				return false;
@@ -105,11 +142,5 @@ public class Rdb2RdfConfig
 			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "Rdb2RdfConfig [id=" + id + ", contextPath=" + contextPath
-				+ ", jdbcDataSource=" + jdbcDataSource + ", textResource="
-				+ textResource + "]";
-	}	
+	
 }

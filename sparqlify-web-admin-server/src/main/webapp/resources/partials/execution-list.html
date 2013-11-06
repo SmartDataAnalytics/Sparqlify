@@ -22,7 +22,7 @@
 					<th>Status</th>
 					<th>Jdbc Url</th>
 					<th>Username</th>
-					<th>Mappings</th>
+<!-- 					<th>Mappings</th> -->
 				</thead>
 				<tr ng-show="!contexts.length">
 					<td colspan="7" style="text-align: center"><span>(empty table)</span></td>
@@ -45,7 +45,7 @@
 					<td>{{context.status}}</td>
 					<td>{{context.config.dataSource.jdbcUrl}}</td>
 					<td>{{context.config.dataSource.username}}</td>
-					<td>Not implemented yet</td>
+<!-- 					<td>TODO Show a summary of view names</td> -->
 				</tr>
 				<tfoot></tfoot>
 			</table>

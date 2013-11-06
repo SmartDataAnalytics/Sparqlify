@@ -436,6 +436,12 @@
 			<div class="frame">
 				<tabset>
 					<tab heading="Info">
+						<table class="table">
+							<colgroup>
+								<col width="100px" />
+							</colgroup>
+							<tr><td>Status</td><td>{{selectedItemData.status}}</td></tr>
+						</table>
 					</tab>
 					<tab heading="Mapping">
 						<pre>{{selectedItemData.config.resource.data}}</pre>
