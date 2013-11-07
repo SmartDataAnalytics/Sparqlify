@@ -97,7 +97,20 @@
 			}],
 			from: '?s a o:Rdb2RdfExecution ; o:id ?sid ; o:status ?status ; o:config ?c . ?c o:id ?cid ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
 		});
-			
+
+		store.addMap({
+			name: 'logs',
+			template: [{
+				id: '?s',
+				logEntries: [{
+					id: '?l',
+					text: '?l'
+				}]
+			}],
+			from: '?s a o:Rdb2RdfExecution ; o:logEntries ?e . ?e o:logEntry ?l .'
+		});
+		
+		
 		
 		var parseJdbcUrl = function(url) {
 			//var re = //
@@ -190,6 +203,13 @@
 
 			findServices: function(criteria) {
 				var promise = store.contexts.find(criteria).asList();
+				//promise.done(function(x) {console.log('data', x); });
+				var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+				return result;
+			},
+
+			findServiceLogs: function(criteria) {
+				var promise = store.logs.find(criteria).asList();
 				//promise.done(function(x) {console.log('data', x); });
 				var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
 				return result;
@@ -303,6 +323,12 @@
 							if(items && items.length > 0) {
 								$scope.selectedItemId = id;
 								$scope.selectedItemData = items[0];
+							}
+						});
+						
+						contextService.findServiceLogs({id: id}).then(function(items) {
+							if(items && items.length > 0) {
+								$scope.selectedItemLog = items[0].logEntries;
 							}
 						});
 					};
@@ -435,20 +461,26 @@
 		
 			<div class="frame">
 				<tabset>
-					<tab heading="Info">
-						<table class="table">
+					<tab heading="Log">
+						<table class="table table-striped">
 							<colgroup>
 								<col width="100px" />
 							</colgroup>
-							<tr><td>Status</td><td>{{selectedItemData.status}}</td></tr>
+							<th>Level</th><th>Message</th>
+							<tr ng-repeat="entry in selectedItemLog"><td>Info</td><td>{{entry.text}}</td></tr>
 						</table>
 					</tab>
 					<tab heading="Mapping">
 						<pre>{{selectedItemData.config.resource.data}}</pre>
 					</tab>
-					<tab heading="Log">
-						{{selectedItemData.log}}
-					</tab>
+<!-- 					<tab heading="Info"> -->
+<!-- 						<table class="table"> -->
+<!-- 							<colgroup> -->
+<!-- 								<col width="100px" /> -->
+<!-- 							</colgroup> -->
+<!-- 							<tr><td>Status</td><td>{{selectedItemData.status}}</td></tr> -->
+<!-- 						</table> -->
+<!-- 					</tab> -->
 				</tabset>
 			</div>
 		</div>

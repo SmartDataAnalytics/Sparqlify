@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>facete-debian-tomcat6</artifactId>
+	<packaging>jar</packaging>
+
+
+	<name>Facete - Slice 'n' Dice SPARQL Workbench</name>
+	<url>http://aksw.org/Projects/Facete</url>
+
+
+	<parent>
+		<groupId>org.aksw.facete</groupId>
+		<artifactId>facete-parent</artifactId>
+		<version>0.7.2-SNAPSHOT</version>
+	</parent>
+
+	<profiles>
+		<profile>
+			<id>tomcat6</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<project.description>A web application for working with SPARQL accessible data.</project.description>
+			</properties>
+		</profile>
+		<profile>
+			<id>tomcat6-lod2</id>
+			<properties>
+<project.description>A web application for working with SPARQL accessible data.
+ .
+ LOD2 is a large-scale integrating project co-funded by the European
+ Commission within the FP7 Information and Communication Technologies
+ Work Programme (Grant Agreement No. 257943). Commencing in September
+ 2010, this 4-year project comprises leading Linked Open Data technology
+ researchers, companies, and service providers from across 7 European
+ countries and is coordinated by the AKSW research group at the
+ University of Leipzig.</project.description>
+			</properties>
+		</profile>
+	</profiles>
+
+	<description>${project.description}</description>
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<!-- This plugin's configuration must come *before* the Debian Maven 
+					Plugin. -->
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>copy-deb-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>						
+							<overwrite>true</overwrite>
+<!-- 							<includeEmptyDirs>true</includeEmptyDirs> -->
+							<outputDirectory>${project.build.directory}/deb</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/deb/resources</directory>
+									<!-- Uncomment the following line to enable Velocity filtering. -->
+									<!-- <filtering>true</filtering> -->
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<!-- This plugin's configuration must come *after* the Maven Resources 
+					Plugin, and *before* the Debian Maven Plugin. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+
+
+					<execution>
+						<id>create-symlinks</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<mkdir dir="${project.build.directory}/deb/var/lib/tomcat6/webapps/" />
+								<symlink link="${project.build.directory}/deb/var/lib/tomcat6/webapps/facete.war" resource="../../../../usr/share/lib/facete/facete-debian-tomcat6.war" />
+<!-- 									resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war"  -->
+<!-- 									resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				
+				
+<!-- 					<execution> -->
+<!-- 						<id>merge-control</id> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<configuration> -->
+<!-- 							<target> -->
+<!-- 								<exec dir="${basedir}/src/deb/bin" executable="${basedir}/src/deb/bin/merge-control-file.sh" -->
+<!-- 									failonerror="true"> -->
+<!-- 								</exec> -->
+<!-- 							</target> -->
+<!-- 						</configuration> -->
+<!-- 						<goals> -->
+<!-- 							<goal>run</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+
+					<execution>
+						<id>fix-permissions</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<chmod perm="ugo+x">
+									<fileset dir="${project.build.directory}/deb">
+										<include name="**/bin/**" />
+										<include name="**/sbin/**" />
+										<include name="DEBIAN/post*" />
+										<include name="DEBIAN/pre*" />
+										<include name="DEBIAN/rules" />
+										<include name="DEBIAN/config" />
+									</fileset>
+								</chmod>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+
+					<!-- A hacky execution for making the DEBIAN directory lower case -->
+					<!-- NOTE The maven plugin creates a deb, so this is fine at this stage, -->
+					<!-- Renaming to lower case is done in the continuous integration server -->
+					<!-- <execution> -->
+					<!-- <phase>verify</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>run</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <tasks> -->
+					<!-- <copy todir="${project.build.directory}/deb/debian"> -->
+					<!-- <fileset dir="${project.build.directory}/deb/DEBIAN"> -->
+					<!-- <include name="**" /> -->
+					<!-- </fileset> -->
+					<!-- </copy> -->
+					<!-- <delete dir="${project.build.directory}/deb/DEBIAN" /> -->
+					<!-- </tasks> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>net.sf.debian-maven</groupId>
+				<artifactId>debian-maven-plugin</artifactId>
+				<version>1.0.5</version>
+				<configuration>
+					<packageName>facete</packageName>
+					<packagePriority>extra</packagePriority>
+					<packageSection>web</packageSection>
+					<packageDependencies>
+					<packageDependency>tomcat6</packageDependency>
+					<packageDependency>dbconfig-common</packageDependency>
+					<packageDependency>xsltproc</packageDependency>
+					<packageDependency>postgresql</packageDependency>
+					</packageDependencies>
+					<maintainerName>${project.parent.developers[0].name}</maintainerName>
+					<maintainerEmail>${project.parent.developers[0].email}</maintainerEmail>
+					<!-- <packageName>my-package</packageName> <packageVersion>1.0.0</packageVersion> 
+						... -->
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.facete</groupId>
+			<artifactId>facete-server</artifactId>
+			<type>war</type>
+		</dependency>
+	</dependencies>
+</project>
+

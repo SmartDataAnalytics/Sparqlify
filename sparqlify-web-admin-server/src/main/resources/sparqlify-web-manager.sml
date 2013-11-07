@@ -121,22 +121,36 @@ Create View rdb2rdfExecution As
     "rdb2rdfexecution"
 
 
-/*
-Create View rdb2rdfExecution_logmessages As
+
+
+
+
+Create View rdb2rdfExecution As
   Construct {
     ?s
-      a o:LogEntry ;
-      o:for ?e ;
-      rdfs:label ?l ; 
-      o:level ?lvl ;
+      o:logEntries ?o ;
       .
   }
   With
-    ?s = uri(r:, 'rdb2RdfExecutionLogMessage', ?rdb2rdfexecution_id)
-    ?e = uri(r:, 'rdb2RdfExecution', ?rdb2rdfexecution_id)
-    ?l = plainLiteral(?text)
-    ?lvl = plainLiteral(?level)    
+    ?s = uri(r:, 'rdb2RdfExecution', ?id)
+    ?o = uri(r:, 'rdb2RdfExecutionLogEntry', ?id)
+  From
+    "rdb2rdfexecution"
+
+
+Create View rdb2rdfExecution_logmessages As
+  Construct {
+    ?s
+      //rdfs:label ?l
+      o:logEntry ?e ;
+      .
+  }
+  With
+    ?s = uri(r:, 'rdb2RdfExecutionLogEntry', ?rdb2rdfexecution_id)
+//    ?e = uri(r:, 'rdb2RdfExecution', ?rdb2rdfexecution_id)
+    ?e = plainLiteral(?text)
+//    ?lvl = plainLiteral(?level)    
   From
     "rdb2rdfexecution_logmessages"
-*/
+
   
