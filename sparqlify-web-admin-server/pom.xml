@@ -3,19 +3,27 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sparqlify-web-admin-server</artifactId>
-	<packaging>war</packaging>
-
-
-	<name>Sparqlify SPARQL-&gt;SQL rewriter - Web Admin Server</name>
-	<url>http://aksw.org/Projects/Sparqlify</url>
-
-
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
 		<version>0.6.5-SNAPSHOT</version>
 	</parent>
+
+
+	<artifactId>sparqlify-web-admin-server</artifactId>
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Web Admin Server</name>
+	<packaging>war</packaging>
+
+
+	<properties>
+		<tomcat.server-id>tomcat-localhost</tomcat.server-id>
+
+		<tomcat6.server-id>${tomcat.server-id}</tomcat6.server-id>
+		<tomcat6.deploy-url>http://localhost:8080/manager</tomcat6.deploy-url>
+
+		<tomcat7.server-id>${tomcat.server-id}</tomcat7.server-id>
+		<tomcat7.deploy-url>http://localhost:8080/manager/text</tomcat7.deploy-url>
+	</properties>
 
 
 	<!-- <pluginRepositories> <pluginRepository> <id>typescript-maven-plugin</id> 
@@ -28,9 +36,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.3</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+
 					<!-- <archive> -->
 					<!-- <manifest> -->
 					<!-- <mainClass>org.aksw.sparqlify.admin.web.main.MainSparqlifyWebManager</mainClass> -->
@@ -55,6 +64,44 @@
 					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
 					</excludes> </overlay> </overlays> </configuration> -->
 			</plugin>
+
+<!-- 			<plugin> -->
+<!-- 				run "mvn hibernate3:hbm2ddl" to generate a schema -->
+<!-- 				<groupId>org.codehaus.mojo</groupId> -->
+<!-- 				<artifactId>hibernate3-maven-plugin</artifactId> -->
+<!-- 				<version>3.0</version> -->
+
+<!-- 				<configuration> -->
+<!-- 					<hibernatetool> -->
+<!-- 						<jpaconfiguration persistenceunit="unitname" /> -->
+
+<!-- 						<hbm2ddl export="false" create="true" update="true" -->
+<!-- 							format="true" outputfilename="schemaDiff.ddl" /> -->
+
+<!-- 					</hibernatetool> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<server>${tomcat6.server-id}</server>
+					<url>${tomcat6.deploy-url}</url>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<server>${tomcat7.server-id}</server>
+					<url>${tomcat7.deploy-url}</url>
+				</configuration>
+			</plugin>
+
 			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId> 
 				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor> 
 				</configuration> </plugin> -->
@@ -77,7 +124,7 @@
 
 
 
-<!-- 			Create a symlink to the target folder without version numbers -->
+			<!-- Create a symlink to the target folder without version numbers -->
 			<plugin>
 				<!-- This plugin's configuration must come *after* the Maven Resources 
 					Plugin, and *before* the Debian Maven Plugin. -->

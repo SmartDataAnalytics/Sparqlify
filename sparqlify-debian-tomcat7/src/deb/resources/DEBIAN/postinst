@@ -8,7 +8,7 @@ set -e
 
 # you can set the default database encoding to something else
 dbc_pgsql_createdb_encoding="UTF8"
-dbc_go facete $@
+dbc_go sparqlify-tomcat7 $@
 
 
 
@@ -41,10 +41,10 @@ function updateDbCredentials {
 </xsl:stylesheet>
 "
 
-  xsltFile="/tmp/facete-context.xslt"
+  xsltFile="/tmp/sparqlify-tomcat7-context.xslt"
   echo "$xslt" > "$xsltFile"
 
-  xmlFile="/etc/tomcat6/Catalina/localhost/facete.xml"
+  xmlFile="/etc/tomcat7/Catalina/localhost/sparqlify.xml"
 
   xml=`cat "$xmlFile"`
   echo "$xml" | xsltproc "$xsltFile" - > "$xmlFile"
@@ -58,7 +58,7 @@ case "$1" in
   configure)
 
     updateDbCredentials "$dbc_dbuser" "$dbc_dbpass"
-    service tomcat6 restart
+    service tomcat7 restart
 
   ;;
 

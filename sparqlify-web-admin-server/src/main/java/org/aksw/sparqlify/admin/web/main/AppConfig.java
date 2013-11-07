@@ -39,6 +39,8 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -76,19 +78,6 @@ public class AppConfig
 	public static DataSource cliDataSource = null;
 	
 	
-//	@Bean
-//	public JndiObjectFactoryBean jndiObjectFactory() {
-//		
-//		String jndiName = "java:comp/env/jdbc/sparqlifyWebAdminDs";
-//		
-//		
-//		JndiTemplate jndiTemplate = new JndiTemplate();
-//		jndiTemplate.lookup(name)
-//		
-//		JndiObjectFactoryBean result = new JndiObjectFactoryBean();
-//		result.setJndiName();
-//		return result;
-//	}
 	
 	//@Bean
 //	public DataSource dataSource2() {
@@ -98,6 +87,22 @@ public class AppConfig
 	
 	@Bean
 	public DataSource dataSource() {
+		
+		DataSource result;
+		
+		String jndiName = "java:comp/env/jdbc/sparqlifyDs";
+		
+		
+		JndiObjectFactoryBean jndiFactory = new JndiObjectFactoryBean();
+		jndiFactory.setLookupOnStartup(true);
+		jndiFactory.setJndiName(jndiName);
+		
+		
+		result = (DataSource)jndiFactory.getObject();
+		if(result != null) {
+			return result;
+		}
+
 		
 //		URL location = AppConfig.class.getProtectionDomain().getCodeSource().getLocation();
 //        System.out.println(location.getFile());

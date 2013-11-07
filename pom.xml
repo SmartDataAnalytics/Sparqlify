@@ -37,7 +37,7 @@
 		<module>sparqlify-core</module>
 		<!-- module>sparqlify-server</module -->
 		<module>sparqlify-platform</module>
-		<module>sparqlify-debian</module>
+		<module>sparqlify-debian-cli</module>
 		<module>sparqlify-tests</module>
 
 		<module>sparqlify-jpa</module>
@@ -46,6 +46,7 @@
 
 		<module>sparqlify-web-admin-client</module>
 		<module>sparqlify-web-admin-server</module>
+		<module>sparqlify-debian-tomcat7</module>
 	</modules>
 
 
@@ -355,6 +356,13 @@
                                 <artifactId>sparqlify-web-admin-client</artifactId>
                                 <version>${project.version}</version>
 				<type>war</type>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.aksw.sparqlify</groupId>
+                                <artifactId>sparqlify-web-admin-server</artifactId>
+                                <version>${project.version}</version>
+                                <type>war</type>
                         </dependency>
 
 

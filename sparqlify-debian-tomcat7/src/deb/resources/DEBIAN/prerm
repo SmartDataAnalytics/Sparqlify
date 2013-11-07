@@ -5,6 +5,6 @@ set -e
 
 . /usr/share/debconf/confmodule
 . /usr/share/dbconfig-common/dpkg/prerm.pgsql 
-dbc_go facete $@
+dbc_go sparqlify-tomcat7 $@
 
 #DEBHELPER#

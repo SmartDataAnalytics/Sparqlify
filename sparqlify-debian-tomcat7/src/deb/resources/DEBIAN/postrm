@@ -9,6 +9,6 @@ fi
 if [ -f /usr/share/dbconfig-common/dpkg/postrm.pgsql  ]; then
 	. /usr/share/dbconfig-common/dpkg/postrm.pgsql 
 fi
-dbc_go facete $@
+dbc_go sparqlify-tomcat7 $@
 
 #DEBHELPER#

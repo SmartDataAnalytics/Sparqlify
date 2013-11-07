@@ -2,23 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>facete-debian-tomcat6</artifactId>
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.6.5-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>sparqlify-debian-tomcat7</artifactId>
 	<packaging>jar</packaging>
 
 
-	<name>Facete - Slice 'n' Dice SPARQL Workbench</name>
-	<url>http://aksw.org/Projects/Facete</url>
+	<name>Sparqlify - Tomcat 7 Debian Packaging</name>
 
 
-	<parent>
-		<groupId>org.aksw.facete</groupId>
-		<artifactId>facete-parent</artifactId>
-		<version>0.7.2-SNAPSHOT</version>
-	</parent>
+	<properties>
+		<deb.packageName>sparqlify-tomcat7</deb.packageName>
+		<tomcat.context.name>sparqlify</tomcat.context.name>
+	</properties>
 
 	<profiles>
 		<profile>
-			<id>tomcat6</id>
+			<id>tomcat7</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -27,7 +31,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>tomcat6-lod2</id>
+			<id>tomcat7-lod2</id>
 			<properties>
 <project.description>A web application for working with SPARQL accessible data.
  .
@@ -45,8 +49,16 @@
 	<description>${project.description}</description>
 
 	<build>
-
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
 
 			<plugin>
 				<!-- This plugin's configuration must come *before* the Debian Maven 
@@ -60,9 +72,9 @@
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
-						<configuration>						
+						<configuration>
 							<overwrite>true</overwrite>
-<!-- 							<includeEmptyDirs>true</includeEmptyDirs> -->
+							<!-- <includeEmptyDirs>true</includeEmptyDirs> -->
 							<outputDirectory>${project.build.directory}/deb</outputDirectory>
 							<resources>
 								<resource>
@@ -91,32 +103,42 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<mkdir dir="${project.build.directory}/deb/var/lib/tomcat6/webapps/" />
-								<symlink link="${project.build.directory}/deb/var/lib/tomcat6/webapps/facete.war" resource="../../../../usr/share/lib/facete/facete-debian-tomcat6.war" />
-<!-- 									resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war"  -->
-<!-- 									resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
+								<mkdir dir="${project.build.directory}/deb/usr/share/lib/${deb.packageName}/" />
+
+<!-- ${project.packaging} -->
+								<copy
+									file="${project.build.directory}/${project.build.finalName}.${project.packaging}"
+									tofile="${project.build.directory}/deb/usr/share/lib/${deb.packageName}/${project.build.finalName}.war" />
+
+								<mkdir dir="${project.build.directory}/deb/var/lib/tomcat7/webapps/" />
+
+								<symlink
+									link="${project.build.directory}/deb/var/lib/tomcat7/webapps/${tomcat.context.name}.war"
+									resource="../../../../usr/share/lib/${deb.packageName}/${project.build.finalName}.war" />
+								<!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
+								<!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
 							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
 					</execution>
-				
-				
-<!-- 					<execution> -->
-<!-- 						<id>merge-control</id> -->
-<!-- 						<phase>package</phase> -->
-<!-- 						<configuration> -->
-<!-- 							<target> -->
-<!-- 								<exec dir="${basedir}/src/deb/bin" executable="${basedir}/src/deb/bin/merge-control-file.sh" -->
-<!-- 									failonerror="true"> -->
-<!-- 								</exec> -->
-<!-- 							</target> -->
-<!-- 						</configuration> -->
-<!-- 						<goals> -->
-<!-- 							<goal>run</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
+
+
+					<!-- <execution> -->
+					<!-- <id>merge-control</id> -->
+					<!-- <phase>package</phase> -->
+					<!-- <configuration> -->
+					<!-- <target> -->
+					<!-- <exec dir="${basedir}/src/deb/bin" executable="${basedir}/src/deb/bin/merge-control-file.sh" -->
+					<!-- failonerror="true"> -->
+					<!-- </exec> -->
+					<!-- </target> -->
+					<!-- </configuration> -->
+					<!-- <goals> -->
+					<!-- <goal>run</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
 
 					<execution>
 						<id>fix-permissions</id>
@@ -167,14 +189,14 @@
 				<artifactId>debian-maven-plugin</artifactId>
 				<version>1.0.5</version>
 				<configuration>
-					<packageName>facete</packageName>
+					<packageName>${deb.packageName}</packageName>
 					<packagePriority>extra</packagePriority>
 					<packageSection>web</packageSection>
 					<packageDependencies>
-					<packageDependency>tomcat6</packageDependency>
-					<packageDependency>dbconfig-common</packageDependency>
-					<packageDependency>xsltproc</packageDependency>
-					<packageDependency>postgresql</packageDependency>
+						<packageDependency>tomcat7</packageDependency>
+						<packageDependency>dbconfig-common</packageDependency>
+						<packageDependency>xsltproc</packageDependency>
+						<packageDependency>postgresql</packageDependency>
 					</packageDependencies>
 					<maintainerName>${project.parent.developers[0].name}</maintainerName>
 					<maintainerEmail>${project.parent.developers[0].email}</maintainerEmail>
@@ -190,8 +212,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.aksw.facete</groupId>
-			<artifactId>facete-server</artifactId>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-web-admin-server</artifactId>
 			<type>war</type>
 		</dependency>
 	</dependencies>

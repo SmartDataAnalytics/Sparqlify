@@ -1,5 +1,5 @@
 <Context path="/sparqlify"
-   docBase="/var/lib/tomcat6/webapps/sparqlify.war"
+   docBase="/var/lib/tomcat7/webapps/sparqlify.war"
    crossContext="false"
    reloadable="false">
 

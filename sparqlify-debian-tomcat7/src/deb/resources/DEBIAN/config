@@ -8,5 +8,5 @@ set -e
 if [ -f /usr/share/dbconfig-common/dpkg/config.pgsql ]; then
 	. /usr/share/dbconfig-common/dpkg/config.pgsql 
 	#dbc_authmethod_user="password"
-	dbc_go facete $@
+	dbc_go sparqilfy-tomcat7 $@
 fi
