@@ -12,7 +12,7 @@
 	<packaging>jar</packaging>
 
 
-	<name>Sparqlify - Tomcat 7 Debian Packaging</name>
+	<name>Sparqlify - Debian Packaging - Tomcat7</name>
 
 
 	<properties>
