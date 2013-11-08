@@ -276,3 +276,4 @@ Colums can be referenced either by name (see the -h option) or by index (1-based
         ?lat = typedLiteral(?7, xsd:float)
 
 
+
