@@ -2356,7 +2356,10 @@ public class MappingOpsImpl
 		
 
 		List<SqlExprContext> contexts = createExprContexts(e, source);
-		
+
+		if(contexts == null) {
+			return null;
+		}
 
 //		List<ExprSqlRewrite> rewrites = new ArrayList<ExprSqlRewrite>(contexts.size());
 //		for(SqlExprContext context : contexts) {
