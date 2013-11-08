@@ -11,21 +11,22 @@
 	Quick link to probably most relevant docs:
 	http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/index.html#tips
 -->
+
 <urlrewrite>
 
-<!-- 	<rule> -->
-<!-- 		<from>^(.*)/sparql([^/].*)?$</from> -->
-<!-- 		<to type="temporary-redirect" qsappend="true">$1/sparql/$2</to> -->
-<!-- 	</rule> -->
+	<rule>
+		<from>^/$</from>
+		<to>/index.do</to>
+	</rule>
+
 	<rule>
 		<from>^(.*)/sparql$</from>
-		<to type="temporary-redirect">$1/sparql/$2?%{query-string}</to>
+		<to type="temporary-redirect">%{context-path}$1/sparql/$2?%{query-string}</to>
 	</rule>
 
 	<rule>
 		<from>^(.*)/sparql/(.*\.(css|js|png))$</from>
-<!-- 		<from>^(.*)/sparql/(.*\..*)$</from> -->
-		<to>/resources/snorql/$2</to>
+		<to>%{context-path}/resources/snorql/$2</to>
 	</rule>
 	
 </urlrewrite>

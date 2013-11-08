@@ -8,7 +8,7 @@
       auth="Container"
       type="javax.sql.DataSource"
       driverClassName="org.postgresql.Driver"
-      url="jdbc:postgresql://localhost:5432/sparqlify"
+      url="jdbc:postgresql://localhost:5432/sparqlifytomcat7"
       username="postgres"
       password="postgres"
       maxActive="-1"

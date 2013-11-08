@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -39,8 +42,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jndi.JndiObjectFactoryBean;
-import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -86,22 +87,33 @@ public class AppConfig
 //	}
 	
 	@Bean
-	public DataSource dataSource() {
+	public DataSource dataSource() throws IllegalArgumentException {
 		
-		DataSource result;
+		DataSource result = null;
 		
-		String jndiName = "java:comp/env/jdbc/sparqlifyDs";
-		
-		
-		JndiObjectFactoryBean jndiFactory = new JndiObjectFactoryBean();
-		jndiFactory.setLookupOnStartup(true);
-		jndiFactory.setJndiName(jndiName);
-		
-		
-		result = (DataSource)jndiFactory.getObject();
-		if(result != null) {
+		try {
+			String jndiName = "java:comp/env/jdbc/sparqlifyDs";
+			Context ctx = new InitialContext();
+		    result = (DataSource)ctx.lookup(jndiName);
+		} catch (NamingException e) {
+			logger.info("Exception on retrieving initial JNDI context - trying a different method");
+		}
+	    
+		if(result != null) {			
 			return result;
 		}
+
+	    
+//		JndiObjectFactoryBean jndiFactory = new JndiObjectFactoryBean();
+//		jndiFactory.setResourceRef(true);
+//		jndiFactory.setJndiName(jndiName);
+//		//jndiFactory.setJndiName("jdbc/sparqlifyDs");
+//		jndiFactory.setLookupOnStartup(true);
+//		jndiFactory.afterPropertiesSet();
+//		
+//		
+//		result = (DataSource)jndiFactory.getObject();
+
 
 		
 //		URL location = AppConfig.class.getProtectionDomain().getCodeSource().getLocation();

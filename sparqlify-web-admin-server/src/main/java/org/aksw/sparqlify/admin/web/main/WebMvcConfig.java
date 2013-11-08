@@ -38,6 +38,7 @@ public class WebMvcConfig
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+//        registry.addResourceHandler("/jsp/**").addResourceLocations("/jsp/");
 //        registry.addResourceHandler("*.js").addResourceLocations("/resources/snorql/");
 //        registry.addResourceHandler("/**/*.css").addResourceLocations("/resources/snorql/");
 //        registry.addResourceHandler("/**/snorql.css").addResourceLocations("/resources/snorql/");
@@ -46,7 +47,9 @@ public class WebMvcConfig
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index-sparqlify-web-manager");
+        //registry.addViewController("").setViewName("index-sparqlify-web-manager");
+//        registry.addViewController("/").setViewName("index-sparqlify-web-manager");
+        registry.addViewController("/index.do").setViewName("index-sparqlify-web-manager");
     }
     
 
@@ -127,7 +130,7 @@ public class WebMvcConfig
 	
 	//@Bean(name="viewResolverJsp")
 	public InternalResourceViewResolver internalResourceViewResolverJsp() {
-		InternalResourceViewResolver result = new InternalResourceViewResolverChainable();
+		InternalResourceViewResolver result = new InternalResourceViewResolver();
 		result.setPrefix("/WEB-INF/jsp/");
 		result.setSuffix(".jsp");
 		result.setViewClass(JstlView.class);
