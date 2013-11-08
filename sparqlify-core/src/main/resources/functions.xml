@@ -13,6 +13,17 @@
 
 <!-- NOTE: GeomFromPoint already needs a template... -->
 	<simpleFunctions>
+
+		<simpleFunction>
+			<name>strstarts</name>
+			<mappings>
+				<mapping>
+					<signature>boolean strstarts(string, string)</signature>
+					<pattern>(strpos($1$, $2$) = 1)</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+	
 		<simpleFunction>
 			<name>http://www.openlinksw.com/schemas/bif#st_geomFromPoint</name>
 			<mappings>
