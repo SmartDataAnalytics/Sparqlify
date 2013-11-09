@@ -32,7 +32,8 @@ function Snorql() {
         var match = document.location.href.match(/\?(.*)/);
         var queryString = match ? match[1] : '';
         if (!queryString) {
-            document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
+//            document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
+            document.getElementById('querytext').value = 'SELECT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
             this._updateGraph(null, false);
             return;
         }

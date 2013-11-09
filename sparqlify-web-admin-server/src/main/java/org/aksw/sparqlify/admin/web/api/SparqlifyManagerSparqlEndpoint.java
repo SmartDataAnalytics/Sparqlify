@@ -47,7 +47,7 @@ public class SparqlifyManagerSparqlEndpoint
 			throws Exception {
 				
 		InputStream r = servletContext.getResourceAsStream("/resources/snorql/index.html");
-		System.out.println("Resource is " + r);
+		//System.out.println("Resource is " + r);
 		return Response.ok(r, MediaType.TEXT_HTML).build();
 	}
 

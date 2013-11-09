@@ -87,7 +87,10 @@ public class AppConfig
 //	}
 	
 	@Bean
-	public DataSource dataSource() throws IllegalArgumentException {
+	public DataSource dataSource() throws IllegalArgumentException, ClassNotFoundException {
+		
+		// TODO Somehow allow loading drivers dynamically
+		Class.forName("org.postgresql.Driver");
 		
 		DataSource result = null;
 		
