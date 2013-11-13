@@ -571,7 +571,7 @@ quadPattern
     ;
     
 quads
-    : triplesTemplate? ( quadsNotTriples DOT? triplesTemplate? )* ->  triplesTemplate? ( quadsNotTriples triplesTemplate? )* 
+    : a=triplesTemplate? ( quadsNotTriples DOT? b=triplesTemplate? )* -> $a? ( quadsNotTriples $b? )* 
     ;
     
 quadsNotTriples

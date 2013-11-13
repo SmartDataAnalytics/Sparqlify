@@ -28,6 +28,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpTable;
 import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
 import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.core.BasicPattern;
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -78,15 +79,17 @@ public class ReplaceConstants {
 	{
 		return MultiMethod.invokeStatic(ReplaceConstants.class, "_replace", op);
 	}
-	
 		
-	public static Node transform(Node node, Generator generator, ExprList filters) {
+	public static Node transform(Node node, boolean isGraphNode, Generator generator, ExprList filters) {
 		if(node.isConcrete()) {
 			Var var = Var.alloc(generator.next());			
 			
-			Expr condition = new E_Equals(new ExprVar(var), NodeValue.makeNode(node));
-			filters.add(condition);
-			
+			// Use of the constant Quad.defaultGraphNodeGenerated in the graph position results in a free variable.
+			if(!(isGraphNode && node.equals(Quad.defaultGraphNodeGenerated))) {
+				Expr condition = new E_Equals(new ExprVar(var), NodeValue.makeNode(node));
+				filters.add(condition);				
+			}
+						
 			return var;
 		}
 		
@@ -190,7 +193,7 @@ public class ReplaceConstants {
 
 		BasicPattern triples = new BasicPattern();
 		
-		Node graphNode = transform(op.getGraphNode(), generator, filters);
+		Node graphNode = transform(op.getGraphNode(), true, generator, filters);
 		
 		
 		List<Node> nodes = new ArrayList<Node>();
@@ -198,7 +201,7 @@ public class ReplaceConstants {
 			
  
 			for(Node node : tripleToList(triple)) {
-				Node n = transform(node, generator, filters);
+				Node n = transform(node, false, generator, filters);
 				nodes.add(n);
 			}
 		

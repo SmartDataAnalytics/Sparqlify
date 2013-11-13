@@ -1,0 +1,14 @@
+Prefix ex:<http://ex.org/>
+
+Create View GraphDemo As
+    Construct {
+        Graph ex:TagGraph {
+            ?s a ex:Tag ;
+            ex:owner ?o
+        }
+    }
+    With
+        ?s = uri('http://bla.org/tags/', ?name)
+        ?o = plainLiteral(?owner)
+    From
+        tags

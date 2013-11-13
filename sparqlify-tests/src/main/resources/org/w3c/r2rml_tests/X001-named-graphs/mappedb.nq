@@ -1,0 +1,4 @@
+<http://bla.org/tags/programming> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ex.org/Tag> .
+<http://bla.org/tags/programming> <http://ex.org/owner> "thomas" <http://ex.org/TagGraph> .
+<http://bla.org/tags/statistics> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ex.org/Tag> .
+<http://bla.org/tags/statistics> <http://ex.org/owner> "willem" <http://ex.org/TagGraph> .
