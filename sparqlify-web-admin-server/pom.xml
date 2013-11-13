@@ -171,11 +171,11 @@
 			<artifactId>sparqlify-jpa</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.aksw.sparqlify</groupId>
-			<artifactId>sparqlify-web-admin-client</artifactId>
-			<type>war</type>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aksw.sparqlify</groupId> -->
+<!-- 			<artifactId>sparqlify-web-admin-client</artifactId> -->
+<!-- 			<type>war</type> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -187,10 +187,10 @@
 			<artifactId>spring-orm</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework</groupId> -->
+<!-- 			<artifactId>spring-web</artifactId> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.tuckey</groupId>
