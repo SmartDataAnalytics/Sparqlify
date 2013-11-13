@@ -902,8 +902,8 @@
             
             <dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-orm</artifactId>
-				<version>3.2.4.RELEASE</version>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -913,6 +913,20 @@
 				</exclusions>
 			</dependency>
             
+
+            <dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<!-- Using org.slf4j:jcl-over-slf4j instead -->
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
             
 			<!-- <dependency> -->
 			<!-- <groupId>org.activiti</groupId> -->

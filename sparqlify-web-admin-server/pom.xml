@@ -46,7 +46,7 @@
 					<!-- </manifest> -->
 					<!-- </archive> -->
 					<!-- <packagingExcludes>WEB-INF/lib/jetty-*.jar,WEB-INF/lib/*EmbeddedJetty*.jar</packagingExcludes> -->
-					<overlays>
+<!-- 					<overlays> -->
 						<!-- <overlay> -->
 						<!-- <groupId>org.aksw.sparqlify</groupId> -->
 						<!-- <artifactId>sparqlify-web-admin-server</artifactId> -->
@@ -57,7 +57,7 @@
 						<!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
 						<!-- <type>war</type> -->
 						<!-- </overlay> -->
-					</overlays>
+<!-- 					</overlays> -->
 				</configuration>
 				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId> 
 					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath> 
@@ -185,6 +185,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
 		</dependency>
 
 		<dependency>
