@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
+import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
@@ -32,6 +33,8 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.jena.riot.out.NQuadsWriter;
+import org.apache.jena.riot.out.NTriplesWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -42,6 +45,7 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.sparql.core.Quad;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 
@@ -102,11 +106,12 @@ public class Main {
 		cliOptions.addOption("Q", "query", true, "");
 		cliOptions.addOption("D", "dump", false, "");
 
-		// TODO Rename to m for mapping file soon
 		cliOptions.addOption("m", "mapping", true, "Sparqlify mapping file");
 
-		cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout");
+		cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout in seconds");
 		cliOptions.addOption("n", "resultsetsize", true, "Maximum result set size");
+
+		cliOptions.addOption("o", "format", true, "Output format; currently only applies to dump (-D). Values: ntriples, nquads");
 
 		
 
@@ -129,6 +134,7 @@ public class Main {
 		
 		
 		
+		String outputFormat = commandLine.getOptionValue("o", "default");
 		
 		//String driverClassName = commandLine.getOptionValue("c", "");
 		
@@ -140,12 +146,19 @@ public class Main {
 			queryString = null;
 		}
 		
-		if(isDump && isQuery) {
-			loggerCount.error("Options D and Q are mutually exclusive");
-		}
-		
 		if(isDump) {
-			queryString = "Construct { ?s ?p ?o } { ?s ?p ?o }";
+			
+			if(isQuery) {
+				loggerCount.error("Options D and Q are mutually exclusive");
+			}
+			
+//			if(outputFormat.equals("nquads")) {
+//				//queryString = "Construct { Graph ?g { ?s ?p ?o } } { Graph ?g { ?s ?p ?o } }";
+//				queryString = "Select ?s ?p ?o ?g { Graph ?g { ?s ?p ?o } }";
+//			} else {
+//				//queryString = "Construct { ?s ?p ?o } { ?s ?p ?o }";
+//				queryString = "Select ?s ?p ?o { ?s ?p ?o }";
+//			}
 		}
 		
 		
@@ -244,8 +257,21 @@ public class Main {
 //		QueryExecutionFactoryEx qef = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
 		
 		QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetSize, maxQueryExecutionTime);
-		
-		if(queryString != null) {
+
+		if(isDump) {
+			if(outputFormat.equals("nquads")) {
+				Iterator<Quad> itQuad = QueryExecutionUtils.createIteratorDumpQuads(qef);
+				NQuadsWriter.write(System.out, itQuad); 
+				
+			}
+			else {
+				Iterator<Triple> itTriple = QueryExecutionUtils.createIteratorDumpTriples(qef);
+				NTriplesWriter.write(System.out, itTriple);
+			}
+			
+			return;
+		}
+		else if(queryString != null) {
 			QueryEx queryEx = QueryFactoryEx.create(queryString); 
 			
 			if(queryEx.isSelectType()) {
