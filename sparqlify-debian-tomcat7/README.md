@@ -39,9 +39,9 @@ If you followed about recommendations, your chances of getting a working deploym
 
         sudo apt-get install tomcat7 dbconfig-common xsltproc postgresql
 
-* The Sparqlify Web Admin debian package is available at
+* The Sparqlify Web Admin debian package is available at:
 
-        http://cstadler.aksw.org/repos/apt/pool/main/s/sparqlify-tomcat7/
+[http://cstadler.aksw.org/repos/apt/pool/main/s/sparqlify-tomcat7/](http://cstadler.aksw.org/repos/apt/pool/main/s/sparqlify-tomcat7/)
 
 * Download the sparqlify-tomcat7 package and install it with (fill out `${version}` appropriately):
 
