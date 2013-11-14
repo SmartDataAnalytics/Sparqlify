@@ -51,7 +51,7 @@ If you followed about recommendations, your chances of getting a working deploym
 
 * Visiting the following URL with your browser should show the Sparqlify Web Admin dashboard
 
-        [http://localhost:8080/sparqlify](http://localhost:8080/sparqlify)
+[http://localhost:8080/sparqlify](http://localhost:8080/sparqlify)
 
 * If this is the case: Congratulations! Otherwise, check out the trouble shooting guide.
 
