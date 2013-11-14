@@ -17,7 +17,7 @@ Otherwise, you may be left with a non-functional deployed war file.
         # but this command lists the installed Java versions and may help you
         # on your decision on which jdk to install:
         
-        dpgk --get-selections | grep openjdk-
+        dpkg --get-selections | grep openjdk-
 
 * Make sure that there is an approriate JDBC driver in tomcat's lib folder. If not, you can install one using the command below. Note that we sucessfully tested version 8.4-701 against Postgresql 9.* databases, however we had issues related to incompatible datatype mappings with the 9.* JDBC drivers.
 
