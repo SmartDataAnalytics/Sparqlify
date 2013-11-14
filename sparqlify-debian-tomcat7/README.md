@@ -95,8 +95,9 @@ So you can test your setup by mapping this database.
  * Check the prerequisites about the notes about the JDK.
 * In the browser I see a blank page.
  * Check `/var/log/tomcat7/catalina.out` for exceptions.
-* In `catalina.out` I see an exception mentioning `Heap space`
+* In `catalina.out`, I see an exception mentioning `Heap space`
  * Probably Tomcat does not have enough memory. Check the prerequisites section.
-
+* In `catalina.out`, I see `java.lang.NoSuchMethodError: org.postgresql.core.BaseConnection.getLargeObjectAPI()Lorg/postgresql/largeobject/LargeObjectManager;`
+ * Place the PostgreSQL JDBC driver into `/usr/share/tomcat7/lib`. Check the prerequisites section.
 
 
