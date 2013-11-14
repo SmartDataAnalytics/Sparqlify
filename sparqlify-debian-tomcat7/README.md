@@ -17,7 +17,7 @@ Otherwise, you may be left with a non-functional deployed war file.
         # but this command lists the installed Java versions and may help you
         # on your decision on which jdk to install:
         
-        dpgk --get-selections | grep openjdk-
+        dpkg --get-selections | grep openjdk-
 
 * Make sure that there is an approriate JDBC driver in tomcat's lib folder. If not, you can install one using the command below. Note that we sucessfully tested version 8.4-701 against Postgresql 9.* databases, however we had issues related to incompatible datatype mappings with the 9.* JDBC drivers.
 
@@ -47,11 +47,11 @@ If you followed about recommendations, your chances of getting a working deploym
 
         sudo dpkg -i sparqlify-tomcat7_${version}.deb
 
-* When prompted for the database password, enter one. Important note: Currently there is an character escaping issue - do not use characters that have special meaning in XML in the password, otherwise you need to manually fix the file `/etc/tomcat7/Catalina/localhost/sparqlify.xml`.
+* When prompted for the database password, enter one. Important note: Currently there is a character escaping issue - do not use characters that have special meaning in XML in the password, otherwise you need to manually fix the file `/etc/tomcat7/Catalina/localhost/sparqlify.xml`.
 
 * Visiting the following URL with your browser should show the Sparqlify Web Admin dashboard
 
-        http://localhost:8080/sparqlify
+[http://localhost:8080/sparqlify](http://localhost:8080/sparqlify)
 
 * If this is the case: Congratulations! Otherwise, check out the trouble shooting guide.
 
