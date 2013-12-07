@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+#set -x
+
+. /usr/share/debconf/confmodule
+. /usr/share/dbconfig-common/dpkg/postinst.pgsql 
+
+# you can set the default database encoding to something else
+dbc_pgsql_createdb_encoding="UTF8"
+dbc_go sparqlify-tomcat-common $@
+
+
+case "$1" in
+
+  configure)
+
+  ;;
+
+  abort-upgrade|abort-remove|abort-deconfigure)
+    exit 0
+  ;;
+
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+  ;;
+
+esac
+
+
+
+#DEBHELPER#

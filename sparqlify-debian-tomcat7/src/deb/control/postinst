@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -e
+#set -x
+
+. /usr/share/debconf/confmodule
+. /usr/share/dbconfig-common/dpkg/postinst.pgsql 
+
+. /etc/dbconfig-common/sparqlify-tomcat-common.conf
+
+# you can set the default database encoding to something else
+dbc_pgsql_createdb_encoding="UTF8"
+#dbc_go sparqlify-tomcat-common $@
+
+
+
+function updateDbCredentials {
+  dbc_dbuser="$1"
+  dbc_dbpass="$2"
+
+  xslt="<?xml version=\"1.0\"?>
+<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">
+
+<xsl:output method=\"xml\" indent=\"yes\"/>
+
+<xsl:template match=\"@*|node()\">
+  <xsl:copy>
+    <xsl:apply-templates select=\"@*|node()\"/>
+  </xsl:copy>
+</xsl:template>
+<xsl:template match=\"@username\">
+  <xsl:attribute name=\"username\">
+        <xsl:text>$dbc_dbuser</xsl:text>
+  </xsl:attribute>
+</xsl:template>
+
+<xsl:template match=\"@password\">
+  <xsl:attribute name=\"password\">
+        <xsl:text>$dbc_dbpass</xsl:text>
+  </xsl:attribute>
+</xsl:template>
+
+</xsl:stylesheet>
+"
+
+  xsltFile="/tmp/sparqlify-tomcat7-context.xslt"
+  echo "$xslt" > "$xsltFile"
+
+  xmlFile="/etc/tomcat7/Catalina/localhost/sparqlify.xml"
+
+  xml=`cat "$xmlFile"`
+  echo "$xml" | xsltproc "$xsltFile" - > "$xmlFile"
+
+  rm "$xsltFile"
+}
+
+
+case "$1" in
+
+  configure)
+
+    updateDbCredentials "$dbc_dbuser" "$dbc_dbpass"
+    service tomcat7 restart
+
+  ;;
+
+  abort-upgrade|abort-remove|abort-deconfigure)
+    exit 0
+  ;;
+
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+  ;;
+
+esac
+
+
+
+#DEBHELPER#

@@ -1,0 +1,10 @@
+Source: facete
+Section: web
+Priority: extra
+Maintainer: Claus Stadler <cstadler@informatik.uni-leipzig.de>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.9.2
+Homepage: http://aksw.org/Projects/Facete
+Vcs-Git: git://github.com/GeoKnow/Facete.git
+Vcs-Browser: https://github.com/GeoKnow/Facete
+

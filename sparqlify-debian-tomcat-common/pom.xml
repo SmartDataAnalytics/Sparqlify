@@ -8,16 +8,16 @@
 		<version>0.6.5-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sparqlify-debian-tomcat7</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>sparqlify-debian-tomcat-common</artifactId>
+	<packaging>war</packaging>
 
 
-	<name>Sparqlify - Debian Packaging - Tomcat7</name>
+	<name>Sparqlify - Debian Packaging - Tomcat Common</name>
 
 
 	<properties>
-		<deb.tomcat7.packageName>sparqlify-tomcat7</deb.tomcat7.packageName>
-<!-- 		<tomcat.context.name>sparqlify</tomcat.context.name> -->
+		<deb.tomcatCommon.packageName>sparqlify-tomcat-common</deb.tomcatCommon.packageName>
+		<tomcat.context.name>sparqlify</tomcat.context.name>
 	</properties>
 
 	<profiles>
@@ -48,9 +48,17 @@
 
 	<description>${project.description}</description>
 
-
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<artifactId>jdeb</artifactId>
 				<groupId>org.vafer</groupId>
@@ -62,7 +70,7 @@
 							<goal>jdeb</goal>
 						</goals>
 						<configuration>
-							<deb>${project.build.directory}/${deb.tomcat7.packageName}_[[version]]_all.deb</deb>
+							<deb>${project.build.directory}/${deb.tomcatCommon.packageName}_[[version]]_all.deb</deb>
 							<timestamped>true</timestamped>
 							<dataSet>
 			
@@ -71,23 +79,23 @@
 									<src>${basedir}/src/deb/resources</src>
 								</data>
 			
-<!-- 								<data> -->
-<!-- 									<type>file</type> -->
-<!-- 									<src>${project.build.directory}/${project.build.finalName}.war</src> -->
-<!-- 									<mapper> -->
-<!-- 										<type>perm</type> -->
-<!-- 										<prefix>/usr/share/lib/${deb.tomcatCommon.name}</prefix> -->
+								<data>
+									<type>file</type>
+									<src>${project.build.directory}/${project.build.finalName}.war</src>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/lib/${deb.tomcatCommon.packageName}</prefix>
 <!-- 										<user>loader</user> -->
 <!-- 										<group>loader</group> -->
-<!-- 									</mapper> -->
-<!-- 								</data> -->
+									</mapper>
+								</data>
 
-<!-- 								<data> -->
-<!-- 									<type>link</type> -->
-<!-- 									<symlink>true</symlink> -->
-<!-- 									<linkName>/var/lib/tomcat7/web${deb.tomcatCommon.name}/${deb.tomcatCommon.name}.war</linkName> -->
-<!-- 									<linkTarget>/usr/share/lib/${deb.tomcatCommon.name}/${project.build.finalName}.war</linkTarget> -->
-<!-- 								</data> -->
+								<data>
+									<type>link</type>
+									<symlink>true</symlink>
+									<linkName>/usr/share/lib/${deb.tomcatCommon.packageName}/${deb.tomcatCommon.packageName}.war</linkName>
+									<linkTarget>/usr/share/lib/${deb.tomcatCommon.packageName}/${project.build.finalName}.war</linkTarget>
+								</data>
 
 							</dataSet>
 			
@@ -98,5 +106,13 @@
 		</plugins>
 	</build>
 
+
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-web-admin-server</artifactId>
+			<type>war</type>
+		</dependency>
+	</dependencies>
 </project>
 

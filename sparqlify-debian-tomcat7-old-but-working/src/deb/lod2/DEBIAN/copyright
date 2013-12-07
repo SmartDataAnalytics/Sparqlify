@@ -1,0 +1,12 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Facete
+Source: https://github.com/GeoKnow/Facete
+
+Files: *
+Copyright:
+    2013 Claus Stadler
+    2013 Jörg Unbehauen
+    2013 Sören Brunk
+License: Apache-2.0
+ Apache License 2.0
+ http://www.opensource.org/licenses/Apache-2.0

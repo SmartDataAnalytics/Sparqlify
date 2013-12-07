@@ -1,0 +1,9 @@
+Package: sparqlify-tomcat7
+Version: [[version]]
+Section: web
+Priority: optional
+Architecture: all
+Depends: sparqlify-tomcat-common, xsltproc, tomcat7
+Maintainer: Claus Stadler <cstadler@informatik.uni-leipzig.de>
+Description: Sparqlify Tomcat Common
+Distribution: development
