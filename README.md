@@ -1,5 +1,6 @@
 # Sparqlify SPARQL->SQL rewriter
-![Build Status](http://ci.aksw.org/jenkins/job/Sparqlify/badge/icon)
+[![Build Status](http://ci.aksw.org/jenkins/job/Sparqlify/badge/icon)](http://ci.aksw.org/jenkins/job/Sparqlify/)
+
 
 ## Introduction
 
