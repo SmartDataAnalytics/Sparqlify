@@ -173,7 +173,7 @@ public class Main {
 				: Long.parseLong(maxResultSetSizeStr);
 		
 
-		Config config = SparqlifyCliHelper.parseSmlConfig(commandLine, loggerCount);
+		Config config = SparqlifyCliHelper.parseSmlConfigs(commandLine, loggerCount);
 		onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
 
 		/*

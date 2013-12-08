@@ -30,6 +30,8 @@ ASTLabelType=CommonTree;
 
 
 tokens{
+SET;
+
 VIEW_DEFINITION;
 VAR_BINDING;
 VAR_BINDINGS;
@@ -183,9 +185,14 @@ sparqlifyConfigStmt
     | prefixDefStmt
     | macroStmt
     | functionDeclarationStmt
+    | setStmt
 //    | importStmt
     ;
 
+
+setStmt
+    : SET NAME '=' string ';'? -> ^(SET NAME string) 
+	;
 
 /*
  * Function declaration extension
@@ -1010,6 +1017,8 @@ anon
 // $>
 
 // $<Lexer
+
+SET : ('S'|'s')('E'|'e')('T'|'t');
 
 VIEW : ('V'|'v')('I'|'i')('E'|'e')('W'|'w');
 

@@ -543,13 +543,15 @@ public class SqlExprOptimizer {
 			
 			int k = 0;
 			while((k = sb.indexOf(sa, k)) >= 0) {
-				// Constants must align at beginnig and ending
+				// Constants must align at beginning and ending
 				if(i == 0 && k != 0) {
 					continue;
 				}
 				
 				if(i == a.size() - 1 && k + sa.length() != sb.length()) {
-					continue;
+				    // TODO Not sure if break is correct (we may miss alignments and thus get incomplete results) - with continue I entered an endless loop on the GADM mapping 
+				    // continue
+					break;
 				}
 				
 				String[] parts = split(sb, k, sa.length());			

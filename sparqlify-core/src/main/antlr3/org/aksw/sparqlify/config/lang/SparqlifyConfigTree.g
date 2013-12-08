@@ -33,32 +33,35 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     
     import com.hp.hpl.jena.sparql.expr.*;
     import org.apache.commons.lang.NotImplementedException;
-	import com.hp.hpl.jena.graph.*;
-	import com.hp.hpl.jena.vocabulary.*;
+    import com.hp.hpl.jena.graph.*;
+    import com.hp.hpl.jena.vocabulary.*;
     import com.hp.hpl.jena.sparql.syntax.*;
     import com.hp.hpl.jena.shared.*;
     import org.aksw.sparqlify.config.syntax.*;
-	import com.hp.hpl.jena.shared.impl.*;
+    import com.hp.hpl.jena.shared.impl.*;
     import com.hp.hpl.jena.sparql.core.*;
     import com.hp.hpl.jena.datatypes.*;
     import org.aksw.sparqlify.algebra.sparql.expr.*;
-	import com.hp.hpl.jena.rdf.model.AnonId;    
-	import org.aksw.sparqlify.util.*;
-	import org.aksw.jena_sparql_api.utils.*;
+    import com.hp.hpl.jena.rdf.model.AnonId;    
+    import org.aksw.sparqlify.util.*;
+    import org.aksw.jena_sparql_api.utils.*;
 
-	import org.aksw.sparqlify.algebra.sql.nodes.*;
-	import com.hp.hpl.jena.sdb.core.JoinType;
+    import org.aksw.sparqlify.algebra.sql.nodes.*;
+    import com.hp.hpl.jena.sdb.core.JoinType;
 
     import java.util.Collection;
     import java.util.List;
     import java.util.ArrayList;
+    import java.util.Map;
+    import java.util.AbstractMap;
+    import java.util.HashMap;
 
 
     import org.slf4j.Logger;
     import org.slf4j.LoggerFactory;
 
-	import com.hp.hpl.jena.shared.PrefixMapping;
-	import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
+    import com.hp.hpl.jena.shared.PrefixMapping;
+    import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 
 
     import org.aksw.sparqlify.core.SparqlifyConstants;
@@ -70,11 +73,39 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 
 
 
-	PrefixMapping prefixMapping = new PrefixMappingImpl();
+	private PrefixMapping prefixMapping = new PrefixMappingImpl();
+
+    private Map<String, String> options = new HashMap<String, String>();
 	
 	public PrefixMapping getPrefixMapping() {
 		return prefixMapping;
 	}
+	
+	public Map<String, String> getOptions() {
+        return options;
+	}
+	
+	
+	public Node getDefaultGraph() {
+	    String value = options.get("defaultGraph");
+	    if(value == null) {
+	    	value = "";
+	    } else {
+	    	value = value.trim();
+	    }
+
+
+	    Node result;
+	    if(value.isEmpty()) {
+	    	result = Quad.defaultGraphNodeGenerated;
+	   	}
+	   	else {
+	   		result = Node.createURI(value);
+	   	}
+	    
+	    return result;
+	}
+	
 
 	void registerPrefix(String prefix, String uri) {
 		registerPrefix(prefixMapping, new PrefixDecl(prefix, uri));
@@ -117,6 +148,19 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
         return result;
     }
     
+    
+    public String tryExpandUri(String uri) {
+    	String result;
+    
+        int index = uri.indexOf(':');
+        if(index < 0) {
+			result = uri;
+		} else {
+			result = expandUri(uri);
+		}
+		
+		return result;
+	}
     
     public String expandUri(String uri) {
         int index = uri.indexOf(':');
@@ -209,10 +253,15 @@ templateConfig returns[TemplateConfig config]
 	;
 
 templateConfigItem[TemplateConfig config]
-	: x=namedViewTemplateDefinition { config.getDefinitions().add($x.value); }
-	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
+	: x=namedViewTemplateDefinition {config.getDefinitions().add($x.value);}
+	| a=prefixDecl {registerPrefix($a.prefix, $a.uri);}
+	| b=setStmt {options.put($b.value.getKey(), $b.value.getValue());}
 	;
 
+
+setStmt returns[Map.Entry<String, String> value]
+    : ^(SET a=NAME b=string) {$value = new AbstractMap.SimpleEntry<String, String>($a.text, $b.value);}
+    ;
 
 constructConfig returns[ConstructConfig config]
 	@init { $config = new ConstructConfig(); prefixMapping = $config.getPrefixMapping(); }
@@ -222,6 +271,7 @@ constructConfig returns[ConstructConfig config]
 constructConfigItem[ConstructConfig config]
 	: x=constructViewDefinition[config] { config.getViewDefinitions().add($x.value); }
 	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
+	| b=setStmt {options.put($b.value.getKey(), $b.value.getValue());}
 	;
 
 constructViewDefinition[ConstructConfig config] returns [ ConstructViewDefinition value ]
@@ -240,6 +290,7 @@ sparqlifyConfigItem[Config config]
 	: x=viewDefinition      {$config.getViewDefinitions().add($x.value);}
 	| a=prefixDecl          {registerPrefix($a.prefix, $a.uri);}
 	| b=functionDeclaration {$config.getFunctionDeclarations().add($b.value);}
+	| c=setStmt {options.put($c.value.getKey(), $c.value.getValue());}
 	;
 
 
@@ -546,7 +597,7 @@ quadPattern returns [QuadPattern value]
     
 quads returns [QuadPattern value]
     @init{$value = new QuadPattern();}
-    : (a=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern($a.value));})? ( quadsNotTriples[$value] (c=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern($c.value));})? )*
+    : (a=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern(getDefaultGraph(), $a.value));})? ( quadsNotTriples[$value] (c=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern(getDefaultGraph(), $c.value));})? )*
     ;
     
 quadsNotTriples [QuadPattern value] //returns [QuadPattern value]

@@ -35,4 +35,13 @@ public class Config {
 		return functionDeclarations;
 	}
 	
+	
+	public void merge(Config other) {
+	    // TODO Check for overwrites of the prefix mappings
+	    prefixMapping.setNsPrefixes(other.prefixMapping);
+
+	    viewDefinitions.addAll(other.viewDefinitions);
+	    
+	    functionDeclarations.addAll(other.functionDeclarations);
+	}
 }

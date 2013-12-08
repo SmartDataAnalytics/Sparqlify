@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -145,6 +146,27 @@ public class SparqlifyCliHelper {
 		return result;
 	}
 
+    public static List<File> parseFiles(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
+        String[] fileNames = commandLine.getOptionValues(optName);
+
+        if (fileNames == null || fileNames.length == 0) {
+            logger.error("File or folder name required for option '" + optName + "'"); //"No mapping file given");
+            return null;
+        }
+
+        List<File> result = new ArrayList<File>();
+        for(String fileName : fileNames) {
+            File file = new File(fileName);
+            if (mustExist && !file.exists()) {
+                logger.error("File does not exist: " + fileName);
+                return null;
+            }
+            
+            result.add(file);
+        }
+        
+        return result;
+    }
 
 	public static File parseFile(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
 		String fileName = commandLine.getOptionValue(optName);
@@ -162,7 +184,35 @@ public class SparqlifyCliHelper {
 		
 		return file;
 	}
-	
+
+	/**
+	 * Returns a single configuration created from multiple files
+	 * 
+	 * @param commandLine
+	 * @param logger
+	 * @return
+	 * @throws IOException
+	 * @throws RecognitionException
+	 */
+    public static Config parseSmlConfigs(CommandLine commandLine, Logger logger) throws IOException, RecognitionException {
+        List<File> configFiles = parseFiles(commandLine, "m", true, logger);
+        if(configFiles == null) {
+            return null;
+        }
+
+        Config result = null;
+        for(File configFile : configFiles) {
+            InputStream in = new FileInputStream(configFile);
+            Config tmp = SparqlifyUtils.parseSmlConfig(in, logger);
+            if(result == null) {
+                result = tmp;
+            } else {
+                result.merge(tmp);
+            }
+        }
+
+        return result;
+    }	
 	public static Config parseSmlConfig(CommandLine commandLine, Logger logger) throws IOException, RecognitionException {
 		File configFile = parseFile(commandLine, "m", true, logger);
 		if(configFile == null) {
