@@ -29,6 +29,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
 import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
 import com.hp.hpl.jena.sparql.core.BasicPattern;
 import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.E_Equals;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -63,6 +64,10 @@ public class ReplaceConstants {
 		return new Triple(nodes.get(0), nodes.get(1), nodes.get(2));
 	}
 
+	public static Quad listToQuad(List<Node> nodes) {
+        return new Quad(nodes.get(0), nodes.get(1), nodes.get(2), nodes.get(3));
+    }
+
 	public static List<Node> tripleToList(Triple triple)
 	{
 		List<Node> result = new ArrayList<Node>();
@@ -80,15 +85,15 @@ public class ReplaceConstants {
 		return MultiMethod.invokeStatic(ReplaceConstants.class, "_replace", op);
 	}
 		
-	public static Node transform(Node node, boolean isGraphNode, Generator generator, ExprList filters) {
+	public static Node transform(Node node, Generator generator, ExprList filters) {
 		if(node.isConcrete()) {
 			Var var = Var.alloc(generator.next());			
 			
 			// Use of the constant Quad.defaultGraphNodeGenerated in the graph position results in a free variable.
-			if(!(isGraphNode && node.equals(Quad.defaultGraphNodeGenerated))) {
+			//if(!(isGraphNode && node.equals(Quad.defaultGraphNodeGenerated))) {
 				Expr condition = new E_Equals(new ExprVar(var), NodeValue.makeNode(node));
 				filters.add(condition);				
-			}
+			//}
 						
 			return var;
 		}
@@ -191,28 +196,52 @@ public class ReplaceConstants {
 		
 		ExprList filters = new ExprList();
 
-		BasicPattern triples = new BasicPattern();
+		//BasicPattern triples = new BasicPattern();
+        QuadPattern quadPattern = new QuadPattern();
 		
-		Node graphNode = transform(op.getGraphNode(), true, generator, filters);
+		Node rawGraphNode = op.getGraphNode();
+		
+		Node commonGraphNode = null;
+		if(rawGraphNode.isConcrete()) {
+		    // If the graph node is a concrete value - except for the default graph,
+		    // replace it with a variable that is constrained to that value
+		    if(!rawGraphNode.equals(Quad.defaultGraphNodeGenerated)) {
+		        commonGraphNode = transform(rawGraphNode, generator, filters);		        
+		    }
+		}
+		else {
+		    // If the graph node is a variable, use it.
+		    commonGraphNode = rawGraphNode;
+		}
 		
 		
-		List<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<Node>(4);
 		for(Triple triple : op.getBasicPattern().getList()) {
-			
+
+            Node graphNode;
+            if(commonGraphNode != null) {
+                graphNode = commonGraphNode;
+            } else {
+                graphNode = Var.alloc(generator.next());          
+            }
+            nodes.add(graphNode);
+
  
 			for(Node node : tripleToList(triple)) {
-				Node n = transform(node, false, generator, filters);
+			    
+				Node n = transform(node, generator, filters);
 				nodes.add(n);
 			}
 		
-			Triple t = listToTriple(nodes);
+			//Triple t = listToTriple(nodes);
 			
-			triples.add(t);
-			
+			//triples.add(t);
+			Quad q = listToQuad(nodes);
+			quadPattern.add(q);
 			nodes.clear();			
 		}
 		
-		Op result = new OpQuadPattern(graphNode, triples); 
+		Op result = new OpQuadPattern2(quadPattern); 
 		
 		if(!filters.isEmpty()) {
 			result = OpFilter.filter(filters, result);

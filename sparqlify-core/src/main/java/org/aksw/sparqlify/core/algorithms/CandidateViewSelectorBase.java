@@ -20,6 +20,7 @@ import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
+import org.aksw.sparqlify.core.OpQuadPattern2;
 import org.aksw.sparqlify.core.ReplaceConstants;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
@@ -66,7 +67,6 @@ import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
 import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
-import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
 import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
 import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
@@ -159,7 +159,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * Abstract methods
 	 */
 	//public abstract I createUnionItem(List<ViewInstance<T>> list, RestrictionManagerImpl restrictions);
-	public abstract Op createOp(OpQuadPattern opQuadPattern, List<RecursionResult<T, C>> viewInstances);
+	public abstract Op createOp(OpQuadPattern2 opQuadPattern, List<RecursionResult<T, C>> viewInstances);
 
 	
 	/**
@@ -561,7 +561,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	 * such as 'aaaa' = prefix
 	 * 'aaaaa$' = constant
 	 */
-	public List<RecursionResult<T, C>> getApplicableViewsBase(OpQuadPattern op, RestrictionManagerImpl restrictions)
+	public List<RecursionResult<T, C>> getApplicableViewsBase(OpQuadPattern2 op, RestrictionManagerImpl restrictions)
 	{
 		//List<ViewInstanceJoin<T>> result = new ArrayList<ViewInstanceJoin<T>>();
 		List<RecursionResult<T, C>> result = new ArrayList<RecursionResult<T, C>>();
@@ -1211,7 +1211,7 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		// Hm, but actually: If I pick those quads with the least view candidates first, then I will quickly
 		// Get to those quads causing contradictions
 		
-	public Op getApplicableViews(OpQuadPattern op, RestrictionManagerImpl restrictions)
+	public Op getApplicableViews(OpQuadPattern2 op, RestrictionManagerImpl restrictions)
 	{
 		//List<ViewInstanceJoin<T>> conjunctions =
 		List<RecursionResult<T, C>> conjuncions = getApplicableViewsBase(op, restrictions);
@@ -1312,8 +1312,8 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 			result = getApplicableViews((OpExtend)op, restrictions);
 			break;			
 			
-		case OpQuadPattern:
-			result = getApplicableViews((OpQuadPattern)op, restrictions);
+		case OpQuadPattern2:
+			result = getApplicableViews((OpQuadPattern2)op, restrictions);
 			break;			
 		
 		case OpSlice:

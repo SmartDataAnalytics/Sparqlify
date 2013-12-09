@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
+import org.aksw.sparqlify.core.OpQuadPattern2;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
@@ -22,7 +23,6 @@ import com.hp.hpl.jena.sdb.core.Generator;
 import com.hp.hpl.jena.sdb.core.Gensym;
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
-import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.expr.Expr;
@@ -119,7 +119,7 @@ public class CandidateViewSelectorImpl
 	}
 	*/
 	@Override
-	public Op createOp(OpQuadPattern opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
+	public Op createOp(OpQuadPattern2 opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
 		
 		OpDisjunction result = OpDisjunction.create();
 		
@@ -144,7 +144,7 @@ public class CandidateViewSelectorImpl
 	
 	
 	//@Override
-	public Op createOpOldButWorking(OpQuadPattern opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
+	public Op createOpOldButWorking(OpQuadPattern2 opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
 		
 		for(RecursionResult<ViewDefinition, Mapping> tmp : conjunctions) {
 			ViewInstanceJoin<ViewDefinition> conjunction = tmp.getViewInstances();
@@ -173,7 +173,7 @@ public class CandidateViewSelectorImpl
 	
 	public static Generator emptyViewNameGenerator = Gensym.create("emptyView");
 	
-	public static Op createEmptyViewInstance(OpQuadPattern opQuadPattern) {
+	public static Op createEmptyViewInstance(OpQuadPattern2 opQuadPattern) {
 		Set<Var> vars = GetVarsMentioned.getVarsMentioned(opQuadPattern);
 
 		

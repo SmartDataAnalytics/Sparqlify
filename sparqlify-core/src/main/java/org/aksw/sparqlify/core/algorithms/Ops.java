@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 public enum Ops {
 	OpQuadPattern,
+    OpQuadPattern2,
 	OpFilter,
 	OpFilterIndexed,
 	OpUnion,

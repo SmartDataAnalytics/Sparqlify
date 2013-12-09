@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.List;
 
+import org.aksw.sparqlify.core.OpQuadPattern2;
 import org.aksw.sparqlify.sparqlview.OpSparqlViewPattern;
 import org.aksw.sparqlify.sparqlview.SparqlView;
 import org.slf4j.Logger;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.algebra.Op;
 import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
-import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 
 public class CandidateViewSelectorRestructify
 	extends CandidateViewSelectorBase<SparqlView, Void>
@@ -21,7 +21,7 @@ public class CandidateViewSelectorRestructify
 	}
 
 	@Override
-	public Op createOp(OpQuadPattern qpQuadPattern, List<RecursionResult<SparqlView, Void>> conjunctions) {
+	public Op createOp(OpQuadPattern2 qpQuadPattern, List<RecursionResult<SparqlView, Void>> conjunctions) {
 		
 		//ViewInstanceJoin<SparqlView> conjunctions = item.get
 		

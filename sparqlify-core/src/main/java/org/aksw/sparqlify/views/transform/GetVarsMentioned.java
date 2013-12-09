@@ -6,6 +6,7 @@ import java.util.Set;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
+import org.aksw.sparqlify.core.OpQuadPattern2;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.algorithms.OpMapping;
 import org.aksw.sparqlify.core.algorithms.OpViewInstanceJoin;
@@ -56,6 +57,10 @@ public class GetVarsMentioned {
 	public static Set<Var> _getVarsMentioned(OpQuadPattern op) {
 		return QuadUtils.getVarsMentioned(op.getPattern());
 	}
+
+	public static Set<Var> _getVarsMentioned(OpQuadPattern2 op) {
+        return QuadUtils.getVarsMentioned(op.getPattern());
+    }
 	
 	public static Set<Var> _getVarsMentioned(OpExtend op) {
 		Set<Var> result = new HashSet<Var>();
