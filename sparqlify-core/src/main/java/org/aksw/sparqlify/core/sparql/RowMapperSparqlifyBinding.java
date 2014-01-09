@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import org.aksw.sparqlify.core.MakeNodeValue;
 import org.slf4j.Logger;
@@ -103,6 +104,8 @@ public class RowMapperSparqlifyBinding
 				String tmp = colValue.toString();
 				String val = tmp.replace(' ', 'T');
 				nodeValue = NodeValue.makeDateTime(val);
+			} else if(colValue instanceof UUID) {
+			    nodeValue = NodeValue.makeString(colValue.toString());
 			} else {
 				try {
 					nodeValue = MakeNodeValue.makeNodeValue(colValue);
