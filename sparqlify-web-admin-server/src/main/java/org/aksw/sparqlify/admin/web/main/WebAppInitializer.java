@@ -34,10 +34,17 @@ public class WebAppInitializer
 		servletContext.addListener(new ContextLoaderListener(rootContext));
 		servletContext.addListener(new RequestContextListener());
 		
-		FilterRegistration.Dynamic fr = servletContext.addFilter("UrlRewriteFilter", new UrlRewriteFilter());
-		fr.setInitParameter("dispatcher", "REQUEST");
-		fr.setInitParameter("dispatcher", "FORWARD");
-		fr.addMappingForUrlPatterns(null, true, "/*");
+		{
+            FilterRegistration.Dynamic fr = servletContext.addFilter("CorsFilter", new CorsFilter());
+            fr.addMappingForUrlPatterns(null, true, "/*");
+		}
+		
+		{
+    		FilterRegistration.Dynamic fr = servletContext.addFilter("UrlRewriteFilter", new UrlRewriteFilter());
+    		fr.setInitParameter("dispatcher", "REQUEST");
+    		fr.setInitParameter("dispatcher", "FORWARD");
+    		fr.addMappingForUrlPatterns(null, true, "/*");
+		}
 		
 		// Create the dispatcher servlet's Spring application context
 		AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
