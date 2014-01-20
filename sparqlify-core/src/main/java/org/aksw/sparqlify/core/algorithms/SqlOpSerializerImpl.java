@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sdb.core.JoinType;
+import com.hp.hpl.jena.sdb.core.sqlnode.SqlSelectBlock;
 
 
 
@@ -204,7 +205,19 @@ public class SqlOpSerializerImpl
 			}
 			
 			isFirst = false;
+			
+			boolean isSubSelect = subOp instanceof SqlOpSelectBlock;
+			if(isSubSelect) {
+			    writer.print("(");
+			    writer.incIndent();
+			}
+			
 			serialize(subOp, writer);
+
+			if(isSubSelect) {
+                writer.decIndent();
+                writer.print(") " + ((SqlOpSelectBlock)subOp).getAliasName());
+            }
 			
 		}
 		//writer.print("EMPTY_SQL_NODE");

@@ -317,7 +317,7 @@ public class SqlOpSelectBlockCollectorImpl
 	}
 
 	
-	public static SqlOp makeSelect(SqlOpSlice op, Set<String> refs) {
+	public static SqlOpSelectBlock makeSelect(SqlOpSlice op, Set<String> refs) {
 		SqlOp newOp = _makeSelect(op.getSubOp(), refs);
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		
@@ -327,7 +327,7 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpDistinct op, Set<String> refs) {
+	public static SqlOpSelectBlock makeSelect(SqlOpDistinct op, Set<String> refs) {
 		SqlOp newOp = _makeSelect(op.getSubOp(), refs);
 		SqlOpSelectBlock result = requireSelectBlock(newOp);
 		result.setDistinct(true);
@@ -665,11 +665,23 @@ public class SqlOpSelectBlockCollectorImpl
 			result = collectJoins((SqlOpUnionN)sqlOp, refs);
 			break;
 
-			
-		default:
-			logger.warn("Not sure if we should come here"); 
-			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "collectJoins", sqlOp);
+		case SqlOpDistinct: {
+		    SqlOpSelectBlock tmp = makeSelect((SqlOpDistinct)sqlOp, refs); 
+		    result = collectJoins(tmp, refs);
 			break;
+		}
+
+		case SqlOpSlice: {
+            SqlOpSelectBlock tmp = makeSelect((SqlOpSlice)sqlOp, refs); 
+            result = collectJoins(tmp, refs);
+            break;
+        }
+
+		default:
+		    throw new RuntimeException("Should not come here; don't know how to handle " + sqlOp);
+//			logger.warn("Not sure if we should come here"); 
+//			result = MultiMethod.invokeStatic(SqlOpSelectBlockCollectorImpl.class, "collectJoins", sqlOp);
+//			break;
 		}
 		
 		
@@ -981,6 +993,18 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 
+	
+	public static JoinContextJoin collectJoins(SqlOpSelectBlock sqlOp, Set<String> refs) {
+        //SqlOpSelectBlock op = makeSelect(sqlOp, refs);
+        String alias = aliasGenerator.next();
+        sqlOp.setAliasName(alias);
+
+        
+        JoinContextJoin result = new JoinContextJoin(sqlOp);
+        initProjection(result.getProjection(), sqlOp.getSchema(), sqlOp.getAliasName());
+        
+        return result;
+	}
 	
 	public static JoinContextJoin collectJoins(SqlOpTable op, Set<String> refs) {
 		SqlOpTable table = makeSelectOrTable(op);
