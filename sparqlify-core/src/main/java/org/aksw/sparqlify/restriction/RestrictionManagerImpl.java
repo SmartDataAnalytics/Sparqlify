@@ -700,6 +700,10 @@ public class RestrictionManagerImpl implements RestrictionManager {
 			return false;
 		}
 
+		if(rm == null) {
+		    throw new RuntimeException("Should not happen");
+		}
+		
 		Set<Var> vars = rm.getVariables();
 		for(Var var : vars) {
 			RestrictionImpl r = rm.getRestriction(var);

@@ -1579,7 +1579,9 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(leftRestrictions);
 				//RestrictionManagerImpl subRestrictions = new RestrictionManagerImpl(restrictions);
 				RestrictionManagerImpl tmp = getRestrictions2(member);
-				subRestrictions.stateRestriction(tmp);
+				if(tmp != null) {
+				    subRestrictions.stateRestriction(tmp);
+				}
 				
 				/*
 				if(moreRestrictions != null) {

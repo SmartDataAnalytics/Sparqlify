@@ -207,16 +207,18 @@ public class SqlOpSerializerImpl
 			isFirst = false;
 			
 			boolean isSubSelect = subOp instanceof SqlOpSelectBlock;
-			if(isSubSelect) {
+            boolean isUnion = subOp instanceof SqlOpUnionN;
+			
+			if(isSubSelect || isUnion) {
 			    writer.print("(");
 			    writer.incIndent();
 			}
 			
 			serialize(subOp, writer);
 
-			if(isSubSelect) {
+			if(isSubSelect || isUnion) {
                 writer.decIndent();
-                writer.print(") " + ((SqlOpSelectBlock)subOp).getAliasName());
+                writer.print(") " + SqlOpSelectBlock.getAliasName(subOp));
             }
 			
 		}
