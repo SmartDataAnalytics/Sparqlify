@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,8 @@ public class SqlOpSerializerImpl
 		writer.flush();
 		writer.close();
 		
-		return out.toString();
+		String result = SparqlifyUtils.toUtf8String(out);
+		return result;
 	}
 	
 	public void serialize(SqlOp op, IndentedWriter writer) {

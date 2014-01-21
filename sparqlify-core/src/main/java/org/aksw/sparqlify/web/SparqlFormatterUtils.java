@@ -4,11 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.jena_sparql_api.utils.ModelUtils;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.collections15.Transformer;
 import org.apache.jena.atlas.lib.Sink;
 import org.apache.jena.riot.out.SinkTripleOutput;
@@ -204,13 +206,15 @@ public class SparqlFormatterUtils {
 		model.write(out, "RDF/XML");
 	}
 
-	public static void writeXml(OutputStream out, ResultSet rs) {
+	public static void writeXml(OutputStream out, ResultSet rs) throws UnsupportedEncodingException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ResultSetFormatter.outputAsXML(baos, rs);
 		
-		String str = baos.toString();
+		//String str = baos.toString();
+	    String str = SparqlifyUtils.toUtf8String(baos);
+
 		
-		PrintStream ps = new PrintStream(out);
+		PrintStream ps = new PrintStream(out, false, "UTF-8");
 		ps.println(str);
 
 		// TODO Hack: Writing from Jena directly seems to block for same reason
@@ -284,19 +288,22 @@ public class SparqlFormatterUtils {
 	public static String _formatJson(Boolean value) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		writeJson(out, value);
-		return out.toString();
+		String result = SparqlifyUtils.toUtf8String(out);
+		return result;
 	}
 
 	public static String _formatJson(Model model) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		writeJson(out, model);
-		return out.toString();
+        String result = SparqlifyUtils.toUtf8String(out);
+        return result;
 	}
 
 	public static String _formatJson(ResultSet rs) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		writeJson(out, rs);
-		return out.toString();
+        String result = SparqlifyUtils.toUtf8String(out);
+        return result;
 	}
 
 	// OutputStream

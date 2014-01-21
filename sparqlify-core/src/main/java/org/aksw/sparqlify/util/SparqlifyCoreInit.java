@@ -65,6 +65,7 @@ import org.aksw.sparqlify.core.transformations.ExprTransformerArithmetic;
 import org.aksw.sparqlify.core.transformations.ExprTransformerCast;
 import org.aksw.sparqlify.core.transformations.ExprTransformerConcat;
 import org.aksw.sparqlify.core.transformations.ExprTransformerFunction;
+import org.aksw.sparqlify.core.transformations.ExprTransformerHasRdfTermType;
 import org.aksw.sparqlify.core.transformations.ExprTransformerIsNumeric;
 import org.aksw.sparqlify.core.transformations.ExprTransformerLang;
 import org.aksw.sparqlify.core.transformations.ExprTransformerLangMatches;
@@ -445,6 +446,10 @@ public class SparqlifyCoreInit {
 			//typeSystem.get
 			TypeModel<String> sparqlTypeModel = typeSystem.getSparqlTypeModel();
 			transMap.put("isNumeric", new ExprTransformerIsNumeric(sparqlTypeModel));
+			
+			transMap.put("isURI", new ExprTransformerHasRdfTermType(1));
+			transMap.put("isBlank", new ExprTransformerHasRdfTermType(0));
+			
 			//transMap.put("isDecimal", new ET_IsDecimal(sparqlTypeModel));
 	
 			

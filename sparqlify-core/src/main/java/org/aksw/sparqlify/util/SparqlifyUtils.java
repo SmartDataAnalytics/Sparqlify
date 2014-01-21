@@ -1,10 +1,12 @@
 package org.aksw.sparqlify.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -74,6 +76,19 @@ import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 public class SparqlifyUtils {
 
+    
+    public static String toUtf8String(ByteArrayOutputStream baos) {
+        String result;
+        
+        try {
+            result = baos.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        
+        return result;
+    }
+    
 //
 //	//public Connection
 	public static void initTestDatabase(DataSource ds) throws SQLException {

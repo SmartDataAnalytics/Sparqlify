@@ -31,6 +31,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.SqlNodeBinding;
+import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.base.Joiner;
@@ -59,7 +60,7 @@ public class SqlAlgebraToString
 				
 		transformer.asString(node, writer);
 		
-		return out.toString();
+		return SparqlifyUtils.toUtf8String(out);
 		//return (String)MultiMethod.invokeStatic(SqlAlgebraToString.class, "_asString", node);
 	}
 	
