@@ -212,14 +212,16 @@ public class SqlOpSerializerImpl
 			boolean isSubSelect = subOp instanceof SqlOpSelectBlock;
             boolean isUnion = subOp instanceof SqlOpUnionN;
 			
-			if(isSubSelect || isUnion) {
+            boolean needsGrouping = isSubSelect || isUnion; 
+            
+			if(needsGrouping) {
 			    writer.print("(");
 			    writer.incIndent();
 			}
 			
 			serialize(subOp, writer);
 
-			if(isSubSelect || isUnion) {
+			if(needsGrouping) {
                 writer.decIndent();
                 writer.print(") " + SqlOpSelectBlock.getAliasName(subOp));
             }
@@ -280,9 +282,9 @@ public class SqlOpSerializerImpl
     	
     	writer.println("FROM");
 
-    	boolean isUnion = op.getSubOp() instanceof SqlOpUnionN || op.getSubOp() instanceof SqlOpSelectBlock;
+    	boolean needsGrouping = op.getSubOp() instanceof SqlOpUnionN || op.getSubOp() instanceof SqlOpSelectBlock;// || op.getSubOp() instanceof SqlOpQuery;
     	
-    	if(isUnion) {
+    	if(needsGrouping) {
     		writer.print("(");
     	}
 
@@ -293,7 +295,7 @@ public class SqlOpSerializerImpl
     	serialize(op.getSubOp(), writer);
     	writer.decIndent();
     
-    	if(isUnion) {
+    	if(needsGrouping) {
     		String aliasName = getAliasNameNotNull(op.getSubOp());
     		writer.print(")" + aliasName);
     	}

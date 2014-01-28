@@ -402,6 +402,13 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}		
 
+//    public static SqlOpSelectBlock forceSelectBlock(SqlOp op) {
+//        SqlOpSelectBlock result;
+//        result = SqlOpSelectBlock.create(op);
+//        initProjection(result.getProjection(), op.getSchema(), result.getAliasName());
+//        
+//        return result;
+//    }
 
 	public static SqlOpSelectBlock requireSelectBlock(SqlOp op) {
 		SqlOpSelectBlock result;
@@ -487,9 +494,33 @@ public class SqlOpSelectBlockCollectorImpl
 	
 	public static SqlOpSelectBlock makeSelect(SqlOpExtend op, Set<String> refs) {
 		
-		SqlOp subOp = _makeSelect(op.getSubOp(), refs);
+
+	       SqlOp subOp = op.getSubOp();
+	        if(subOp instanceof SqlOpSlice) {
+	            
+	            // Create a wrapping SqlOpSelectBlock
+	            SqlOpSelectBlock wrapper = makeSelect((SqlOpSlice)subOp, refs);
+	            String aliasName = SqlOpSelectBlock.getAliasName(wrapper.getSubOp());
+	            initProjection(wrapper.getProjection(), wrapper.getSchema(), aliasName);
+
+	            String aliasName2 = aliasGenerator.next();
+                wrapper.setAliasName(aliasName2);
+
+
+	            subOp = SqlOpSelectBlock.create(wrapper);
+
+
+	        }
+	        else {
+	        
+	            subOp = _makeSelect(subOp, refs);
+	        }
+
+	    
+		//SqlOp subOp = _makeSelect(op.getSubOp(), refs);
 		
 		SqlOpSelectBlock result = requireSelectBlock(subOp);
+	    //SqlOpSelectBlock result = forceSelectBlock(subOp);
 		result.setSchema(op.getSchema());
 
 		Projection subProj = result.getProjection();
