@@ -18,6 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.web.SparqlEndpointBase;
+import org.aksw.service_framework.core.SparqlService;
 import org.springframework.stereotype.Service;
 
 import com.hp.hpl.jena.query.Query;
@@ -31,7 +32,8 @@ public class SparqlEndpointDispatcher
 	extends SparqlEndpointBase
 {	
 	@Resource(name="sparqlServiceMap")
-	private Map<String, QueryExecutionFactory> nameToService;
+	//private Map<String, QueryExecutionFactory> nameToService;
+	private Map<String, SparqlService> nameToService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -47,10 +49,13 @@ public class SparqlEndpointDispatcher
 		MultivaluedMap<String, String> params = uriInfo.getPathParameters();
 		String path = params.getFirst("path");		
 		
-		QueryExecutionFactory result = nameToService.get(path); //sparqlServiceConfig.getServiceMap().get(path);
-		if(result == null) {
+		SparqlService service = nameToService.get(path);
+		//QueryExecutionFactory result = nameToService.get(path); //sparqlServiceConfig.getServiceMap().get(path);
+		if(service == null) {
 			throw new RuntimeException("No service registered for " + path);
 		}
+		
+        QueryExecutionFactory result = service.getSparqlService(); 
 
 		return result;
 	}

@@ -1,26 +1,26 @@
 package org.aksw.sparqlify.admin.web.common;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.service_framework.core.ServiceProviderBase;
+import org.aksw.service_framework.core.SparqlService;
 
 import com.jolbox.bonecp.BoneCPDataSource;
 
 
 public class ServiceProviderRdb2Rdf
-	extends ServiceProviderBase<QueryExecutionFactory>
+	extends ServiceProviderBase<SparqlService>
 {
 	private BoneCPDataSource dataSource;
-	private QueryExecutionFactory queryExecutionFactory;
+	private SparqlService sparqlService;
 	
-	public ServiceProviderRdb2Rdf(String name, BoneCPDataSource dataSource, QueryExecutionFactory queryExecutionFactory) {
+	public ServiceProviderRdb2Rdf(String name, BoneCPDataSource dataSource, SparqlService sparqlService) {
 		super(name);
 		this.dataSource = dataSource;
-		this.queryExecutionFactory = queryExecutionFactory;
+		this.sparqlService = sparqlService;
 	}
 	
 	@Override
-	public QueryExecutionFactory getService() {
-		return queryExecutionFactory;
+	public SparqlService getService() {
+		return sparqlService;
 	}
 
 	

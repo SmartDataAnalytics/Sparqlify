@@ -27,16 +27,15 @@ import com.google.common.collect.Lists;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 
-
 public class ServiceLauncherRdb2Rdf
-	implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory>
+	implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService>
 {
 	private static final Logger logger = LoggerFactory.getLogger(ServiceLauncherRdb2Rdf.class);
 
 	
 	@Override
 	//public ServiceExecution<QueryExecutionFactory> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
-	public ServiceProvider<QueryExecutionFactory> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
+	public ServiceProvider<SparqlService> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
 		
 //		String serviceName = serviceConfig.getContextPath();
 //		ServiceExecution<?> serviceExecution = nameToExecution.get(serviceName);
@@ -73,7 +72,7 @@ public class ServiceLauncherRdb2Rdf
 		//context.openSession();
 		
 		
-		ServiceProvider<QueryExecutionFactory> result = null;
+		ServiceProvider<SparqlService> result = null;
 		
 		try {
 			//
@@ -114,9 +113,11 @@ public class ServiceLauncherRdb2Rdf
 			// A Test Query
 			qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
 	
-			result = new ServiceProviderRdb2Rdf(serviceName, dataSource, qef);
+			SparqlService sparqlService = new SparqlServiceImpl<Config>(smlConfig, qef);
+			
+			result = new ServiceProviderRdb2Rdf(serviceName, dataSource, sparqlService);
 	
-			result = new ServiceProviderJpaRdbRdf<QueryExecutionFactory>(result, emf, context);
+			result = new ServiceProviderJpaRdbRdf<SparqlService>(result, emf, context);
 			
 			//nameToExecution.put(serviceName, sparqlServiceExecution);
 			context.setStatus(ContextStateFlags.RUNNING);

@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.service_framework.core.ServiceLauncherRdb2Rdf;
+import org.aksw.service_framework.core.SparqlService;
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
 import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
@@ -50,6 +51,10 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.hp.hpl.jena.shared.PrefixMapping;
 
 @Configuration
 @ComponentScan("org.aksw.sparqlify.admin.web")
@@ -266,11 +271,11 @@ public class AppConfig
 
 	
 	@Bean
-	public ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> sparqlServiceRepo(JpaTransactionManager txManager) {
+	public ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService> sparqlServiceRepo(JpaTransactionManager txManager) {
 
 		EntityManagerFactory emf = txManager.getEntityManagerFactory();
 		
-		ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo =
+		ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService> serviceRepo =
 			ServiceRepositoryJpaImpl.create(
 					emf,
 					Rdb2RdfConfig.class,
@@ -283,8 +288,8 @@ public class AppConfig
 	
 
 	@Bean
-	public Map<String, QueryExecutionFactory> sparqlServiceMap(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo) {
-		Map<String, QueryExecutionFactory> result = Collections.synchronizedMap(new HashMap<String, QueryExecutionFactory>());
+	public Map<String, SparqlService> sparqlServiceMap(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService> serviceRepo) {
+		Map<String, SparqlService> result = Collections.synchronizedMap(new HashMap<String, SparqlService>());
 		
 		ServiceEventListenerRegister listener = new ServiceEventListenerRegister(result);
 		serviceRepo.getServiceEventListeners().add(listener);
@@ -294,6 +299,39 @@ public class AppConfig
 		return result;
 	}
 
+	
+//	@Bean
+//	public Map<String, QueryExecutionFactory> sparqlServiceMap(@Resource(name="tmpSparqlServiceMap") Map<String, SparqlService> tmpSparqlServiceMap) {
+//	    Map<String, QueryExecutionFactory> result = Maps.transformValues(tmpSparqlServiceMap, new Function<SparqlService, QueryExecutionFactory>() {
+//            @Override
+//            public QueryExecutionFactory apply(SparqlService sparqlService) {
+//                return sparqlService.getSparqlService();
+//            }
+//	    });
+//	    
+//	    return result;
+//	}
+//
+//    @Bean
+//    public Map<String, PrefixMapping> sparqlNamespaceMap(Map<String, SparqlService> sparqlServiceMap) {
+//        Map<String, PrefixMapping> result = Maps.transformValues(sparqlServiceMap, new Function<SparqlService, PrefixMapping>() {
+//            @Override
+//            public PrefixMapping apply(SparqlService sparqlService) {
+//                PrefixMapping tmp = null;
+//                
+//                Object c = sparqlService.getConfig();
+//                if(c instanceof Config) {
+//                    Config config = (Config)c;
+//                    tmp = config.getPrefixMapping();
+//                }
+//                
+//                return tmp;
+//            }
+//        });
+//        
+//        return result;
+//    }
+//
 	
 	@Bean
 	public ServiceManager sparqlServiceManager(ServiceRepositoryJpaImpl<Rdb2RdfConfig, Rdb2RdfExecution, QueryExecutionFactory> serviceRepo, EntityInverseMapper entityInverseMapper) {

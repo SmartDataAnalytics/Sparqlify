@@ -31,7 +31,7 @@
 	</rule>
 
 	<rule>
-		<from>^(.*)/sparql/(.*\.(css|js|png))$</from>
+		<from>^(.*)/sparql/(?!namespaces)(.*\.(css|js|png))$</from>
 		<to type="temporary-redirect">%{context-path}/resources/snorql/$2</to>
 	</rule>
 	
