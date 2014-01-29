@@ -34,9 +34,7 @@ public class SparqlifyManagerSparqlEndpoint
 
 	
 	@Override
-	public QueryExecution createQueryExecution(Query query,
-			HttpServletRequest req) {
-		
+	public QueryExecution createQueryExecution(Query query) {
 		QueryExecution result = qef.createQueryExecution(query);
 		return result;
 	}
