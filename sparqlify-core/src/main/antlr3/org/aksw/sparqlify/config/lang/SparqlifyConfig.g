@@ -1297,7 +1297,8 @@ VAR_HEAD : (QUESTION_MARK | '$') ;
 NAME : PN_CHARS_U NAME_SUFFIX ;
 
 
-LANGTAG : '@' ('A'..'Z'|'a'..'z')+ (MINUS ('A'..'Z'|'a'..'z'|DIGIT)+)*;
+LANGTAG : '@' v=LANGTAG_STR {setText($v.text);};
+LANGTAG_STR : ('A'..'Z'|'a'..'z')+ (MINUS ('A'..'Z'|'a'..'z'|DIGIT)+)*;
 
 INTEGER : DIGIT+;
 

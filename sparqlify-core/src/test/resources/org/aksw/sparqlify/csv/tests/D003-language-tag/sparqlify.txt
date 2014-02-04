@@ -1,0 +1,6 @@
+Create View Template DefaultView As
+  CONSTRUCT {
+      ?obs <http://example.org/property> "test"@de
+  }
+  With
+      ?obs = uri('http://example.org/resource', ?rowId)
