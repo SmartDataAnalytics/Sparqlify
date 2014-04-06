@@ -70,6 +70,7 @@ import org.aksw.sparqlify.core.transformations.ExprTransformerIsNumeric;
 import org.aksw.sparqlify.core.transformations.ExprTransformerLang;
 import org.aksw.sparqlify.core.transformations.ExprTransformerLangMatches;
 import org.aksw.sparqlify.core.transformations.ExprTransformerLogicalConjunction;
+import org.aksw.sparqlify.core.transformations.ExprTransformerOneOf;
 import org.aksw.sparqlify.core.transformations.ExprTransformerPassAsTypedLiteral;
 import org.aksw.sparqlify.core.transformations.ExprTransformerRdfTermComparator;
 import org.aksw.sparqlify.core.transformations.ExprTransformerRdfTermCtor;
@@ -423,6 +424,8 @@ public class SparqlifyCoreInit {
 			transMap.put("&&", new ExprTransformerLogicalConjunction());
 			transMap.put("||", new ExprTransformerLogicalConjunction());
 			transMap.put("!", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
+			
+			transMap.put("in", new ExprTransformerOneOf());
 			//transMap.put("||", new ExprTransformerLogicalAn());
 	
 			transMap.put(XSD.xdouble.getURI(), new ExprTransformerCast());
@@ -455,7 +458,7 @@ public class SparqlifyCoreInit {
 			
 			// TODO: The return type of this function depends on which signature is used
 			// So i more sophicsticated transformer is needed
-			transMap.put(AggCount.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
+			transMap.put(AggCount.class.getSimpleName(), new ExprTransformerFunction(XSD.xlong));
 			transMap.put(AggSum.class.getSimpleName(), new ExprTransformerFunction(XSD.xdouble));
 			transMap.put(AggGroupConcat.class.getSimpleName(), new ExprTransformerSparqlFunctionModel(sparqlModel));
 			
@@ -519,6 +522,9 @@ public class SparqlifyCoreInit {
 				TypeSystemImpl result = TypeSystemImpl.create(typeHierarchy, physicalTypeMap);
 	
 				result.getSparqlTypeHierarchy().putAll(rdfTypeHierarchy);
+				
+				result.getNormSqlTypeToUri().putAll(typeNameToUri);
+				
 				
 				SparqlifyCoreInit.initSparqlModel(result);
 	

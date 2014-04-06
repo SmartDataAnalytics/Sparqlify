@@ -8,6 +8,7 @@ import java.util.Set;
 /**
  * Object for storing meta information about function symbols
  * 
+ * TODO Maybe this should be approached by tagging functions - something like function.getTagMap().contains("isa", "comparator"); 
  * 
  * @author raven
  *

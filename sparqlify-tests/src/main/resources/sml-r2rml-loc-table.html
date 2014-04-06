@@ -1,0 +1,4557 @@
+<html>
+
+<head><link rel="stylesheet" href="bootstrap.css" /></head>
+
+<body>
+<h1>Lines of Code (LOC) Comparison for SML and R2RML</h1>
+R2RML-norm has been piped through rapper for normalization of the turtle representation.
+The SML has been manually derived (before we created the R2RML->SML converter) based on the <a href=http://www.w3.org/2001/sw/rdb2rdf/test-cases/>R2RML test suite</a>.
+
+<table class="table table-striped">
+<tr><th>Id</th><th>SML-loc</th><th>R2RML-loc</th><th>R2RML-norm-loc</th><th>SML</th><th>R2RML</th><th>R2RML-norm</th></tr>
+<tr><td>D000-1table1column0rows-</td><td>13</td><td>15</td><td>19</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?o .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Name))
+    ?o = plainLiteral(?Name)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+        
+    rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot;; ] ;
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Name\&quot;}&quot; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		foaf:name ; 
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]
+    ]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D001-1table1column1row-a</td><td>13</td><td>15</td><td>19</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?o .
+  }
+  With
+    //?s = uri(concat(&quot;http://example.com/&quot;, ?Name))
+    //?s = uri(&quot;http://example.com/&quot;, ?Name)
+    ?s = uri(ex:, ?Name)
+    ?o = plainLiteral(?Name)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+    &#13;
+    rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Name\&quot;}&quot; ]; &#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D001-1table1column1row-b</td><td>13</td><td>15</td><td>20</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?o .
+  }
+  With
+    ?s = bNode(?Name)
+    ?o = plainLiteral(?Name)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+    &#13;
+    rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;{\&quot;Name\&quot;}&quot;; rr:termType rr:BlankNode ]; &#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate 	  foaf:name; &#13;
+      rr:objectMap    [ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;Name\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .</pre></td></tr>
+<tr><td>D003-1table3columns1row-a</td><td>14</td><td>24</td><td>26</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a foaf:Person ;
+      ex:id ?id .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?FirstName, &quot;-&quot;, ?LastName))
+  From
+    [[Select &quot;ID&quot;, &quot;FirstName&quot;, &quot;LastName&quot; FROM &quot;Student&quot;]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ &#13;
+						rr:sqlQuery &quot;&quot;&quot;&#13;
+							SELECT 	&quot;ID&quot;,&#13;
+									&quot;FirstName&quot;,&#13;
+									&quot;LastName&quot;&#13;
+							FROM &quot;Student&quot;&#13;
+                       &quot;&quot;&quot;;&#13;
+						rr:sqlVersion rr:SQL1979 				   &#13;
+                       ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;FirstName\&quot;}-{\&quot;LastName\&quot;}&quot;;&#13;
+                    rr:class foaf:Person  ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:id ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;ID\&quot;&quot;; ]&#13;
+    ];&#13;
+     .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;&#13;
+							SELECT 	\&quot;ID\&quot;,&#13;
+									\&quot;FirstName\&quot;,&#13;
+									\&quot;LastName\&quot;&#13;
+							FROM \&quot;Student\&quot;&#13;
+                       &quot;&quot;&quot; ;
+        rr:sqlVersion rr:SQL1979
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ] ;
+    rr:subjectMap [
+        rr:class foaf:Person ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;FirstName\&quot;}-{\&quot;LastName\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D003-1table3columns1row-b</td><td>13</td><td>21</td><td>23</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?n .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID))
+    ?n = plainLiteral(?Name)
+  From
+    //[[SELECT &quot;ID&quot;, (&quot;FirstName&quot; || ' ' || &quot;LastName&quot;) AS Name FROM &quot;Student&quot;]]
+    // H2 uses the concat function
+    [[SELECT &quot;ID&quot;, CONCAT(&quot;FirstName&quot;, ' ', &quot;LastName&quot;) AS &quot;Name&quot; FROM &quot;Student&quot;]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+     rr:logicalTable [ &#13;
+                     rr:sqlQuery &quot;&quot;&quot;&#13;
+                     SELECT &quot;ID&quot;,&#13;
+                            (&quot;FirstName&quot; || ' ' || &quot;LastName&quot;) AS Name&#13;
+                     FROM &quot;Student&quot;&#13;
+                     &quot;&quot;&quot;&#13;
+                     ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}&quot;; ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:column &quot;Name&quot; ]&#13;
+    ]&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;&#13;
+                     SELECT \&quot;ID\&quot;,&#13;
+                            (\&quot;FirstName\&quot; || ' ' || \&quot;LastName\&quot;) AS Name&#13;
+                     FROM \&quot;Student\&quot;&#13;
+                     &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;Name&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D003-1table3columns1row-c</td><td>13</td><td>15</td><td>20</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?n .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student&quot;, ?ID))
+    ?n = plainLiteral(concat(?FirstName, &quot; &quot;, ?LastName))
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+     rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student{\&quot;ID\&quot;}&quot;;  ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:template &quot;{\&quot;FirstName\&quot;} {\&quot;LastName\&quot;}&quot;; rr:termType rr:Literal; ]&#13;
+    ]&#13;
+    .	&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;{\&quot;FirstName\&quot;} {\&quot;LastName\&quot;}&quot; ;
+            rr:termType rr:Literal
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Student{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D004-1table2columns1row-a</td><td>26</td><td>27</td><td>35</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a ex:Student ;
+      foaf:name ?n .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Student))
+    ?n = plainLiteral(?Student)
+  From
+    Student_Sport
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      a ex:Sport ;
+      foaf:name ?n .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Sport))
+    ?n = plainLiteral(?Sport)
+  From
+    Student_Sport</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Student_Sport\&quot;&quot; ];&#13;
+	&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Student\&quot;}&quot;;&#13;
+                    rr:class ex:Student ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Student\&quot;&quot; ]&#13;
+    ]&#13;
+    .&#13;
+&#13;
+&lt;TriplesMap2&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Student_Sport\&quot;&quot; ];&#13;
+	&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Sport\&quot;}&quot;;&#13;
+                    rr:class ex:Sport  ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Sport\&quot;&quot; ]&#13;
+    ]&#13;
+	.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student_Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Student\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:class ex:Student ;
+        rr:template &quot;http://example.com/{\&quot;Student\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student_Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Sport\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:class ex:Sport ;
+        rr:template &quot;http://example.com/{\&quot;Sport\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D004-1table2columns1row-b</td><td>15</td><td>21</td><td>25</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+/**
+ * NOTE: This mapping does not have a defined result because of the literal subject.
+ * See: http://www.w3.org/TR/2012/NOTE-rdb2rdf-test-cases-20120814/#R2RMLTC0004b
+ */
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a ex:Student ;
+      foaf:name ?n .
+  }
+  With
+    ?s = plainLiteral(?StudentId)
+    ?n = plainLiteral(?Student)
+  From
+    [[SELECT CONCAT('Student' || &quot;Student&quot;) AS &quot;StudentId&quot;, &quot;Student&quot; FROM &quot;Student_Sport&quot;]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+      rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;&#13;
+       SELECT ('Student' || &quot;Student&quot;) AS StudentId,&#13;
+				&quot;Student&quot;&#13;
+         FROM &quot;Student_Sport&quot;&#13;
+       &quot;&quot;&quot;;&#13;
+	   ] ;&#13;
+&#13;
+    rr:subjectMap [ rr:column &quot;StudentId&quot;; rr:termType rr:Literal;&#13;
+                    rr:class ex:Student ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Student\&quot;&quot; ]&#13;
+    ]&#13;
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;&#13;
+       SELECT ('Student' || \&quot;Student\&quot;) AS StudentId,&#13;
+				\&quot;Student\&quot;&#13;
+         FROM \&quot;Student_Sport\&quot;&#13;
+       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Student\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:class ex:Student ;
+        rr:column &quot;StudentId&quot; ;
+        rr:termType rr:Literal
+    ] .</pre></td></tr>
+<tr><td>D005-1table3columns3rows2duplicates-a</td><td>15</td><td>16</td><td>20</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a foaf:Person ;
+      ex:owes ?a .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?fname, &quot;;&quot;, ?lname))
+    ?a = typedLiteral(?amount, xsd:double)
+  From
+    IOUs</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+    &#13;
+    rr:logicalTable [ rr:tableName &quot;\&quot;IOUs\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;fname\&quot;};{\&quot;lname\&quot;}&quot;;&#13;
+                    rr:class foaf:Person ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:owes ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;amount\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;IOUs\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;amount\&quot;&quot;
+        ] ;
+        rr:predicate ex:owes
+    ] ;
+    rr:subjectMap [
+        rr:class foaf:Person ;
+        rr:template &quot;http://example.com/{\&quot;fname\&quot;};{\&quot;lname\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D005-1table3columns3rows2duplicates-b</td><td>21</td><td>27</td><td>31</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+
+// Note: There is no special &quot;@base&quot; construct in Sparqlify-ML as there is in Turtle
+// The workaround is to simple use a namespace prefix 
+Prefix base: &lt;http://example.com/base/&gt;
+Prefix ious: &lt;http://example.com/base/IOUs#&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a base:IOUs ;
+      ious:fname ?fn ;
+      ious:lname ?ln ;
+      ious:amount ?a .
+  }
+  With
+    ?s  = bNode(concat(?fname, &quot;_&quot;, ?lname))
+    ?fn = plainLiteral(?fname)
+    ?ln = plainLiteral(?lname)
+    ?a  = typedLiteral(?amount, xsd:double) // Maybe introduce an &quot;auto&quot; keyword / URI for the dataype
+  From
+    IOUs</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+    &#13;
+    rr:logicalTable [ rr:tableName &quot;\&quot;IOUs\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}&quot;;&#13;
+                    rr:class &lt;IOUs&gt;;&#13;
+                    rr:termType rr:BlankNode; ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		&lt;IOUs#fname&gt; ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;fname\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		&lt;IOUs#lname&gt; ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;lname\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		&lt;IOUs#amount&gt; ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;amount\&quot;&quot;; ]&#13;
+    ];&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;IOUs\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;fname\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#fname&gt;
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;lname\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#lname&gt;
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;amount\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#amount&gt;
+    ] ;
+    rr:subjectMap [
+        rr:class &lt;http://example.com/base/IOUs&gt; ;
+        rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .</pre></td></tr>
+<tr><td>D006-1table1primarykey1column1row-a</td><td>10</td><td>16</td><td>24</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    Graph &lt;http://example.com/graph/student&gt; {
+      ex:BadStudent ex:description &quot;Bad Student&quot; .
+    }
+  }</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+    &#13;
+    rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:constant ex:BadStudent;  &#13;
+    				rr:graphMap [ rr:constant &lt;http://example.com/graph/student&gt; ]; ]; &#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicateMap [ rr:constant ex:description ]; &#13;
+      rr:objectMap    [ rr:constant &quot;Bad Student&quot;; ]&#13;
+    ]&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:constant &quot;Bad Student&quot;
+        ] ;
+        rr:predicateMap [
+            rr:constant ex:description
+        ]
+    ] ;
+    rr:subjectMap [
+        rr:constant ex:BadStudent ;
+        rr:graphMap [
+            rr:constant &lt;http://example.com/graph/student&gt;
+        ]
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-a</td><td>13</td><td>16</td><td>17</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s a foaf:Person
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name)) 
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type ;&#13;
+		rr:object		foaf:Person; &#13;
+	];&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-b</td><td>18</td><td>23</td><td>23</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    Graph ex:PersonGraph {
+      ?s
+        a foaf:Person ;
+        foaf:name ?n
+    }
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name))
+    ?n = plainLiteral(?Name)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot;; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; &#13;
+				    rr:graph ex:PersonGraph;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object		foaf:Person;&#13;
+	];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:graph ex:PersonGraph ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-c</td><td>18</td><td>24</td><td>25</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a foaf:Person, ex:Student ;
+      foaf:name ?n ;
+      ex:id ?i
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name))
+    ?n = plainLiteral(?Name)
+    ?i = typedLiteral(?ID, xsd:integer)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ &#13;
+		rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; &#13;
+		rr:class foaf:Person,ex:Student; &#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	ex:id ;&#13;
+		rr:objectMap	[ rr:column &quot;\&quot;ID\&quot;&quot;;  ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:class ex:Student, foaf:Person ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-d</td><td>19</td><td>33</td><td>30</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a foaf:Person ;
+      a ex:Student ;
+      foaf:name ?n ;
+      ex:id ?i
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name))
+    ?n = plainLiteral(?Name)
+    ?i = typedLiteral(?ID, xsd:integer)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ &#13;
+		rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; &#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object	foaf:Person;&#13;
+	];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object	ex:Student;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	ex:id ;&#13;
+		rr:objectMap    [ rr:column &quot;\&quot;ID\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:object ex:Student ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-e</td><td>20</td><td>24</td><td>26</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    Graph ex:PersonGraph {
+      ?s
+        a foaf:Person ;
+        foaf:name ?n ;
+        ex:id ?i
+    }
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name))
+    ?n = plainLiteral(?Name)
+    ?i = typedLiteral(?ID, xsd:integer)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+
+&lt;TriplesMap1&gt;
+     a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];
+
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; 
+					rr:graph	ex:PersonGraph ;
+					rr:class foaf:Person
+	];
+	
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:id ;
+		rr:objectMap	[ rr:column &quot;\&quot;ID\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		foaf:name ;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]
+    ]
+
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:class foaf:Person ;
+        rr:graph ex:PersonGraph ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-f</td><td>20</td><td>28</td><td>28</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+// TODO Where is the difference to D007-e?
+Create View TriplesMap1 As
+  Construct {
+    Graph ex:PersonGraph {
+      ?s
+        a foaf:Person ;
+        ex:id ?i ;
+        foaf:name ?n
+    }
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name))
+    ?n = plainLiteral(?Name)
+    ?i = typedLiteral(?ID, xsd:integer)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+
+&lt;TriplesMap1&gt;
+     a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];
+
+	rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;;
+					rr:graph	ex:PersonGraph ;
+	];
+	
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	rdf:type ;
+		rr:object	foaf:Person ; 
+	];
+	
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:id ;
+		rr:objectMap    [ rr:column &quot;\&quot;ID\&quot;&quot;;  ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	foaf:name ;
+		rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot; ]
+    ]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:graph ex:PersonGraph ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D007-1table1primarykey2columns1row-g</td><td>16</td><td>23</td><td>23</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+
+// TODO Probably add support for internally mapping
+// rr:defaultGraph to Jena's Quad.defaultGraphNodeGenerated
+Create View TriplesMap1 As
+  Construct {
+    //Graph rr:defaultGraph {
+      ?s
+        a foaf:Person ;
+        foaf:name ?n
+    //}
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, ?Name))
+    ?n = plainLiteral(?Name)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot;; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; &#13;
+				    rr:graph rr:defaultGraph;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object		foaf:Person;&#13;
+	];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:graph rr:defaultGraph ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D008-1table1compositeprimarykey3columns1row-a</td><td>24</td><td>33</td><td>35</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+// TODO urlEncode currently not supported anymore
+Create View TriplesMap1 As
+  Construct {
+    Graph ?g {
+      ?s
+        rdf:type foaf:Person ;
+        ex:id ?i ;
+        foaf:name ?n ;
+        ex:Sport ?sp
+    }
+  }
+  With
+    ?g = uri(concat(&quot;http://example.com/graph/Student/&quot;, ?ID, &quot;/&quot;, spy:urlEncode(?Name)))
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, spy:urlEncode(?Name)))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?n = plainLiteral(?Name)
+    ?sp = plainLiteral(?Sport)
+  From
+    Student
+ </pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+	rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; &#13;
+					rr:graphMap [ rr:template &quot;http://example.com/graph/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; ]&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type ;&#13;
+		rr:object		foaf:Person; &#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	ex:id ;&#13;
+		rr:objectMap    [ rr:column &quot;\&quot;ID\&quot;&quot;;  ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:Sport ;&#13;
+      rr:objectMap    [ rr:column &quot;\&quot;Sport\&quot;&quot; ]&#13;
+    ]&#13;
+	&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Sport\&quot;&quot;
+        ] ;
+        rr:predicate ex:Sport
+    ], [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:graphMap [
+            rr:template &quot;http://example.com/graph/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+        ] ;
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D008-1table1compositeprimarykey3columns1row-b</td><td>30</td><td>46</td><td>46</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix activity: &lt;http://example.com/activity/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap2 As
+  Construct {
+    ?s rdf:type activity:Sport
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Sport))
+  From
+    Student
+
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:id ?i ;
+      foaf:name ?n ;
+      ex:Sport ?sp
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, spy:urlEncode(?Name)))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?n = plainLiteral(?Name)
+    ?sp = uri(concat(&quot;http://example.com/&quot;, ?Sport))
+    // TODO references ?sp = TriplesMap2.?s ON this.?person_id = that.?id
+  From
+    Student
+		
+/* 
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		ex:Sport ;
+      rr:objectMap		&lt;RefObjectMap1&gt;
+    ]
+    
+ .
+
+ 
+&lt;RefObjectMap1&gt;
+	a rr:RefObjectMap;
+	rr:parentTriplesMap &lt;TriplesMap2&gt; ;
+.
+*/</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix activity: &lt;http://example.com/activity/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap2&gt;&#13;
+	a rr:TriplesMap;&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+	rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Sport\&quot;}&quot;; ];&#13;
+&#13;
+	rr:predicateObjectMap [&#13;
+		rr:predicate	rdf:type ;&#13;
+		rr:object		activity:Sport ;&#13;
+	];&#13;
+.&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type ;&#13;
+		rr:object		foaf:Person ;&#13;
+	];&#13;
+		&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	ex:id ;&#13;
+		rr:objectMap    [ rr:column &quot;\&quot;ID\&quot;&quot;;  ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ];&#13;
+ &#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:Sport ;&#13;
+      rr:objectMap		&lt;RefObjectMap1&gt;&#13;
+    ]&#13;
+    &#13;
+ .&#13;
+&#13;
+ &#13;
+&lt;RefObjectMap1&gt;&#13;
+	a rr:RefObjectMap;&#13;
+	rr:parentTriplesMap &lt;TriplesMap2&gt; ;&#13;
+.&#13;
+&#13;
+&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix activity: &lt;http://example.com/activity/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/RefObjectMap1&gt;
+    a rr:RefObjectMap ;
+    rr:parentTriplesMap &lt;http://example.com/base/TriplesMap2&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ], [
+        rr:objectMap &lt;http://example.com/base/RefObjectMap1&gt; ;
+        rr:predicate ex:Sport
+    ], [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object activity:Sport ;
+        rr:predicate rdf:type
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Sport\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D008-1table1compositeprimarykey3columns1row-c</td><td>17</td><td>17</td><td>19</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?n ;
+      ex:name ?n
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Student/&quot;, ?ID, &quot;/&quot;, spy:urlEncode(?Name)))
+    ?n = plainLiteral(?Name)
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	foaf:name ;&#13;
+		rr:predicate	ex:name ;&#13;
+		rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ];&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate ex:name, foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Student/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D009-2tables1primarykey1foreignkey-a</td><td>26</td><td>38</td><td>44</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?n ;
+      &lt;http://example.com/ontology/practises&gt; ?p
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/resource/student_&quot;, ?ID))
+    ?n = plainLiteral(?Name)
+    //?p = TriplesMap2.?s On this.?Sport = that.?ID
+    ?p = uri(concat(&quot;http://example.com/resource/sport_&quot;, ?Sport))
+  From
+    Student        
+	//[[Select a.&quot;ID&quot;, a. From &quot;Student&quot; a JOIN &quot;Sport&quot; b ON (b.&quot;ID&quot; = a.&quot;Sport&quot;)]]
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s rdfs:label ?l
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/resource/sport_&quot;, ?ID))
+    ?l = plainLiteral(?Name)
+  From
+    Sport</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+        
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Student\&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/resource/student_{\&quot;ID\&quot;}&quot;; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	foaf:name ; 
+		rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; ];
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	&lt;http://example.com/ontology/practises&gt; ; 
+      rr:objectMap	[ 
+           a rr:RefObjectMap ;
+           rr:parentTriplesMap &lt;TriplesMap2&gt;;
+           rr:joinCondition [
+				rr:child &quot;\&quot;Sport\&quot;&quot; ;
+				rr:parent &quot;\&quot;ID\&quot;&quot; ;
+		  ]
+      ];
+    ];
+    .
+
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+		
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Sport\&quot;&quot; ];
+
+    rr:subjectMap [ rr:template &quot;http://example.com/resource/sport_{\&quot;ID\&quot;}&quot;; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	rdfs:label ; 
+		rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; ];
+    ];
+	.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ], [
+        rr:objectMap [
+            a rr:RefObjectMap ;
+            rr:joinCondition [
+                rr:child &quot;\&quot;Sport\&quot;&quot; ;
+                rr:parent &quot;\&quot;ID\&quot;&quot;
+            ] ;
+            rr:parentTriplesMap &lt;http://example.com/base/TriplesMap2&gt;
+        ] ;
+        rr:predicate &lt;http://example.com/ontology/practises&gt;
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/resource/student_{\&quot;ID\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate rdfs:label
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/resource/sport_{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D009-2tables1primarykey1foreignkey-b</td><td>37</td><td>50</td><td>50</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    Graph &lt;http://example.com/graph/students&gt; {
+      ?s a &lt;http://example.com/ontology/Student&gt; .
+      ?s &lt;http://example.com/ontology/practises&gt; ?o
+    }
+    Graph &lt;http://example.com/graph/students&gt; {
+      ?s foaf:name ?n
+    }
+    Graph &lt;http://example.com/graph/practise&gt; {
+      ?s &lt;http://example.com/ontology/practises&gt; ?o
+    }
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/resource/student_&quot;, ?ID))
+    ?n = plainLiteral(?Name)
+    ?o = uri(concat(&quot;http://example.com/resource/sport_&quot;, ?Sport))
+    // TODO Reference rr:join
+    //?sp = ref TriplesMaps2.?s On this.?Sport = that.?ID) 
+  From
+    Student
+
+Create View TriplesMap2 As
+  Construct {
+    Graph &lt;http://example.com/graph/sports&gt; {
+      ?s
+        a &lt;http://example.com/ontology/Sport&gt; ;
+        rdfs:label ?n
+    }
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/resource/sport_&quot;, ?ID))
+    ?n = plainLiteral(?Name)
+  From
+    Sport</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+        
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Student\&quot;&quot; ];
+	
+    rr:subjectMap 
+    [ 
+        rr:template	&quot;http://example.com/resource/student_{\&quot;ID\&quot;}&quot;;
+        rr:class	&lt;http://example.com/ontology/Student&gt;;
+        rr:graph	&lt;http://example.com/graph/students&gt; ;
+    ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	foaf:name ; 
+      rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; ];
+      rr:graph		&lt;http://example.com/graph/students&gt; ;
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	&lt;http://example.com/ontology/practises&gt; ; 
+      rr:objectMap	[ 
+           a rr:RefObjectMap ;
+           rr:parentTriplesMap &lt;TriplesMap2&gt;;
+           rr:joinCondition [
+				rr:child &quot;\&quot;Sport\&quot;&quot; ;
+				rr:parent &quot;\&quot;ID\&quot;&quot; ;
+		   ]
+      ];
+      rr:graph	&lt;http://example.com/graph/practise&gt; ;
+    ];
+    .
+
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Sport\&quot;&quot; ];
+
+    rr:subjectMap 
+    [ 
+        rr:template &quot;http://example.com/resource/sport_{\&quot;ID\&quot;}&quot;;
+        rr:class &lt;http://example.com/ontology/Sport&gt;;
+        rr:graph &lt;http://example.com/graph/sports&gt; ;
+    ]; 
+	
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	rdfs:label ; 
+		rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; ];
+    ];
+	.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:graph &lt;http://example.com/graph/students&gt; ;
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ], [
+        rr:graph &lt;http://example.com/graph/practise&gt; ;
+        rr:objectMap [
+            a rr:RefObjectMap ;
+            rr:joinCondition [
+                rr:child &quot;\&quot;Sport\&quot;&quot; ;
+                rr:parent &quot;\&quot;ID\&quot;&quot;
+            ] ;
+            rr:parentTriplesMap &lt;http://example.com/base/TriplesMap2&gt;
+        ] ;
+        rr:predicate &lt;http://example.com/ontology/practises&gt;
+    ] ;
+    rr:subjectMap [
+        rr:class &lt;http://example.com/ontology/Student&gt; ;
+        rr:graph &lt;http://example.com/graph/students&gt; ;
+        rr:template &quot;http://example.com/resource/student_{\&quot;ID\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate rdfs:label
+    ] ;
+    rr:subjectMap [
+        rr:class &lt;http://example.com/ontology/Sport&gt; ;
+        rr:graph &lt;http://example.com/graph/sports&gt; ;
+        rr:template &quot;http://example.com/resource/sport_{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D009-2tables1primarykey1foreignkey-c</td><td>15</td><td>20</td><td>24</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?n
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/resource/student_&quot;, spy:urlEncode(?Name)))
+    ?n = plainLiteral(?Name)
+  From
+    [[SELECT &quot;Name&quot;, COUNT(&quot;Sport&quot;) FROM &quot;Student&quot; GROUP BY &quot;Name&quot;]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+   a rr:TriplesMap;
+        
+   rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+        SELECT &quot;Name&quot;, COUNT(&quot;Sport&quot;)
+        FROM &quot;Student&quot;
+        GROUP BY &quot;Name&quot;
+        &quot;&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/resource/student_{\&quot;Name\&quot;}&quot;; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	foaf:name ; 
+      rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; ];
+    ];
+  .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+        SELECT \&quot;Name\&quot;, COUNT(\&quot;Sport\&quot;)
+        FROM \&quot;Student\&quot;
+        GROUP BY \&quot;Name\&quot;
+        &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/resource/student_{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D009-2tables1primarykey1foreignkey-d</td><td>18</td><td>25</td><td>29</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?n ;
+      ex:numSport ?c 
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/resource/student_&quot;, spy:urlEncode(?Name)))
+    ?n = plainLiteral(?Name)
+    ?c = typedLiteral(?SPORTCOUNT, xsd:integer)
+  FROM
+    [[SELECT &quot;Name&quot;, COUNT(&quot;Sport&quot;) as SPORTCOUNT FROM &quot;Student&quot; GROUP BY &quot;Name&quot;]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+   a rr:TriplesMap;
+        
+   rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+        SELECT &quot;Name&quot;, COUNT(&quot;Sport&quot;) as SPORTCOUNT
+        FROM &quot;Student&quot;
+        GROUP BY &quot;Name&quot;
+        &quot;&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/resource/student_{\&quot;Name\&quot;}&quot;; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	foaf:name ; 
+      rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; ];
+    ];
+
+   rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:numSport ; 
+		rr:objectMap	[ rr:column &quot;SPORTCOUNT&quot;; ];
+    ];
+  .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+        SELECT \&quot;Name\&quot;, COUNT(\&quot;Sport\&quot;) as SPORTCOUNT
+        FROM \&quot;Student\&quot;
+        GROUP BY \&quot;Name\&quot;
+        &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ], [
+        rr:objectMap [
+            rr:column &quot;SPORTCOUNT&quot;
+        ] ;
+        rr:predicate ex:numSport
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/resource/student_{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D010-1table1primarykey3colums3rows-a</td><td>13</td><td>15</td><td>19</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s ex:name ?n .
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?&quot;Country Code&quot;))
+    ?n = plainLiteral(?Name)
+  From
+    &quot;Country Info&quot;</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+        
+	rr:logicalTable [ rr:tableName &quot;\&quot;Country Info\&quot;&quot;; ] ;
+	
+	rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Country Code\&quot;}&quot; ]; 
+	
+	rr:predicateObjectMap
+	[ 
+		rr:predicate		ex:name ; 
+		rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]
+ 	]
+ 	.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Country Info\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate ex:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Country Code\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D010-1table1primarykey3colums3rows-b</td><td>14</td><td>15</td><td>19</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s ex:name ?n
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?&quot;Country Code&quot;, &quot;/&quot;, spy:urlEncode(?Name)))
+    ?n = plainLiteral(?Name)
+  From
+    &quot;Country Info&quot;</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+        
+	rr:logicalTable [ rr:tableName &quot;\&quot;Country Info\&quot;&quot;; ] ;
+	
+	rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Country Code\&quot;}/{\&quot;Name\&quot;}&quot; ]; 
+	
+	rr:predicateObjectMap
+	[ 
+		rr:predicate	ex:name ; 
+		rr:objectMap    [ rr:column &quot;\&quot;Name\&quot;&quot; ]
+    ]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Country Info\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate ex:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Country Code\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D010-1table1primarykey3colums3rows-c</td><td>14</td><td>15</td><td>20</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+
+Create View TriplesMap1 As
+  Construct {
+	?s ex:code ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?&quot;Country Code&quot;, &quot;/&quot;, spy:urlEncode(?Name)))
+    ?o = plainLiteral(concat(&quot;{{{ &quot;, ?&quot;ISO 3166&quot;, &quot; }}}&quot;))
+  From
+    &quot;Country Info&quot;</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+        
+	rr:logicalTable [ rr:tableName &quot;\&quot;Country Info\&quot;&quot;; ] ;
+	
+	rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Country Code\&quot;}/{\&quot;Name\&quot;}&quot; ]; 
+	
+	rr:predicateObjectMap
+	[ 
+		rr:predicate	ex:code ; 
+		rr:objectMap    [ rr:template &quot;\\{\\{\\{ {\&quot;ISO 3166\&quot;} \\}\\}\\}&quot;; rr:termType rr:Literal; ]
+	]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Country Info\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;\\{\\{\\{ {\&quot;ISO 3166\&quot;} \\}\\}\\}&quot; ;
+            rr:termType rr:Literal
+        ] ;
+        rr:predicate ex:code
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Country Code\&quot;}/{\&quot;Name\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D011-M2MRelations-a</td><td>40</td><td>54</td><td>62</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      ex:id ?i ;
+      ex:firstName ?fn ;
+      ex:lastName ?ln ;
+      ex:plays ?p
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?ID, &quot;/&quot;, ?FirstName, &quot;;&quot;, ?LastName))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?fn = plainLiteral(?FirstName)
+    ?ln = plainLiteral(?LastName)
+    ?p = uri(concat(&quot;http://example.com&quot;, &quot;/&quot;, ?Sport_ID, &quot;/&quot;, ?Description))
+  From [[
+       SELECT &quot;Student&quot;.&quot;ID&quot; as ID,
+              &quot;Student&quot;.&quot;FirstName&quot; as &quot;FirstName&quot;,
+              &quot;Student&quot;.&quot;LastName&quot; as &quot;LastName&quot;,
+              &quot;Sport&quot;.&quot;Description&quot; as &quot;Description&quot;,
+              &quot;Sport&quot;.&quot;ID&quot; as &quot;Sport_ID&quot;
+       FROM &quot;Student&quot;,&quot;Sport&quot;,&quot;Student_Sport&quot;
+       WHERE &quot;Student&quot;.&quot;ID&quot; = &quot;Student_Sport&quot;.&quot;ID_Student&quot;
+       AND &quot;Sport&quot;.&quot;ID&quot; = &quot;Student_Sport&quot;.&quot;ID_Sport&quot;
+  ]] // TODO Added quotes to column aliases. H2 turns them to uppercase
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      ex:id ?i ;
+      ex:description ?d
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?ID, &quot;/&quot;, ?Description))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?d = plainLiteral(?Description)
+  From
+    Sport  </pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+
+    rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+       SELECT &quot;Student&quot;.&quot;ID&quot; as ID,
+              &quot;Student&quot;.&quot;FirstName&quot; as FirstName,
+              &quot;Student&quot;.&quot;LastName&quot; as LastName,
+              &quot;Sport&quot;.&quot;Description&quot; as Description,
+              &quot;Sport&quot;.&quot;ID&quot; as Sport_ID
+       FROM &quot;Student&quot;,&quot;Sport&quot;,&quot;Student_Sport&quot;
+       WHERE &quot;Student&quot;.&quot;ID&quot; = &quot;Student_Sport&quot;.&quot;ID_Student&quot;
+       AND &quot;Sport&quot;.&quot;ID&quot; = &quot;Student_Sport&quot;.&quot;ID_Sport&quot;;
+       &quot;&quot;&quot;; ];
+
+    rr:subjectMap [ rr:template &quot;http://example.com/{ID}/{FirstName};{LastName}&quot; ];
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:id ; 
+      rr:objectMap	[ rr:column &quot;ID&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:firstName ; 
+      rr:objectMap	[ rr:column &quot;FirstName&quot; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:lastName ; 
+      rr:objectMap	[ rr:column &quot;LastName&quot; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:plays ; 
+      rr:objectMap	[ rr:template &quot;http://example.com/{Sport_ID}/{Description}&quot; ]
+    ]
+    .
+
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Sport\&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;ID\&quot;}/{\&quot;Description\&quot;}&quot;; ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:id ; 
+      rr:objectMap	[ rr:column &quot;\&quot;ID\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:description ; 
+      rr:objectMap	[ rr:column &quot;\&quot;Description\&quot;&quot; ]
+    ]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+       SELECT \&quot;Student\&quot;.\&quot;ID\&quot; as ID,
+              \&quot;Student\&quot;.\&quot;FirstName\&quot; as FirstName,
+              \&quot;Student\&quot;.\&quot;LastName\&quot; as LastName,
+              \&quot;Sport\&quot;.\&quot;Description\&quot; as Description,
+              \&quot;Sport\&quot;.\&quot;ID\&quot; as Sport_ID
+       FROM \&quot;Student\&quot;,\&quot;Sport\&quot;,\&quot;Student_Sport\&quot;
+       WHERE \&quot;Student\&quot;.\&quot;ID\&quot; = \&quot;Student_Sport\&quot;.\&quot;ID_Student\&quot;
+       AND \&quot;Sport\&quot;.\&quot;ID\&quot; = \&quot;Student_Sport\&quot;.\&quot;ID_Sport\&quot;;
+       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;http://example.com/{Sport_ID}/{Description}&quot;
+        ] ;
+        rr:predicate ex:plays
+    ], [
+        rr:objectMap [
+            rr:column &quot;ID&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;FirstName&quot;
+        ] ;
+        rr:predicate ex:firstName
+    ], [
+        rr:objectMap [
+            rr:column &quot;LastName&quot;
+        ] ;
+        rr:predicate ex:lastName
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{ID}/{FirstName};{LastName}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Description\&quot;&quot;
+        ] ;
+        rr:predicate ex:description
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;ID\&quot;}/{\&quot;Description\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D011-M2MRelations-b</td><td>37</td><td>43</td><td>57</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      ex:firstName ?fn ;
+      ex:lastName ?ln
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/student/&quot;, ?ID))
+    ?fn = plainLiteral(?FirstName)
+    ?ln = plainLiteral(?LastName) 
+  From
+    Student
+    
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      ex:id ?i ;
+      ex:description ?d 
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/sport/&quot;, ?ID))
+    ?i = typedLiteral(?ID, xsd:integer)
+    ?d = plainLiteral(?Description)
+  From
+    Sport
+
+Create View LinkMap_1_2 As
+  Construct {
+    ?s ex:plays ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/student/&quot;, ?ID_Student))
+    ?o = uri(concat(&quot;http://example.com/sport/&quot;, ?ID_Sport))
+  From
+    Student_Sport
+   
+   </pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+	a rr:TriplesMap; 
+
+    rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot;; ] ;
+
+    rr:subjectMap [ rr:template &quot;http://example.com/student/{\&quot;ID\&quot;}&quot;; ];
+
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:firstName ; 
+		rr:objectMap	[ rr:column &quot;\&quot;FirstName\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:lastName ; 
+		rr:objectMap	[ rr:column &quot;\&quot;LastName\&quot;&quot; ]
+    ]
+	.	
+    
+&lt;TriplesMap2&gt;
+	a rr:TriplesMap; 
+
+    rr:logicalTable [ rr:tableName &quot;\&quot;Sport\&quot;&quot;; ] ;
+
+    rr:subjectMap [ rr:template &quot;http://example.com/sport/{\&quot;ID\&quot;}&quot;; ];
+
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:id ; 
+		rr:objectMap	[ rr:column &quot;\&quot;ID\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+		rr:predicate	ex:description ; 
+		rr:objectMap	[ rr:column &quot;\&quot;Description\&quot;&quot; ]
+    ]
+	.
+
+&lt;LinkMap_1_2&gt;
+	a rr:TriplesMap; 
+   
+   rr:logicalTable [ rr:tableName &quot;\&quot;Student_Sport\&quot;&quot; ];
+   
+   rr:subjectMap [ rr:template &quot;http://example.com/student/{\&quot;ID_Student\&quot;}&quot; ];
+   
+   rr:predicateObjectMap [
+		rr:predicate	ex:plays ;
+		rr:objectMap	[ rr:template &quot;http://example.com/sport/{\&quot;ID_Sport\&quot;}&quot; ];
+   ].
+   
+   </pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/LinkMap_1_2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student_Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;http://example.com/sport/{\&quot;ID_Sport\&quot;}&quot;
+        ] ;
+        rr:predicate ex:plays
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/student/{\&quot;ID_Student\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;FirstName\&quot;&quot;
+        ] ;
+        rr:predicate ex:firstName
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;LastName\&quot;&quot;
+        ] ;
+        rr:predicate ex:lastName
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/student/{\&quot;ID\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Sport\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Description\&quot;&quot;
+        ] ;
+        rr:predicate ex:description
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/sport/{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D012-2tables2duplicates0nulls-a</td><td>16</td><td>25</td><td>26</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?o ;
+      ex:amount ?a
+  }
+  With
+    ?s = bNode(concat(?fname, &quot;_&quot;, ?lname, &quot;_&quot;, ?amount))
+    ?o = plainLiteral(concat(?fname, &quot; &quot;, ?lname))
+    ?a = typedLiteral(?amount, xsd:double)
+  From
+    IOUs</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName  &quot;\&quot;IOUs\&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}_{\&quot;amount\&quot;}&quot;; rr:termType rr:BlankNode; ];
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	foaf:name ; 
+      rr:objectMap	[ 
+            rr:template &quot;{\&quot;fname\&quot;} {\&quot;lname\&quot;}&quot;;
+            rr:termType rr:Literal ;
+      ]
+    ];
+    
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		ex:amount ; 
+      rr:objectMap    [ 
+            rr:column &quot;\&quot;amount\&quot;&quot;;
+      ]
+    ];
+	.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;IOUs\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;{\&quot;fname\&quot;} {\&quot;lname\&quot;}&quot; ;
+            rr:termType rr:Literal
+        ] ;
+        rr:predicate foaf:name
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;amount\&quot;&quot;
+        ] ;
+        rr:predicate ex:amount
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}_{\&quot;amount\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .</pre></td></tr>
+<tr><td>D012-2tables2duplicates0nulls-b</td><td>24</td><td>34</td><td>36</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      foaf:name ?n
+  }
+  With
+    ?s = bNode(concat(?fname, &quot;_&quot;, ?lname))
+    ?n = plainLiteral(concat(?fname, &quot; &quot;, ?lname))
+  From
+    IOUs
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      ex:city ?c
+  }
+  With
+    ?s = bNode(concat(?fname, &quot;_&quot;, ?lname))
+    ?c = plainLiteral(?city)
+  From
+    Lives</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName  &quot;\&quot;IOUs\&quot;&quot; ]; 
+	
+    rr:subjectMap [
+            rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}&quot;; 
+            rr:termType rr:BlankNode ;
+      ];
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		foaf:name ; 
+      rr:objectMap    [ 
+            rr:template &quot;{\&quot;fname\&quot;} {\&quot;lname\&quot;}&quot;;
+            rr:termType rr:Literal ;
+      ]
+    ];
+    .
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+	
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Lives\&quot;&quot; ]; 
+
+    rr:subjectMap [
+            rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}&quot;; 
+            rr:termType rr:BlankNode;
+      ];
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	ex:city ; 
+      rr:objectMap	[ rr:column &quot;\&quot;city\&quot;&quot;; ]
+    ];
+	.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;IOUs\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;{\&quot;fname\&quot;} {\&quot;lname\&quot;}&quot; ;
+            rr:termType rr:Literal
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Lives\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;city\&quot;&quot;
+        ] ;
+        rr:predicate ex:city
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .</pre></td></tr>
+<tr><td>D012-2tables2duplicates0nulls-e</td><td>37</td><td>54</td><td>61</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix base: &lt;http://example.com/base/&gt;
+
+Prefix ious: &lt;http://example.com/base/IOUs#&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type base:IOUs ;
+      ious:fname ?fn ;
+      ious:lname ?ln ;
+      ious:amount ?a
+  }
+  With
+    ?s = bNode(concat(?fname, &quot;_&quot;, ?lname, &quot;_&quot;, ?amount))
+    ?fn = plainLiteral(?fname)
+    ?ln = plainLiteral(?lname)
+    ?a = typedLiteral(?amount, xsd:double)
+  From
+    IOUs
+	
+	
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      rdf:type base:Lives ;
+      ious:fname ?fn ;
+      ious:lname ?ln ;
+      ious:city ?c
+  }
+  With
+    ?s = bNode(concat(?fname, &quot;_&quot;, ?lname, &quot;_&quot;, ?city))
+    ?fn = plainLiteral(?fname)
+    ?ln = plainLiteral(?lname)
+    ?c = plainLiteral(?city) 
+  From
+    Lives</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName  &quot;\&quot;IOUs\&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}_{\&quot;amount\&quot;}&quot;; rr:termType rr:BlankNode; ];
+    
+    rr:predicateObjectMap [
+    	rr:predicate rdf:type;
+    	rr:object &lt;IOUs&gt;;
+    ];
+		
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		&lt;IOUs#fname&gt; ; 
+      rr:objectMap		[ rr:column &quot;\&quot;fname\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		&lt;IOUs#lname&gt; ; 
+      rr:objectMap		[ rr:column &quot;\&quot;lname\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		&lt;IOUs#amount&gt; ; 
+      rr:objectMap		[ rr:column &quot;\&quot;amount\&quot;&quot;; ]
+    ];
+	.
+	
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+
+	rr:logicalTable [ rr:tableName  &quot;\&quot;Lives\&quot;&quot; ];
+	
+    rr:subjectMap [ rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}_{\&quot;city\&quot;}&quot;; rr:termType rr:BlankNode; ];
+    
+    rr:predicateObjectMap [
+    	rr:predicate rdf:type;
+    	rr:object &lt;Lives&gt;;
+    ];
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		&lt;IOUs#fname&gt; ; 
+      rr:objectMap		[ rr:column &quot;\&quot;fname\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		&lt;IOUs#lname&gt; ; 
+      rr:objectMap		[ rr:column &quot;\&quot;lname\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		&lt;IOUs#city&gt; ; 
+      rr:objectMap		[ rr:column &quot;\&quot;city\&quot;&quot;; ]
+    ];
+	.	</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;IOUs\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object &lt;http://example.com/base/IOUs&gt; ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;fname\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#fname&gt;
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;lname\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#lname&gt;
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;amount\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#amount&gt;
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}_{\&quot;amount\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Lives\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object &lt;http://example.com/base/Lives&gt; ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;fname\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#fname&gt;
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;lname\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#lname&gt;
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;city\&quot;&quot;
+        ] ;
+        rr:predicate &lt;http://example.com/base/IOUs#city&gt;
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;fname\&quot;}_{\&quot;lname\&quot;}_{\&quot;city\&quot;}&quot; ;
+        rr:termType rr:BlankNode
+    ] .</pre></td></tr>
+<tr><td>D013-1table1primarykey3columns2rows1nullvalue-a</td><td>15</td><td>16</td><td>19</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s ex:BirthDay ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Person/&quot;, ?ID, &quot;/&quot;, ?Name, &quot;/&quot;, spy:urlEncode(?DateOfBirth)))
+    ?o = plainLiteral(?DateOfBirth)
+  From
+    Person</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+     a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Person\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Person/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}/{\&quot;DateOfBirth\&quot;}&quot;;  ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:BirthDay ;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;DateOfBirth\&quot;&quot; ]&#13;
+    ]&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Person\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;DateOfBirth\&quot;&quot;
+        ] ;
+        rr:predicate ex:BirthDay
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Person/{\&quot;ID\&quot;}/{\&quot;Name\&quot;}/{\&quot;DateOfBirth\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D014-3tables1primarykey1foreignkey-a</td><td>19</td><td>21</td><td>26</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix dept: &lt;http://example.com/dept#&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      dept:location ?o
+  }
+  With
+    ?s = bNode(?deptId)
+    ?o = plainLiteral(?loc)
+  From
+    [[
+       SELECT ('Department' || &quot;deptno&quot;) AS &quot;deptId&quot;
+            , &quot;deptno&quot;
+            , &quot;dname&quot;
+            , &quot;loc&quot;
+       FROM &quot;DEPT&quot;
+    ]]
+// TODO Inverse Expression support
+/*
+    rr:subjectMap [ rr:column &quot;\&quot;deptId\&quot;&quot;; rr:termType rr:BlankNode;
+                    rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({\&quot;deptId\&quot;},length('Department')+1)&quot;];
+*/</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+    rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+       SELECT ('Department' || &quot;deptno&quot;) AS &quot;deptId&quot;
+            , &quot;deptno&quot;
+            , &quot;dname&quot;
+            , &quot;loc&quot;
+       FROM &quot;DEPT&quot;
+       &quot;&quot;&quot; ];
+
+    rr:subjectMap [ rr:column &quot;\&quot;deptId\&quot;&quot;; rr:termType rr:BlankNode;
+                    rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({\&quot;deptId\&quot;},length('Department')+1)&quot;];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate	dept:location ; 
+      rr:objectMap	[ rr:column &quot;\&quot;loc\&quot;&quot; ]
+    ];
+ 
+.</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+       SELECT ('Department' || \&quot;deptno\&quot;) AS \&quot;deptId\&quot;
+            , \&quot;deptno\&quot;
+            , \&quot;dname\&quot;
+            , \&quot;loc\&quot;
+       FROM \&quot;DEPT\&quot;
+       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;loc\&quot;&quot;
+        ] ;
+        rr:predicate dept:location
+    ] ;
+    rr:subjectMap [
+        rr:column &quot;\&quot;deptId\&quot;&quot; ;
+        rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({\&quot;deptId\&quot;},length('Department')+1)&quot; ;
+        rr:termType rr:BlankNode
+    ] .</pre></td></tr>
+<tr><td>D014-3tables1primarykey1foreignkey-b</td><td>76</td><td>112</td><td>121</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/ns#&gt;
+Prefix emp: &lt;http://example.com/emp#&gt;
+Prefix dept: &lt;http://example.com/dept#&gt;
+Prefix likes: &lt;http://example.com/likes#&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      dept:deptno ?d ;
+      dept:name ?n ;
+      dept:location ?l ;
+      dept:COMPANY &quot;EXAMPLE Corporation&quot;
+  }
+  With
+    ?s = bNode(?deptId)
+    ?d = typedLiteral(?deptno, xsd:integer)
+    ?n = plainLiteral(?dname)
+    ?l = plainLiteral(?loc)
+  From [[
+       SELECT ('Department' || &quot;deptno&quot;) AS &quot;deptId&quot;
+            , &quot;deptno&quot;
+            , &quot;dname&quot;
+            , &quot;loc&quot;
+       FROM &quot;DEPT&quot;
+  ]]
+/*
+TODO Inverse Expression support 
+    rr:subjectMap [ rr:column &quot;deptId&quot;; rr:termType rr:BlankNode;
+                    rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({deptId},length('Department')+1)&quot; ];
+*/
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      emp:jobtype ?j ; 
+      rdf:type ?j ;
+      emp:emptype ?e ;
+      rdf:type ?e ;
+      emp:empno ?eno ;
+      emp:name ?en ;
+      emp:job ?ej ;
+      emp:deptNum ?dno ;
+      emp:etype ?et ;
+      //emp:c_ref_deptno ?ref
+  }
+  With
+    ?s = uri(?empURI)
+    ?j = uri(?jobTypeURI)
+    ?e = uri(?empTypeURI)
+    ?eno = typedLiteral(?empno, xsd:integer)
+    ?en = plainLiteral(?ename)
+    ?ej = plainLiteral(?job)
+    ?dno = typedLiteral(?deptno, xsd:integer)
+    ?et = plainLiteral(?etype)
+    //?ref = bNode(?deptno)
+  From [[
+       SELECT ('http://example.com/emp/' || &quot;empno&quot;) AS &quot;empURI&quot;
+            , &quot;empno&quot;
+            , &quot;ename&quot;
+            , ('http://example.com/emp/job/'|| &quot;job&quot;) AS &quot;jobTypeURI&quot;
+            , &quot;job&quot;
+            , &quot;deptno&quot;
+            , ('http://example.com/emp/etype/'|| &quot;etype&quot;) AS &quot;empTypeURI&quot;
+            , &quot;etype&quot;
+            , ('http://example.com/graph/'|| &quot;job&quot; || '/' || &quot;etype&quot;) AS &quot;graphURI&quot;
+       FROM &quot;EMP&quot; 
+  ]]
+
+// TODO Add Ref Support
+Create View TODO_Add_Ref_Support
+  As Construct{
+    ?s emp:c_ref_deptno ?o
+  }
+  With
+    ?s = uri(?empURI)
+    ?o = bNode(?deptId)
+  From [[
+       SELECT
+         ('http://example.com/emp/' || &quot;a&quot;.&quot;empno&quot;) AS &quot;empURI&quot;,
+         ('Department' || &quot;b&quot;.&quot;deptno&quot;) AS &quot;deptId&quot;
+       FROM
+         &quot;EMP&quot; &quot;a&quot;
+         JOIN &quot;DEPT&quot; &quot;b&quot; ON (&quot;b&quot;.&quot;deptno&quot; = &quot;a&quot;.&quot;deptno&quot;)
+  ]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix ex: &lt;http://example.com/ns#&gt; .
+@prefix emp: &lt;http://example.com/emp#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix likes: &lt;http://example.com/likes#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+    rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+       SELECT ('Department' || &quot;deptno&quot;) AS deptId
+            , &quot;deptno&quot;
+            , &quot;dname&quot;
+            , &quot;loc&quot;
+       FROM &quot;DEPT&quot;
+       &quot;&quot;&quot; ];
+
+    rr:subjectMap [ rr:column &quot;deptId&quot;; rr:termType rr:BlankNode;
+                    rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({deptId},length('Department')+1)&quot; ];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		dept:deptno ; 
+      rr:objectMap    [ rr:column &quot;\&quot;deptno\&quot;&quot;; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		dept:name ; 
+      rr:objectMap    [ rr:column &quot;\&quot;dname\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		dept:location ; 
+      rr:objectMap    [ rr:column &quot;\&quot;loc\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		dept:COMPANY ; 
+      rr:object			&quot;EXAMPLE Corporation&quot;
+    ]
+.
+
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+    rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+       SELECT ('http://example.com/emp/' || &quot;empno&quot;) AS empURI
+            , &quot;empno&quot;
+            , &quot;ename&quot;
+            , ('http://example.com/emp/job/'|| &quot;job&quot;) AS jobTypeURI
+            , &quot;job&quot;
+            , &quot;deptno&quot;
+            , ('http://example.com/emp/etype/'|| &quot;etype&quot;) AS empTypeURI
+            , &quot;etype&quot;
+            , ('http://example.com/graph/'|| &quot;job&quot; || '/' || &quot;etype&quot;) AS graphURI
+       FROM &quot;EMP&quot;
+       &quot;&quot;&quot; ];
+
+    rr:subjectMap [ rr:column &quot;empURI&quot;; ];
+     
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:jobtype ; 
+      rr:objectMap    [ rr:column &quot;jobTypeURI&quot;; rr:termType rr:IRI; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		rdf:type ; 
+      rr:objectMap    [ rr:column &quot;jobTypeURI&quot;; rr:termType rr:IRI; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:emptype ; 
+      rr:objectMap    [ rr:column &quot;empTypeURI&quot;; rr:termType rr:IRI; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		rdf:type ; 
+      rr:objectMap    [ rr:column &quot;empTypeURI&quot;; rr:termType rr:IRI; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:empno ; 
+      rr:objectMap    [ rr:column &quot;\&quot;empno\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:name ; 
+      rr:objectMap    [ rr:column &quot;\&quot;ename\&quot;&quot; ]; 
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:job ; 
+      rr:objectMap    [ rr:column &quot;\&quot;job\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:deptNum ; 
+      rr:objectMap    [ rr:column &quot;\&quot;deptno\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:etype ; 
+      rr:objectMap    [ rr:column &quot;\&quot;etype\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate		emp:c_ref_deptno ;
+      rr:objectMap    [
+        a rr:RefObjectMap ;
+        rr:parentTriplesMap &lt;TriplesMap1&gt;;
+        rr:joinCondition [
+          rr:child &quot;\&quot;deptno\&quot;&quot;;
+          rr:parent &quot;\&quot;deptno\&quot;&quot;;
+        ];
+      ];
+    ]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix ex: &lt;http://example.com/ns#&gt; .
+@prefix emp: &lt;http://example.com/emp#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix likes: &lt;http://example.com/likes#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+       SELECT ('Department' || \&quot;deptno\&quot;) AS deptId
+            , \&quot;deptno\&quot;
+            , \&quot;dname\&quot;
+            , \&quot;loc\&quot;
+       FROM \&quot;DEPT\&quot;
+       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;deptno\&quot;&quot;
+        ] ;
+        rr:predicate dept:deptno
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;dname\&quot;&quot;
+        ] ;
+        rr:predicate dept:name
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;loc\&quot;&quot;
+        ] ;
+        rr:predicate dept:location
+    ], [
+        rr:object &quot;EXAMPLE Corporation&quot; ;
+        rr:predicate dept:COMPANY
+    ] ;
+    rr:subjectMap [
+        rr:column &quot;deptId&quot; ;
+        rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({deptId},length('Department')+1)&quot; ;
+        rr:termType rr:BlankNode
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+       SELECT ('http://example.com/emp/' || \&quot;empno\&quot;) AS empURI
+            , \&quot;empno\&quot;
+            , \&quot;ename\&quot;
+            , ('http://example.com/emp/job/'|| \&quot;job\&quot;) AS jobTypeURI
+            , \&quot;job\&quot;
+            , \&quot;deptno\&quot;
+            , ('http://example.com/emp/etype/'|| \&quot;etype\&quot;) AS empTypeURI
+            , \&quot;etype\&quot;
+            , ('http://example.com/graph/'|| \&quot;job\&quot; || '/' || \&quot;etype\&quot;) AS graphURI
+       FROM \&quot;EMP\&quot;
+       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;jobTypeURI&quot; ;
+            rr:termType rr:IRI
+        ] ;
+        rr:predicate emp:jobtype
+    ], [
+        rr:objectMap [
+            rr:column &quot;jobTypeURI&quot; ;
+            rr:termType rr:IRI
+        ] ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;empTypeURI&quot; ;
+            rr:termType rr:IRI
+        ] ;
+        rr:predicate emp:emptype
+    ], [
+        rr:objectMap [
+            rr:column &quot;empTypeURI&quot; ;
+            rr:termType rr:IRI
+        ] ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;empno\&quot;&quot;
+        ] ;
+        rr:predicate emp:empno
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ename\&quot;&quot;
+        ] ;
+        rr:predicate emp:name
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;job\&quot;&quot;
+        ] ;
+        rr:predicate emp:job
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;deptno\&quot;&quot;
+        ] ;
+        rr:predicate emp:deptNum
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;etype\&quot;&quot;
+        ] ;
+        rr:predicate emp:etype
+    ], [
+        rr:objectMap [
+            a rr:RefObjectMap ;
+            rr:joinCondition [
+                rr:child &quot;\&quot;deptno\&quot;&quot; ;
+                rr:parent &quot;\&quot;deptno\&quot;&quot;
+            ] ;
+            rr:parentTriplesMap &lt;http://example.com/base/TriplesMap1&gt;
+        ] ;
+        rr:predicate emp:c_ref_deptno
+    ] ;
+    rr:subjectMap [
+        rr:column &quot;empURI&quot;
+    ] .</pre></td></tr>
+<tr><td>D014-3tables1primarykey1foreignkey-c</td><td>61</td><td>109</td><td>107</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/ns#&gt;
+Prefix emp: &lt;http://example.com/emp#&gt;
+Prefix dept: &lt;http://example.com/dept#&gt;
+Prefix likes: &lt;http://example.com/likes#&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      dept:deptno ?dno ;
+      dept:name ?dn ;
+      dept:location ?dl ;
+      dept:COMPANY &quot;EXAMPLE Corporation&quot;
+  }
+  With
+    ?s = bNode(?deptId)
+    ?dno = typedLiteral(?deptno, xsd:positiveInteger)
+    ?dn = plainLiteral(?dname)
+    ?dl = plainLiteral(?loc)
+  From [[
+       Select ('Department' || &quot;deptno&quot;) AS &quot;deptId&quot;
+            , &quot;deptno&quot;
+            , &quot;dname&quot;
+            , &quot;loc&quot;
+         from &quot;DEPT&quot;
+  ]]
+
+/*
+    rr:subjectMap [ rr:column &quot;deptId&quot;; rr:termType rr:BlankNode;
+                    rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({deptId},length('Department')+1)&quot;];
+*/
+
+
+Create View TriplesMap2 As
+  Construct {
+    ?s
+      emp:jobtype ?j ;
+      rdf:type ?j ;
+      emp:emptype ?et ;
+      rdf:type ?et ;
+      emp:empno ?eno ;
+      emp:name ?en ;
+      emp:job ?job ;
+      emp:deptNum ?dno ;
+      emp:etype ?etn
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/emp/&quot;, ?empno))
+    ?j = uri(concat(&quot;http://example.com/emp/job/&quot;, ?job))
+    ?et = uri(concat(&quot;http://example.com/emp/etype/&quot;, ?etype))
+    ?eno = typedLiteral(?empno, xsd:integer)
+    ?en = plainLiteral(?ename)
+    ?job = plainLiteral(?job)
+    ?dno = typedLiteral(?deptno, xsd:integer)
+    ?etn = plainLiteral(?etype)
+  From
+    EMP
+
+Create View TODO_Ref As
+  Construct {
+    ?s emp:c_ref_deptno ?o
+  }
+  With
+  	?s = uri(concat(&quot;http://example.com/emp/&quot;, ?empno))
+  	?o = bNode(?deptId)
+  From [[
+    SELECT &quot;a&quot;.&quot;empno&quot;, ('Department' || &quot;b&quot;.&quot;deptno&quot;) AS &quot;deptId&quot; FROM &quot;EMP&quot; &quot;a&quot; JOIN &quot;DEPT&quot; &quot;b&quot; ON (&quot;b&quot;.&quot;deptno&quot; = &quot;a&quot;.&quot;deptno&quot;)
+  ]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix ex: &lt;http://example.com/ns#&gt; .
+@prefix emp: &lt;http://example.com/emp#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix likes: &lt;http://example.com/likes#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+    rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+       Select ('Department' || &quot;deptno&quot;) AS deptId
+            , &quot;deptno&quot;
+            , &quot;dname&quot;
+            , &quot;loc&quot;
+         from &quot;DEPT&quot;
+       &quot;&quot;&quot; ];
+
+    rr:subjectMap [ rr:column &quot;deptId&quot;; rr:termType rr:BlankNode;
+                    rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({deptId},length('Department')+1)&quot;];
+
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		dept:deptno ; 
+      rr:objectMap    [ rr:column &quot;\&quot;deptno\&quot;&quot;; rr:datatype xsd:positiveInteger ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		dept:name ; 
+      rr:objectMap    [ rr:column &quot;\&quot;dname\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		dept:location ; 
+      rr:objectMap    [ rr:column &quot;\&quot;loc\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		dept:COMPANY ; 
+      rr:objectMap		[ rr:constant &quot;EXAMPLE Corporation&quot;; ]
+    ]
+.
+
+
+&lt;jobtypeObjectMap&gt;
+    a rr:ObjectMap;
+    rr:template &quot;http://example.com/emp/job/{\&quot;job\&quot;}&quot;
+    .
+
+&lt;emptypeObjectMap&gt;
+    a rr:ObjectMap;
+    rr:template &quot;http://example.com/emp/etype/{\&quot;etype\&quot;}&quot;
+    .
+
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+
+    rr:logicalTable [ rr:tableName &quot;\&quot;EMP\&quot;&quot; ];
+
+    rr:subjectMap [ rr:template &quot;http://example.com/emp/{\&quot;empno\&quot;}&quot;; ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:jobtype ; 
+      rr:objectMap    &lt;jobtypeObjectMap&gt;
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		rdf:type ; 
+      rr:objectMap    &lt;jobtypeObjectMap&gt;
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:emptype ; 
+      rr:objectMap    &lt;emptypeObjectMap&gt;
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		rdf:type ; 
+      rr:objectMap    &lt;emptypeObjectMap&gt;
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:empno ; 
+      rr:objectMap    [ rr:column &quot;\&quot;empno\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:name ; 
+      rr:objectMap    [ rr:column &quot;\&quot;ename\&quot;&quot; ]; 
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:job ; 
+      rr:objectMap    [ rr:column &quot;\&quot;job\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:deptNum ; 
+      rr:objectMap    [ rr:column &quot;\&quot;deptno\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap 
+    [ 
+      rr:predicate		emp:etype ; 
+      rr:objectMap    [ rr:column &quot;\&quot;etype\&quot;&quot; ]
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate		emp:c_ref_deptno ;
+      rr:objectMap    [
+      	a rr:RefObjectMap ;
+        rr:parentTriplesMap &lt;TriplesMap1&gt;;
+        rr:joinCondition [
+          rr:child &quot;\&quot;deptno\&quot;&quot;;
+          rr:parent &quot;\&quot;deptno\&quot;&quot;;
+        ];
+      ];
+    ]
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix ex: &lt;http://example.com/ns#&gt; .
+@prefix emp: &lt;http://example.com/emp#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix likes: &lt;http://example.com/likes#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+       Select ('Department' || \&quot;deptno\&quot;) AS deptId
+            , \&quot;deptno\&quot;
+            , \&quot;dname\&quot;
+            , \&quot;loc\&quot;
+         from \&quot;DEPT\&quot;
+       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:constant &quot;EXAMPLE Corporation&quot;
+        ] ;
+        rr:predicate dept:COMPANY
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;deptno\&quot;&quot; ;
+            rr:datatype xsd:positiveInteger
+        ] ;
+        rr:predicate dept:deptno
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;dname\&quot;&quot;
+        ] ;
+        rr:predicate dept:name
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;loc\&quot;&quot;
+        ] ;
+        rr:predicate dept:location
+    ] ;
+    rr:subjectMap [
+        rr:column &quot;deptId&quot; ;
+        rr:inverseExpression &quot;{\&quot;deptno\&quot;} = substr({deptId},length('Department')+1)&quot; ;
+        rr:termType rr:BlankNode
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;EMP\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap &lt;http://example.com/base/jobtypeObjectMap&gt; ;
+        rr:predicate emp:jobtype
+    ], [
+        rr:objectMap &lt;http://example.com/base/jobtypeObjectMap&gt; ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap &lt;http://example.com/base/emptypeObjectMap&gt; ;
+        rr:predicate emp:emptype
+    ], [
+        rr:objectMap &lt;http://example.com/base/emptypeObjectMap&gt; ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;empno\&quot;&quot;
+        ] ;
+        rr:predicate emp:empno
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ename\&quot;&quot;
+        ] ;
+        rr:predicate emp:name
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;job\&quot;&quot;
+        ] ;
+        rr:predicate emp:job
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;deptno\&quot;&quot;
+        ] ;
+        rr:predicate emp:deptNum
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;etype\&quot;&quot;
+        ] ;
+        rr:predicate emp:etype
+    ], [
+        rr:objectMap [
+            a rr:RefObjectMap ;
+            rr:joinCondition [
+                rr:child &quot;\&quot;deptno\&quot;&quot; ;
+                rr:parent &quot;\&quot;deptno\&quot;&quot;
+            ] ;
+            rr:parentTriplesMap &lt;http://example.com/base/TriplesMap1&gt;
+        ] ;
+        rr:predicate emp:c_ref_deptno
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/emp/{\&quot;empno\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/emptypeObjectMap&gt;
+    a rr:ObjectMap ;
+    rr:template &quot;http://example.com/emp/etype/{\&quot;etype\&quot;}&quot; .
+
+&lt;http://example.com/base/jobtypeObjectMap&gt;
+    a rr:ObjectMap ;
+    rr:template &quot;http://example.com/emp/job/{\&quot;job\&quot;}&quot; .</pre></td></tr>
+<tr><td>D014-3tables1primarykey1foreignkey-d</td><td>20</td><td>23</td><td>26</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/ns#&gt;
+Prefix emp: &lt;http://example.com/emp#&gt;
+Prefix dept: &lt;http://example.com/dept#&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap4 As
+  Construct {
+    ?s ex:role ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://data.example.com/employee/&quot;, ?empno))
+    ?o = uri(concat(&quot;http://data.example.com/roles/&quot;, ?ROLE))
+  From [[
+        SELECT &quot;EMP&quot;.*, (CASE &quot;job&quot;
+            WHEN 'CLERK' THEN 'general-office'
+            WHEN 'NIGHTGUARD' THEN 'security'
+            WHEN 'ENGINEER' THEN 'engineering'
+        END) AS ROLE FROM &quot;EMP&quot;
+  ]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix ex: &lt;http://example.com/ns#&gt; .
+@prefix emp: &lt;http://example.com/emp#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+&lt;TriplesMap4&gt;
+	a rr:TriplesMap;
+    rr:logicalTable [ rr:sqlQuery &quot;&quot;&quot;
+
+        SELECT &quot;EMP&quot;.*, (CASE &quot;job&quot;
+            WHEN 'CLERK' THEN 'general-office'
+            WHEN 'NIGHTGUARD' THEN 'security'
+            WHEN 'ENGINEER' THEN 'engineering'
+        END) AS ROLE FROM &quot;EMP&quot;
+
+        &quot;&quot;&quot; ];
+    rr:subjectMap [
+        rr:template &quot;http://data.example.com/employee/{\&quot;empno\&quot;}&quot;;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:role;
+        rr:objectMap [ rr:template &quot;http://data.example.com/roles/{ROLE}&quot; ];
+    ].
+    </pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix ex: &lt;http://example.com/ns#&gt; .
+@prefix emp: &lt;http://example.com/emp#&gt; .
+@prefix dept: &lt;http://example.com/dept#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap4&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+
+        SELECT \&quot;EMP\&quot;.*, (CASE \&quot;job\&quot;
+            WHEN 'CLERK' THEN 'general-office'
+            WHEN 'NIGHTGUARD' THEN 'security'
+            WHEN 'ENGINEER' THEN 'engineering'
+        END) AS ROLE FROM \&quot;EMP\&quot;
+
+        &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:template &quot;http://data.example.com/roles/{ROLE}&quot;
+        ] ;
+        rr:predicate ex:role
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://data.example.com/employee/{\&quot;empno\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D015-1table3columns1composityeprimarykey3rows2languages-a</td><td>29</td><td>34</td><td>44</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+
+Create View TriplesMap1 As
+  Construct {
+    ?s rdfs:label ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Code))
+    ?o = plainLiteral(?Name, &quot;en&quot;) 
+  From [[
+						SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+						FROM &quot;Country&quot;
+						WHERE &quot;Lan&quot; = 'EN';
+  ]]
+	
+Create View TriplesMap2 As
+  Construct {
+    ?s rdfs:label ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Code))
+    ?o = plainLiteral(?Name, &quot;es&quot;)
+  From [[
+                       SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+                       FROM &quot;Country&quot;
+					   WHERE &quot;Lan&quot; = 'ES';
+  ]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+      
+	rr:logicalTable [  rr:sqlQuery &quot;&quot;&quot;
+						SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+						FROM &quot;Country&quot;
+						WHERE &quot;Lan&quot; = 'EN';
+                       &quot;&quot;&quot; ] ;
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate	rdfs:label;
+      rr:objectMap	[ rr:column &quot;\&quot;Name\&quot;&quot;; rr:language &quot;en&quot; ]
+    ]
+    .
+	
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+      
+	rr:logicalTable [  rr:sqlQuery &quot;&quot;&quot;
+                       SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+                       FROM &quot;Country&quot;
+					   WHERE &quot;Lan&quot; = 'ES';
+                       &quot;&quot;&quot; ] ;
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate rdfs:label;
+      rr:objectMap    [ rr:column &quot;\&quot;Name\&quot;&quot;; rr:language &quot;es&quot; ]
+    ]
+    .	</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+						SELECT \&quot;Code\&quot;, \&quot;Name\&quot;, \&quot;Lan\&quot;
+						FROM \&quot;Country\&quot;
+						WHERE \&quot;Lan\&quot; = 'EN';
+                       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot; ;
+            rr:language &quot;en&quot;
+        ] ;
+        rr:predicate rdfs:label
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+                       SELECT \&quot;Code\&quot;, \&quot;Name\&quot;, \&quot;Lan\&quot;
+                       FROM \&quot;Country\&quot;
+					   WHERE \&quot;Lan\&quot; = 'ES';
+                       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot; ;
+            rr:language &quot;es&quot;
+        ] ;
+        rr:predicate rdfs:label
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D015-1table3columns1composityeprimarykey3rows2languages-b</td><td>29</td><td>34</td><td>44</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s rdfs:label 
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Code))
+    ?o = plainLiteral(?Name, &quot;english&quot;)
+  From [[
+                       SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+                       FROM &quot;Country&quot;
+					   WHERE &quot;Lan&quot; = 'EN';
+  ]]
+	
+Create View TriplesMap2 As
+  Construct {
+    ?s rdfs:label ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?Code))
+    ?o = plainLiteral(?Name, &quot;spanish&quot;)
+  From [[
+                       SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+                       FROM &quot;Country&quot;
+					   WHERE &quot;Lan&quot; = 'ES';
+  ]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@base &lt;http://example.com/base/&gt; .
+
+
+&lt;TriplesMap1&gt;
+    a rr:TriplesMap;
+      
+	rr:logicalTable [  rr:sqlQuery &quot;&quot;&quot;
+                       SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+                       FROM &quot;Country&quot;
+					   WHERE &quot;Lan&quot; = 'EN';
+                       &quot;&quot;&quot; ] ;
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		rdfs:label;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot;; rr:language &quot;english&quot; ]
+    ]
+    .
+	
+&lt;TriplesMap2&gt;
+    a rr:TriplesMap;
+      
+	rr:logicalTable [  rr:sqlQuery &quot;&quot;&quot;
+                       SELECT &quot;Code&quot;, &quot;Name&quot;, &quot;Lan&quot;
+                       FROM &quot;Country&quot;
+					   WHERE &quot;Lan&quot; = 'ES';
+                       &quot;&quot;&quot; ] ;
+	
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot; ]; 
+	
+    rr:predicateObjectMap
+    [ 
+      rr:predicate		rdfs:label;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot;; rr:language &quot;spanish&quot; ]
+    ]
+    .	</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+                       SELECT \&quot;Code\&quot;, \&quot;Name\&quot;, \&quot;Lan\&quot;
+                       FROM \&quot;Country\&quot;
+					   WHERE \&quot;Lan\&quot; = 'EN';
+                       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot; ;
+            rr:language &quot;english&quot;
+        ] ;
+        rr:predicate rdfs:label
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot;
+    ] .
+
+&lt;http://example.com/base/TriplesMap2&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;
+                       SELECT \&quot;Code\&quot;, \&quot;Name\&quot;, \&quot;Lan\&quot;
+                       FROM \&quot;Country\&quot;
+					   WHERE \&quot;Lan\&quot; = 'ES';
+                       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot; ;
+            rr:language &quot;spanish&quot;
+        ] ;
+        rr:predicate rdfs:label
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/{\&quot;Code\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D016-1table1primarykey10columns3rowsSQLdatatypes-a</td><td>22</td><td>36</td><td>37</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:id ?id ;
+      ex:firstName ?fn ;
+      ex:lastName ?ln ;
+      ex:gender ?sex
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Patient/&quot;, ?ID))
+    ?id = typedLiteral(?ID, xsd:integer)
+    ?fn = plainLiteral(?FirstName)
+    ?ln = plainLiteral(?LastName)
+    ?sex = plainLiteral(?Sex)
+  From
+    Patient</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Patient\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Patient/{\&quot;ID\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object		foaf:Person;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	ex:id ;&#13;
+		rr:objectMap    [ rr:column &quot;\&quot;ID\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:firstName;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;FirstName\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:lastName;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;LastName\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:gender;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Sex\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Patient\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;Sex\&quot;&quot;
+        ] ;
+        rr:predicate ex:gender
+    ], [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;FirstName\&quot;&quot;
+        ] ;
+        rr:predicate ex:firstName
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;LastName\&quot;&quot;
+        ] ;
+        rr:predicate ex:lastName
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Patient/{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D016-1table1primarykey10columns3rowsSQLdatatypes-b</td><td>18</td><td>26</td><td>27</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:weight ?w ;
+      ex:height ?h
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Patient&quot;, ?ID))
+    ?w = typedLiteral(?Weight, xsd:double)
+    ?h = typedLiteral(?Height, xsd:double) 
+  From
+    Patient</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Patient\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate rdf:type;&#13;
+		rr:object foaf:Person;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate ex:weight;&#13;
+      rr:objectMap    [ rr:column &quot;\&quot;Weight\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate ex:height;&#13;
+      rr:objectMap    [ rr:column &quot;\&quot;Height\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Patient\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Weight\&quot;&quot;
+        ] ;
+        rr:predicate ex:weight
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Height\&quot;&quot;
+        ] ;
+        rr:predicate ex:height
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D016-1table1primarykey10columns3rowsSQLdatatypes-c</td><td>18</td><td>26</td><td>27</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:birthdate ?bd ;
+      ex:entrancedate ?ed ;
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Patient&quot;, ?ID))
+    ?bd = typedLiteral(?BirthDate, xsd:date)
+    ?ed = typedLiteral(?EntranceDate, xsd:dateTime)
+  From
+    Patient</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Patient\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object		foaf:Person;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:birthdate;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;BirthDate\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:entrancedate;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;EntranceDate\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Patient\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;BirthDate\&quot;&quot;
+        ] ;
+        rr:predicate ex:birthdate
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;EntranceDate\&quot;&quot;
+        ] ;
+        rr:predicate ex:entrancedate
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D016-1table1primarykey10columns3rowsSQLdatatypes-d</td><td>16</td><td>21</td><td>22</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:paid ?pia
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Patient&quot;, ?ID))
+    ?pia = typedLiteral(?PaidInAdvance, xsd:boolean) 
+  From
+	Patient</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Patient\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object		foaf:Person;&#13;
+	];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:paid;&#13;
+      rr:objectMap		[ rr:column &quot;\&quot;PaidInAdvance\&quot;&quot;;  ]&#13;
+    ];&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Patient\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;PaidInAdvance\&quot;&quot;
+        ] ;
+        rr:predicate ex:paid
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D016-1table1primarykey10columns3rowsSQLdatatypes-e</td><td>16</td><td>21</td><td>22</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      rdf:type foaf:Person ;
+      ex:photo ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/Patient&quot;, ?ID))
+    ?o = uri(concat(&quot;data:image/png;hex,&quot;, ?Photo))
+  From
+    Patient</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+&#13;
+	rr:logicalTable [ rr:tableName &quot;\&quot;Patient\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;; ];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+		rr:predicate	rdf:type;&#13;
+		rr:object		foaf:Person;&#13;
+	];&#13;
+	&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate	ex:photo;&#13;
+      rr:objectMap	[ rr:template &quot;data:image/png;hex,{\&quot;Photo\&quot;}&quot;; ];&#13;
+    ];&#13;
+&#13;
+    .&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Patient\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ], [
+        rr:objectMap [
+            rr:template &quot;data:image/png;hex,{\&quot;Photo\&quot;}&quot;
+        ] ;
+        rr:predicate ex:photo
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;http://example.com/Patient{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D018-1table1primarykey2columns3rows-a</td><td>18</td><td>21</td><td>25</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s
+      a foaf:Person ;
+      ex:id ?id ;
+      foaf:name ?n
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/&quot;, ?ID))
+    ?id = typedLiteral(?ID, xsd:integer)
+    
+    // TODO Automatically add the rightPad expression on char datatype
+    // on effective view generation step
+    ?n = plainLiteral(spy:rightPad(?Name, 15))
+  From
+    Student</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+    &#13;
+    rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot; ];&#13;
+&#13;
+    rr:subjectMap [ rr:template &quot;http://example.com/{\&quot;ID\&quot;}&quot;;&#13;
+                    rr:class foaf:Person ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		ex:id ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;ID\&quot;&quot;; ]&#13;
+    ];&#13;
+&#13;
+    rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name ; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;Name\&quot;&quot; ]&#13;
+    ]&#13;
+    .</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;ID\&quot;&quot;
+        ] ;
+        rr:predicate ex:id
+    ], [
+        rr:objectMap [
+            rr:column &quot;\&quot;Name\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:class foaf:Person ;
+        rr:template &quot;http://example.com/{\&quot;ID\&quot;}&quot;
+    ] .</pre></td></tr>
+<tr><td>D019-1table1primarykey3columns3rows-a</td><td>29</td><td>21</td><td>23</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix base: &lt;http://example.com/base/&gt;
+
+Create View TriplesMap1 As
+  Construct {
+    ?s foaf:name ?o
+  }
+  With
+    ?s = uri(?FirstName)
+    ?o = plainLiteral(?FirstName)
+  From [[ 
+                       SELECT &quot;ID&quot;, &quot;FirstName&quot;, &quot;LastName&quot; 
+                       FROM &quot;Employee&quot;
+                       WHERE &quot;ID&quot; &lt; 30 AND &quot;FirstName&quot; LIKE '%://%'
+  ]]
+
+
+/**
+ * IMHO the concept of magically prepending non-URI cell values with a base URI when generating URIs
+ * is somewhat flawed, but oh well ...
+ * 
+ * TODO Implementation wise this is no problem: just add
+ * &quot;(NOT) LIKE '%://%'&quot; to every SQL selection
+ * 
+ * 
+ *
+ */
+Create View TriplesMap1_ex As
+  Construct {
+    ?s foaf:name ?o
+  }
+  With
+    ?s = uri(concat(&quot;http://example.com/base/&quot;, ?FirstName))
+    ?o = plainLiteral(?FirstName)
+  From [[ 
+                       SELECT &quot;ID&quot;, &quot;FirstName&quot;, &quot;LastName&quot; 
+                       FROM &quot;Employee&quot;
+                       WHERE &quot;ID&quot; &lt; 30 AND &quot;FirstName&quot; NOT LIKE '%://%'
+  ]]</pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+ 	rr:logicalTable [ &#13;
+                     rr:sqlQuery &quot;&quot;&quot;&#13;
+                       SELECT &quot;ID&quot;, &quot;FirstName&quot;, &quot;LastName&quot; &#13;
+                       FROM &quot;Employee&quot;&#13;
+                       WHERE &quot;ID&quot; &lt; 30&#13;
+                       &quot;&quot;&quot;&#13;
+                       ];&#13;
+    &#13;
+	rr:subjectMap [ rr:column &quot;\&quot;FirstName\&quot;&quot; ]; &#13;
+	rr:predicateObjectMap&#13;
+    [ &#13;
+      rr:predicate		foaf:name; &#13;
+      rr:objectMap		[ rr:column &quot;\&quot;FirstName\&quot;&quot; ];&#13;
+    ];&#13;
+.&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:sqlQuery &quot;&quot;&quot;&#13;
+                       SELECT \&quot;ID\&quot;, \&quot;FirstName\&quot;, \&quot;LastName\&quot; &#13;
+                       FROM \&quot;Employee\&quot;&#13;
+                       WHERE \&quot;ID\&quot; &lt; 30&#13;
+                       &quot;&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:objectMap [
+            rr:column &quot;\&quot;FirstName\&quot;&quot;
+        ] ;
+        rr:predicate foaf:name
+    ] ;
+    rr:subjectMap [
+        rr:column &quot;\&quot;FirstName\&quot;&quot;
+    ] .</pre></td></tr>
+<tr><td>D020-1table1column5rows-a</td><td>14</td><td>16</td><td>18</td><td><pre>Prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt;
+Prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+Prefix ex: &lt;http://example.com/&gt;
+Prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+Prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+//@base &lt;http://example.com/base/&gt; .
+
+Prefix spy: &lt;http://aksw.org/sparqlify/&gt;
+
+Create View TriplesMap1_ex As
+  Construct {
+    ?s rdf:type foaf:Person
+  }
+  With
+    ?s = uri(&quot;http://example.com/base/&quot;, spy:urlEncode(?Name))
+  From
+    Student 
+    </pre></td><td><pre>@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .&#13;
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .&#13;
+@prefix ex: &lt;http://example.com/&gt; .&#13;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .&#13;
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .&#13;
+@base &lt;http://example.com/base/&gt; .&#13;
+&#13;
+&lt;TriplesMap1&gt;&#13;
+    a rr:TriplesMap;&#13;
+ 	rr:logicalTable [ rr:tableName &quot;\&quot;Student\&quot;&quot;; ];&#13;
+    &#13;
+    rr:subjectMap [ rr:template &quot;{\&quot;Name\&quot;}&quot;; rr:termType rr:IRI; ];&#13;
+    &#13;
+    rr:predicateObjectMap &#13;
+    [&#13;
+    	rr:predicate	rdf:type;&#13;
+    	rr:object		foaf:Person;&#13;
+    ];&#13;
+.&#13;</pre></td><td><pre>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rr: &lt;http://www.w3.org/ns/r2rml#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix ex: &lt;http://example.com/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.com/base/TriplesMap1&gt;
+    a rr:TriplesMap ;
+    rr:logicalTable [
+        rr:tableName &quot;\&quot;Student\&quot;&quot;
+    ] ;
+    rr:predicateObjectMap [
+        rr:object foaf:Person ;
+        rr:predicate rdf:type
+    ] ;
+    rr:subjectMap [
+        rr:template &quot;{\&quot;Name\&quot;}&quot; ;
+        rr:termType rr:IRI
+    ] .</pre></td></tr>
+</table>
+</body>
+</html>
+

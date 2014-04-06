@@ -52,6 +52,9 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.transformations.ExprTransformer;
+import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
+import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
@@ -2044,6 +2047,17 @@ public class MappingOpsImpl
 	 * @return
 	 */
 	public static ExprSqlRewrite rewrite(Mapping mapping, Aggregator agg, Generator generator, TypeSystem typeSystem, SqlTranslator sqlTranslator) {
+	    
+
+	    // Unwrapping of transMap
+	    // TODO Hacky, tidy this up somehow
+//	    SqlTranslatorImpl2 sqlTranslatorImpl = (SqlTranslatorImpl2)sqlTranslator;
+//	    RdfTermEliminator rdfTermEliminator = sqlTranslatorImpl.getRdfTermEliminator();
+//	    RdfTermEliminatorImpl rdfTermEliminatorImpl = (RdfTermEliminatorImpl)rdfTermEliminator;
+//	    Map<String, ExprTransformer> transMap = rdfTermEliminatorImpl.getTransformerMap();
+	    
+
+	    
 		ExprFunction fn = aggregatorToFunction(agg);
 
 		String sparqlFnName = ExprUtils.getFunctionId(fn);
@@ -2165,7 +2179,9 @@ public class MappingOpsImpl
 	
 			
 			if(bestMatch == null) {
-				throw new RuntimeException("Could not decide on a best match from a set of candidates");
+			    // TODO We must not throw an exception, as it may happen that there are no candidates:
+			    // Select (Sum(?t) As ?sum) { ?s a ?t } -> If all types ?t are URIs, then there is no candidate
+				throw new RuntimeException("Could not decide on a best match from a set of candidates: " + overloads);
 			}
 			
 			
@@ -2250,12 +2266,33 @@ public class MappingOpsImpl
 		
 		ExprVar columnRef = new ExprVar(columnAlias);
 		
-		ExprList newArgs = new ExprList();
-		newArgs.add(columnRef);
-		newArgs.add(NodeValue.makeString(XSD.xdouble.getURI()));
+//		ExprList newArgs = new ExprList();
+//		newArgs.add(columnRef);
+//		newArgs.add(NodeValue.makeString(XSD.xdouble.getURI()));
 
+		
+//		String functionId = ExprUtils.getFunctionId(fn);
+//		ExprTransformer exprTransformer = transMap.get(functionId);
+		
+		//typeSystem.getSparqlTypeModel().g
+		// TODO We need to map the SQL datatype to the sparql datatype
+		//E_RdfTerm colExpr = E_RdfTerm.createTypedLiteral(columnRef, datatype);
+		
+		List<E_RdfTerm> rdfTermExprs = new ArrayList<E_RdfTerm>();
+//		E_RdfTerm signature = exprTransformer.transform(fn, rdfTermExprs);		
+//		E_RdfTerm e = new E_RdfTerm(signature.getType(), columnRef, signature.getLanguageTag(), signature.getDatatype());
+		
 		//Expr e = new E_Function(SparqlifyConstants.typedLiteralLabel, newArgs);
-		E_RdfTerm e = E_RdfTerm.createTypedLiteral(columnRef, NodeValue.makeString(XSD.xdouble.getURI()));
+		//E_RdfTerm e = E_RdfTerm.createTypedLiteral(columnRef, NodeValue.makeString(XSD.xdouble.getURI()));
+
+		String sqlTypeName = sqlCoalesce.getDatatype().getName();
+		
+		String typeUri = typeSystem.getNormSqlTypeToUri().get(sqlTypeName);
+		if(typeUri == null) {
+		    throw new RuntimeException("No mapping from sql type " + sqlTypeName + " to a uri for an RDF literal");
+		}
+
+		E_RdfTerm e = E_RdfTerm.createTypedLiteral(columnRef, NodeValue.makeString(typeUri));
 
 		ExprSqlRewrite result = new ExprSqlRewrite(e, p);
 

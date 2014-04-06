@@ -34,6 +34,10 @@ public class SqlTranslatorImpl2
 		this.exprEvaluator = exprTransformer;
 		this.typedExprTransformer = typedExprTransformer;
 	}
+	
+	public RdfTermEliminator getRdfTermEliminator() {
+	    return rdfTermEliminator;
+	}
 
 	public TypedExprTransformer getTypedExprTransformer() {
 		return typedExprTransformer;
@@ -55,6 +59,7 @@ public class SqlTranslatorImpl2
 			Map<String, TypeToken> typeMap) {
 		Expr e1;
 		
+		// Obtain an 'integrated' expression by replacing variables in the sparqlExpr with corresponding expressions of the binding
 		if(binding != null) {
 			e1 = exprBindingSubstitutor.substitute(sparqlExpr, binding);
 		} else {

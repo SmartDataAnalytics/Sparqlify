@@ -147,6 +147,8 @@ public interface TypeSystem
 	 *
 	 */
 
+	Map<String, String> getNormSqlTypeToUri();
+	
 	FunctionModel<TypeToken> getSqlFunctionModel();
 	FunctionModelMeta getSqlFunctionMetaModel();
 

@@ -114,9 +114,12 @@ public class RdfTermEliminatorImpl
 			newArgs.add(newArg);			
 		}
 		
-		ExprTransformer transformer = lookup(fn);
+		//ExprTransformer transformer = lookup(fn);
+	    String id = ExprUtils.getFunctionId(fn);
+	    ExprTransformer transformer = idToTransformer.get(id);
+
 		if(transformer == null) {
-			throw new RuntimeException("No transformer registered for " + fn);
+			throw new RuntimeException("No transformer registered for " + id + " in expression "+ fn);
 		}
 
 		E_RdfTerm result = transformer.transform(fn, newArgs);

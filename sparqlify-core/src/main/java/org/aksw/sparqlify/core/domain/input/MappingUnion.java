@@ -57,6 +57,13 @@ public class MappingUnion
 	//private List<K> memberOrder = null;
 	private List<Mapping> mappings = new ArrayList<Mapping>();
 	
+	public MappingUnion() {
+	    
+	}
+	
+	public MappingUnion(List<Mapping> mappings) {
+	    this.mappings = mappings;
+	}
 	
 	@Override
 	public MappingUnion asUnion() {

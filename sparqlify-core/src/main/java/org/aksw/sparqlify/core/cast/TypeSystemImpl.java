@@ -65,7 +65,14 @@ public class TypeSystemImpl
 	private DirectSuperTypeProvider<String> sparqlTypeHierarchyProvider = new DirectSuperTypeProviderBiSetMultimap<String>(sparqlTypeHierarchy);
 
 	private TypeModel<String> sparqlTypeModel = new TypeModelImpl<String>(sparqlTypeHierarchyProvider);
+
 	
+	// Maps a normalized sql type (e.g. boolean) to a corresponding url (e.g. xsd:boolean) on the SPARQL level
+	private Map<String, String> normSqlTypeToUri = new HashMap<String, String>();
+	
+	public Map<String, String> getNormSqlTypeToUri() {
+	    return normSqlTypeToUri;
+	}
 	
 	/**
 	 * Maps SPARQL functions to sets of declarations of SQL functions
