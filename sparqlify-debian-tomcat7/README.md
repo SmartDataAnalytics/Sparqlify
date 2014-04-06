@@ -99,5 +99,7 @@ So you can test your setup by mapping this database.
  * Probably Tomcat does not have enough memory. Check the prerequisites section.
 * In `catalina.out`, I see `java.lang.NoSuchMethodError: org.postgresql.core.BaseConnection.getLargeObjectAPI()Lorg/postgresql/largeobject/LargeObjectManager;`
  * Place the PostgreSQL JDBC driver into `/usr/share/tomcat7/lib`. Check the prerequisites section.
-
-
+* On Ubuntu, the Tomcat log shows: `java.lang.ClassNotFoundException: org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory`
+ * You may be suffering from a corrupted jar file [see here](http://stackoverflow.com/questions/14712308/ubuntu-tomcat7-java-lang-classnotfoundexception-org-apache-tomcat-dbcp-dbcp-bas)
+ * Fix: `sudo wget -O /usr/share/java/tomcat-dbcp-7.0.30.jar http://search.maven.org/remotecontent?filepath=org/apache/tomcat/tomcat-dbcp/7.0.30/tomcat-dbcp-7.0.30.jar`
+ * `sudo service tomcat7 restart`
