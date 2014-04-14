@@ -3,15 +3,14 @@ package org.aksw.sparqlify.core.test;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.CompareUtils;
-import org.springframework.util.Assert;
 
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.query.ResultSetRewindable;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
-import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
 
 public class TestHelper {
 

@@ -156,11 +156,12 @@
 			</dependency> <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
 			</dependency> -->
 
+<!--
 		<dependency>
 			<groupId>com.hp.hpl.jena</groupId>
 			<artifactId>sdb</artifactId>
 		</dependency>
-
+-->
 
 		<dependency>
 			<groupId>com.google.guava</groupId>

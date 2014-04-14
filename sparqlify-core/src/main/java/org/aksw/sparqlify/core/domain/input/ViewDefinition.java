@@ -186,7 +186,7 @@ public class ViewDefinition
 		
 		// Template
 		for(Quad quad : template) {
-			writer.println(quad);
+			writer.println("" + quad);
 		}
 		writer.decIndent();		
 		writer.println("}");
@@ -218,7 +218,7 @@ public class ViewDefinition
 				SqlOpQuery tmp = (SqlOpQuery)op;
 				writer.println("[[" + tmp + "]]");
 			} else {
-				writer.println(op);
+				writer.println("" + op);
 			}
 			writer.decIndent();
 		}

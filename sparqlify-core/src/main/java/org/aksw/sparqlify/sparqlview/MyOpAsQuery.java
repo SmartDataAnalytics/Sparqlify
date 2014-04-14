@@ -63,6 +63,7 @@ import com.hp.hpl.jena.sparql.algebra.op.OpProcedure;
 import com.hp.hpl.jena.sparql.algebra.op.OpProject;
 import com.hp.hpl.jena.sparql.algebra.op.OpPropFunc;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuad;
+import com.hp.hpl.jena.sparql.algebra.op.OpQuadBlock;
 import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
 import com.hp.hpl.jena.sparql.algebra.op.OpReduced;
 import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
@@ -686,6 +687,14 @@ public class MyOpAsQuery
         private ElementGroup pop() { return stack.pop(); }
         private void push(ElementGroup el) { stack.push(el); }
         private boolean inTopLevel() { return stack.size() == 0; }
+
+        @Override
+        public void visit(OpQuadBlock op) {
+            throw new RuntimeException("Not implemented");
+            //op.
+            // TODO Auto-generated method stub
+            
+        }
     }
     
     /**

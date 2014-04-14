@@ -74,7 +74,7 @@
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<aksw.commons.version>0.7.2</aksw.commons.version>
 
-		<jena-sparql-api.version>2.10.0-40</jena-sparql-api.version>
+		<jena-sparql-api.version>2.11.1-44</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 
@@ -670,7 +670,7 @@
 			<!-- </exclusions> -->
 			<!-- </dependency> -->
 
-
+<!--
 			<dependency>
 				<groupId>com.hp.hpl.jena</groupId>
 				<artifactId>sdb</artifactId>
@@ -697,7 +697,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
+-->
 
 			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId> 
 				<version>2.8.8</version> <type>jar</type> <scope>compile</scope> </dependency> 

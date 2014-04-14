@@ -97,7 +97,7 @@ public class S_Constant
 	
 	@Override
 	public void asString(IndentedWriter writer) {
-		writer.print(value);
+		writer.print("" + value);
 	}
 	
 	@Override

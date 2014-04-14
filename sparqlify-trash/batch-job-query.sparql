@@ -1,0 +1,12 @@
+Prefix batch: <http://ns.aksw.org/spring/batch/>
+Select ?je ?jec ?se ?sec {
+  ?je
+    a batch:JobExecution ;
+    batch:shortContext ?jec ;
+    batch:stepExection ?se
+    .
+
+  ?se
+    batch:shortContext ?sec
+    .
+}
