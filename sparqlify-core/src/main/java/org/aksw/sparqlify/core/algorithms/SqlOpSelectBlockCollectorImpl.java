@@ -576,7 +576,7 @@ public class SqlOpSelectBlockCollectorImpl
 		return result;
 	}
 	
-	public static SqlOp makeSelect(SqlOpProject op, Set<String> refs) {
+	public static SqlOpSelectBlock makeSelect(SqlOpProject op, Set<String> refs) {
 		
 		SqlOp subOp = _makeSelect(op.getSubOp(), refs);
 		
@@ -708,6 +708,12 @@ public class SqlOpSelectBlockCollectorImpl
             break;
         }
 
+        case SqlOpProject: {
+            SqlOpSelectBlock tmp = makeSelect((SqlOpProject)sqlOp, refs); 
+            result = collectJoins(tmp, refs);
+            break;
+        }
+		
 		default:
 		    throw new RuntimeException("Should not come here; don't know how to handle " + sqlOp);
 //			logger.warn("Not sure if we should come here"); 
