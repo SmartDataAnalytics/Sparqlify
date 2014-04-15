@@ -4,7 +4,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.6.8-SNAPSHOT</version>
+	<version>0.6.8</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -86,7 +86,7 @@
 		<connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
 		<!-- developerConnection></developerConnection -->
 		<!-- url>https://my-project.googlecode.com/svn</url -->
-		<tag>sparqlify-parent-0.6</tag>
+		<tag>sparqlify-parent-0.6.8</tag>
 	</scm>
 
 
