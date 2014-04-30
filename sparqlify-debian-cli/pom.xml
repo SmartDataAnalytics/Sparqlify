@@ -144,7 +144,7 @@
 					<packagePriority>extra</packagePriority>
 					<packageSection>web</packageSection>
 					<packageDependencies>
-						<packageDependency>openjdk-7-jre | openjdk-6-jre | sun-java6-jre</packageDependency>
+						<packageDependency>openjdk-7-jre-headless | openjdk-6-jre-headless</packageDependency>
 					</packageDependencies>
 					<maintainerName>${project.parent.developers[0].name}</maintainerName>
 					<maintainerEmail>${project.parent.developers[0].email}</maintainerEmail>
