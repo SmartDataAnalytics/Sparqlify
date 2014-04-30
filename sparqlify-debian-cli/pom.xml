@@ -13,6 +13,11 @@
 
 	<name>Sparqlify - Debian Packaging - Cli</name>
 
+	<properties>
+		<deb.packageName>sparqlify-cli</deb.packageName>
+        <deb.jarFile>${project.artifactId}-${project.version}-jar-with-dependencies.jar</deb.jarFile>
+	</properties>
+
 	<profiles>
 		<profile>
 			<id>default</id>
@@ -44,114 +49,107 @@
 	<build>
 		<plugins>
 			<plugin>
-				<!-- This plugin's configuration must come *before* the Debian Maven 
-					Plugin. -->
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>copy-deb-resources</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<overwrite>true</overwrite>
-							<outputDirectory>${basedir}/target/deb</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/deb/resources</directory>
-									<!-- Uncomment the following line to enable Velocity filtering. -->
-									<!-- <filtering>true</filtering> -->
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
+
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-assembly-plugin</artifactId>
+                                <version>2.3</version>
+                                <configuration>
+                                        <descriptorRefs>
+                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                                        </descriptorRefs>
+                                </configuration>
+      <executions>
+        <execution>
+          <id>make-assembly</id> <!-- this is used for inheritance merges -->
+          <phase>package</phase> <!-- append to the packaging phase. -->
+          <goals>
+            <goal>single</goal> <!-- goals == mojos -->
+          </goals>
+        </execution>
+      </executions>
 			</plugin>
 
-			<plugin>
-				<!-- This plugin's configuration must come *after* the Maven Resources 
-					Plugin, and *before* the Debian Maven Plugin. -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-<!-- 					<execution> -->
-<!-- 						<id>merge-control</id> -->
-<!-- 						<phase>package</phase> -->
-<!-- 						<configuration> -->
-<!-- 							<target> -->
-<!-- 								<exec dir="${basedir}/src/deb/bin" executable="${basedir}/src/deb/bin/merge-control-file.sh" -->
-<!-- 									failonerror="true"> -->
-<!-- 								</exec> -->
-<!-- 							</target> -->
-<!-- 						</configuration> -->
-<!-- 						<goals> -->
-<!-- 							<goal>run</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
 
+
+
+			<plugin>
+				<artifactId>jdeb</artifactId>
+				<groupId>org.vafer</groupId>
+				<version>1.0</version>
+				<executions>
 					<execution>
-						<id>fix-permissions</id>
 						<phase>package</phase>
-						<configuration>
-							<target>
-								<chmod perm="ugo+x">
-									<fileset dir="${project.build.directory}/deb">
-										<include name="**/bin/**" />
-										<include name="**/sbin/**" />
-										<include name="DEBIAN/post*" />
-										<include name="DEBIAN/pre*" />
-                                                                                <include name="DEBIAN/rules" />
-									</fileset>
-								</chmod>
-							</target>
-						</configuration>
 						<goals>
-							<goal>run</goal>
+							<goal>jdeb</goal>
 						</goals>
-					</execution>
+						<configuration>
+							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
+							<timestamped>true</timestamped>
+							<dataSet>
+			
+								<data>
+									<type>directory</type>
+									<src>${basedir}/src/deb/resources/etc</src>
+                                    <mapper>
+                                            <type>perm</type>
+                                            <prefix>/etc</prefix>
+                                    </mapper>
+								</data>
 
-					<!-- A hacky execution for making the DEBIAN directory lower case -->
-					<!-- NOTE The maven plugin creates a deb, so this is fine at this stage, -->
-					<!-- Renaming to lower case is done in the continuous integration server -->
-					<!-- <execution> -->
-					<!-- <phase>verify</phase> -->
-					<!-- <goals> -->
-					<!-- <goal>run</goal> -->
-					<!-- </goals> -->
-					<!-- <configuration> -->
-					<!-- <tasks> -->
-					<!-- <copy todir="${project.build.directory}/deb/debian"> -->
-					<!-- <fileset dir="${project.build.directory}/deb/DEBIAN"> -->
-					<!-- <include name="**" /> -->
-					<!-- </fileset> -->
-					<!-- </copy> -->
-					<!-- <delete dir="${project.build.directory}/deb/DEBIAN" /> -->
-					<!-- </tasks> -->
-					<!-- </configuration> -->
-					<!-- </execution> -->
+								<data>
+									<type>directory</type>
+									<src>${basedir}/src/deb/resources/usr/bin</src>
+                                    <mapper>
+                                            <type>perm</type>
+                                            <prefix>/usr/bin</prefix>
+                                        <filemode>755</filemode>
+                                    </mapper>
+								</data>
+
+                                <data>
+                                        <type>file</type>
+                                        <src>${project.build.directory}/${deb.jarFile}</src>
+                                        <mapper>
+                                                <type>perm</type>
+                                                <prefix>/usr/share/lib/${deb.packageName}</prefix>
+                                        </mapper>
+                                </data>
+
+                                <data>
+                                <type>link</type>
+									<symlink>true</symlink>
+										<linkName>/usr/share/lib/${deb.packageName}/${deb.packageName}.jar</linkName>
+                                        <linkTarget>/usr/share/lib/${deb.packageName}/${deb.jarFile}</linkTarget>
+                                </data>
+
+
+<!--
+                                <data>
+                                        <type>file</type>
+                                        <src>${basedir}/../sparqlify-core/target/sparqlify-core-${version}.jar</src>
+                                        <mapper>
+                                                <type>perm</type>
+                                                <prefix>/usr/share/lib/${deb.packageName}</prefix>
+                                        </mapper>
+                                </data>
+-->			
+<!--
+                                <data>
+                                        <type>file</type>
+                                        <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                                        <mapper>
+                                                <type>perm</type>
+                                                <prefix>/usr/share/lib/${deb.packageName}</prefix>
+                                        </mapper>
+                                </data>
+-->
+							</dataSet>
+			
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>net.sf.debian-maven</groupId>
-				<artifactId>debian-maven-plugin</artifactId>
-				<version>1.0.5</version>
-				<configuration>
-					<packageName>sparqlify</packageName>
-					<packagePriority>extra</packagePriority>
-					<packageSection>web</packageSection>
-					<packageDependencies>
-						<packageDependency>openjdk-7-jre-headless | openjdk-6-jre-headless</packageDependency>
-					</packageDependencies>
-					<maintainerName>${project.parent.developers[0].name}</maintainerName>
-					<maintainerEmail>${project.parent.developers[0].email}</maintainerEmail>
-					<!-- <packageName>my-package</packageName> <packageVersion>1.0.0</packageVersion> 
-						... -->
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

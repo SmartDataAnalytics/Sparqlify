@@ -1,6 +1,6 @@
 #!/bin/sh
 
-artifactBase="/usr/share/lib/sparqlify-cli/sparqlify-core"
+artifactBase="/usr/share/lib/sparqlify/sparqlify-core"
 
 # Source the dependencies (they become the value of the variable 'artifacts')
 . "$artifactBase.inc"

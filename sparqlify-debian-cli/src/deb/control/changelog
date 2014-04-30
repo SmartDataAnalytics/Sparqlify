@@ -1,0 +1,33 @@
+sparqlify-cli (0.6.9) lod2; urgency=low
+
+  * Several general bug fixes
+
+ -- Claus Stadler <cstadler@informatik.uni-leipzig.de>  Mon, 01 Mar 2014 15:43:21 +0200
+
+sparqlify-cli (0.6.1+nmu1) lod2; urgency=low
+
+  * Non-maintainer upload
+  * fix some lintian tags
+
+ -- Sebastian Tramp <tramp@informatik.uni-leipzig.de>  Fri, 12 Jul 2013 21:18:21 +0200
+
+sparqlify-cli (0.6.1) lod2; urgency=low
+
+  * Several general bug fixes
+  * BSBM now working
+  * All r2rml test cases (that produce output) pass
+  * Added intitial self-join elimination on the SQL level
+  * Improved candidate selection
+  * Improved log output
+  * Optimizied rewrites of left joins
+  * Automatic handling of nullable columns
+
+ -- Claus Stadler <cstadler@informatik.uni-leipzig.de>  Mon, 04 Jul 2013 17:46:35 +0200
+
+sparqlify-cli (0.2) lod2; urgency=low
+
+  * Initial version.
+
+ -- Claus Stadler <cstadler@informatik.uni-leipzig.de>  Mon, 09 Jul 2012 12:25:10 +0200
+
+
