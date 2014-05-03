@@ -2,8 +2,10 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.hp.hpl.jena.sdb.core.Generator;
@@ -456,6 +458,49 @@ public class SqlOpSelectBlock
 	}
 
     
+	
+	/**
+	 * Checks whether a projection contains a COUNT function
+	 * 
+	 * TODO HACK Just checking function names for string containment is not the proper way to do this
+	 * 
+	 * @param projection
+	 * @return
+	 */
+	public static boolean containsCount(Projection projection) {
+        boolean result = false;
 
+        Map<String, SqlExpr> nameToExpr = projection.getNameToExpr();
+        
+        for(String name : projection.getNames()) {
+            SqlExpr expr = nameToExpr.get(name);
+            //System.out.println(expr);
+            if(expr.isFunction()) {
+                SqlExprFunction fn = expr.asFunction();
+                String fnName = fn.getName();
+                if(fnName.contains("Count")) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+	    
+        return result;
+	}
+
+	@Override
+	public boolean isEmpty() {
+	    boolean result = super.isEmpty();
+
+	    // Check if the query is a count query without grouping, because then its not empty after all
+	    int argCount = projection.getNames().size();
+	    if(argCount == 1 && groupByExprs.isEmpty()) {
+	        boolean hasCount = containsCount(projection);
+	        
+	        result = !hasCount;
+	    }
+	    
+        return result;
+	}
 
 }

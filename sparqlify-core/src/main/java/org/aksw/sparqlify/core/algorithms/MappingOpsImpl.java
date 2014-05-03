@@ -1050,41 +1050,75 @@ public class MappingOpsImpl
 
 		// Add common definitions
 		Set<SqlExpr> joinCondition = new HashSet<SqlExpr>();
+
+		//Multimap<Var, RestrictedExpr> newVarDef = HashMultimap.create();
 		
+		boolean isJoinConditionSatisfiable = true;
 		for(Var commonVar : commonVars) {
 			Collection<RestrictedExpr> defsA = a.getVarDefinition().getDefinitions(commonVar);
 			Collection<RestrictedExpr> defsB = b.getVarDefinition().getDefinitions(commonVar);
 			
 			VarDefKey ors = joinDefinitionsOnEquals(defsA, defsB, typeMap, sqlTranslator);
 
-			if(ors == null) {
-				opResult = SqlOpEmpty.create(opJoin.getSchema());
-				break;
-			}
-			newVarDef.putAll(commonVar, ors.definitionExprs);
-			
-			SqlExpr or = SqlExprUtils.orifyBalanced(ors.constraintExpr);
-			if(or == null || or.equals(S_Constant.TRUE)) {
-				continue;
-			} 			
-			
+            if(isLeftJoin) {
+                newVarDef.putAll(commonVar, defsA);
+            }               
 
-			//joinCondition.addAll(ors.constraintExpr);
-			joinCondition.add(or);
+			
+			if(ors == null) {
+			    // // Bail out on unsatisfiable join condition
+			    isJoinConditionSatisfiable = false;
+
+	            if(!isLeftJoin) {
+	                newVarDef.put(commonVar, new RestrictedExpr(NodeValue.nvNothing));
+	            }			     
+			}
+			else {
+			    if(!isLeftJoin) {
+			        newVarDef.putAll(commonVar, ors.definitionExprs);
+			    }
+			}
+			
+			if(isJoinConditionSatisfiable) {
+			    // Stop collecting join conditions if they are unsatisfiable anyway
+			    
+			    // Don't bother adding TRUE conditions
+	            SqlExpr or = SqlExprUtils.orifyBalanced(ors.constraintExpr);
+	            if(or == null || or.equals(S_Constant.TRUE)) {
+	                continue;
+	            }           
+
+	            //joinCondition.addAll(ors.constraintExpr);
+	            joinCondition.add(or);
+			}			
 		}
 
-		SqlOp resultSqlOp;
-		List<SqlExpr> jc = new ArrayList<SqlExpr>(joinCondition);
+	    SqlOp resultSqlOp;
 
-		if(joinType.equals(JoinType.LEFT)) {
-			opJoin.getConditions().addAll(jc);
-			resultSqlOp = opResult;
-		} else {
-			
-			//ExprList jc = new ExprList(new ArrayList<Expr>(joinCondition));
-			resultSqlOp = SqlOpFilter.create(opResult, jc);
-		}		
+		if(!isJoinConditionSatisfiable) {
+		    //newVarDef.clear();
+		    
+            if(isLeftJoin) {
+                resultSqlOp = a.getSqlOp();
+            }
+            else {              
+                resultSqlOp = SqlOpEmpty.create(opJoin.getSchema());
+            }		    
+		}
+		else {
 		
+    		List<SqlExpr> jc = new ArrayList<SqlExpr>(joinCondition);
+    
+    		if(joinType.equals(JoinType.LEFT)) {
+    			opJoin.getConditions().addAll(jc);
+    			resultSqlOp = opResult;
+    		} else {
+    			
+    			//ExprList jc = new ExprList(new ArrayList<Expr>(joinCondition));
+    			resultSqlOp = SqlOpFilter.create(opResult, jc);
+    		}		
+		}
+
 		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
 		
 		

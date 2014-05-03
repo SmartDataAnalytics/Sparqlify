@@ -8,6 +8,7 @@ import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOptimizerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
+import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +137,10 @@ public class SparqlSqlOpRewriterImpl
 		}
 		*/		
 		
-		SparqlSqlOpRewrite result = new SparqlSqlOpRewrite(sqlOp, mapping.isEmpty(), mapping.getVarDefinition(), projectionOrder);
+		//boolean isEmpty = mapping.isEmpty();
+		boolean isEmpty = sqlOp.isEmpty();
+		VarDefinition varDefinition = mapping.getVarDefinition();
+		SparqlSqlOpRewrite result = new SparqlSqlOpRewrite(sqlOp, isEmpty, varDefinition, projectionOrder);
 		
 		return result;
 	}
