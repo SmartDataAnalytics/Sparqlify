@@ -230,6 +230,8 @@ public class RestrictionImpl
 			return RdfTermType.URI;
 		} else if(node.isLiteral()) {
 			return RdfTermType.LITERAL;
+		} else if(node.isBlank()) {
+			return RdfTermType.BLANK;
 		} else {
 			throw new RuntimeException("Should not happen");
 		}
