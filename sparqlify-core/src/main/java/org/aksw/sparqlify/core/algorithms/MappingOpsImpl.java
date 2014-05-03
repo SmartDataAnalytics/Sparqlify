@@ -1034,91 +1034,103 @@ public class MappingOpsImpl
 		Set<Var> varsAOnly = Sets.difference(varsA, commonVars);
 		Set<Var> varsBOnly = Sets.difference(varsB, commonVars);
 		
-		Multimap<Var, RestrictedExpr> newVarDef = HashMultimap.create();
+		Set<Var> varsAll = Sets.union(varsA, varsB);
 		
-		// Add definitions of A only
-		for(Var varA : varsAOnly) {
-			Collection<RestrictedExpr> exprs = vdA.getMap().get(varA);
-			newVarDef.putAll(varA, exprs);
-		}
+		Multimap<Var, RestrictedExpr> commonVarDef = HashMultimap.create();
 
-		// Add definitions of B only
-		for(Var varB : varsBOnly) {
-			Collection<RestrictedExpr> exprs = vdB.getMap().get(varB);
-			newVarDef.putAll(varB, exprs);
-		}
 
-		// Add common definitions
-		Set<SqlExpr> joinCondition = new HashSet<SqlExpr>();
-
-		//Multimap<Var, RestrictedExpr> newVarDef = HashMultimap.create();
+        // Try to collect join conditions - this may 'fail' if a condition is unsatisifiable
+        Set<SqlExpr> joinCondition = new HashSet<SqlExpr>();
 		
-		boolean isJoinConditionSatisfiable = true;
-		for(Var commonVar : commonVars) {
-			Collection<RestrictedExpr> defsA = a.getVarDefinition().getDefinitions(commonVar);
-			Collection<RestrictedExpr> defsB = b.getVarDefinition().getDefinitions(commonVar);
-			
-			VarDefKey ors = joinDefinitionsOnEquals(defsA, defsB, typeMap, sqlTranslator);
+	    boolean isJoinConditionSatisfiable = true;
+        for(Var commonVar : commonVars) {
+            Collection<RestrictedExpr> defsA = a.getVarDefinition().getDefinitions(commonVar);
+            Collection<RestrictedExpr> defsB = b.getVarDefinition().getDefinitions(commonVar);
+            
+            VarDefKey ors = joinDefinitionsOnEquals(defsA, defsB, typeMap, sqlTranslator);
 
-            if(isLeftJoin) {
-                newVarDef.putAll(commonVar, defsA);
-            }               
-
-			
-			if(ors == null) {
-			    // // Bail out on unsatisfiable join condition
-			    isJoinConditionSatisfiable = false;
-
-	            if(!isLeftJoin) {
-	                newVarDef.put(commonVar, new RestrictedExpr(NodeValue.nvNothing));
-	            }			     
-			}
-			else {
-			    if(!isLeftJoin) {
-			        newVarDef.putAll(commonVar, ors.definitionExprs);
-			    }
-			}
-			
-			if(isJoinConditionSatisfiable) {
-			    // Stop collecting join conditions if they are unsatisfiable anyway
-			    
-			    // Don't bother adding TRUE conditions
-	            SqlExpr or = SqlExprUtils.orifyBalanced(ors.constraintExpr);
-	            if(or == null || or.equals(S_Constant.TRUE)) {
-	                continue;
-	            }           
-
-	            //joinCondition.addAll(ors.constraintExpr);
-	            joinCondition.add(or);
-			}			
-		}
-
-	    SqlOp resultSqlOp;
-
-		if(!isJoinConditionSatisfiable) {
-		    //newVarDef.clear();
-		    
-            if(isLeftJoin) {
-                resultSqlOp = a.getSqlOp();
+            if(ors == null) {
+                // Bail out on unsatisfiable join condition
+                isJoinConditionSatisfiable = false;
+                break;
             }
-            else {              
-                resultSqlOp = SqlOpEmpty.create(opJoin.getSchema());
-            }		    
-		}
-		else {
-		
-    		List<SqlExpr> jc = new ArrayList<SqlExpr>(joinCondition);
-    
-    		if(joinType.equals(JoinType.LEFT)) {
-    			opJoin.getConditions().addAll(jc);
-    			resultSqlOp = opResult;
-    		} else {
-    			
-    			//ExprList jc = new ExprList(new ArrayList<Expr>(joinCondition));
-    			resultSqlOp = SqlOpFilter.create(opResult, jc);
-    		}		
-		}
+            
+            commonVarDef.putAll(commonVar, ors.definitionExprs);
 
+            // Don't bother adding TRUE conditions
+            SqlExpr or = SqlExprUtils.orifyBalanced(ors.constraintExpr);
+            if(or == null || or.equals(S_Constant.TRUE)) {
+                continue;
+            }           
+
+            //joinCondition.addAll(ors.constraintExpr);
+            joinCondition.add(or);           
+        }
+
+                
+        /// Process the variable definitions
+        
+        Multimap<Var, RestrictedExpr> newVarDef = HashMultimap.create();
+        SqlOp resultSqlOp;
+
+        List<SqlExpr> jc = new ArrayList<SqlExpr>(joinCondition);
+
+        // Add the var defs of the left hand side
+        if(isLeftJoin) {
+            // Add all vardefs of the left hand side
+            for(Var varA : varsA) {
+                Collection<RestrictedExpr> exprs = vdA.getMap().get(varA);
+                newVarDef.putAll(varA, exprs);
+            }
+            
+            if(isJoinConditionSatisfiable) {
+                for(Var varB : varsBOnly) {
+                    Collection<RestrictedExpr> exprs = vdB.getMap().get(varB);
+                    newVarDef.putAll(varB, exprs);
+                }
+
+                opJoin.getConditions().addAll(jc);
+                resultSqlOp = opResult;
+            }
+            else {
+                // Add definitions of B only
+//                for(Var varB : varsBOnly) {
+//                    newVarDef.put(varB, new RestrictedExpr(E_RdfTerm.TYPE_ERROR));
+//                }
+
+                resultSqlOp = a.getSqlOp();
+            }            
+        }
+        else {
+            
+            if(isJoinConditionSatisfiable) {
+                // Add common definitions
+                newVarDef.putAll(commonVarDef);
+    
+                for(Var varA : varsAOnly) {
+                    Collection<RestrictedExpr> exprs = vdA.getMap().get(varA);
+                    newVarDef.putAll(varA, exprs);
+                }
+                
+                // Add definitions of B only
+                for(Var varB : varsBOnly) {
+                    Collection<RestrictedExpr> exprs = vdB.getMap().get(varB);
+                    newVarDef.putAll(varB, exprs);
+                }
+
+                resultSqlOp = SqlOpFilter.create(opResult, jc);
+                
+            }
+            else {
+//                for(Var var : varsAll) {
+//                    newVarDef.put(var, new RestrictedExpr(E_RdfTerm.TYPE_ERROR));
+//                }
+
+                resultSqlOp = SqlOpEmpty.create(opJoin.getSchema());
+            }
+        }
+
+    
 		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
 		
 		
@@ -1126,8 +1138,7 @@ public class MappingOpsImpl
 		
 		//List<String> refs = newVarDefinition.getReferencedNames();
 		
-		
-		
+				
 		Mapping result = new Mapping(newVarDefinition, resultSqlOp);
 
 		return result;

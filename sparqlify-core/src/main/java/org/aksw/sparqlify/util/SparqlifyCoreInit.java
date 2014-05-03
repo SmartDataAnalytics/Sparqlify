@@ -487,6 +487,18 @@ public class SparqlifyCoreInit {
 	
 			// String basePath = "src/main/resources";
 			try {
+			    /*
+                Map<String, String> typeNameToClass = MapReader.read(SparqlifyCoreInit.class.getResourceAsStream("/type-class.tsv"));
+
+                Map<String, String> typeNameToUri = MapReader.read(SparqlifyCoreInit.class.getResourceAsStream("/type-uri.tsv"));               
+
+                Map<String, String> typeHierarchy = MapReader.read(SparqlifyCoreInit.class.getResourceAsStream("/type-hierarchy.default.tsv")); 
+                
+                Map<String, String> physicalTypeMap = MapReader.read(SparqlifyCoreInit.class.getResourceAsStream("/type-map.h2.tsv"));  
+                
+                Map<String, String> rdfTypeHierarchyRaw = MapReader.read(SparqlifyCoreInit.class.getResourceAsStream("/rdf-type-hierarchy.tsv")); 
+			    */
+			   
 				Map<String, String> typeNameToClass = MapReader
 						.readFromResource("/type-class.tsv");
 				Map<String, String> typeNameToUri = MapReader

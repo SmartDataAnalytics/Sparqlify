@@ -494,7 +494,7 @@ public class SqlOpSelectBlock
 
 	    // Check if the query is a count query without grouping, because then its not empty after all
 	    int argCount = projection.getNames().size();
-	    if(argCount == 1 && groupByExprs.isEmpty()) {
+	    if(result && (argCount == 1 && groupByExprs.isEmpty())) {
 	        boolean hasCount = containsCount(projection);
 	        
 	        result = !hasCount;
