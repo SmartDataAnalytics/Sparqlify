@@ -112,7 +112,23 @@ public class FilterPlacementOptimizer2 {
 	}
 
 	
+	
 	public static Op _optimize(OpJoin op, RestrictionManagerImpl cnf) {
+        Factory2<Op> factory = new Factory2<Op>() {
+            @Override
+            public Op create(Op a, Op b) {
+                Op result = OpJoin.create(a, b);
+                return result;
+            }
+        
+        };
+        
+        Op result = handleLeftJoin(op.getLeft(), op.getRight(), cnf, factory);
+        return result;      
+	    
+	}
+	
+	public static Op _optimizeBreaking(OpJoin op, RestrictionManagerImpl cnf) {
 		
 		RestrictionManagerImpl leftCnf = filterByVars(cnf, op.getLeft());
 		RestrictionManagerImpl rightCnf = filterByVars(cnf, op.getRight());
