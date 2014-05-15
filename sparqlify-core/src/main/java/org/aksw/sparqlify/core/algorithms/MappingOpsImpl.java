@@ -666,8 +666,8 @@ public class MappingOpsImpl
 		result.definitionExprs.addAll(a);
 				
 		//boolean isPickDefSatisfiable = defs.isEmpty();
+        Set<RestrictedExpr> newRexprsA = new HashSet<RestrictedExpr>();
 		for(RestrictedExpr rexprA : result.definitionExprs) {
-			Set<RestrictedExpr> newRexprsA = new HashSet<RestrictedExpr>();
 
 			// The restrictions that apply to the picked variable.
 			// initialized only if there are no defs (init means true, i.e. no restriction)
@@ -699,10 +699,9 @@ public class MappingOpsImpl
 			if(varRestrictions != null) {
 				RestrictedExpr newRestrictedExpr = new RestrictedExpr(rexprA.getExpr(), varRestrictions);
 				newRexprsA.add(newRestrictedExpr);
-			}
-			
-			result.definitionExprs = newRexprsA;
+			}			
 		}
+        result.definitionExprs = newRexprsA;
 		
 		if(result.definitionExprs.isEmpty()) {
 			// All defining expressions resulted in unsatisfiable joins - return null to indicate this
@@ -984,19 +983,28 @@ public class MappingOpsImpl
 	}
 	
 	public Mapping join(Mapping a, Mapping b) {
-		Mapping result = joinCommon(a, b, false);
+		Mapping result = joinCommon(a, b, false, null);
 		return result;
 	}
 	
-	public Mapping leftJoin(Mapping a, Mapping b) {
-		Mapping result = joinCommon(a, b, true);
+	public Mapping leftJoin(Mapping a, Mapping b, ExprList exprs) {
+		Mapping result = joinCommon(a, b, true, exprs);
 		return result;		
 	}
 
 
 	static Generator genSymJoin = Gensym.create("h");
 
-	public Mapping joinCommon(Mapping a, Mapping initB, boolean isLeftJoin) {
+	/**
+	 * 
+	 * 
+	 * @param a
+	 * @param initB
+	 * @param isLeftJoin
+	 * @param joinExprs Only for left joins, leave null otherwise. Extra join conditions to add for the left join.
+	 * @return
+	 */
+	public Mapping joinCommon(Mapping a, Mapping initB, boolean isLeftJoin, ExprList joinExprs) {
 
 		// TODO Make the generator global as to avoid creating conflicting names all the time 
 		
@@ -1067,11 +1075,12 @@ public class MappingOpsImpl
             joinCondition.add(or);           
         }
 
-                
-        /// Process the variable definitions
         
+        
+        /// Process the variable definitions
+
         Multimap<Var, RestrictedExpr> newVarDef = HashMultimap.create();
-        SqlOp resultSqlOp;
+        VarDefinition newVarDefinition = new VarDefinition(newVarDef);
 
         List<SqlExpr> jc = new ArrayList<SqlExpr>(joinCondition);
 
@@ -1088,17 +1097,12 @@ public class MappingOpsImpl
                     Collection<RestrictedExpr> exprs = vdB.getMap().get(varB);
                     newVarDef.putAll(varB, exprs);
                 }
-
-                opJoin.getConditions().addAll(jc);
-                resultSqlOp = opResult;
             }
             else {
                 // Add definitions of B only
-//                for(Var varB : varsBOnly) {
-//                    newVarDef.put(varB, new RestrictedExpr(E_RdfTerm.TYPE_ERROR));
-//                }
-
-                resultSqlOp = a.getSqlOp();
+                for(Var varB : varsBOnly) {
+                    newVarDef.put(varB, new RestrictedExpr(E_RdfTerm.TYPE_ERROR));
+                }
             }            
         }
         else {
@@ -1117,21 +1121,58 @@ public class MappingOpsImpl
                     Collection<RestrictedExpr> exprs = vdB.getMap().get(varB);
                     newVarDef.putAll(varB, exprs);
                 }
-
-                resultSqlOp = SqlOpFilter.create(opResult, jc);
-                
             }
             else {
-//                for(Var var : varsAll) {
-//                    newVarDef.put(var, new RestrictedExpr(E_RdfTerm.TYPE_ERROR));
-//                }
-
-                resultSqlOp = SqlOpEmpty.create(opJoin.getSchema());
+                for(Var var : varsAll) {
+                    newVarDef.put(var, new RestrictedExpr(E_RdfTerm.TYPE_ERROR));
+                }
             }
         }
 
-    
-		VarDefinition newVarDefinition = new VarDefinition(newVarDef);
+		
+
+		// For left join, process remaining join conditions
+		
+        if(isLeftJoin && isJoinConditionSatisfiable) {
+            for(Expr expr : joinExprs) {
+                //List<SqlExpr> sqlExprs = new ArrayList<SqlExpr>();
+                // Replace any variables in the expression with the variable definitions            
+                SqlExpr sqlExpr = createSqlCondition(expr, newVarDefinition, typeMap, sqlTranslator);
+                if(sqlExpr.equals(S_Constant.TRUE)) {
+                    continue;
+                }
+                else if(sqlExpr.equals(S_Constant.TRUE)) {
+                    isJoinConditionSatisfiable = false;
+                    break;
+                }
+
+                jc.add(sqlExpr);
+            }
+        }
+
+        
+        /// Create the result
+        SqlOp resultSqlOp;
+
+        // Add the var defs of the left hand side
+        if(isLeftJoin) {
+            if(isJoinConditionSatisfiable) {
+                opJoin.getConditions().addAll(jc);
+                resultSqlOp = opResult;
+            }
+            else {
+                resultSqlOp = a.getSqlOp();
+            }            
+        }
+        else {            
+            if(isJoinConditionSatisfiable) {
+                resultSqlOp = SqlOpFilter.create(opResult, jc);                
+            }
+            else {
+                resultSqlOp = SqlOpEmpty.create(opJoin.getSchema());
+            }
+        }
+        
 		
 		
 		// TODO Minimize the schema to only the referenced columns

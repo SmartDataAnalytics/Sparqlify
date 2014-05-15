@@ -343,12 +343,12 @@ public class FilterPlacementOptimizer2 {
 	
 	
 	
-	public static Op _optimize(OpLeftJoin op, RestrictionManagerImpl cnf) {
+	public static Op _optimize(final OpLeftJoin op, RestrictionManagerImpl cnf) {
 	
 		Factory2<Op> factory = new Factory2<Op>() {
 			@Override
 			public Op create(Op a, Op b) {
-				Op result = OpLeftJoin.create(a, b, new ExprList());
+				Op result = OpLeftJoin.create(a, b, op.getExprs());
 				return result;
 			}
 		

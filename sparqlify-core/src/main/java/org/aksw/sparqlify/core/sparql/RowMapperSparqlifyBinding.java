@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.core.MakeNodeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,10 +116,14 @@ public class RowMapperSparqlifyBinding
 					//throw new RuntimeException(e);
 				}
 			}
-			
+
 			if(nodeValue == null) {
 				continue;
 			}
+
+			if(nodeValue.equals(E_RdfTerm.TYPE_ERROR)) {
+                continue;
+            }
 			
 //			if(nodeValue.isDateTime()) {
 //				XSDDateTime val = nodeValue.getDateTime();

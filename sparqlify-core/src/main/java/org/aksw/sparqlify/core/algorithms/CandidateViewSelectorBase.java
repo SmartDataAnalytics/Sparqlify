@@ -1608,12 +1608,24 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 				
 				RestrictionManagerImpl rclauses = rsplit.getPushable();
 				Op newRight = _getApplicableViews(right, rclauses);
+
 				
-				Op item = (OpLeftJoin)OpLeftJoin.create(member, newRight, new ExprList());
+
+				ExprList joinExprs = new ExprList();
+
+                if(!rsplit.getNonPushable().getCnf().isEmpty()) {
+                    //item = new OpFilterIndexed(item, rsplit.getNonPushable());
+                    joinExprs.addAll(rsplit.getNonPushable().getExprs());
+                }
+
+
+				
+				Op item = (OpLeftJoin)OpLeftJoin.create(member, newRight, joinExprs);
 				
 				if(!filterSplit.getNonPushable().getCnf().isEmpty()) {
 					item = new OpFilterIndexed(item, filterSplit.getNonPushable());
 				}
+
 
 				newUnion.add(item);
 				

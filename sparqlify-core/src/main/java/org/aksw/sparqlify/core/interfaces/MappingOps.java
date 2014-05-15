@@ -32,7 +32,7 @@ public interface MappingOps {
 	Mapping rename(Mapping a, Map<String, String> columnRenames);
 	
 	Mapping join(Mapping a, Mapping b);
-	Mapping leftJoin(Mapping a, Mapping b);
+	Mapping leftJoin(Mapping a, Mapping b, ExprList exprs);
 	
 	// A binary union would be sucky to compute (permanently moving projections around)
 	// Therfore we use one that deals with lists.

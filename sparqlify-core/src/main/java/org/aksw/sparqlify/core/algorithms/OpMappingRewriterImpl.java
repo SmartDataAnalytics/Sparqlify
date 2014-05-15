@@ -138,8 +138,9 @@ public class OpMappingRewriterImpl
 	public Mapping rewrite(OpLeftJoin op) {
 		Mapping a = rewrite(op.getLeft());
 		Mapping b = rewrite(op.getRight());
+		ExprList exprs = op.getExprs();
 		
-		Mapping result = ops.leftJoin(a, b);
+		Mapping result = ops.leftJoin(a, b, exprs);
 		return result;
 	}
 	
