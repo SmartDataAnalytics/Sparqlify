@@ -79,6 +79,16 @@ class PredicateInstanceOf<T>
 public class FilterPlacementOptimizer2 {
 	private static final Logger logger = LoggerFactory.getLogger(FilterPlacementOptimizer2.class);
 	
+    public static Factory2<Op> joinFactory = new Factory2<Op>() {
+        @Override
+        public Op create(Op a, Op b) {
+            Op result = OpJoin.create(a, b);
+            return result;
+        }
+    
+    };
+
+	
 	public static Op optimize(Op op) {
 		RestrictionManagerImpl cnf = new RestrictionManagerImpl();
 		Op result = MultiMethod.invokeStatic(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
@@ -114,16 +124,8 @@ public class FilterPlacementOptimizer2 {
 	
 	
 	public static Op _optimize(OpJoin op, RestrictionManagerImpl cnf) {
-        Factory2<Op> factory = new Factory2<Op>() {
-            @Override
-            public Op create(Op a, Op b) {
-                Op result = OpJoin.create(a, b);
-                return result;
-            }
         
-        };
-        
-        Op result = handleLeftJoin(op.getLeft(), op.getRight(), cnf, factory);
+        Op result = handleLeftJoin(op.getLeft(), op.getRight(), cnf, joinFactory);
         return result;      
 	    
 	}

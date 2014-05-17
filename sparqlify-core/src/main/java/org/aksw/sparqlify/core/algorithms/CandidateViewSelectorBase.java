@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.commons.factory.Factory;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
@@ -1485,7 +1486,13 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	
 	
 	public Op getApplicableViews(OpJoin op, RestrictionManagerImpl restrictions) {
-		return OpJoin.create(_getApplicableViews(op.getLeft(), restrictions), _getApplicableViews(op.getRight(), restrictions));
+	    // TODO Restrictions from the left hand side should carry over to the right hand side
+	    // Even better, if constraints on both sides were equally respected
+	    
+	    Op result = processJoinSplitLhs(op.getLeft(), op.getRight(), null, restrictions, false);
+	    return result;
+	    
+		//return OpJoin.create(_getApplicableViews(op.getLeft(), restrictions), _getApplicableViews(op.getRight(), restrictions));
 	}
 
 	
@@ -1533,12 +1540,12 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 	// Seems to be working now
 	public Op processLeftJoin(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
 	{
-		Op result = processLeftJoinSplitLhs(left, right, exprs, restrictions);
+		Op result = processJoinSplitLhs(left, right, exprs, restrictions, true);
 		//Op result = processLeftJoinDirect(left, right, exprs, restrictions);
 		return result;
 	}
 	
-	public Op processLeftJoinSplitLhs(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions)
+	public Op processJoinSplitLhs(Op left, Op right, Iterable<Expr> exprs, RestrictionManagerImpl restrictions, boolean isLeftJoin)
 	{
 		FilterSplit filterSplit = FilterPlacementOptimizer2.splitFilter(left, restrictions);
 		RestrictionManagerImpl leftRestrictions = filterSplit.getPushable();
@@ -1613,14 +1620,20 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 
 				ExprList joinExprs = new ExprList();
 
-                if(!rsplit.getNonPushable().getCnf().isEmpty()) {
-                    //item = new OpFilterIndexed(item, rsplit.getNonPushable());
-                    joinExprs.addAll(rsplit.getNonPushable().getExprs());
-                }
+				Op item;
+				if(isLeftJoin) {
+                    if(!rsplit.getNonPushable().getCnf().isEmpty()) {
+                        joinExprs.addAll(rsplit.getNonPushable().getExprs());
+                    }
 
 
 				
-				Op item = (OpLeftJoin)OpLeftJoin.create(member, newRight, joinExprs);
+                    item = (OpLeftJoin)OpLeftJoin.create(member, newRight, joinExprs);
+				}
+				else {
+				    item = OpJoin.create(member, newRight);
+                    item = new OpFilterIndexed(item, rsplit.getNonPushable());
+				}
 				
 				if(!filterSplit.getNonPushable().getCnf().isEmpty()) {
 					item = new OpFilterIndexed(item, filterSplit.getNonPushable());

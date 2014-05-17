@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.sparql.lib.Metadata;
 
 
 public class EntityInverseMapperImplHibernate
@@ -35,6 +36,7 @@ public class EntityInverseMapperImplHibernate
 		this.inverseMapper = inverseMapper;
 		this.tableNameToPersister = tableNameToPersister;
 	}
+	
 	
 	@Override
 	public List<EntityRef> map(Quad quad) {
@@ -114,33 +116,42 @@ public class EntityInverseMapperImplHibernate
 		Map<String, String> columnToProperty = new HashMap<String, String>();
 		
 		
-		String idPropertyName = persister.getIdentifierPropertyName();
-		String[] idColumnNames = persister.getIdentifierColumnNames();
-		if(idColumnNames.length > 1 || idColumnNames.length == 0) {
-			return null;
+		
+		String[] propertyNames = persister.getPropertyNames();
+		
+		for(String propertyName : propertyNames) {
+			//String propertyTableName = persister.getPropertyTableName(propertyName);
+
+			//System.out.println(propertyTableName);
+
+			String[] columnNames = persister.getPropertyColumnNames(propertyName);
+			if(columnNames.length > 1 || columnNames.length == 0) {
+			    logger.warn("Skipped property with multi column mapping: " + propertyName + " -> " + columnNames);
+				// Skip multi column properties for now
+				continue;
+			}
+			
+			String columnName = columnNames[0];
+			
+			// TODO Non-portable code (cross-dbms) I don't get how to get the final SQL column names from hibernate :/
+			// The ones I get here are camel case, where as in the db they are all lower case
+			columnName = columnName.toLowerCase();
+			
+			columnToProperty.put(columnName, propertyName);
+			
 		}
 		
-		String idColumnName = idColumnNames[0];
-		columnToProperty.put(idColumnName, idPropertyName);
-//		
-//		String[] propertyNames = persister.getPropertyNames();
-//		
-//		for(String propertyName : propertyNames) {
-//			String propertyTableName = persister.getPropertyTableName(propertyName);
-//
-//			System.out.println(propertyTableName);
-//			
-//			String[] columnNames = persister.getPropertyColumnNames(propertyName);
-//			if(columnNames.length > 1 || columnNames.length == 0) {
-//				// Skip multi column properties for now
-//				continue;
-//			}
-//			
-//			String columnName = columnNames[0];
-//			
-//			columnToProperty.put(columnName, propertyName);
-//			
-//		}
+		
+		// Set the id property (may override a prior mapping)
+		// TODO This code may not be robust
+        String idPropertyName = persister.getIdentifierPropertyName();
+        String[] idColumnNames = persister.getIdentifierColumnNames();
+        if (idColumnNames.length == 1) {
+            String idColumnName = idColumnNames[0];
+            columnToProperty.put(idColumnName, idPropertyName);
+        }
+		
+		
 		
 		Map<String, Object> propertyToValue = new HashMap<String, Object>();
 		
@@ -198,4 +209,35 @@ public class EntityInverseMapperImplHibernate
 		
 		return result;
 	}
+	
+    /**
+     * Look up an instance of a class by a URI
+     * 
+     * TODO We would need access to the candidate selector here, in order to pick the view definitions for a specific table
+     * 
+     * 
+     * @param clazz
+     * @param uri
+     * @return
+     */
+	/*
+    public <T> T find(Class<T> clazz, String uri) {
+        
+        for(AbstractEntityPersister persister : tableNameToPersister.values()) {
+            Class<?> mappedClazz = persister.getMappedClass();
+            if(clazz.isAssignableFrom(mappedClazz)) {
+                
+                inverseMapper.map(quad)
+            }
+            
+            
+        }
+        
+        ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
+        //classMetadata.
+        
+        return null;
+    }
+    */
+	
 }

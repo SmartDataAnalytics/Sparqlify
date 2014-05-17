@@ -11,6 +11,7 @@ import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.core.TypeToken;
@@ -94,7 +95,9 @@ public class SparqlSqlInverseMapperImpl
 				Var v = (Var)n;
 				
 				Node insertNode = QuadUtils.getNode(quad, i);
-			
+				if(insertNode.isVariable() || insertNode.isBlank()) {
+				    continue;
+				}
 			
 				//exprs.add(new E_Equals(NodeValue.makeNode(quad.getSubject()), NodeValue.makeNode(insertQuad.getSubject())));
 				exprs.add(new E_Equals(new ExprVar(v), NodeValue.makeNode(insertNode)));
@@ -118,6 +121,17 @@ public class SparqlSqlInverseMapperImpl
 				SqlExpr left = args.get(0);
 				SqlExpr right = args.get(1);
 
+				// Get rid of redundant expression items (such as conversion from string to string) 
+                // TODO Move this to a generic optimization function
+				if(left.isFunction()) {
+				    SqlExprFunction fn = left.asFunction();
+				    if(fn.getName().equals("str@str")) {
+				        left = fn.getArgs().get(0);
+				    }
+				}
+			
+				
+				
 				if(left.isConstant()) {
 					SqlExpr tmp = right;
 					right = left;
@@ -188,11 +202,26 @@ public class SparqlSqlInverseMapperImpl
 		 * with one clause for constraint of {g, s, p, o}
 		 */
 		Set<Clause> clauses = new HashSet<Clause>();
+		
+		Var[] vars = new Var[]{g, s, p, o};
+		Node[] nodes = new Node[]{gv, sv, pv, ov};
+		
+		for(int i = 0; i < 4; ++i) {
+		    Var v = vars[i];
+		    Node n = nodes[i];
+
+		    if(!n.isVariable() && !n.isBlank()) {		    
+		      clauses.add(new Clause(new E_Equals(new ExprVar(v), NodeValue.makeNode(n))));
+		    }
+
+		}
+
+		/*
 		clauses.add(new Clause(new E_Equals(new ExprVar(g), NodeValue.makeNode(gv))));
 		clauses.add(new Clause(new E_Equals(new ExprVar(s), NodeValue.makeNode(sv))));
 		clauses.add(new Clause(new E_Equals(new ExprVar(p), NodeValue.makeNode(pv))));
 		clauses.add(new Clause(new E_Equals(new ExprVar(o), NodeValue.makeNode(ov))));
-
+		*/
 		NestedNormalForm nnf = new NestedNormalForm(clauses);
 		
 		r.stateCnf(nnf);
