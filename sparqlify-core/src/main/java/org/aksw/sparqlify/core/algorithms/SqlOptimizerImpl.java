@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
@@ -280,6 +282,26 @@ public class SqlOptimizerImpl
             open = tmp;
         }		
 	}
+	
+	
+	public static boolean isEqualsExpr(SqlExpr expr) {
+        boolean isEquals = false;
+        if(expr.isFunction()) {
+            SqlExprFunction fn = expr.asFunction();
+            String fnName = fn.getName();
+            
+            String[] names = new String[]{"equal@boolean", "equal@date", "equal@int", "equal@float"};
+            HashSet<String> equalsFnNames = new HashSet<String>(Arrays.asList(names));
+            
+            if(equalsFnNames.contains(fnName)) {
+                isEquals = true;
+            }
+        }
+
+        // TODO SELF join elimination is still bugged
+        isEquals = false;
+        return isEquals;
+	}
 		
 
 	/**
@@ -334,14 +356,22 @@ public class SqlOptimizerImpl
 			// From here search for expressions of the form S_Equals(ai.col = aj.col)
 			// TODO: Instead for checking S_Equals, we need to check the SqlModel whether
 			// the expression is an equals constraint
-			if(!(expr instanceof S_Equals)) {
-				continue;
+//			if(!(expr instanceof S_Equals)) {
+//				continue;
+//			}
+
+
+			if(!isEqualsExpr(expr)) {
+			    continue;
 			}
 			
-			S_Equals equals = (S_Equals)expr;
+			SqlExprFunction equals = expr.asFunction(); 
 			
-			SqlExpr ta = equals.getLeft();
-			SqlExpr tb = equals.getRight();
+			//S_Equals equals = (S_Equals)expr;			
+//			SqlExpr ta = equals.getLeft();
+//			SqlExpr tb = equals.getRight();
+			SqlExpr ta = equals.getArgs().get(0);
+			SqlExpr tb = equals.getArgs().get(1);
 			
 			// We need ta to be a column reference
 			if(!(ta instanceof S_ColumnRef)) {
@@ -401,6 +431,10 @@ public class SqlOptimizerImpl
 			
 			SqlOpLeaf tableB = aliasToTable.get(aliasB);
 			
+			if(tableB == null) {
+			    throw new RuntimeException("Should not happen");
+			}
+			
 			String tableNameB = tableB.getId();
 			
 			if(!tableNameA.equals(tableNameB)) {
@@ -408,21 +442,24 @@ public class SqlOptimizerImpl
 				continue;
 			}
 			
-			selfJoinGraph.addVertex(aliasA);
-			selfJoinGraph.addVertex(aliasB);
+			//if(!(aliasA.equals(aliasB) && colNameA.equals(colNameB))) {
 			
-			EdgeSelfJoin edge = selfJoinGraph.getEdge(aliasA, aliasB);
-			
-			if(edge == null) {
-				edge = new EdgeSelfJoin(aliasA, aliasB);
-				
-				selfJoinGraph.addEdge(aliasA, aliasB, edge);
-			}
-			
-			edge.getColumnNames().add(colNameA);
+    			selfJoinGraph.addVertex(aliasA);
+    			selfJoinGraph.addVertex(aliasB);
+    			
+    			EdgeSelfJoin edge = selfJoinGraph.getEdge(aliasA, aliasB);
+    			
+    			if(edge == null) {
+    				edge = new EdgeSelfJoin(aliasA, aliasB);
+    				
+    				selfJoinGraph.addEdge(aliasA, aliasB, edge);
+    			}
+    			
+    			edge.getColumnNames().add(colNameA);
+			//}
 		}
 		
-		boolean enableConstantSelfJoinElimination = true;
+		boolean enableConstantSelfJoinElimination = false;
 		
 		// If enabled, adds edges inferred from constants to the join graph
 		if(enableConstantSelfJoinElimination) {
