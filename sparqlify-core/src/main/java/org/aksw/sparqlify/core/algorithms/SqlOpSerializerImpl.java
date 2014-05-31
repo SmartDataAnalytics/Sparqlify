@@ -482,10 +482,30 @@ public class SqlOpSerializerImpl
     		
     		//String part = "SELECT " + projection(arg.getColumnToSqlExpr()) + " FROM " + serialize(arg) + " " + arg.getAliasName() + "";
     		//String sub = serialize(arg);
-    		writer.incIndent();
-    		serialize(arg, writer);
-    		writer.decIndent();
     		
+    		boolean needsGrouping = false;
+    		if(arg instanceof SqlOpSelectBlock) {
+    		    SqlOpSelectBlock block = (SqlOpSelectBlock)arg;
+    		    needsGrouping = block.getLimit() != null || block.getOffset() != null || !block.getSortConditions().isEmpty() || !block.getGroupByExprs().isEmpty();
+    		}
+
+            if(needsGrouping) {
+                writer.print("(");
+                writer.newline();
+            }
+
+    		writer.incIndent();
+    		
+    		serialize(arg, writer);
+
+            writer.decIndent();
+
+            if(needsGrouping) {
+                writer.print(")");
+                writer.newline();
+            }
+
+
     		if(i != op.getSubOps().size() - 1) {
     			writer.println("UNION ALL");
     		}
