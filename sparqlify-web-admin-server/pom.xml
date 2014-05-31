@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.6.11</version>
+		<version>0.6.12-SNAPSHOT</version>
 	</parent>
 
 
