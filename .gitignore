@@ -27,6 +27,7 @@ platform.properties
 run-panlex.sh
 deptree.txt
 
+dependency-reduced-pom.xml
 
 ## Temporary excludes
 dependency-tree.txt
