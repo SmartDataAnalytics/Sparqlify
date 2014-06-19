@@ -287,6 +287,9 @@ public class SqlOptimizerImpl
     public static String[] names = new String[]{"equal@boolean", "equal@date", "equal@int", "equal@float", "equal@string"};
     public static HashSet<String> equalsFnNames = new HashSet<String>(Arrays.asList(names));
 
+    boolean enableConstantSelfJoinElimination = false;
+
+    
 	public static boolean isEqualsExpr(SqlExpr expr) {
         boolean isEquals = false;
         if(expr.isFunction()) {
@@ -301,7 +304,7 @@ public class SqlOptimizerImpl
         }
 
         // TODO SELF join elimination is still bugged
-        //isEquals = false;
+        isEquals = false;
         return isEquals;
 	}
 		
@@ -461,7 +464,6 @@ public class SqlOptimizerImpl
 			//}
 		}
 		
-		boolean enableConstantSelfJoinElimination = true;
 		
 		// If enabled, adds edges inferred from constants to the join graph
 		if(enableConstantSelfJoinElimination) {
