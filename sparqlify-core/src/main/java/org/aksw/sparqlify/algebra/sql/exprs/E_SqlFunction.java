@@ -45,7 +45,7 @@ public class E_SqlFunction
 	}
 
 	@Override
-	public Expr copySubstitute(Binding binding, boolean foldConstants) {
+	public Expr copySubstitute(Binding binding) { //, boolean foldConstants) {
 		return null;
 	}
 

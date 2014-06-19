@@ -134,7 +134,7 @@ public class E_RdfTerm
 
 	
 	@Override
-	protected NodeValue eval(List<NodeValue> args) {
+    public NodeValue eval(List<NodeValue> args) {
 		return RdfTerm.eval(args.get(0), args.get(1), args.get(2), args.get(3));
 		//RdfTerm
 		//throw new RuntimeException("Should not happen");
@@ -143,7 +143,7 @@ public class E_RdfTerm
 	}
 
 	@Override
-	protected Expr copy(ExprList args) {
+    public Expr copy(ExprList args) {
 		return new E_RdfTerm(args.get(0), args.get(1), args.get(2), args.get(3));
 	}
 

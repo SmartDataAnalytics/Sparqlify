@@ -25,13 +25,13 @@ public class E_StrConcatPermissive extends ExprFunctionN
     }
 
     @Override
-    protected Expr copy(ExprList newArgs)
+    public Expr copy(ExprList newArgs)
     {
         return new E_StrConcatPermissive(newArgs) ;
     }
 
     @Override
-    protected NodeValue eval(List<NodeValue> args)
+    public NodeValue eval(List<NodeValue> args)
     { 
     	String str = "";
     	for(NodeValue arg : args) {

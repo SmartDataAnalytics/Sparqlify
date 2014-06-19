@@ -48,7 +48,7 @@ public class E_SqlFunctionRegistered
 	}
 
 	@Override
-	public Expr copySubstitute(Binding binding, boolean foldConstants) {
+	public Expr copySubstitute(Binding binding) { //, boolean foldConstants)
 		throw new RuntimeException("Not implemented");
 	}
 

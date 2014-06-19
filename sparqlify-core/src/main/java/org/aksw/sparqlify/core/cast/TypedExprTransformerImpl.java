@@ -115,7 +115,7 @@ class RewriteState {
 public class TypedExprTransformerImpl
 	implements TypedExprTransformer
 {	
-	private static final Logger logger = LoggerFactory.getLogger(SqlTranslatorImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(TypedExprTransformerImpl.class);
 	
 	// TODO Get rid of the typeSystem here, and replace it by more fine granular
 	// objects

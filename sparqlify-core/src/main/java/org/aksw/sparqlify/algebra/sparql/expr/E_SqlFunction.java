@@ -53,11 +53,16 @@ public class E_SqlFunction
 		return exprFunction.eval(binding, env);
 	}
 
-	@Override
-	public Expr copySubstitute(Binding binding, boolean foldConstants) {
-		return exprFunction.copySubstitute(binding, foldConstants);
-	}
+//	@Override
+//	public Expr copySubstitute(Binding binding, boolean foldConstants) {
+//		return exprFunction.copySubstitute(binding, foldConstants);
+//	}
 
+    @Override
+    public Expr copySubstitute(Binding binding) {
+        return exprFunction.copySubstitute(binding);
+    }
+	
 	@Override
 	public Expr applyNodeTransform(NodeTransform transform) {
 		return exprFunction.applyNodeTransform(transform);

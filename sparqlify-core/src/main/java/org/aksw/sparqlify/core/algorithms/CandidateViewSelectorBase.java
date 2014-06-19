@@ -582,9 +582,32 @@ public abstract class CandidateViewSelectorBase<T extends IViewDef, C>
 		}
 		
 		
-		//System.out.println("Candidate order: " + StringUtils.itemPerLine(order));
+		// TODO Remove this. - This is just debug code to investigate a performance issue related to sub-optimal join orderdering
+		if(false) {
+    		List<Quad> o = new ArrayList<Quad>();
+    		// This order sucked: 1 3 4 9 2 5 6 7 8
+    		// This one sucks as well: 3 0 8 2 1 4 5 6 7
+    		//
+    		o.add(order.get(3));
+    		o.add(order.get(0));
+    		o.add(order.get(8));
+    		o.add(order.get(2));
+    		o.add(order.get(1));
+    		o.add(order.get(4));
+    		o.add(order.get(5));
+    		o.add(order.get(6));
+            o.add(order.get(7));
+    		
+    		order = o;
+		}
 		
+
+	    //System.out.println("Pattern: " + restrictions);
+	    //System.out.println("Candidate order: " + StringUtils.itemPerLine(order));
+
 		//System.out.println("Order:\n" + Joiner.on("\n").join(order));
+		//for()
+		
 		Set<ViewQuad<T>> viewQuads = quadToCandidates.get(order.get(0));
 		getApplicableViewsRec2(0, order, viewQuads, quadToCandidates, restrictions, null, result, null);
 		

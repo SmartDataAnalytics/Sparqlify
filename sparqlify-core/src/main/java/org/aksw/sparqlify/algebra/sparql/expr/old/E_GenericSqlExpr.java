@@ -36,13 +36,13 @@ public class E_GenericSqlExpr
     }
     
 	@Override
-	protected NodeValue eval(List<NodeValue> args) {
+    public NodeValue eval(List<NodeValue> args) {
 		// TODO Invoke on some global registry
 		throw new NotImplementedException();
 	}
 
 	@Override
-	protected Expr copy(ExprList newArgs) {
+    public Expr copy(ExprList newArgs) {
 		return new E_GenericSqlExpr(funcDef, newArgs);
 	}
 }
