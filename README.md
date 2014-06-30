@@ -34,7 +34,7 @@ Sparqlify Debian packages can be obtained by following means:
 
 After setting up any of the repositories below, you can install sparqlify with apt using
 
-* apt: `sudo apt-get install sparqlify`
+* apt: `sudo apt-get install sparqlify-cli
 
 #### LOD2 (Releases, this is what you want)
 
