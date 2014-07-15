@@ -1,4 +1,4 @@
-package org.aksw.update;
+package org.aksw.sparqlify.update;
 
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 

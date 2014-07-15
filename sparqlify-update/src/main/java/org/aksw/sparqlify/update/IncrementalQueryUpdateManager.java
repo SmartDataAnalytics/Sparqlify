@@ -1,4 +1,4 @@
-package org.aksw.update;
+package org.aksw.sparqlify.update;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

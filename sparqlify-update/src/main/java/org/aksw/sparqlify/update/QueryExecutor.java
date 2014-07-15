@@ -1,4 +1,4 @@
-package org.aksw.update;
+package org.aksw.sparqlify.update;
 
 import java.util.Collection;
 import java.util.Set;

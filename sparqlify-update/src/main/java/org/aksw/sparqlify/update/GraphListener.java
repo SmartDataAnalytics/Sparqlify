@@ -1,4 +1,4 @@
-package org.aksw.update;
+package org.aksw.sparqlify.update;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 
