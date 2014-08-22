@@ -19,6 +19,10 @@ Otherwise, you may be left with a non-functional deployed war file.
         
         dpkg --get-selections | grep openjdk-
 
+* On Ubuntu, the following jar - if it exists - may be corrupted. In this case, overwrite it with a fresh version using the command:
+
+        sudo wget -O /usr/share/java/tomcat-dbcp-7.0.30.jar http://search.maven.org/remotecontent?filepath=org/apache/tomcat/tomcat-dbcp/7.0.30/tomcat-dbcp-7.0.30.jar
+
 * Make sure that there is an approriate JDBC driver in tomcat's lib folder. If not, you can install one using the command below. Note that we sucessfully tested version 8.4-701 against Postgresql 9.* databases, however we had issues related to incompatible datatype mappings with the 9.* JDBC drivers.
 
         sudo wget -P /usr/share/tomcat7/lib/ http://repo1.maven.org/maven2/postgresql/postgresql/8.4-701.jdbc4/postgresql-8.4-701.jdbc4.jar
