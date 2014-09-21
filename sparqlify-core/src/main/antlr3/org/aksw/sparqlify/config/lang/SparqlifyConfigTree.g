@@ -30,7 +30,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 
 @header {
     package org.aksw.sparqlify.config.lang;
-    
+
     import com.hp.hpl.jena.sparql.expr.*;
     import org.apache.commons.lang.NotImplementedException;
     import com.hp.hpl.jena.graph.*;
@@ -42,7 +42,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import com.hp.hpl.jena.sparql.core.*;
     import com.hp.hpl.jena.datatypes.*;
     import org.aksw.sparqlify.algebra.sparql.expr.*;
-    import com.hp.hpl.jena.rdf.model.AnonId;    
+    import com.hp.hpl.jena.rdf.model.AnonId;
     import org.aksw.sparqlify.util.*;
     import org.aksw.jena_sparql_api.utils.*;
 
@@ -69,111 +69,111 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 
 
 @members {
-	private static final Logger logger = LoggerFactory.getLogger("Parser");
+    private static final Logger logger = LoggerFactory.getLogger("Parser");
 
 
 
-	private PrefixMapping prefixMapping = new PrefixMappingImpl();
+    private PrefixMapping prefixMapping = new PrefixMappingImpl();
 
     private Map<String, String> options = new HashMap<String, String>();
-	
-	public PrefixMapping getPrefixMapping() {
-		return prefixMapping;
-	}
-	
-	public Map<String, String> getOptions() {
+
+    public PrefixMapping getPrefixMapping() {
+        return prefixMapping;
+    }
+
+    public Map<String, String> getOptions() {
         return options;
-	}
-	
-	
-	public Node getDefaultGraph() {
-	    String value = options.get("defaultGraph");
-	    if(value == null) {
-	    	value = "";
-	    } else {
-	    	value = value.trim();
-	    }
+    }
 
 
-	    Node result;
-	    if(value.isEmpty()) {
-	    	result = Quad.defaultGraphNodeGenerated;
-	   	}
-	   	else {
-	   		result = Node.createURI(value);
-	   	}
-	    
-	    return result;
-	}
-	
+    public Node getDefaultGraph() {
+        String value = options.get("defaultGraph");
+        if(value == null) {
+            value = "";
+        } else {
+            value = value.trim();
+        }
 
-	void registerPrefix(String prefix, String uri) {
-		registerPrefix(prefixMapping, new PrefixDecl(prefix, uri));
-	}
+
+        Node result;
+        if(value.isEmpty()) {
+            result = Quad.defaultGraphNodeGenerated;
+           }
+           else {
+               result = Node.createURI(value);
+           }
+
+        return result;
+    }
+
+
+    void registerPrefix(String prefix, String uri) {
+        registerPrefix(prefixMapping, new PrefixDecl(prefix, uri));
+    }
 
 /*
-	void registerPrefix(Config config, String prefix, String uri) {
-		registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
-	}
+    void registerPrefix(Config config, String prefix, String uri) {
+        registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
+    }
 
-	void registerPrefix(TemplateConfig config, String prefix, String uri) {
-		registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
-	}
+    void registerPrefix(TemplateConfig config, String prefix, String uri) {
+        registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
+    }
 
-	void registerPrefix(ConstructConfig config, String prefix, String uri) {
-		registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
-	}
+    void registerPrefix(ConstructConfig config, String prefix, String uri) {
+        registerPrefix(config.getPrefixMapping(), new PrefixDecl(prefix, uri));
+    }
 */
-	
-	void registerPrefix(PrefixMapping prefixMapping, PrefixDecl prefixDecl) {
-	    // Warn if prefix gets re-registered
-	    String uri = prefixMapping.getNsPrefixURI(prefixDecl.getPrefix());
-	    
-	    if(uri != null) {
-			logger.warn("Prefix '" + prefixDecl.getPrefix() + "' remapped from <" + uri + "> to <" + prefixDecl.getUri() + ">");
-	    }
-	    
-	    prefixMapping.setNsPrefix(prefixDecl.getPrefix(), prefixDecl.getUri());
-	}
+
+    void registerPrefix(PrefixMapping prefixMapping, PrefixDecl prefixDecl) {
+        // Warn if prefix gets re-registered
+        String uri = prefixMapping.getNsPrefixURI(prefixDecl.getPrefix());
+
+        if(uri != null) {
+            logger.warn("Prefix '" + prefixDecl.getPrefix() + "' remapped from <" + uri + "> to <" + prefixDecl.getUri() + ">");
+        }
+
+        prefixMapping.setNsPrefix(prefixDecl.getPrefix(), prefixDecl.getUri());
+    }
 
 
     public String expandPrefix(String prefix) {
-    	String result = prefixMapping.getNsPrefixMap().get(prefix);
+        String result = prefixMapping.getNsPrefixMap().get(prefix);
 
         if(result == null) {
             logger.error("Namespace for prefix '" + prefix + "' not declared");
             result = "http://sparqlify.org/resource/unresolvedNamespace/";
         }
-        
+
         return result;
     }
-    
-    
+
+
     public String tryExpandUri(String uri) {
-    	String result;
-    
+        String result;
+
         int index = uri.indexOf(':');
         if(index < 0) {
-			result = uri;
-		} else {
-			result = expandUri(uri);
-		}
-		
-		return result;
-	}
-    
+            result = uri;
+        } else {
+            result = expandUri(uri);
+        }
+
+        return result;
+    }
+
     public String expandUri(String uri) {
         int index = uri.indexOf(':');
         if(index < 0) {
             logger.error("Internal error: Expansion of '" + uri + "' requested although no symbol ':' found.");
             return uri;
         }
-        
+
         String prefix = uri.substring(0, index);
         String namespace = expandPrefix(prefix);
 
         String result = namespace + uri.substring(index + 1);
-        
+
         return result;
     }
 
@@ -210,7 +210,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
         if(g == null) {
             g = Quad.defaultGraphNodeGenerated;
         }
-        
+
         for(Triple t : template.getTriples()) {
             Quad quad = new Quad(g, t);
             qp.add(quad);
@@ -220,15 +220,15 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 
     public E_Function createUriFunction(ExprList args) {
         Expr arg;
-       
+
         if(args.size() == 1) {
-			arg = args.get(0);
+            arg = args.get(0);
         } else {
-			arg = new E_StrConcatPermissive(args);
+            arg = new E_StrConcatPermissive(args);
         }
 
         E_Function result = createFunction(SparqlifyConstants.uriLabel, arg);
-        return result; 
+        return result;
     }
 
 
@@ -239,8 +239,8 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
                 exprs.add(arg);
             }
         }
-        
-        return new E_Function(label, exprs);        
+
+        return new E_Function(label, exprs);
     }
 
 }
@@ -248,15 +248,15 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 // $<Parser
 
 templateConfig returns[TemplateConfig config]
-	@init { $config = new TemplateConfig(); prefixMapping = $config.getPrefixMapping(); }
-	: templateConfigItem[config]+
-	;
+    @init { $config = new TemplateConfig(); prefixMapping = $config.getPrefixMapping(); }
+    : templateConfigItem[config]+
+    ;
 
 templateConfigItem[TemplateConfig config]
-	: x=namedViewTemplateDefinition {config.getDefinitions().add($x.value);}
-	| a=prefixDecl {registerPrefix($a.prefix, $a.uri);}
-	| b=setStmt {options.put($b.value.getKey(), $b.value.getValue());}
-	;
+    : x=namedViewTemplateDefinition {config.getDefinitions().add($x.value);}
+    | a=prefixDecl {registerPrefix($a.prefix, $a.uri);}
+    | b=setStmt {options.put($b.value.getKey(), $b.value.getValue());}
+    ;
 
 
 setStmt returns[Map.Entry<String, String> value]
@@ -264,34 +264,34 @@ setStmt returns[Map.Entry<String, String> value]
     ;
 
 constructConfig returns[ConstructConfig config]
-	@init { $config = new ConstructConfig(); prefixMapping = $config.getPrefixMapping(); }
-	: constructConfigItem[config]+
-	;
+    @init { $config = new ConstructConfig(); prefixMapping = $config.getPrefixMapping(); }
+    : constructConfigItem[config]+
+    ;
 
 constructConfigItem[ConstructConfig config]
-	: x=constructViewDefinition[config] { config.getViewDefinitions().add($x.value); }
-	| a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
-	| b=setStmt {options.put($b.value.getKey(), $b.value.getValue());}
-	;
+    : x=constructViewDefinition[config] { config.getViewDefinitions().add($x.value); }
+    | a=prefixDecl { registerPrefix($a.prefix, $a.uri); }
+    | b=setStmt {options.put($b.value.getKey(), $b.value.getValue());}
+    ;
 
 constructViewDefinition[ConstructConfig config] returns [ ConstructViewDefinition value ]
-	: ^(CONSTRUCT_VIEW_DEFINITION a=NAME b=SQL_QUERY) { $value = new ConstructViewDefinition($a.text, $b.text, prefixMapping); }
-	;
+    : ^(CONSTRUCT_VIEW_DEFINITION a=NAME b=SQL_QUERY) { $value = new ConstructViewDefinition($a.text, $b.text, prefixMapping); }
+    ;
 
 
 
 
 sparqlifyConfig returns[Config config]
-	@init { $config = new Config(); prefixMapping = $config.getPrefixMapping(); }
-	: sparqlifyConfigItem[config]+
-	;
-	
+    @init { $config = new Config(); prefixMapping = $config.getPrefixMapping(); }
+    : sparqlifyConfigItem[config]+
+    ;
+
 sparqlifyConfigItem[Config config]
-	: x=viewDefinition      {$config.getViewDefinitions().add($x.value);}
-	| a=prefixDecl          {registerPrefix($a.prefix, $a.uri);}
-	| b=functionDeclaration {$config.getFunctionDeclarations().add($b.value);}
-	| c=setStmt {options.put($c.value.getKey(), $c.value.getValue());}
-	;
+    : x=viewDefinition      {$config.getViewDefinitions().add($x.value);}
+    | a=prefixDecl          {registerPrefix($a.prefix, $a.uri);}
+    | b=functionDeclaration {$config.getFunctionDeclarations().add($b.value);}
+    | c=setStmt {options.put($c.value.getKey(), $c.value.getValue());}
+    ;
 
 
 
@@ -304,9 +304,9 @@ functionSignature returns [FunctionSignature value]
     ;
 
 paramTypeList returns [ParamTypeList value]
-	@init { $value = new ParamTypeList(); }
+    @init { $value = new ParamTypeList(); }
     : ^(PARAM_TYPE_LIST (a=paramType {$value.add($a.value);})+)
-    | ^(PARAM_TYPE_LIST nil)	
+    | ^(PARAM_TYPE_LIST nil)
     ;
 
 
@@ -323,38 +323,38 @@ functionTemplate returns [FunctionTemplate value]
 
 
 namedViewTemplateDefinition returns [NamedViewTemplateDefinition value]
-	: ^(NAMED_VIEW_TEMPLATE_DEFINITION a=NAME b=viewTemplateDefinition) {$value = new NamedViewTemplateDefinition($a.text, $b.value);}
-	;
-	
+    : ^(NAMED_VIEW_TEMPLATE_DEFINITION a=NAME b=viewTemplateDefinition) {$value = new NamedViewTemplateDefinition($a.text, $b.value);}
+    ;
+
 viewTemplateDefinition returns [ViewTemplateDefinition value]
-	: ^(VIEW_TEMPLATE_DEFINITION a=constructTemplateQuads b=varBindings?) {$value = new ViewTemplateDefinition($a.value, $b.value);}
-	;
+    : ^(VIEW_TEMPLATE_DEFINITION a=constructTemplateQuads b=varBindings?) {$value = new ViewTemplateDefinition($a.value, $b.value);}
+    ;
 
 viewDefinition returns [ ViewDefinition value ]
-	: ^(VIEW_DEFINITION a=NAME b=viewTemplateDefinition d=varConstraints? c=sqlRelation?) { $value = new ViewDefinition($a.text, $b.value, $c.value, $d.value); }
-	;
-	
+    : ^(VIEW_DEFINITION a=NAME b=viewTemplateDefinition d=varConstraints? c=sqlRelation?) { $value = new ViewDefinition($a.text, $b.value, $c.value, $d.value); }
+    ;
+
 varBindings returns [List<Expr> value]
-	@init {$value = new ArrayList<Expr>();}
-	: ^(VAR_BINDINGS (a=varBinding {$value.add($a.value);})+)
-	;
-	
+    @init {$value = new ArrayList<Expr>();}
+    : ^(VAR_BINDINGS (a=varBinding {$value.add($a.value);})+)
+    ;
+
 
 varBinding returns [Expr value]
-	: ^(VAR_BINDING	a=var b=typeCtorExpression) {$value = new E_Equals(new ExprVar($a.value), $b.value);}
-	;
-	
+    : ^(VAR_BINDING	a=var b=typeCtorExpression) {$value = new E_Equals(new ExprVar($a.value), $b.value);}
+    ;
+
 typeCtorExpression returns [Expr value]
-    : ^(BNODE a=expression) {$value = createFunction(SparqlifyConstants.blankNodeLabel, $a.value); } 
+    : ^(BNODE a=expression) {$value = createFunction(SparqlifyConstants.blankNodeLabel, $a.value); }
     | ^(URI c=expressionList) {$value = createUriFunction($c.value); }
     | ^(PLAIN_LITERAL a=expression b=expression?) {$value = createFunction(SparqlifyConstants.plainLiteralLabel, $a.value, $b.value); }
     | ^(TYPED_LITERAL a=expression b=expression) {$value = createFunction(SparqlifyConstants.typedLiteralLabel, $a.value, $b.value); }
     ;
-	
+
 sqlRelationOld returns [Relation value]
-	: ^(SQL_RELATION a=SQL_QUERY) {$value = new QueryString($a.text);}
-	| ^(SQL_RELATION a=SQL_TABLE) {$value = new RelationRef($a.text);}
-	;
+    : ^(SQL_RELATION a=SQL_QUERY) {$value = new QueryString($a.text);}
+    | ^(SQL_RELATION a=SQL_TABLE) {$value = new RelationRef($a.text);}
+    ;
 
 
 // Expressions are SPARQL expressions, so its a bit hacky right now
@@ -364,21 +364,21 @@ sqlRelation returns [SqlOp value]
 
 joinClause returns [SqlOp value]
     : a=joinClauseMember {$value=$a.value;}
-    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, JoinType.INNER, $a.value, $b.value);} 
+    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, JoinType.INNER, $a.value, $b.value);}
     ;
-    
+
 joinClauseMember returns [SqlOp value]
     : ^(JOIN_MEMBER a=sqlLogicalTable b=NAME?) {$value = $a.value; ((SqlOpLeaf)$value).setAliasName($b.text);}
     ;
 
 sqlLogicalTable returns [SqlOp value]
-	: ^(SQL_RELATION a=SQL_QUERY) {$value = new SqlOpQuery(null, $a.text);}
-	| ^(SQL_RELATION a=SQL_TABLE) {$value = new SqlOpTable(null, $a.text);}
-	;
+    : ^(SQL_RELATION a=SQL_QUERY) {$value = new SqlOpQuery(null, $a.text);}
+    | ^(SQL_RELATION a=SQL_TABLE) {$value = new SqlOpTable(null, $a.text);}
+    ;
 
 
 varConstraints returns [List<Constraint> value]
-	@init {$value = new ArrayList<Constraint>();}
+    @init {$value = new ArrayList<Constraint>();}
     : ^(CONSTRAINTS (a=varConstraint{$value.add($a.value);})+)
     ;
 
@@ -388,15 +388,15 @@ varConstraint returns [Constraint value]
     ;
 
 regexVarConstraint returns [RegexConstraint value]
-	: ^(REGEX_CONSTRAINT a=var b=string) {$value = new RegexConstraint($a.value, "value", $b.value);}
+    : ^(REGEX_CONSTRAINT a=var b=string) {$value = new RegexConstraint($a.value, "value", $b.value);}
     ;
 
 prefixVarConstraint returns [PrefixConstraint value]
-	: ^(PREFIX_CONSTRAINT a=var b=stringList) {$value = new PrefixConstraint($a.value, "value", $b.value);}
+    : ^(PREFIX_CONSTRAINT a=var b=stringList) {$value = new PrefixConstraint($a.value, "value", $b.value);}
     ;
 
 stringList returns [List<String> value]
-	@init {$value = new ArrayList<String>();}
+    @init {$value = new ArrayList<String>();}
     : ^(STRING_LIST (a=string {value.add($a.value); })+)
     ;
 
@@ -425,7 +425,7 @@ selectQuery
 subSelect
     : ^(SUBSELECT whereClause* solutionModifier)
     ;
-    	
+
 selectClause
     : ^(SELECT_CLAUSE ASTERISK)
     | ^(SELECT_CLAUSE DISTINCT ASTERISK)
@@ -436,10 +436,10 @@ selectClause
     ;
 
 selectVariables
-    : ^(VAR var) 
+    : ^(VAR var)
     | ^(AS expression var)
     ;
-  
+
 constructQuery
     : ^(CONSTRUCT constructTemplate* datasetClause* whereClause* solutionModifier)
     | ^(CONSTRUCT datasetClause* ^(WHERE triplesTemplate*) solutionModifier)
@@ -460,7 +460,7 @@ datasetClause
 whereClause
     : ^(WHERE_CLAUSE groupGraphPattern)
     ;
-    
+
 solutionModifier
     : groupClause? havingClause? orderClause? limitOffsetClauses?
     ;
@@ -468,7 +468,7 @@ solutionModifier
 groupClause
     : ^(GROUP_BY groupCondition+)
     ;
-    		 
+
 groupCondition
     : builtInCall
     | functionCall
@@ -477,9 +477,9 @@ groupCondition
     ;
 
 havingClause
-    : ^(HAVING constraint+)	
+    : ^(HAVING constraint+)
     ;
-    
+
 orderClause
     : ^(ORDER_BY orderCondition+)
     ;
@@ -490,7 +490,7 @@ orderCondition
     | ^(ORDER_CONDITION constraint)
     | ^(ORDER_CONDITION var)
     ;
-	    
+
 limitOffsetClauses
     : ^(LIMIT INTEGER) (^(OFFSET INTEGER))*
     | ^(OFFSET INTEGER) (^(LIMIT INTEGER))*
@@ -500,11 +500,11 @@ limitOffsetClauses
 bindingsClause
     : ^(BINDINGS var* bindingValueList*)
     ;
-    
+
 bindingValueList
     : ^(BINDING_VALUE bindingValue*)
     ;
-    	
+
 bindingValue returns [Node value]
     : a=iriRef {$value=$a.value;}
     | a=rdfLiteral {$value=$a.value;}
@@ -512,35 +512,35 @@ bindingValue returns [Node value]
     | booleanLiteral
     | UNDEF
     ;
-    
+
 update
     : prologue load* clear* drop* add* move* copy* create* insert* delete* modify*
-    ;   
-    
-load 	  
+    ;
+
+load
     : ^(LOAD SILENT* iriRef graphRef*)
     ;
-    
+
 clear
     : ^(CLEAR SILENT* graphRefAll)
     ;
-    
+
 drop
     : ^(DROP SILENT* graphRefAll)
-    ; 
+    ;
 
 create
     : ^(CREATE SILENT* graphRef)
     ;
-    
+
 add
     : ^(ADD SILENT* graphOrDefault graphOrDefault)
     ;
-    
+
 move
     : ^(MOVE SILENT* graphOrDefault graphOrDefault)
     ;
-    
+
 copy
     : ^(COPY SILENT* graphOrDefault graphOrDefault)
     ;
@@ -548,8 +548,8 @@ copy
 insert
     : ^(INSERT DATA quadPattern)
     ;
-   
-delete 	  
+
+delete
     : DELETE ( deleteData | deleteWhere )
     ;
 
@@ -560,16 +560,16 @@ deleteData
 deleteWhere
     : ^(DELETE WHERE quadPattern)
     ;
-    
+
 modify
     : ^(MODIFY ^(WITH iriRef) deleteClause* insertClause* usingClause* ^(WHERE groupGraphPattern))
     | ^(MODIFY deleteClause* insertClause* usingClause* ^(WHERE groupGraphPattern))
     ;
-  
+
 deleteClause
     : DELETE quadPattern
     ;
-      
+
 insertClause
     : INSERT quadPattern
     ;
@@ -578,11 +578,11 @@ usingClause
     : ^(USING NAMED? iriRef)
     ;
 
-graphOrDefault	  
-    : DEFAULT 
+graphOrDefault
+    : DEFAULT
     | GRAPH? iriRef
     ;
-    	    	
+
 graphRef
     : GRAPH iriRef
     ;
@@ -594,12 +594,12 @@ graphRefAll
 quadPattern returns [QuadPattern value]
     : a=quads{$value = $a.value;}
     ;
-    
+
 quads returns [QuadPattern value]
     @init{$value = new QuadPattern();}
     : (a=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern(getDefaultGraph(), $a.value));})? ( quadsNotTriples[$value] (c=triplesTemplate {$value.addAll(QuadPatternUtils.toQuadPattern(getDefaultGraph(), $c.value));})? )*
     ;
-    
+
 quadsNotTriples [QuadPattern value] //returns [QuadPattern value]
     //@init{$value = new QuadPattern()}
     : ^(GRAPH_TOKEN a=varOrIRIref b=triplesTemplate?) {$value.addAll(QuadPatternUtils.toQuadPattern($a.value, $b.value));}
@@ -615,16 +615,16 @@ triplesTemplate returns [BasicPattern value]
 triplesTemplate returns [BasicPattern value]
     : ^(TRIPLES_TEMPLATE a=triples {$value = $a.value;})
     ;
-    	
+
 groupGraphPattern
     : ^(GROUP_GRAPH_PATTERN subSelect)
     | ^(GROUP_GRAPH_PATTERN groupGraphPatternSub)
     ;
-    
+
 groupGraphPatternSub
     : triplesBlock? groupGraphPatternSubCache*
     ;
-    
+
 groupGraphPatternSubCache
     :  graphPatternNotTriples triplesBlock?
     ;
@@ -648,11 +648,11 @@ graphGraphPattern
 serviceGraphPattern
     : ^(SERVICE SILENT? varOrIRIref groupGraphPattern)
     ;
-    
+
 bind
-    : ^(BIND expression ^(AS var))	
+    : ^(BIND expression ^(AS var))
     ;
-    	
+
 minusGraphPattern
     : ^(MINUS_KEYWORD groupGraphPattern)
     ;
@@ -678,25 +678,25 @@ functionCall returns [Expr value]
 
 // TODO Not sure if the return type is correct
 argList returns [ExprList value]
-	@init { value = new ExprList(); }
+    @init { value = new ExprList(); }
     : nil
     | DISTINCT? (a=expression {$value.add($a.value);})*
     ;
 
 expressionList returns [ExprList value]
-	@init { value = new ExprList(); }
+    @init { value = new ExprList(); }
     : ^(EXPRESSION_LIST (a=expression {value.add($a.value); })+)
     | ^(EXPRESSION_LIST nil)
-    ;	
+    ;
 
 
 /*
 constructTemplateEx returns[QuadPattern value]
-	@init { $value = QuadPattern(); }
-	: a=constructTemplate {addAsQuad($value, $a, null);}
+    @init { $value = QuadPattern(); }
+    : a=constructTemplate {addAsQuad($value, $a, null);}
     | ^(GRAPH b=varOrIriRef a=constructTemplate {addAsQuad($value, $a, $b);}
     ;
-*/  
+*/
 
 constructTemplateQuads returns[QuadPattern value]
     : ^(CONSTRUCT_QUADS a=quadPattern) {$value = $a.value;}
@@ -712,17 +712,17 @@ constructTemplate returns[Template value]
 constructTriples returns [BasicPattern value]
     : a=triples {$value = $a.value;}
     ;
-    
+
 //TODO Insert Basic Pattern rule
 
 triples returns [BasicPattern value]
-	@init {$value = new BasicPattern();}
-	: triple[value]+
+    @init {$value = new BasicPattern();}
+    : triple[value]+
     ;
 
 triple[BasicPattern triples]
     : ^(TRIPLE ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples])) {$triples.add(new Triple($a.value, $b.value, $c.value)); }
-	;
+    ;
 
 
 // TODO: Do we need this rule?
@@ -735,15 +735,15 @@ triplesSameSubject[BasicPattern value]
 
 // Object list is actually just a a single triple
 objectList[BasicPattern triples]
-	: ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples]) {$triples.add(new Triple($a.value, $b.value, $c.value)); System.out.println("Created triple: " + $triples); }
-	;
+    : ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples]) {$triples.add(new Triple($a.value, $b.value, $c.value)); System.out.println("Created triple: " + $triples); }
+    ;
 
 
 
 /*
 triple returns [Triple value]
     : ^(TRIPLE a=objectList) { $value = $a.value; }
-    ; 
+    ;
 
 constructTemplate
     : ^(CONSTRUCT_TRIPLES constructTriples?)
@@ -766,7 +766,7 @@ objectList[Collection<Triple> triples]
 
 // FIXME Result can also be a path
 verb returns [ Node value ]
-    : a=varOrIRIref { $value = $a.value; } 
+    : a=varOrIRIref { $value = $a.value; }
     | A           { $value = RDF.type.asNode(); }
     | path		  { if(true) { throw new NotImplementedException(); } }
     ;
@@ -775,23 +775,23 @@ triplesSameSubjectPath [BasicPattern value]
     : ^(TRIPLE objectList[value])
     | ^(TRIPLE triplesSameSubjectPath[value])
     ;
-      
+
 path
     : PATH pathSequence ( PIPE pathSequence )*
-    ; 
+    ;
 
 pathSequence
     : pathEltOrInverse ( DIVIDE pathEltOrInverse )*
     ;
-    	  	
+
 pathElt
     : pathPrimary pathMod?
     ;
-    
+
 pathEltOrInverse
     : pathElt | INVERSE pathElt
     ;
-    
+
 pathMod
     : ( ASTERISK | QUESTION_MARK | PLUS | OPEN_CURLY_BRACE ( INTEGER ( COMMA ( CLOSE_CURLY_BRACE | INTEGER CLOSE_CURLY_BRACE ) | CLOSE_CURLY_BRACE ) | COMMA INTEGER CLOSE_CURLY_BRACE ) )
     ;
@@ -805,12 +805,12 @@ pathPrimary
 
 pathNegatedPropertySet
     : ^(PATH_NEGATED pathOneInPropertySet+)
-    ;  	
+    ;
 
 pathOneInPropertySet
     : INVERSE? ( iriRef | A )
     ;
-	
+
 triplesNode[BasicPattern triples] returns [Node value]
     : ^(COLLECTION graphNode[triples]+)
     | ^(TRIPLE objectList[triples])
@@ -832,18 +832,18 @@ varOrIRIref returns [Node value]
     ;
 
 var returns [Var value]
-    : a=VAR {$value = Var.alloc($a.text);} 
+    : a=VAR {$value = Var.alloc($a.text);}
     ;
 
 graphTerm returns [Node value]
-    : a=iriRef         {$value = $a.value;} 
+    : a=iriRef         {$value = $a.value;}
     | a=rdfLiteral       {$value = $a.value;}
     | b=numericLiteral {$value = $b.value.asNode();}
     | b=booleanLiteral {$value = $b.value.asNode();}
     | a=blankNode      {$value = $a.value;}
     | nil
     ;
-    
+
 nil
     : OPEN_BRACE CLOSE_BRACE
     ;
@@ -863,9 +863,9 @@ expression returns [ Expr value ]
     | ^(MINUS a=expression b=expression)         { $value = new E_Subtract          ($a.value, $b.value); }
     | ^(ASTERISK a=expression b=expression)      { $value = new E_Multiply          ($a.value, $b.value); }
     | ^(DIVIDE a=expression b=expression)        { $value = new E_Divide            ($a.value, $b.value); }
-    | a=unaryExpression                          { $value = $a.value; } 
+    | a=unaryExpression                          { $value = $a.value; }
     ;
-    
+
 unaryExpression returns [ Expr value ]
     : ^(UNARY_NOT a=primaryExpression)         { $value = new E_LogicalNot($a.value); }
     | ^(UNARY_PLUS a=primaryExpression)        { $value = new E_UnaryPlus ($a.value); }
@@ -876,6 +876,7 @@ unaryExpression returns [ Expr value ]
 primaryExpression returns [Expr value]
     : e=builtInCall       {$value = $e.value;}
     | e=iriRefOrFunction  {$value = $e.value;}
+    | e=expression        {$value = $e.value;} // For bracketted expressions
     | n=rdfLiteral        {$value = NodeValue.makeNode($n.value);}
     | nv=numericLiteral    {$value = $nv.value;}
     | nv=booleanLiteral    {$value = $nv.value;}
@@ -884,7 +885,7 @@ primaryExpression returns [Expr value]
     ;
 
 builtInCall returns [Expr value]
-    : ^(STR a=expression)             {$value = new E_Str($a.value);} 
+    : ^(STR a=expression)             {$value = new E_Str($a.value);}
     | ^(LANG a=expression)            {$value = new E_Lang($a.value);}
     | ^(LANGMATCHES a=expression b=expression)    {$value = new E_LangMatches($a.value, $b.value);}
     | ^(DATATYPE a=expression)
@@ -928,7 +929,7 @@ builtInCall returns [Expr value]
     | ^(SAMETERM expression expression)
     | ^(ISIRI expression)
     | ^(ISURI expression)
-    | ^(ISBLANK expression) 
+    | ^(ISBLANK expression)
     | ^(ISLITERAL expression)
     | ^(ISNUMERIC expression)
     | regexExpression
@@ -939,11 +940,11 @@ builtInCall returns [Expr value]
 regexExpression
     : ^(REGEX expression+)
     ;
-    
+
 subStringExpression
     : ^(SUBSTR expression+)
     ;
-    
+
 existsFunction
     : ^(EXISTS groupGraphPattern)
     ;
@@ -961,21 +962,21 @@ aggregate
     | ^(SAMPLE DISTINCT? expression)
     | ^(GROUP_CONCAT DISTINCT* expression string?)
     ;
-    
+
 iriRefOrFunction returns [Expr value]
-    : a=iriRef                                   {$value = NodeValue.makeNode($a.value);} 
+    : a=iriRef                                   {$value = NodeValue.makeNode($a.value);}
     | ^(FUNCTION a=iriRef ^(ARG_LIST b=argList)) {$value = new E_Function(a.toString(), b);}
     ;
 
 rdfLiteral returns [Node value]
     : ^(PLAIN_LITERAL a=string b=LANGTAG?) {$value = Node.createLiteral($a.value, $b.text, null);}
     | ^(TYPED_LITERAL a=string c=iriRef) {$value = Node.createLiteral($a.value, null, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
-    
+
     //: a=string ( b=LANGTAG | ( REFERENCE c=iriRef ) )? { $value = Node.createLiteral($a.value, $b.text, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
     ;
 
 numericLiteral returns [ NodeValue value ]
-    : a=numericLiteralUnsigned { $value = $a.value; } 
+    : a=numericLiteralUnsigned { $value = $a.value; }
     | a=numericLiteralPositive { $value = $a.value; }
     | a=numericLiteralNegative { $value = $a.value; }
     ;
@@ -1011,7 +1012,7 @@ string returns [String value]
     ;
 
 iriRef returns [Node value]
-    : a=IRI_REF      {$value = Node.createURI($a.text);} 
+    : a=IRI_REF      {$value = Node.createURI($a.text);}
     | b=prefixedName {$value = $b.value;}
     ;
 
@@ -1027,5 +1028,5 @@ blankNode returns [Node value]
 
 anon
     : OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET
-    ;	
+    ;
 // $>
