@@ -10,10 +10,11 @@ usage="$(basename "$0") options -- Tool to simply invoking sparqlify based on pr
 
 where:
     -P  profile name
-    -h  postgres host name
-    -d  postgres database name
-    -U  postgres user name
-    -W  postgres password
+    -h  database host name
+    -d  database name
+    -p  database port
+    -U  database user name
+    -W  database password
     -Q  SPARQL query string
 
 If the query string is the last argument, -Q can be omitted.
@@ -50,7 +51,7 @@ echoerr() { echo "$@" 1>&2; }
 # A POSIX variable
 OPTIND=1         # Reset in case getopts has been used previously in the shell.
 
-while getopts "?h:P:m:U:W:d:Q:" opt; do
+while getopts "?h:p:j:P:m:U:W:d:Q:" opt; do
     case "$opt" in
         \?)
             echoerr "$usage"
@@ -63,6 +64,10 @@ while getopts "?h:P:m:U:W:d:Q:" opt; do
         W)  dbPass="$OPTARG"
             ;;
         d)  dbName="$OPTARG"
+            ;;
+        p)  dbPort="$OPTARG"
+            ;;
+        j)  dbJdbc="$OPTARG"
             ;;
 	m)  mappingFile="$OPTARG"
             ;;
@@ -106,11 +111,18 @@ fi
 # Confirm settings before continuation
 dbPassText=`echo "$dbPass" | cut -c1-2`
 
+[ -z "$dbPort" ] && dbPort="5432"
+
 echoerr "-------------------------------------------------------------------"
 echoerr "Your settings are:"
 echoerr "Database"
-echoerr "  Name: $dbName"
-echoerr "  Host: $dbHost"
+if [ -z "$dbJdbc" ]; then
+    echoerr "  Name: $dbName"
+    echoerr "  Host: $dbHost"
+    echoerr "  Port: $dbPort"
+else
+    echoerr "  Jdbc: $dbJdbc"
+fi
 echoerr "  Username: $dbUser"
 echoerr "  Password: $dbPassText..."
 echoerr ""
@@ -128,6 +140,10 @@ if [ -z "$queryString" ]; then
     exit 1
 fi
 
-"$sparqlifyCmd" -h "$dbHost" -u "$dbUser" -p "$dbPass" -d "$dbName" -m "$mappingFile" -Q "$queryString"
+if [ -z "$dbJdbc" ]; then
+    "$sparqlifyCmd" -h "$dbHost" -p "$dbPort" -d "$dbName" -U "$dbUser" -W "$dbPass" -m "$mappingFile" -Q "$queryString"
+else
+    "$sparqlifyCmd" -j "$dbJdbc" -U "$dbUser" -W "$dbPass" -m "$mappingFile" -Q "$queryString"
+fi
 
 
