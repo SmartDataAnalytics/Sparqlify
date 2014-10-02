@@ -15,7 +15,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
+import org.aksw.sparqlify.core.algorithms.TypeSerializerPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
@@ -250,9 +250,9 @@ public class NewWorldTest {
 
 		// Obtain DBMS specific string representation for SqlExpr
 
-		DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
+		TypeSerializerPostgres typeSerializer = new TypeSerializerPostgres();
 
-		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
+		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperPostgres(
 				typeSerializer);
 		SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
 				typeSerializer, sqlLiteralMapper);

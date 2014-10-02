@@ -8,15 +8,15 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatatypeToStringPostgres
-	implements DatatypeToString
+public class TypeSerializerPostgres
+	implements TypeSerializer
 {
 	
-	private static final Logger logger = LoggerFactory.getLogger(DatatypeToStringPostgres.class);
+	private static final Logger logger = LoggerFactory.getLogger(TypeSerializerPostgres.class);
 	
 	private Map<String, String> nameToPostgres = new HashMap<String, String>();
 
-	public DatatypeToStringPostgres() {
+	public TypeSerializerPostgres() {
 		// TODO: Use the datatype system map for reverse mapping
 		nameToPostgres.put("boolean", "boolean");
 		nameToPostgres.put("float", "double precision");

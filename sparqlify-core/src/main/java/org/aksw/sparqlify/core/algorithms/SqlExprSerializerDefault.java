@@ -21,9 +21,9 @@ public abstract class SqlExprSerializerDefault
 
 	//public DatatypeAssigner datatypeAssigner;
 	
-	protected DatatypeToString datatypeSerializer;
+	protected TypeSerializer datatypeSerializer;
 	
-	public SqlExprSerializerDefault(DatatypeToString datatypeSerializer)
+	public SqlExprSerializerDefault(TypeSerializer datatypeSerializer)
 	{
 		//this.datatypeAssigner = datatypeAssigner;
 		this.datatypeSerializer = datatypeSerializer;

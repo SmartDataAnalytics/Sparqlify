@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
-import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
+import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderSql92;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -22,8 +22,10 @@ import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang.StringUtils;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
@@ -33,7 +35,7 @@ public class SparqlifyCliHelper {
     public static void addDatabaseOptions(Options cliOptions) {
         cliOptions.addOption("t", "type", true,
                 "Database type (posgres, mysql,...)");
-        cliOptions.addOption("d", "database", true, "Database name");
+        cliOptions.addOption("e", "database type", true, "Database type (default: postgres)");
         cliOptions.addOption("p", "port", true, "");
         cliOptions.addOption("U", "username", true, "");
         cliOptions.addOption("W", "password", true, "");
@@ -44,21 +46,23 @@ public class SparqlifyCliHelper {
 
     public static DataSource parseDataSource(CommandLine commandLine, Logger logger) {
 
+        String dbType = commandLine.getOptionValue("e", "");
         String hostName = commandLine.getOptionValue("h", "");
         String dbName = commandLine.getOptionValue("d", "");
         String userName = commandLine.getOptionValue("U", "");
         String passWord = commandLine.getOptionValue("W", "");
-        String portStr = commandLine.getOptionValue("p", "").trim();
+        String portStr = commandLine.getOptionValue("p", ""); //.trim();
 
 
         String jdbcUrl = commandLine.getOptionValue("j", "");
 
-        if(!jdbcUrl.isEmpty() && (!hostName.isEmpty() || !dbName.isEmpty() || !portStr.isEmpty())) {
-            logger.error("Option 'j' is mutually exclusive with 'h' and 'd' and 'p'");
+        if(!jdbcUrl.isEmpty() && (!dbType.isEmpty() || !hostName.isEmpty() || !dbName.isEmpty() || !portStr.isEmpty())) {
+            logger.error("Option 'j' is mutually exclusive with 'e', 'h', 'd' and 'p'");
             return null;
         }
 
         if(jdbcUrl.isEmpty() && hostName.isEmpty()) {
+            dbType = "postgres";
             hostName = "localhost";
         }
 
@@ -66,6 +70,7 @@ public class SparqlifyCliHelper {
          * Connection Pool
          */
 
+/*
         PGSimpleDataSource dataSourceBean = null;
 
         if(jdbcUrl.isEmpty()) {
@@ -81,16 +86,21 @@ public class SparqlifyCliHelper {
                 dataSourceBean.setPortNumber(port);
             }
         }
+*/
 
         BoneCPConfig cpConfig = new BoneCPConfig();
 
         if(jdbcUrl.isEmpty()) {
-            cpConfig.setDatasourceBean(dataSourceBean);
-        } else {
-            cpConfig.setJdbcUrl(jdbcUrl);
-            cpConfig.setUsername(userName);
-            cpConfig.setPassword(passWord);
+            String p = portStr.isEmpty() ? "" : ""  + portStr;
+            jdbcUrl = "jdbc:" + dbType + "://" + hostName + p + "/" + dbName;
         }
+
+        logger.debug("Created JDBC Url: " + jdbcUrl);
+
+        cpConfig.setJdbcUrl(jdbcUrl);
+        cpConfig.setUsername(userName);
+        cpConfig.setPassword(passWord);
+
 
         /*
         cpConfig.setJdbcUrl(dbconf.getDbConnString()); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
@@ -121,7 +131,7 @@ public class SparqlifyCliHelper {
 
         Connection conn = dataSource.getConnection();
         try {
-            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+            SchemaProvider schemaProvider = new SchemaProviderSql92(conn, typeSystem);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             result = SyntaxBridge.bridge(syntaxBridge, viewDefinitions, logger);

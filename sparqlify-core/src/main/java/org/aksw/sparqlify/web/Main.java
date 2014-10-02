@@ -11,7 +11,7 @@ import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
-import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
+import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderOracle;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
@@ -84,7 +84,7 @@ public class Main {
 
         LoggerCount loggerCount = new LoggerCount(logger);
 
-        Class.forName("org.postgresql.Driver");
+        //Class.forName("org.postgresql.Driver");
 
         CommandLineParser cliParser = new GnuParser();
 
@@ -200,7 +200,7 @@ public class Main {
 
         Connection conn = dataSource.getConnection();
         try {
-            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+            SchemaProvider schemaProvider = new SchemaProviderOracle(conn, typeSystem);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);

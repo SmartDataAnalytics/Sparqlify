@@ -9,63 +9,57 @@ import org.postgis.PGgeometry;
 import com.hp.hpl.jena.sdb.sql.SQLUtils;
 import com.hp.hpl.jena.sparql.expr.NodeValue;
 
-interface DatatypeToString
-{
-	public Factory1<String> asString(TypeToken datatype);
-}
-
-
 public class SqlExprSerializerPostgres
-	extends SqlExprSerializerDefault
+    extends SqlExprSerializerDefault
 {
 
-	public SqlExprSerializerPostgres() {
-		super(new DatatypeToStringPostgres());
-	}
-	
-	
-	public String serializeConstant(Object value, TypeToken datatype) {
-		String result = serializeConstantPostgres(datatypeSerializer, value, datatype);
-		return result;
-	}	
-	
-	
-	public static String serializeConstantPostgres(DatatypeToString datatypeSerializer, Object value, TypeToken datatype) {
-		
-		
-		if(datatype.equals(TypeToken.TypeError)) {
-			return "FALSE";
-		}
-		
-		
-		if(value == null) {
-			//String cast = "::" + datatypeSerializer.asString(datatype);
-			
-			Factory1<String> caster = datatypeSerializer.asString(datatype);
-			
-			return caster.create("NULL");
-		} else if(value instanceof NodeValue) {
-			if(true) {
-				throw new RuntimeException("HACK");
-			}
-			return ((NodeValue) value).asQuotedString();
-		}
-		else if(value instanceof String) {
-			return SQLUtils.quoteStr(value.toString()); 
-		} else if(value instanceof Number) {
-			return value.toString();
-		} else if(value instanceof Calendar) {
-			java.sql.Timestamp sqlDateTime = new java.sql.Timestamp(((Calendar)value).getTime().getTime());
-			return SQLUtils.quoteStr(sqlDateTime.toString());
-		} else if (value instanceof Boolean) {
-			return value.toString();
-		} else if (value instanceof PGgeometry) {
-			//return "'SRID=4326;" + value.toString() + "'::geometry";
-			return "'SRID=4326;" + value.toString() + "'";
-		} else {
-			throw new RuntimeException("Don't know how to serialize " + value + " to an SQL string");
-		}
-	}
+    public SqlExprSerializerPostgres() {
+        super(new TypeSerializerPostgres());
+    }
+
+
+    public String serializeConstant(Object value, TypeToken datatype) {
+        String result = serializeConstantPostgres(datatypeSerializer, value, datatype);
+        return result;
+    }
+
+
+    public static String serializeConstantPostgres(TypeSerializer datatypeSerializer, Object value, TypeToken datatype) {
+
+
+        if(datatype.equals(TypeToken.TypeError)) {
+            return "FALSE";
+        }
+
+
+        if(value == null) {
+            //String cast = "::" + datatypeSerializer.asString(datatype);
+
+            Factory1<String> caster = datatypeSerializer.asString(datatype);
+
+            return caster.create("NULL");
+        } else if(value instanceof NodeValue) {
+            if(true) {
+                throw new RuntimeException("HACK");
+            }
+            return ((NodeValue) value).asQuotedString();
+        }
+        else if(value instanceof String) {
+            return SQLUtils.quoteStr(value.toString());
+        } else if(value instanceof Number) {
+            return value.toString();
+        } else if(value instanceof Calendar) {
+            java.sql.Timestamp sqlDateTime = new java.sql.Timestamp(((Calendar)value).getTime().getTime());
+            return SQLUtils.quoteStr(sqlDateTime.toString());
+        } else if (value instanceof Boolean) {
+            return value.toString();
+        } else if (value instanceof PGgeometry) {
+            //return "'SRID=4326;" + value.toString() + "'::geometry";
+            return "'SRID=4326;" + value.toString() + "'";
+        } else {
+            throw new RuntimeException("Don't know how to serialize " + value + " to an SQL string");
+        }
+    }
 
 
 
@@ -74,33 +68,33 @@ public class SqlExprSerializerPostgres
 
 /*
 class DatatypeToStringMySql
-	implements DatatypeToString
+    implements DatatypeToString
 {
-	public String asString(TokenType datatype)
-	{
-		String result = (String)MultiMethod.invoke(this, "_asString", datatype);
-		return result;		
-	}
+    public String asString(TokenType datatype)
+    {
+        String result = (String)MultiMethod.invoke(this, "_asString", datatype);
+        return result;
+    }
 
-	public String _asString(TokenTypeDateTime datatype) {
-		return "datetime";
-	}
+    public String _asString(TokenTypeDateTime datatype) {
+        return "datetime";
+    }
 
-	public String _asString(TokenTypeReal datatype) {
-		return "decimal";
-	}
+    public String _asString(TokenTypeReal datatype) {
+        return "decimal";
+    }
 
-	public String _asString(TokenTypeInteger datatype) {
-		return "decimal";
-	}
-	
-	public String _asString(TokenTypeString datatype) {
-		return "char";
-	}
-	
-	public String _asString(TokenTypeBigInteger datatype) {
-		return "decimal";
-	}	
+    public String _asString(TokenTypeInteger datatype) {
+        return "decimal";
+    }
+
+    public String _asString(TokenTypeString datatype) {
+        return "char";
+    }
+
+    public String _asString(TokenTypeBigInteger datatype) {
+        return "decimal";
+    }
 
 }*/
 
@@ -111,23 +105,23 @@ class DatatypeToStringMySql
 
 /*
 class ExprSerializerMySql
-	extends ExprSerializerDefault
+    extends ExprSerializerDefault
 {
 
-	public ExprSerializerMySql() {
-		super(new DatatypeToStringMySql());
-	}
-	
-	public String serializeConstant(Object value, TokenType datatype) {
+    public ExprSerializerMySql() {
+        super(new DatatypeToStringMySql());
+    }
 
-		if(value == null) {			
-			return "CAST(NULL AS " + datatypeSerializer.asString(datatype) + ")";
-		} else if(value instanceof String) {
-			return SQLUtils.quoteStr(value.toString()); 
-		} else {
-			return value.toString();
-		}		
-	}
+    public String serializeConstant(Object value, TokenType datatype) {
+
+        if(value == null) {
+            return "CAST(NULL AS " + datatypeSerializer.asString(datatype) + ")";
+        } else if(value instanceof String) {
+            return SQLUtils.quoteStr(value.toString());
+        } else {
+            return value.toString();
+        }
+    }
 
 }
 */
