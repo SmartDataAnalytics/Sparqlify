@@ -94,7 +94,12 @@ public class SqlExprSerializerSystemImpl
             SqlExprVar v = expr.asVariable();
             S_ColumnRef ref = (S_ColumnRef)v;
 
-            result = "\"" + ref.getColumnName() + "\"";
+            result = ref.getColumnName();
+            if(!ref.isKeyword()) {
+                result = "\"" + result + "\"";
+            }
+
+
 
             if(ref.getRelationAlias() != null) {
                 result = ref.getRelationAlias() + "." + result;

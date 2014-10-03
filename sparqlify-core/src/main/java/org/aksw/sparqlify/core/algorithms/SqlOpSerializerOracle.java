@@ -99,9 +99,9 @@ public class SqlOpSerializerOracle
 
             if(op.getLimit() != null) {
                 if(op.getOffset() != null) {
-                    strs.add("(ROWNUM BETWEEN " + op.getOffset() + " AND " + (op.getOffset() + op.getLimit()) + ")");
+                    strs.add("(ROWNUM BETWEEN " + (op.getOffset() + 1) + " AND " + (op.getOffset() + op.getLimit()) + ")");
                 } else {
-                    strs.add("(ROWNUM < " + op.getLimit() + ")");
+                    strs.add("(ROWNUM <= " + op.getLimit() + ")");
                 }
             }
             else if(op.getOffset() != null) {

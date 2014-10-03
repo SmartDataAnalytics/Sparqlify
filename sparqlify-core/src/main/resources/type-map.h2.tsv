@@ -1,5 +1,5 @@
 # Map type names of the dbms to proxy names
-# Function declarations may use the proxy names as to not depend on potentially vendor specific names directly 
+# Function declarations may use the proxy names as to not depend on potentially vendor specific names directly
 # Issue: Are proxy names in the same namespace as the database names?
 # Suggestion: The namespaces are conceptually disjoint, and the function declaration make use of proxy names
 # However, for any database name for which no mapping exists, a proxy with the same name is generated.
@@ -8,7 +8,7 @@
 # Issue: lets assume we call a function f which returns a proxy type of name integer. What would be the corresponding physical sql type?
 # Concretely: if we have the expression integer toInt(string), which sql integer type do we use?
 # Possible solution: Always use the SQL type that is declared first in the mapping file
-   
+
 
 #h2-type-name	aligned-type-name
 bool	boolean
@@ -22,6 +22,7 @@ VARCHAR string
 text	string
 bpchar	string
 float4	float
+NUMBER  double
 float8	double
 float	float
 date	dateTime
@@ -35,4 +36,3 @@ geometry	geometry
 
 #declare xsd:integer xsd:plus(xsd:integer, xsd:integer)
 #declare xsd:plus as
-    
