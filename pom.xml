@@ -269,18 +269,6 @@
     </build>
     <repositories>
         <repository>
-            <id>maven.aksw.internal</id>
-            <name>University Leipzig, AKSW Maven2 Internal Repository</name>
-            <url>http://maven.aksw.org/repository/internal/</url>
-        </repository>
-
-        <repository>
-            <id>maven.aksw.snapshots</id>
-            <name>University Leipzig, AKSW Maven2 Snapshot Repository</name>
-            <url>http://maven.aksw.org/repository/snapshots/</url>
-        </repository>
-
-        <repository>
             <id>maven2-repository.java.net</id>
             <name>Java.net Repository for Maven</name>
             <url>http://download.java.net/maven/2/</url>
@@ -305,7 +293,18 @@
             <id>Alfresco Maven Repository</id>
             <url>https://maven.alfresco.com/nexus/content/groups/public/</url>
         </repository>
+       
+        <repository>
+            <id>maven.aksw.internal</id>
+            <name>University Leipzig, AKSW Maven2 Internal Repository</name>
+            <url>http://maven.aksw.org/repository/internal/</url>
+        </repository>
 
+        <repository>
+            <id>maven.aksw.snapshots</id>
+            <name>University Leipzig, AKSW Maven2 Snapshot Repository</name>
+            <url>http://maven.aksw.org/repository/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
