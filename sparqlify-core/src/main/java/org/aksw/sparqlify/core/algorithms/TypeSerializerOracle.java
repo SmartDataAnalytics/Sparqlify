@@ -38,8 +38,8 @@ public class TypeSerializerOracle
         // FIXME Not sure if we really have to may every type explicitely here
         // I guess this should be inferred from the config
         nameToPostgres.put("int4", "int4");
-        nameToPostgres.put("text", "text");
-        nameToPostgres.put("VARCHAR", "VARCHAR");
+        nameToPostgres.put("text", "VARCHAR2");
+        nameToPostgres.put("VARCHAR2", "VARCHAR2");
         nameToPostgres.put("DOUBLE", "DOUBLE");
         nameToPostgres.put("INTEGER", "INTEGER");
         nameToPostgres.put("BIGINT", "BIGINT");
@@ -87,7 +87,14 @@ public class TypeSerializerOracle
 
             @Override
             public String create(String a) {
-                return "CAST(" + a + " AS " + result + ")";
+                //String foo = result;
+                String r;
+                if(a.equals("NULL") && (result.equals("VARCHAR2") || result.equals("text"))) {
+                    r = "TO_CHAR(NULL)";
+                } else {
+                    r = "CAST(" + a + " AS " + result + ")";
+                }
+                return r;
             }
         };
 
