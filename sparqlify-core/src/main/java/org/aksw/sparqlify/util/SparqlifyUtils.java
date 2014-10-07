@@ -440,8 +440,8 @@ public class SparqlifyUtils {
 
             //List<org.aksw.sparqlify.config.syntax.ViewDefinition> vds = config.getViewDefinitions();
             Set<String> tableNames = getTableNames(candidateViewSelector.getViews());
-//            databaseSchema = Schema.create(conn, null, tableNames);
-            databaseSchema = Schema.create(conn);
+            databaseSchema = Schema.create(conn, null, tableNames);
+            //databaseSchema = Schema.create(conn);
 
         } finally {
             conn.close();
