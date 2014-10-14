@@ -108,7 +108,7 @@
 			<plugin>
 				<artifactId>jdeb</artifactId>
 				<groupId>org.vafer</groupId>
-				<version>1.0</version>
+				<version>1.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -118,6 +118,14 @@
 						<configuration>
 							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
 							<timestamped>true</timestamped>
+
+							<signPackage>true</signPackage>
+							<signMethod>dpkg-sig</signMethod>
+							<signRole>builder</signRole>
+							<keyring>${jdeb.keyring}</keyring>
+							<key>${jdeb.key}</key>
+							<passphrase>${jdeb.passphrase}</passphrase>
+
 							<dataSet>
 
 								<data>
