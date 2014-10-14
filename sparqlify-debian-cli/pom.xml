@@ -121,7 +121,7 @@
 							<snapshotExpand>true</snapshotExpand>
 							<snapshotEnv></snapshotEnv>
 
-							<signPackage>true</signPackage>
+							<signPackage>${jdeb.signPackage}</signPackage>
 							<signMethod>dpkg-sig</signMethod>
 							<signRole>builder</signRole>
 							<keyring>${jdeb.keyring}</keyring>
