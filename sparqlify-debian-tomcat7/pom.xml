@@ -16,7 +16,7 @@
 
 
 	<properties>
-		<deb.tomcat7.packageName>sparqlify-tomcat7</deb.tomcat7.packageName>
+		<deb.packageName>sparqlify-tomcat7</deb.packageName>
 <!-- 		<tomcat.context.name>sparqlify</tomcat.context.name> -->
 	</properties>
 
@@ -62,7 +62,8 @@
 							<goal>jdeb</goal>
 						</goals>
 						<configuration>
-							<deb>${project.build.directory}/${deb.tomcat7.packageName}_[[version]]_all.deb</deb>
+							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
+							<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
 
                                                         <snapshotExpand>true</snapshotExpand>
                                                         <snapshotEnv></snapshotEnv>

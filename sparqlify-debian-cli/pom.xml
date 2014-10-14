@@ -117,6 +117,8 @@
 						</goals>
 						<configuration>
 							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
+							<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
+
 							<!-- <timestamped>true</timestamped> -->
 							<snapshotExpand>true</snapshotExpand>
 							<snapshotEnv></snapshotEnv>
