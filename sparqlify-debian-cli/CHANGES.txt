@@ -1,9 +1,9 @@
-release date=15:43 01.03.2014,version=0.6.9,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=lod2
+release date=15:43 01.03.2014,version=0.6.9,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=ldstack-nightly
  * Several general bug fixes
-release date=21:18 12.07.2013,version=0.6.1+nmu1,urgency=low,by=Sebastian Tramp <tramp@informatik.uni-leipzig.de>,distribution=lod2
+release date=21:18 12.07.2013,version=0.6.1+nmu1,urgency=low,by=Sebastian Tramp <tramp@informatik.uni-leipzig.de>,distribution=ldstack-nightly
  * Non-maintainer upload
  * fix some lintian tags
-release date=17:46 04.07.2013,version=0.6.1,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=lod2
+release date=17:46 04.07.2013,version=0.6.1,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=ldstack-nightly
  * Several general bug fixes
  * BSBM now working
  * All r2rml test cases (that produce output) pass
@@ -12,5 +12,5 @@ release date=17:46 04.07.2013,version=0.6.1,urgency=low,by=Claus Stadler <cstadl
  * Improved log output
  * Optimizied rewrites of left joins
  * Automatic handling of nullable columns
-release date=12:25 09.07.2012,version=0.2,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=lod2
+release date=12:25 09.07.2012,version=0.2,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=ldstack-nightly
  * Initial version

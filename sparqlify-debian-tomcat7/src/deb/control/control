@@ -6,4 +6,4 @@ Architecture: all
 Depends: sparqlify-tomcat-common, xsltproc, tomcat7
 Maintainer: Claus Stadler <cstadler@informatik.uni-leipzig.de>
 Description: Sparqlify Tomcat Common
-Distribution: development
+Distribution: ldstack-nightly
