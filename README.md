@@ -18,8 +18,9 @@ This system's features/traits are:
 
 ## Supported SPARQL language features
 * Join, LeftJoin (i.e. Optional), Union, Sub queries
-* Filter predicates: comparison: (<=, <, =, >, >=) logical: (!, &&; ||) arithmetic: (+, -) spatial: st\_intersects, geomFromText other: regex, lang, langMatches  
+* Filter predicates: comparison: (<=, <, =, >, >=) logical: (!, &&; ||) arithmetic: (+, -) spatial: st\_intersects, geomFromText; other: regex, lang, langMatches  
 * Aggregate functions: Count(\*)
+* Order By is pushed into the SQL
 
 
 ## Debian packages
@@ -168,7 +169,7 @@ Usage: `sparqlify-csv [options]`
   * -h   Use first row as headers. This option allows one to reference columns by name additionally to its index.
 
 
-### sparqlify-platform
+### sparqlify-platform (Deprecated; about to be superseded by sparqlify-web-admin)
 The Sparqlify Platform (under /sparqlify-platform) bundles Sparqlify with the Linked Data wrapper [Pubby](https://github.com/cygri/pubby) and the SPARQL Web interface [Snorql](https://github.com/kurtjx/SNORQL).
 
 Usage: `sparqlify-platform config-dir [port]` 
