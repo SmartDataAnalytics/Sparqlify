@@ -36,9 +36,25 @@ After setting up any of the repositories below, you can install sparqlify with a
 
 * apt: `sudo apt-get install sparqlify-cli
 
-#### LOD2 (Releases, this is what you want)
+#### Linked Data Stack (this is what you want)
 
-Coming soon!
+Sparqlify is distributed at the (Linked Data Stack)[http://stack.linkeddata.org], which offers many great tools done by various contributors of the Semantic Web community.
+
+* The repository is available in the flavors `nightly`, `testing` and `stable` (here)[http://stack.linkeddata.org/download/repo.php].
+Make sure to install thi
+
+```bash
+# Download the repository package
+# !!! Replace stable with nightly or testing as needed !!!
+wget http://stack.linkeddata.org/ldstable-repository.deb
+
+# Install the repository package
+sudo dpkg -i ldstable-repository.deb
+
+# Update the repository database
+sudo apt-get update
+```
+
 
 #### Bleeding Edge (WARNING: Do not use this for production!!!)
 For the latest development version (built on every commit) perform the following steps
