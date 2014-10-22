@@ -42,8 +42,9 @@ Sparqlify is distributed at the [Linked Data Stack](http://stack.linkeddata.org)
 * The repository is available in the flavors `nightly`, `testing` and `stable` [here](http://stack.linkeddata.org/download/repo.php).
 
 ```bash
-# Download the repository package
 # !!! Replace stable with nightly or testing as needed !!!
+
+# Download the repository package
 wget http://stack.linkeddata.org/ldstable-repository.deb
 
 # Install the repository package
