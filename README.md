@@ -25,10 +25,9 @@ This system's features/traits are:
 ## Debian packages
 
 Sparqlify Debian packages can be obtained by following means:
+* Via the [Linked Data Stack](http://stack.linkeddata.org) (recommended)
 * Download from the [Sparqlify website's download section](http://sparqlify.org/downloads/releases).
-* Via the [LOD2 repository](http://stack.lod2.eu/deb/distributions/dists/) 
-* Directly from source using maven (read below)
-
+* Directly from source using maven (read down the README)
 
 ### Public repositories
 
@@ -38,10 +37,9 @@ After setting up any of the repositories below, you can install sparqlify with a
 
 #### Linked Data Stack (this is what you want)
 
-Sparqlify is distributed at the (Linked Data Stack)[http://stack.linkeddata.org], which offers many great tools done by various contributors of the Semantic Web community.
+Sparqlify is distributed at the [Linked Data Stack](http://stack.linkeddata.org), which offers many great tools done by various contributors of the Semantic Web community.
 
-* The repository is available in the flavors `nightly`, `testing` and `stable` (here)[http://stack.linkeddata.org/download/repo.php].
-Make sure to install thi
+* The repository is available in the flavors `nightly`, `testing` and `stable` [here](http://stack.linkeddata.org/download/repo.php).
 
 ```bash
 # Download the repository package
@@ -72,7 +70,7 @@ Import the public key with
     wget -O - http://cstadler.aksw.org/repos/apt/conf/packages.precise.gpg.key | apt-key add -
 
 
-*TODO* Figure out how to deal with other distros
+Note that this also works with distros other than "precise" (ubuntu 12.04) such as ubuntu 14.04.
 
 
 
