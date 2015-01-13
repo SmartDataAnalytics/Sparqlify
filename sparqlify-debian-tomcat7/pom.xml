@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.6.13-SNAPSHOT</version>
+		<version>0.6.13</version>
 	</parent>
 
 	<artifactId>sparqlify-debian-tomcat7</artifactId>
@@ -66,7 +66,7 @@
 							<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
 
                                                         <snapshotExpand>true</snapshotExpand>
-                                                        <snapshotEnv></snapshotEnv>
+                                                        <snapshotEnv />
 
                                                         <signPackage>${jdeb.signPackage}</signPackage>
                                                         <signMethod>dpkg-sig</signMethod>
