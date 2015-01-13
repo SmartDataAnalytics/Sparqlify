@@ -72,7 +72,7 @@
 
 		<dependency>
 			<groupId>org.aksw.commons</groupId>
-			<artifactId>util</artifactId>
+			<artifactId>aksw-commons-util</artifactId>
 			<scope>compile</scope>
 		</dependency>
 
@@ -80,7 +80,7 @@
 			<scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>org.aksw.commons</groupId>
-			<artifactId>collections</artifactId>
+			<artifactId>aksw-commons-collections</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
