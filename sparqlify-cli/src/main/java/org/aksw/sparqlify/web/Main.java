@@ -31,13 +31,13 @@ import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.jena.riot.out.NQuadsWriter;
 import org.apache.jena.riot.out.NTriplesWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,31 +46,9 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.sparql.core.Quad;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 
 public class Main {
-
-    public static void onErrorPrintHelpAndExit(Options cliOptions, LoggerCount loggerCount, int exitCode) {
-
-        if(loggerCount.getErrorCount() != 0) {
-            //logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
-
-            printHelpAndExit(cliOptions, exitCode);
-
-            throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
-        }
-
-    }
-
-    /**
-     * @param exitCode
-     */
-    public static void printHelpAndExit(Options cliOptions, int exitCode) {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(HttpSparqlEndpoint.class.getName(), cliOptions);
-        System.exit(exitCode);
-    }
 
     private static final Logger logger = LoggerFactory
             .getLogger(HttpSparqlEndpoint.class);
@@ -175,13 +153,13 @@ public class Main {
 
 
         Config config = SparqlifyCliHelper.parseSmlConfigs(commandLine, loggerCount);
-        onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
+        SparqlifyCliHelper.onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
 
         /*
          * Connection Pool
          */
         DataSource dataSource = SparqlifyCliHelper.parseDataSource(commandLine, loggerCount);
-        onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
+        SparqlifyCliHelper.onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
 
 
         RdfViewSystemOld.initSparqlifyFunctions();

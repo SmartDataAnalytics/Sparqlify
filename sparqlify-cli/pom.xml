@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>sparqlify-cli</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Sparqlify SPARQL-&gt;SQL rewriter - Cli</name>
+    <url>http://aksw.org/Projects/Sparqlify</url>
+
+    <parent>
+        <groupId>org.aksw.sparqlify</groupId>
+        <artifactId>sparqlify-parent</artifactId>
+        <version>0.6.14-SNAPSHOT</version>
+    </parent>
+
+    <!-- <build> -->
+    <!-- <finalName>sparqlify-core</finalName> -->
+    <!-- </build> -->
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Any eclipse problem with the plugin should disappear with m2e 1.1 -->
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.9.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+<!-- 					<source>${maven.compiler.source}</source> -->
+<!-- 					<target>${maven.compiler.target}</target> -->
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <generatePackage>org.aksw.sparqlify.config.xml</generatePackage>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.aksw.sparqlify</groupId>
+            <artifactId>sparqlify-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aksw.jena-sparql-api</groupId>
+            <artifactId>jena-sparql-api-server</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

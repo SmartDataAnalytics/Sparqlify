@@ -27,6 +27,7 @@ import jxl.read.biff.BiffException;
 import org.aksw.jena_sparql_api.core.ConstructIterator;
 import org.aksw.jena_sparql_api.core.ResultSetClosable;
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
+import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
@@ -37,13 +38,11 @@ import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.sparql.IteratorResultSetSparqlifyBinding;
 import org.aksw.sparqlify.validation.LoggerCount;
-import org.aksw.sparqlify.web.HttpSparqlEndpoint;
-import org.aksw.sparqlify.web.SparqlFormatterUtils;
+import org.aksw.sparqlify.web.SparqlifyCliHelper;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jena.atlas.lib.MapUtils;
@@ -69,506 +68,498 @@ import com.hp.hpl.jena.sparql.syntax.Template;
 
 public class CsvMapperCliMain {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(CsvMapperCliMain.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(CsvMapperCliMain.class);
 
-	private static final Options cliOptions = new Options();
+    private static final Options cliOptions = new Options();
 
-	/**
-	 * @param exitCode
-	 */
-	public static void printHelpAndExit(int exitCode) {
-		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(HttpSparqlEndpoint.class.getName(), cliOptions);
-		System.exit(exitCode);
-	}
 
-	public static File extractFile(CommandLine commandLine, String optionName) {
-		// Option option = commandLine.getO(optionName);
+    public static File extractFile(CommandLine commandLine, String optionName) {
+        // Option option = commandLine.getO(optionName);
 
-		String filename = commandLine.getOptionValue(optionName);
+        String filename = commandLine.getOptionValue(optionName);
 
-		String optionLabel = optionName;
+        String optionLabel = optionName;
 
-		if (filename == null) {
-			logger.error("No file given for option: " + optionLabel);
+        if (filename == null) {
+            logger.error("No file given for option: " + optionLabel);
 
-			printHelpAndExit(-1);
-		}
+            SparqlifyCliHelper.printHelpAndExit(cliOptions, -1);
+        }
 
-		File file = new File(filename);
-		if (!file.exists()) {
-			logger.error("File given as argument for option " + optionLabel
-					+ " does not exist: " + file.getAbsolutePath());
+        File file = new File(filename);
+        if (!file.exists()) {
+            logger.error("File given as argument for option " + optionLabel
+                    + " does not exist: " + file.getAbsolutePath());
 
-			printHelpAndExit(-1);
-		}
+            SparqlifyCliHelper.printHelpAndExit(cliOptions, -1);
+        }
 
-		return file;
-	}
+        return file;
+    }
 
-	public static boolean isNullOrVar(Node node) {
-		return node == null || node.isVariable();
-	}
-	
-	public static boolean containsNullOrVar(Triple triple) {
-		boolean s = isNullOrVar(triple.getSubject());
-		boolean p = isNullOrVar(triple.getPredicate());
-		boolean o = isNullOrVar(triple.getObject());
-		
-		boolean result = s || p || o; 
-		return result;
-	}
-	
-	public static void countVariable(Node node, Map<Var, Integer> countMap) {
-		if(node == null) {
-			MapUtils.increment(countMap, null);
-		}
-		else if(node.isVariable()) {
-			MapUtils.increment(countMap, (Var)node);
-		}
-	}
-	
-	
-	public static void show(Reader reader) {
-		BufferedReader br = new BufferedReader(reader);
-		String line;
-		try {
-			while((line = br.readLine()) != null) {
-				System.out.println(line);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public static TemplateConfig readTemplateConfig(InputStream in, Logger loggerCount)
-			throws IOException, RecognitionException
-	{
-		TemplateConfigParser parser = new TemplateConfigParser();
+    public static boolean isNullOrVar(Node node) {
+        return node == null || node.isVariable();
+    }
 
-		TemplateConfig config;
-		try {
-			config = parser.parse(in, loggerCount);
-		} finally {
-			in.close();
-		}
-		
-		return config;
-	}
-	
-	
-	public static Character parseChar(String str) {
-		Character result;
-		
-		str = str.trim();
+    public static boolean containsNullOrVar(Triple triple) {
+        boolean s = isNullOrVar(triple.getSubject());
+        boolean p = isNullOrVar(triple.getPredicate());
+        boolean o = isNullOrVar(triple.getObject());
 
-		if(str.startsWith("\\")) {
-			String charValue = str.substring(1);
-			int val = Integer.parseInt(charValue);
-			
-			if(val < 0 || val > Character.MAX_VALUE) {
-				throw new RuntimeException("Character value must be in the range 0-" + (int)Character.MAX_VALUE);
-			}
-			result = (char)val;
-		}
-		
-		else if(str.startsWith("0x")) {
+        boolean result = s || p || o;
+        return result;
+    }
 
-			String hex = str.substring(2);
-			int val = 0;
-		    for (int i = 0; i < hex.length(); ++i) {
-		        String s = hex.substring(i, i + 1);
-		        char part = (char)Integer.parseInt(s, 16);
-		        val <<= 4;
-		        val |= part;
-				if(val < 0 || val > Character.MAX_VALUE) {
+    public static void countVariable(Node node, Map<Var, Integer> countMap) {
+        if(node == null) {
+            MapUtils.increment(countMap, null);
+        }
+        else if(node.isVariable()) {
+            MapUtils.increment(countMap, (Var)node);
+        }
+    }
 
-					throw new RuntimeException("Character must be in the range 0x0-0x" + Integer.toHexString(Character.MAX_VALUE));
-				}
-		    }
-		    
-		    result = (char)val;
-		}
-		
-		else if(str.length() > 1) {
-			throw new RuntimeException("Only a singe character allowed.");
-		}
-		else {
-			result = str.charAt(0);
-		}
-	
-		return result;		
-	}
 
-	public static Character getChar(Logger logger, CommandLine commandLine, String opt)
-	{
-		Character result = null;
-		String resultStr = commandLine.getOptionValue(opt, null);
-		if(!StringUtils.isEmpty(resultStr)) {
-			try {
-				result = parseChar(resultStr);
-			} catch(Exception e) {
-				logger.error("Error parsing command line argument -" + opt + " " + resultStr + ": " + e.getClass().getSimpleName() + " for " + e.getMessage());
-			}
-		}
+    public static void show(Reader reader) {
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        try {
+            while((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-		return result;
-	}
-	
-	
-	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws Exception {
-		/*
-		PropertyConfigurator.configure("log4j.properties");
-		LogManager.getLogManager().readConfiguration(
-				new FileInputStream("jdklog.properties"));
-		*/
 
-		CommandLineParser cliParser = new GnuParser();
+    public static TemplateConfig readTemplateConfig(InputStream in, Logger loggerCount)
+            throws IOException, RecognitionException
+    {
+        TemplateConfigParser parser = new TemplateConfigParser();
 
-		// cliOptions.addOption("P", "port", true, "Server port");
-		// cliOptions.addOption("C", "context", true,
-		// "Context e.g. /sparqlify");
-		// cliOptions.addOption("B", "backlog", true,
-		// "Maximum number of connections");
-		//
-		// cliOptions.addOption("t", "type", true,
-		// "Database type (posgres, mysql,...)");
-		// cliOptions.addOption("d", "database", true, "Database name");
-		// cliOptions.addOption("u", "username", true, "");
-		// cliOptions.addOption("p", "password", true, "");
-		// cliOptions.addOption("h", "hostname", true, "");
+        TemplateConfig config;
+        try {
+            config = parser.parse(in, loggerCount);
+        } finally {
+            in.close();
+        }
 
-		cliOptions.addOption("c", "config", true, "Sparqlify config file");
-		cliOptions.addOption("f", "config", true, "Input data file");
-		cliOptions.addOption("v", "config", true, "View name (only needed if config contains more than one view)");
-		cliOptions.addOption("h", "config", false, "Use first row as headers");
+        return config;
+    }
 
-		cliOptions.addOption("s", "config", true, "CSV field separator (default is ',')");
-		cliOptions.addOption("d", "config", true, "CSV field delimiter (default is '\"')");
-		cliOptions.addOption("e", "config", true, "CSV field escape delimiter (escapes the field delimiter) (default is '\\')");
 
-		
-		// TODO NULL value string -n
-		// TODO offset -t (top)
-		// TODO limit  -b (bottom)
-		
-		CommandLine commandLine = cliParser.parse(cliOptions, args);
+    public static Character parseChar(String str) {
+        Character result;
 
-		File configFile = extractFile(commandLine, "c");
-		File dataFile = extractFile(commandLine, "f");
+        str = str.trim();
 
-		String viewName = StringUtils.trim(commandLine.getOptionValue("v"));
+        if(str.startsWith("\\")) {
+            String charValue = str.substring(1);
+            int val = Integer.parseInt(charValue);
 
-		LoggerCount loggerCount = new LoggerCount(logger);
+            if(val < 0 || val > Character.MAX_VALUE) {
+                throw new RuntimeException("Character value must be in the range 0-" + (int)Character.MAX_VALUE);
+            }
+            result = (char)val;
+        }
 
-		CsvParserConfig csvConfig = new CsvParserConfig();
-		csvConfig.setFieldDelimiter(getChar(loggerCount, commandLine, "d"));
-		csvConfig.setEscapeCharacter(getChar(loggerCount, commandLine, "e"));
-		csvConfig.setFieldSeparator(getChar(loggerCount, commandLine, "s"));
+        else if(str.startsWith("0x")) {
 
-		boolean useFirstRowAsHeaderNames = commandLine.hasOption("h");
+            String hex = str.substring(2);
+            int val = 0;
+            for (int i = 0; i < hex.length(); ++i) {
+                String s = hex.substring(i, i + 1);
+                char part = (char)Integer.parseInt(s, 16);
+                val <<= 4;
+                val |= part;
+                if(val < 0 || val > Character.MAX_VALUE) {
 
-		InputStream in = new FileInputStream(configFile);
-		TemplateConfig config;
-		try {
-			config = readTemplateConfig(in, loggerCount);
-		} finally {
-			in.close();
-		}
+                    throw new RuntimeException("Character must be in the range 0x0-0x" + Integer.toHexString(Character.MAX_VALUE));
+                }
+            }
 
-		
-		logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+            result = (char)val;
+        }
 
-		if(loggerCount.getErrorCount() > 0) {
-			throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
-		}
+        else if(str.length() > 1) {
+            throw new RuntimeException("Only a singe character allowed.");
+        }
+        else {
+            result = str.charAt(0);
+        }
 
-		List<NamedViewTemplateDefinition> views = config.getDefinitions();
-		
-		if(views.isEmpty()) {
-			logger.warn("No view definitions found");
-		}
-		
-		
-		// Index the views by name
-		Map<String, NamedViewTemplateDefinition> viewIndex = indexViews(views, loggerCount);
-		ViewTemplateDefinition view;
-		
-		view = pickView(viewIndex, viewName);
+        return result;
+    }
+
+    public static Character getChar(Logger logger, CommandLine commandLine, String opt)
+    {
+        Character result = null;
+        String resultStr = commandLine.getOptionValue(opt, null);
+        if(!StringUtils.isEmpty(resultStr)) {
+            try {
+                result = parseChar(resultStr);
+            } catch(Exception e) {
+                logger.error("Error parsing command line argument -" + opt + " " + resultStr + ": " + e.getClass().getSimpleName() + " for " + e.getMessage());
+            }
+        }
+
+        return result;
+    }
+
+
+    @SuppressWarnings("static-access")
+    public static void main(String[] args) throws Exception {
+        /*
+        PropertyConfigurator.configure("log4j.properties");
+        LogManager.getLogManager().readConfiguration(
+                new FileInputStream("jdklog.properties"));
+        */
+
+        CommandLineParser cliParser = new GnuParser();
+
+        // cliOptions.addOption("P", "port", true, "Server port");
+        // cliOptions.addOption("C", "context", true,
+        // "Context e.g. /sparqlify");
+        // cliOptions.addOption("B", "backlog", true,
+        // "Maximum number of connections");
+        //
+        // cliOptions.addOption("t", "type", true,
+        // "Database type (posgres, mysql,...)");
+        // cliOptions.addOption("d", "database", true, "Database name");
+        // cliOptions.addOption("u", "username", true, "");
+        // cliOptions.addOption("p", "password", true, "");
+        // cliOptions.addOption("h", "hostname", true, "");
+
+        cliOptions.addOption("c", "config", true, "Sparqlify config file");
+        cliOptions.addOption("f", "config", true, "Input data file");
+        cliOptions.addOption("v", "config", true, "View name (only needed if config contains more than one view)");
+        cliOptions.addOption("h", "config", false, "Use first row as headers");
+
+        cliOptions.addOption("s", "config", true, "CSV field separator (default is ',')");
+        cliOptions.addOption("d", "config", true, "CSV field delimiter (default is '\"')");
+        cliOptions.addOption("e", "config", true, "CSV field escape delimiter (escapes the field delimiter) (default is '\\')");
+
+
+        // TODO NULL value string -n
+        // TODO offset -t (top)
+        // TODO limit  -b (bottom)
+
+        CommandLine commandLine = cliParser.parse(cliOptions, args);
+
+        File configFile = extractFile(commandLine, "c");
+        File dataFile = extractFile(commandLine, "f");
+
+        String viewName = StringUtils.trim(commandLine.getOptionValue("v"));
+
+        LoggerCount loggerCount = new LoggerCount(logger);
+
+        CsvParserConfig csvConfig = new CsvParserConfig();
+        csvConfig.setFieldDelimiter(getChar(loggerCount, commandLine, "d"));
+        csvConfig.setEscapeCharacter(getChar(loggerCount, commandLine, "e"));
+        csvConfig.setFieldSeparator(getChar(loggerCount, commandLine, "s"));
+
+        boolean useFirstRowAsHeaderNames = commandLine.hasOption("h");
+
+        InputStream in = new FileInputStream(configFile);
+        TemplateConfig config;
+        try {
+            config = readTemplateConfig(in, loggerCount);
+        } finally {
+            in.close();
+        }
+
+
+        logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+
+        if(loggerCount.getErrorCount() > 0) {
+            throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
+        }
+
+        List<NamedViewTemplateDefinition> views = config.getDefinitions();
+
+        if(views.isEmpty()) {
+            logger.warn("No view definitions found");
+        }
+
+
+        // Index the views by name
+        Map<String, NamedViewTemplateDefinition> viewIndex = indexViews(views, loggerCount);
+        ViewTemplateDefinition view;
+
+        view = pickView(viewIndex, viewName);
 //		if(view == null) {
 //			logger.error("View '" + viewName + "' not found in config file");
 //			System.exit(1);
 //		}
-		
-		Reader fileReader = new FileReader(dataFile);
-		//convertCsvToRdf(fileReader, view);
-		
-		InputSupplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(dataFile, csvConfig);
-		
-		ResultSet resultSet = createResultSetFromCsv(csvReaderSupplier, useFirstRowAsHeaderNames, 100);
 
-		//csv.setEscapeCharacter('/');
+        Reader fileReader = new FileReader(dataFile);
+        //convertCsvToRdf(fileReader, view);
 
-		//ResultSet resultSet = csv.read(fileReader, null);
+        InputSupplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(dataFile, csvConfig);
 
-		
-		
-		TripleIteratorTracking trackingIt = createTripleIterator(resultSet, view);
-		
+        ResultSet resultSet = createResultSetFromCsv(csvReaderSupplier, useFirstRowAsHeaderNames, 100);
 
-		//writeTriples(System.out, trackingIt);
-		SparqlFormatterUtils.writeText(System.out, trackingIt);
-		writeSummary(System.err, trackingIt.getState());
-		
-		
-		//convertCsvToRdf(resultSet, view);
-	}
-	
-	
-	public static Map<String, NamedViewTemplateDefinition> indexViews(List<NamedViewTemplateDefinition> views, Logger loggerCount) {
-		
-		// Index the views by name
-		Map<String, NamedViewTemplateDefinition> nameToView = new HashMap<String, NamedViewTemplateDefinition>();
-		for(NamedViewTemplateDefinition view : views) {
-			String name = view.getName();
-			
-			if(nameToView.containsKey(name)) {
-				loggerCount.warn("Omitting duplicate view definition: " + name);
-			}
-			
-			nameToView.put(name, view);
-		}
-		
-		return nameToView;
-	}
-	
-	public static ViewTemplateDefinition pickView(Map<String, NamedViewTemplateDefinition> index, String viewName)
-	{
-		ViewTemplateDefinition view = null;
-		if(StringUtils.isEmpty(viewName)) {
-			if(index.size() == 1) {
-				view = index.values().iterator().next();
-			} else {
-				throw new RuntimeException("Multiple views exist. Please specify which one to use");
-				//logger.error("Multiple views present in config file; please specify which to use");
-				//printHelpAndExit(1);
-			}
-		} else {
-			view = index.get(viewName);
-			if(view == null) {
-				throw new RuntimeException("View '" + viewName + "' not found");
+        //csv.setEscapeCharacter('/');
+
+        //ResultSet resultSet = csv.read(fileReader, null);
+
+
+
+        TripleIteratorTracking trackingIt = createTripleIterator(resultSet, view);
+
+
+        //writeTriples(System.out, trackingIt);
+        SparqlFormatterUtils.writeText(System.out, trackingIt);
+        writeSummary(System.err, trackingIt.getState());
+
+
+        //convertCsvToRdf(resultSet, view);
+    }
+
+
+    public static Map<String, NamedViewTemplateDefinition> indexViews(List<NamedViewTemplateDefinition> views, Logger loggerCount) {
+
+        // Index the views by name
+        Map<String, NamedViewTemplateDefinition> nameToView = new HashMap<String, NamedViewTemplateDefinition>();
+        for(NamedViewTemplateDefinition view : views) {
+            String name = view.getName();
+
+            if(nameToView.containsKey(name)) {
+                loggerCount.warn("Omitting duplicate view definition: " + name);
+            }
+
+            nameToView.put(name, view);
+        }
+
+        return nameToView;
+    }
+
+    public static ViewTemplateDefinition pickView(Map<String, NamedViewTemplateDefinition> index, String viewName)
+    {
+        ViewTemplateDefinition view = null;
+        if(StringUtils.isEmpty(viewName)) {
+            if(index.size() == 1) {
+                view = index.values().iterator().next();
+            } else {
+                throw new RuntimeException("Multiple views exist. Please specify which one to use");
+                //logger.error("Multiple views present in config file; please specify which to use");
+                //printHelpAndExit(1);
+            }
+        } else {
+            view = index.get(viewName);
+            if(view == null) {
+                throw new RuntimeException("View '" + viewName + "' not found");
 //				//logger.error("View '" + viewName + "' not found in config file");
 //				//System.exit(1);
 //
-			}
-		}
+            }
+        }
 
-		return view;
-	}
-	
+        return view;
+    }
 
-	/**
-	 * 
-	 * @param readerSupplier We need to read the file twice: Once for figuring out the column headers - and if there are none, again for the data
-	 * @param fieldSeparator
-	 * @param quoteCharacter
-	 * @return
-	 * @throws IOException
-	 */
-	public static ResultSet createResultSetFromCsv(InputSupplier<? extends CSVReader> csvReaderSupplier, boolean useHeaders, Integer sampleSize)
-			throws IOException
-	{
-		sampleSize = (sampleSize == null) ? 100 : sampleSize;
-		
-		CSVReader headerReader = csvReaderSupplier.getInput();
-		List<String> columnNames = new ArrayList<String>();
-		try {
-			String row[];
-			int i = 0;
-			while((row = headerReader.readNext()) != null && (i < sampleSize)) {
-				if(i == 0 && useHeaders) {
-					columnNames.addAll(Arrays.asList(row));
-				}
-	
-				int delta = row.length - columnNames.size();
-				for(int j = 0; j < delta; ++j) {
-					columnNames.add("" + (i + j));
-				}
-				
-				++i;
-			}
-		} finally {			
-			headerReader.close();
-		}
-		
-		CSVReader dataReader = csvReaderSupplier.getInput();
-		if(useHeaders) {
-			// Skip header row
-			dataReader.readNext();
-		}
-		
-		Reader reader = new ReaderCSVReader(dataReader);
-		
+
+    /**
+     *
+     * @param readerSupplier We need to read the file twice: Once for figuring out the column headers - and if there are none, again for the data
+     * @param fieldSeparator
+     * @param quoteCharacter
+     * @return
+     * @throws IOException
+     */
+    public static ResultSet createResultSetFromCsv(InputSupplier<? extends CSVReader> csvReaderSupplier, boolean useHeaders, Integer sampleSize)
+            throws IOException
+    {
+        sampleSize = (sampleSize == null) ? 100 : sampleSize;
+
+        CSVReader headerReader = csvReaderSupplier.getInput();
+        List<String> columnNames = new ArrayList<String>();
+        try {
+            String row[];
+            int i = 0;
+            while((row = headerReader.readNext()) != null && (i < sampleSize)) {
+                if(i == 0 && useHeaders) {
+                    columnNames.addAll(Arrays.asList(row));
+                }
+
+                int delta = row.length - columnNames.size();
+                for(int j = 0; j < delta; ++j) {
+                    columnNames.add("" + (i + j));
+                }
+
+                ++i;
+            }
+        } finally {
+            headerReader.close();
+        }
+
+        CSVReader dataReader = csvReaderSupplier.getInput();
+        if(useHeaders) {
+            // Skip header row
+            dataReader.readNext();
+        }
+
+        Reader reader = new ReaderCSVReader(dataReader);
+
 //		BufferedReader br = new BufferedReader(reader);
 //		String tmp;
 //		while((tmp = br.readLine()) != null) {
 //			System.out.println(tmp);
 //		}
-		
-		Csv csv = new Csv();
-		csv.setEscapeCharacter('\\');
-				
-		String[] colNames = columnNames.toArray(new String[0]); 
-		ResultSet result = csv.read(reader, colNames);
-		
-		logger.debug("Detected column names: " + columnNames);
-		
-		return result;
-	}
-	
 
-	public static TripleIteratorTracking createTripleIterator(ResultSet rs, ViewTemplateDefinition view) {
+        Csv csv = new Csv();
+        csv.setEscapeCharacter('\\');
 
-		
-	
-		//System.out.println("Test here");
+        String[] colNames = columnNames.toArray(new String[0]);
+        ResultSet result = csv.read(reader, colNames);
 
-		// TODO Move the method to a better place
-		RdfViewSystemOld.initSparqlifyFunctions();
-	
-		//ResultSetMetaData meta = rs.getMetaData();
+        logger.debug("Detected column names: " + columnNames);
 
-		/*
-		for(int i = 1; i <= meta.getColumnCount(); ++i) {
-			System.out.println(meta.getColumnName(i));
-		}
-		*/
+        return result;
+    }
 
 
-		
-		
-		VarExprList varExprs = view.getVarExprList();
-		
-		List<String> vars = new ArrayList<String>();
-		for(Var var : varExprs.getVars()) {
-			vars.add(var.getName());
-		}
-		
-		Multimap<Var, RestrictedExpr> sparqlVarMap = HashMultimap.create();
-		for(Entry<Var, Expr> entry : varExprs.getExprs().entrySet()) {
-			
-			Expr e = SparqlSubstitute.substituteExpr(entry.getValue());
-			//Expr e = FunctionExpander.transform(ex);
-			//System.out.println(e);
-			
-			sparqlVarMap.put(entry.getKey(), new RestrictedExpr(e));
-		}
-		
-		Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(null, rs, sparqlVarMap, 1, "rowId");
-		ResultSetSparqlify rss = new ResultSetSparqlify(itBinding, vars, 0);
-		
+    public static TripleIteratorTracking createTripleIterator(ResultSet rs, ViewTemplateDefinition view) {
+
+
+
+        //System.out.println("Test here");
+
+        // TODO Move the method to a better place
+        RdfViewSystemOld.initSparqlifyFunctions();
+
+        //ResultSetMetaData meta = rs.getMetaData();
+
+        /*
+        for(int i = 1; i <= meta.getColumnCount(); ++i) {
+            System.out.println(meta.getColumnName(i));
+        }
+        */
+
+
+
+
+        VarExprList varExprs = view.getVarExprList();
+
+        List<String> vars = new ArrayList<String>();
+        for(Var var : varExprs.getVars()) {
+            vars.add(var.getName());
+        }
+
+        Multimap<Var, RestrictedExpr> sparqlVarMap = HashMultimap.create();
+        for(Entry<Var, Expr> entry : varExprs.getExprs().entrySet()) {
+
+            Expr e = SparqlSubstitute.substituteExpr(entry.getValue());
+            //Expr e = FunctionExpander.transform(ex);
+            //System.out.println(e);
+
+            sparqlVarMap.put(entry.getKey(), new RestrictedExpr(e));
+        }
+
+        Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(null, rs, sparqlVarMap, 1, "rowId");
+        ResultSetSparqlify rss = new ResultSetSparqlify(itBinding, vars, 0);
+
 
         // insertPrefixesInto(result) ;
         //Template template = view.getConstructTemplate();
-        
-		QuadPattern quadPattern = view.getConstructTemplate();
-        
-		BasicPattern bgp = QuadPatternUtils.toBasicPattern(quadPattern);
-		Template template = new Template(bgp);
-		
-        
+
+        QuadPattern quadPattern = view.getConstructTemplate();
+
+        BasicPattern bgp = QuadPatternUtils.toBasicPattern(quadPattern);
+        Template template = new Template(bgp);
+
+
         //System.out.println(template.getTriples());
-        
-		ResultSetClosable closableRs = new ResultSetClosable(rss);
+
+        ResultSetClosable closableRs = new ResultSetClosable(rss);
         Iterator<Triple> it = new ConstructIterator(template, closableRs);
-        
+
         TripleIteratorTracking result = new TripleIteratorTracking(it);
-        
+
         return result;
-	}
-    
-	public static void writeSummary(PrintStream out, TripleIteratorState state) {
-	
+    }
+
+    public static void writeSummary(PrintStream out, TripleIteratorState state) {
+
         int totalTripleCount = state.getTotalTripleCount();
         int tripleGenCount = state.getTripleGenCount();
         Map<Var, Integer> varCountMap = state.getVarCountMap();
         int omittedTripleCount = totalTripleCount - tripleGenCount;
-        
+
         System.err.println("Variable\t#Unbound");
         for(Entry<Var, Integer> entry : varCountMap.entrySet()) {
-        	Var var = entry.getKey();
-        	Integer count = entry.getValue();
-        	
-        	System.err.println(var + ":\t" + count);
+            Var var = entry.getKey();
+            Integer count = entry.getValue();
+
+            System.err.println(var + ":\t" + count);
         }
-        
+
         System.err.println("Triples generated:\t" + tripleGenCount);
         System.err.println("Potential triples omitted:\t" + omittedTripleCount);
         System.err.println("Triples total:\t" + totalTripleCount);
-	}
-	
+    }
+
 //	public static void writeTriples(PrintStream out, Iterator<Triple> it) {
-//        
+//
 //        while(it.hasNext()) {
 //
 //        	Triple t = it.next();
 //        	String str = TripleUtils.toNTripleString(t);
-//        	
+//
 //        	out.println(str);
 //        }
-		
-        /*
-		System.exit(0);
-		
-		
-		for (ViewTemplateDefinition x : config.getDefinitions()) {
-			System.out.println(x);
 
-			// x.getConstructTemplate().
-			VarExprList vel = x.getVarExprList();
-			System.out.println(vel);
-		}*/
+        /*
+        System.exit(0);
+
+
+        for (ViewTemplateDefinition x : config.getDefinitions()) {
+            System.out.println(x);
+
+            // x.getConstructTemplate().
+            VarExprList vel = x.getVarExprList();
+            System.out.println(vel);
+        }*/
 //
 //	}
 
 
-	public static Iterator<List<String>> getCsvIterator(File file,
-			String columnSeparator) throws FileNotFoundException {
-		// BufferedReader reader = new BufferedReader(new InputStreamReader(new
-		// FileInputStream(file)));
+    public static Iterator<List<String>> getCsvIterator(File file,
+            String columnSeparator) throws FileNotFoundException {
+        // BufferedReader reader = new BufferedReader(new InputStreamReader(new
+        // FileInputStream(file)));
 
-		Iterator<List<String>> result = new CsvRowIterator(file);
+        Iterator<List<String>> result = new CsvRowIterator(file);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static Iterator<List<String>> getXlsCsvIterator(File file,
-			int sheetIndex) throws BiffException, IOException {
-		WorkbookSettings ws = new WorkbookSettings();
-		ws.setLocale(new Locale("en", "EN"));
-		Workbook w = Workbook.getWorkbook(file, ws);
+    public static Iterator<List<String>> getXlsCsvIterator(File file,
+            int sheetIndex) throws BiffException, IOException {
+        WorkbookSettings ws = new WorkbookSettings();
+        ws.setLocale(new Locale("en", "EN"));
+        Workbook w = Workbook.getWorkbook(file, ws);
 
-		// File f = new File("/tmp/new.csv");
-		// OutputStream os = (OutputStream) new FileOutputStream(f);
-		// String encoding = "UTF8";
-		// OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
-		// BufferedWriter bw = new BufferedWriter(osw);
+        // File f = new File("/tmp/new.csv");
+        // OutputStream os = (OutputStream) new FileOutputStream(f);
+        // String encoding = "UTF8";
+        // OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
+        // BufferedWriter bw = new BufferedWriter(osw);
 
-		if (sheetIndex >= w.getNumberOfSheets()) {
-			throw new IndexOutOfBoundsException("Attemp to access sheet "
-					+ sheetIndex + "/" + w.getNumberOfSheets());
-		}
+        if (sheetIndex >= w.getNumberOfSheets()) {
+            throw new IndexOutOfBoundsException("Attemp to access sheet "
+                    + sheetIndex + "/" + w.getNumberOfSheets());
+        }
 
-		Sheet s = w.getSheet(sheetIndex);
+        Sheet s = w.getSheet(sheetIndex);
 
-		Iterator<List<String>> result = new XlsRowIterator<String>(s, 0,
-				CellToStringTransformer.getInstance(), w);
+        Iterator<List<String>> result = new XlsRowIterator<String>(s, 0,
+                CellToStringTransformer.getInstance(), w);
 
-		return result;
-	}
+        return result;
+    }
 
 }

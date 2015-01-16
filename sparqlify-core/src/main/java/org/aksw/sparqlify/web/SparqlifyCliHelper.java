@@ -19,8 +19,10 @@ import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.validation.LoggerCount;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -243,5 +245,26 @@ public class SparqlifyCliHelper {
         Config result = SparqlifyUtils.parseSmlConfig(in, logger);
 
         return result;
+    }
+
+    public static void onErrorPrintHelpAndExit(Options cliOptions, LoggerCount loggerCount, int exitCode) {
+
+        if(loggerCount.getErrorCount() != 0) {
+            //logger.info("Errors: " + loggerCount.getErrorCount() + ", Warnings: " + loggerCount.getWarningCount());
+
+            SparqlifyCliHelper.printHelpAndExit(cliOptions, exitCode);
+
+            throw new RuntimeException("Encountered " + loggerCount.getErrorCount() + " errors that need to be fixed first.");
+        }
+
+    }
+
+    /**
+     * @param exitCode
+     */
+    public static void printHelpAndExit(Options cliOptions, int exitCode) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(SparqlifyCliHelper.class.getName(), cliOptions);
+        System.exit(exitCode);
     }
 }
