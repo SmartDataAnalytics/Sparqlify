@@ -23,30 +23,30 @@ import com.hp.hpl.jena.query.QueryExecution;
 @Service
 @Path("/api/sparql/")
 public class SparqlifyManagerSparqlEndpoint
-	extends SparqlEndpointBase
+    extends SparqlEndpointBase
 {
 
-	@Resource(name="managerApiQef")
-	private QueryExecutionFactory qef;
-	
-	@Context
-	private ServletContext servletContext;
+    @Resource(name="managerApiQef")
+    private QueryExecutionFactory qef;
 
-	
-	@Override
-	public QueryExecution createQueryExecution(Query query) {
-		QueryExecution result = qef.createQueryExecution(query);
-		return result;
-	}
-	
-	@GET
-	@Produces(MediaType.TEXT_HTML)
-	public Response executeQueryXml(@Context HttpServletRequest req) //, @Context HttpServletResponse res)
-			throws Exception {
-				
-		InputStream r = servletContext.getResourceAsStream("/resources/snorql/index.html");
-		//System.out.println("Resource is " + r);
-		return Response.ok(r, MediaType.TEXT_HTML).build();
-	}
+    @Context
+    private ServletContext servletContext;
+
+
+    @Override
+    public QueryExecution createQueryExecution(Query query) {
+        QueryExecution result = qef.createQueryExecution(query);
+        return result;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public Response executeQueryXml(@Context HttpServletRequest req) //, @Context HttpServletResponse res)
+            throws Exception {
+
+        InputStream r = servletContext.getResourceAsStream("/resources/snorql/index.html");
+        //System.out.println("Resource is " + r);
+        return Response.ok(r, MediaType.TEXT_HTML).build();
+    }
 
 }
