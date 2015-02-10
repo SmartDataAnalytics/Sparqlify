@@ -78,7 +78,7 @@
 
         <aksw.commons.version>0.7.4</aksw.commons.version>
 
-        <jena-sparql-api.version>2.11.2-60-SNAPSHOT</jena-sparql-api.version>
+        <jena-sparql-api.version>2.12.1-1</jena-sparql-api.version>
 
         <platform.linkedData.contextPath>/</platform.linkedData.contextPath>
     </properties>
@@ -402,12 +402,18 @@
                 <artifactId>jena-sparql-api-core</artifactId>
                 <version>${jena-sparql-api.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-web</artifactId>
+                <version>${jena-sparql-api.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.aksw.jena-sparql-api</groupId>
                 <artifactId>jena-sparql-api-server</artifactId>
                 <version>${jena-sparql-api.version}</version>
             </dependency>
-
 
 
 
@@ -899,6 +905,13 @@
                 <artifactId>hibernate-entitymanager</artifactId>
 <!-- 				<version>4.3.0.Beta4</version> -->
                 <version>4.2.3.Final</version>
+
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 <!-- 			<dependency> -->
 <!-- 				<groupId>org.hibernate</groupId> -->

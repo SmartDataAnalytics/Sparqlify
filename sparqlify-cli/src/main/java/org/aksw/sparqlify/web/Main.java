@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
+import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
@@ -32,8 +33,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
-import org.apache.jena.riot.out.NQuadsWriter;
-import org.apache.jena.riot.out.NTriplesWriter;
+import org.apache.jena.riot.writer.NQuadsWriter;
+import org.apache.jena.riot.writer.NTriplesWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;

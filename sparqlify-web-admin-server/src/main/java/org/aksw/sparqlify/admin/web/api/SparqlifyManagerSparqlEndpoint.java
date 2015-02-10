@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.jena_sparql_api.web.SparqlEndpointBase;
+import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
 import org.springframework.stereotype.Service;
 
 import com.hp.hpl.jena.query.Query;

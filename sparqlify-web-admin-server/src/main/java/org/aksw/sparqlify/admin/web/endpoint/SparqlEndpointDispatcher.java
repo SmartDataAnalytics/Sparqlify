@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionAndType;
-import org.aksw.jena_sparql_api.web.SparqlEndpointBase;
+import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
 import org.aksw.service_framework.core.SparqlService;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
