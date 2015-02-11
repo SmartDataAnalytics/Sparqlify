@@ -46,6 +46,7 @@ sparqlify-benchmark/sp2/config
 
 release.properties
 pom.xml.releaseBackup
+dependency-reduced-pom.xml
 
 sparqlify-dump.h2.db
 sparqlify-dump.trace.db
