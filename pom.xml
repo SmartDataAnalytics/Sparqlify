@@ -38,7 +38,6 @@
         <module>sparqlify-cli</module>
         <!-- module>sparqlify-server</module -->
         <module>sparqlify-platform</module>
-        <module>sparqlify-debian-cli</module>
         <module>sparqlify-tests</module>
 
         <module>sparqlify-jpa</module>
@@ -48,6 +47,7 @@
         <module>sparqlify-web-admin-client</module>
         <module>sparqlify-web-admin-server</module>
 
+        <module>sparqlify-debian-cli</module>
         <module>sparqlify-debian-tomcat-common</module>
         <module>sparqlify-debian-tomcat7</module>
     </modules>
