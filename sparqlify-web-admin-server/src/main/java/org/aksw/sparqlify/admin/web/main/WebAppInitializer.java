@@ -36,6 +36,7 @@ public class WebAppInitializer
         {
             FilterRegistration.Dynamic fr = servletContext.addFilter("CorsFilter", new CorsFilter());
             fr.addMappingForUrlPatterns(null, true, "/*");
+            fr.setAsyncSupported(true);
         }
 
         {
@@ -43,6 +44,7 @@ public class WebAppInitializer
             fr.setInitParameter("dispatcher", "REQUEST");
             fr.setInitParameter("dispatcher", "FORWARD");
             fr.addMappingForUrlPatterns(null, true, "/*");
+            fr.setAsyncSupported(true);
         }
 
         // Create the dispatcher servlet's Spring application context
@@ -53,11 +55,13 @@ public class WebAppInitializer
         // com.sun.jersey.config.property.packages
         adminServlet.setInitParameter("jersey.config.server.provider.packages", "org.aksw.sparqlify.admin.web.api");
         adminServlet.addMapping("/manager/*");
+        adminServlet.setAsyncSupported(true);
         adminServlet.setLoadOnStartup(1);
 
         ServletRegistration.Dynamic endpointServlet = servletContext.addServlet("sparqlify-endpoints", new ServletContainer());
         endpointServlet.setInitParameter("jersey.config.server.provider.packages", "org.aksw.sparqlify.admin.web.endpoint");
         endpointServlet.setLoadOnStartup(1);
+        endpointServlet.setAsyncSupported(true);
         endpointServlet.addMapping("/services/*");
 
         // Register and map the dispatcher servlet
