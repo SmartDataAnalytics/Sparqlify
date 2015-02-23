@@ -300,10 +300,12 @@ public class Main {
         // "com.sun.ws.rest.api.core.PackagesResourceConfig");
         // sh.setInitParameter("com.sun.ws.rest.config.property.packages",
         // "jetty");
-        sh.setInitParameter(
-                "com.sun.jersey.config.property.resourceConfigClass",
-                "com.sun.jersey.api.core.PackagesResourceConfig");
-        sh.setInitParameter("com.sun.jersey.config.property.packages",
+        //        jassaServlet.setInitParameter("jersey.config.server.provider.classnames", "org.aksw.jena_sparql_api.web.servlets.PathFindingApi org.aksw.facete2.web.api.ServletDataStore org.aksw.facete2.web.api.ServletExportSparql org.aksw.facete2.web.api.ServletSparqlSpringBatchStatus");
+        //
+//        sh.setInitParameter(
+//                "com.sun.jersey.config.property.resourceConfigClass",
+//                "com.sun.jersey.api.core.PackagesResourceConfig");
+        sh.setInitParameter("jersey.config.server.provider.packages",
                 "org.aksw.sparqlify.web");
 
         Server server = new Server(port);
