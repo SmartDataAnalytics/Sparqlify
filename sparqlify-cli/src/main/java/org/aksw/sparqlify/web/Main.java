@@ -7,7 +7,11 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
+import org.aksw.jena_sparql_api.core.GraphQueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
+import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
+import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -25,6 +29,7 @@ import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyUtils;
@@ -42,10 +47,13 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.sparql.core.Quad;
 
 
@@ -93,6 +101,7 @@ public class Main {
 
         cliOptions.addOption("o", "format", true, "Output format; currently only applies to dump (-D). Values: ntriples, nquads");
 
+        cliOptions.addOption("1", "sparql11", false, "use jena for sparql 11 (supports property paths but may be slow)");
 
 
         CommandLine commandLine = cliParser.parse(cliOptions, args);
@@ -236,7 +245,23 @@ public class Main {
 //
 //		QueryExecutionFactoryEx qef = new QueryExecutionFactoryExImpl(qefDefault, qefExplain);
 
-        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetSize, maxQueryExecutionTime);
+        boolean useSparql11Wrapper = commandLine.hasOption("1");
+
+        Long mrs = useSparql11Wrapper ? null : maxResultSetSize;
+
+        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, mrs, maxQueryExecutionTime);
+
+
+        if(useSparql11Wrapper) {
+            Graph graph = new GraphQueryExecutionFactory(qef);
+            Model model = ModelFactory.createModelForGraph(graph);
+            QueryExecutionFactory tmp = new QueryExecutionFactoryModel(model);
+            if(maxResultSetSize != null) {
+                tmp = QueryExecutionFactoryLimit.decorate(tmp, true, maxResultSetSize);
+            }
+
+            qef = new QueryExecutionFactoryExWrapper(tmp);
+        }
 
         if(isDump) {
             if(outputFormat.equals("nquads")) {

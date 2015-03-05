@@ -4,48 +4,53 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 
 public abstract class QueryExecutionFactoryExBase
-	implements QueryExecutionFactoryEx
+    implements QueryExecutionFactoryEx
 {
 
-	@Override
-	public String getId() {
-		return null;
-	}
+    @Override
+    public String getId() {
+        return null;
+    }
 
-	@Override
-	public String getState() {
-		return null;
-	}
+    @Override
+    public String getState() {
+        return null;
+    }
 
-	@Override
-	public QueryExecution createQueryExecution(String queryString) {
+    @Override
+    public QueryExecution createQueryExecution(String queryString) {
 
-		QueryEx qe = QueryFactoryEx.create(queryString);
-		
-		QueryExecution result = createQueryExecution(qe);
+        QueryEx qe = QueryFactoryEx.create(queryString);
 
-		return result;
-	}
+        QueryExecution result = createQueryExecution(qe);
 
-	@Override
-	public QueryExecution createQueryExecution(Query query) {
-		QueryEx qe = new QueryEx(query);
+        return result;
+    }
 
-		QueryExecution result = createQueryExecution(qe);
-		return result;
-	}
+    @Override
+    public QueryExecution createQueryExecution(Query query) {
+        QueryEx qe = new QueryEx(query);
 
-	
-	@Override
-	public <T> T unwrap(Class<T> clazz) {
-		@SuppressWarnings("unchecked")
-		T result = getClass().isAssignableFrom(clazz) ? (T)this : null;
-		return result;
-	}
-	//public abstract QueryExecutionStreaming createQueryExecution(QueryEx query);
+        QueryExecution result = createQueryExecution(qe);
+        return result;
+    }
 
-	/*
-	 * public QueryExecutionStreaming createQueryExecution(QueryEx query) { //
-	 * TODO Auto-generated method stub return null; }
-	 */
+
+    @Override
+    public <T> T unwrap(Class<T> clazz) {
+        @SuppressWarnings("unchecked")
+        T result = getClass().isAssignableFrom(clazz) ? (T)this : null;
+        return result;
+    }
+
+    @Override
+    public void close() {
+
+    }
+    //public abstract QueryExecutionStreaming createQueryExecution(QueryEx query);
+
+    /*
+     * public QueryExecutionStreaming createQueryExecution(QueryEx query) { //
+     * TODO Auto-generated method stub return null; }
+     */
 }

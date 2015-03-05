@@ -576,6 +576,8 @@ public class SparqlifyCoreInit {
             stm.register(XSD.xboolean.getURI(), new SqlDatatypeDefault(TypeToken.Boolean, new NodeValueToObjectDefault()));
 
             stm.register(XSD.integer.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
+            stm.register(XSD.xfloat.getURI(),  new SqlDatatypeDefault(TypeToken.Float, new NodeValueToObjectDefault()));
+            stm.register(XSD.xdouble.getURI(),  new SqlDatatypeDefault(TypeToken.Double, new NodeValueToObjectDefault()));
             stm.register(XSD.decimal.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
 
 

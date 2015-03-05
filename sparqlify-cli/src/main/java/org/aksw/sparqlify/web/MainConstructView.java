@@ -126,6 +126,12 @@ class QueryExecutionFactoryStreamingWrapper
         return result;
     }
 
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+
+    }
+
 }
 
 
