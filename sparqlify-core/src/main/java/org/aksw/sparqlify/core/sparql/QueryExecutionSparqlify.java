@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.aksw.jena_sparql_api.core.QueryExecutionBaseSelect;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.QueryExecutionTimeoutHelper;
-import org.aksw.jena_sparql_api.core.ResultSetClosable;
+import org.aksw.jena_sparql_api.core.ResultSetCloseable;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,253 +18,253 @@ import com.hp.hpl.jena.query.QueryExecution;
 // TODO Replace with class from AKSW commons
 /*
 class QueryExecutionAdapter
-	implements QueryExecution
+    implements QueryExecution
 {
-	@Override
-	public void setFileManager(FileManager fm) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void setFileManager(FileManager fm) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public void setInitialBinding(QuerySolution binding) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void setInitialBinding(QuerySolution binding) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Dataset getDataset() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Dataset getDataset() {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Context getContext() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Context getContext() {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public ResultSet execSelect() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public ResultSet execSelect() {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Model execConstruct() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Model execConstruct() {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Model execConstruct(Model model) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Model execConstruct(Model model) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Model execDescribe() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Model execDescribe() {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Model execDescribe(Model model) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public Model execDescribe(Model model) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public boolean execAsk() {
-		throw new NotImplementedException();
-	}
+    @Override
+    public boolean execAsk() {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public void abort() {
-	}
+    @Override
+    public void abort() {
+    }
 
-	@Override
-	public void close() {
-	}
+    @Override
+    public void close() {
+    }
 
-	@Override
-	public void setTimeout(long timeout, TimeUnit timeoutUnits) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void setTimeout(long timeout, TimeUnit timeoutUnits) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public void setTimeout(long timeout) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void setTimeout(long timeout) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
-			TimeUnit timeUnit2) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
+            TimeUnit timeUnit2) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public void setTimeout(long timeout1, long timeout2) {
-		throw new NotImplementedException();
-	}
+    @Override
+    public void setTimeout(long timeout1, long timeout2) {
+        throw new NotImplementedException();
+    }
 
-	@Override
-	public Query getQuery() {
-		throw new NotImplementedException();
-	}
-	
+    @Override
+    public Query getQuery() {
+        throw new NotImplementedException();
+    }
+
 }
 */
 /*
 public class QueryExecutionTimeout
-	extends QueryExecutionAdapter
+    extends QueryExecutionAdapter
 {
-	protected QueryExecutionTimeoutHelper timeoutHelper = new QueryExecutionTimeoutHelper(this);
+    protected QueryExecutionTimeoutHelper timeoutHelper = new QueryExecutionTimeoutHelper(this);
 
-	@Override
-	public void setTimeout(long timeout, TimeUnit timeoutUnits) {
-		timeoutHelper.setTimeout(timeout, timeoutUnits);
-	}
+    @Override
+    public void setTimeout(long timeout, TimeUnit timeoutUnits) {
+        timeoutHelper.setTimeout(timeout, timeoutUnits);
+    }
 
-	@Override
-	public void setTimeout(long timeout) {
-		timeoutHelper.setTimeout(timeout);
-	}
+    @Override
+    public void setTimeout(long timeout) {
+        timeoutHelper.setTimeout(timeout);
+    }
 
-	@Override
-	public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
-			TimeUnit timeUnit2) {
-		timeoutHelper.setTimeout(timeout1, timeUnit1, timeout2, timeUnit2);
-	}
+    @Override
+    public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
+            TimeUnit timeUnit2) {
+        timeoutHelper.setTimeout(timeout1, timeUnit1, timeout2, timeUnit2);
+    }
 
-	@Override
-	public void setTimeout(long timeout1, long timeout2) {
-		timeoutHelper.setTimeout(timeout1, timeout2);
-	}
+    @Override
+    public void setTimeout(long timeout1, long timeout2) {
+        timeoutHelper.setTimeout(timeout1, timeout2);
+    }
 }
 */
 
 
 public class QueryExecutionSparqlify
-	extends QueryExecutionBaseSelect
+    extends QueryExecutionBaseSelect
 {
-	public static Logger logger = LoggerFactory.getLogger(QueryExecutionSparqlify.class);
-	
-	private SparqlSqlStringRewriter rewriter;
-	private Connection conn;
-	private boolean closeConnWhenDone;
-	//private Query query;
-	
-	// subFactory is needed for DESCRIBE queries right now
-	public QueryExecutionSparqlify(SparqlSqlStringRewriter rewriter, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory subFactory) {
-		super(query, subFactory);
-		this.rewriter = rewriter;
-		this.conn = conn;
-		this.closeConnWhenDone = closeConnWhenDone;
-		//this.query = query;
-	}
+    public static Logger logger = LoggerFactory.getLogger(QueryExecutionSparqlify.class);
 
-	/*
-	@Override
-	public Object getId() {
-		// Transient id means, that after recreation of the object with the same
-		// configuration, the id might be different.
-		// Caches can be cleared once such object gets destroyed.
-		// TODO Think about how to implement this properly
-		return "transient-id-" + this.hashCode();
-	}*/
+    private SparqlSqlStringRewriter rewriter;
+    private Connection conn;
+    private boolean closeConnWhenDone;
+    //private Query query;
+
+    // subFactory is needed for DESCRIBE queries right now
+    public QueryExecutionSparqlify(SparqlSqlStringRewriter rewriter, Connection conn, boolean closeConnWhenDone, Query query, QueryExecutionFactory subFactory) {
+        super(query, subFactory);
+        this.rewriter = rewriter;
+        this.conn = conn;
+        this.closeConnWhenDone = closeConnWhenDone;
+        //this.query = query;
+    }
+
+    /*
+    @Override
+    public Object getId() {
+        // Transient id means, that after recreation of the object with the same
+        // configuration, the id might be different.
+        // Caches can be cleared once such object gets destroyed.
+        // TODO Think about how to implement this properly
+        return "transient-id-" + this.hashCode();
+    }*/
 
 
-	@Override
-	protected QueryExecution executeCoreSelectX(Query dummy) {
-		// TODO This object hardly closes the connection again....
-		QueryExecution result = new QueryExecutionSelect(rewriter, conn, dummy, false);
-		return result;
-	}
-	
-	
-	@Override
-	protected ResultSetClosable executeCoreSelect(Query query) {
-		timeoutHelper.startExecutionTimer();
-		
-		try {
-			ResultSetClosable result = super.executeCoreSelect(query);
-			
-			return result;
-			
-		} finally {
-			timeoutHelper.stopExecutionTimer();
-		}
-	}
-	
-	protected QueryExecutionTimeoutHelper timeoutHelper = new QueryExecutionTimeoutHelper(this);
+    @Override
+    protected QueryExecution executeCoreSelectX(Query dummy) {
+        // TODO This object hardly closes the connection again....
+        QueryExecution result = new QueryExecutionSelect(rewriter, conn, dummy, false);
+        return result;
+    }
 
-	@Override
-	public void setTimeout(long timeout, TimeUnit timeoutUnits) {
-		timeoutHelper.setTimeout(timeout, timeoutUnits);
-	}
 
-	@Override
-	public void setTimeout(long timeout) {
-		timeoutHelper.setTimeout(timeout);
-	}
+    @Override
+    protected ResultSetCloseable executeCoreSelect(Query query) {
+        timeoutHelper.startExecutionTimer();
 
-	@Override
-	public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
-			TimeUnit timeUnit2) {
-		timeoutHelper.setTimeout(timeout1, timeUnit1, timeout2, timeUnit2);
-	}
+        try {
+            ResultSetCloseable result = super.executeCoreSelect(query);
 
-	@Override
-	public void setTimeout(long timeout1, long timeout2) {
-		timeoutHelper.setTimeout(timeout1, timeout2);
-	}
+            return result;
 
-	@Override
-	public void close() {
-		super.close();
+        } finally {
+            timeoutHelper.stopExecutionTimer();
+        }
+    }
 
-		if(this.closeConnWhenDone) {
-			try {
-				logger.trace("Closed connection: [" + conn + "]");
-				conn.close();
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-		}
+    protected QueryExecutionTimeoutHelper timeoutHelper = new QueryExecutionTimeoutHelper(this);
 
-	}	
+    @Override
+    public void setTimeout(long timeout, TimeUnit timeoutUnits) {
+        timeoutHelper.setTimeout(timeout, timeoutUnits);
+    }
+
+    @Override
+    public void setTimeout(long timeout) {
+        timeoutHelper.setTimeout(timeout);
+    }
+
+    @Override
+    public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
+            TimeUnit timeUnit2) {
+        timeoutHelper.setTimeout(timeout1, timeUnit1, timeout2, timeUnit2);
+    }
+
+    @Override
+    public void setTimeout(long timeout1, long timeout2) {
+        timeoutHelper.setTimeout(timeout1, timeout2);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+
+        if(this.closeConnWhenDone) {
+            try {
+                logger.trace("Closed connection: [" + conn + "]");
+                conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
 //
-	/*
-	protected ResultSet executeSelectImpl(Query query) throws SQLException {
-		/*
-		if (!query.isSelectType()) {
-			throw new RuntimeException("SELECT query expected. Got: ["
-					+ query.toString() + "]");
-		}
-		* /
-		
-		Op view = system.getApplicableViews(query);
+    /*
+    protected ResultSet executeSelectImpl(Query query) throws SQLException {
+        /*
+        if (!query.isSelectType()) {
+            throw new RuntimeException("SELECT query expected. Got: ["
+                    + query.toString() + "]");
+        }
+        * /
 
-		//
-		ViewRewriter sqlRewriter = new ViewRewriter();
-		SqlNode sqlNode = sqlRewriter.rewriteMM(view);
+        Op view = system.getApplicableViews(query);
 
-		System.out.println("Final sparql var mapping = "
-				+ sqlNode.getSparqlVarToExprs());
+        //
+        ViewRewriter sqlRewriter = new ViewRewriter();
+        SqlNode sqlNode = sqlRewriter.rewriteMM(view);
 
-		SqlGenerator sqlGenerator = new SqlGenerator();
-		String sqlQuery = sqlGenerator.generateMM(sqlNode);
-		System.out.println(sqlQuery);
+        System.out.println("Final sparql var mapping = "
+                + sqlNode.getSparqlVarToExprs());
 
-		double cost = RdfViewDatabase.getCostPostgres(conn, sqlQuery);
+        SqlGenerator sqlGenerator = new SqlGenerator();
+        String sqlQuery = sqlGenerator.generateMM(sqlNode);
+        System.out.println(sqlQuery);
 
-		if (cost > 4000) {
-			System.out.println("Aborted due to high query cost: " + cost);
-			return null;
-		}
+        double cost = RdfViewDatabase.getCostPostgres(conn, sqlQuery);
 
-		System.out.println("Query cost ok (" + cost + ")");
+        if (cost > 4000) {
+            System.out.println("Aborted due to high query cost: " + cost);
+            return null;
+        }
 
-		ResultSet rs = ResultSetFactory.create(conn, sqlQuery,
-				sqlNode.getSparqlVarToExprs());
-		
-		return rs;
-	}
+        System.out.println("Query cost ok (" + cost + ")");
 
-	//@Override
-	public void abort() {
-	}
-	*/	
+        ResultSet rs = ResultSetFactory.create(conn, sqlQuery,
+                sqlNode.getSparqlVarToExprs());
+
+        return rs;
+    }
+
+    //@Override
+    public void abort() {
+    }
+    */
 }

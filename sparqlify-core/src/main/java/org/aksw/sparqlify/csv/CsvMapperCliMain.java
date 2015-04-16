@@ -25,7 +25,7 @@ import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 
 import org.aksw.jena_sparql_api.core.ConstructIterator;
-import org.aksw.jena_sparql_api.core.ResultSetClosable;
+import org.aksw.jena_sparql_api.core.ResultSetCloseable;
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
@@ -474,7 +474,7 @@ public class CsvMapperCliMain {
 
         //System.out.println(template.getTriples());
 
-        ResultSetClosable closableRs = new ResultSetClosable(rss);
+        ResultSetCloseable closableRs = new ResultSetCloseable(rss);
         Iterator<Triple> it = new ConstructIterator(template, closableRs);
 
         TripleIteratorTracking result = new TripleIteratorTracking(it);

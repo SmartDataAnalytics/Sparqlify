@@ -78,7 +78,7 @@
 
         <aksw.commons.version>0.7.5</aksw.commons.version>
 
-        <jena-sparql-api.version>2.12.1-7</jena-sparql-api.version>
+        <jena-sparql-api.version>2.12.1-8</jena-sparql-api.version>
 
         <platform.linkedData.contextPath>/</platform.linkedData.contextPath>
     </properties>
@@ -97,7 +97,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.5.1</version>
                 <configuration>
                     <arguments>-P!source-artifacts</arguments>
                     <useReleaseProfile>false</useReleaseProfile>
