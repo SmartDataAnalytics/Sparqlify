@@ -104,7 +104,7 @@ Another way to build the project is run the following commands at `<repository-r
 
     mvn clean install
 
-    cd sparqlify-core
+    cd sparqlify-cli
     mvn assembly:assembly
 
 
