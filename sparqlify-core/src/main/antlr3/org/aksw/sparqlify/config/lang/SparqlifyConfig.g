@@ -342,6 +342,7 @@ name
 
 logicalTable
     : a=SQL_QUERY -> ^(SQL_RELATION SQL_QUERY[$a])
+    | a=STRING_LITERAL_LONG1 -> ^(SQL_RELATION SQL_QUERY[$a])
     | a=NAME -> ^(SQL_RELATION SQL_TABLE[$a])
     | a=STRING_LITERAL2 -> ^(SQL_RELATION SQL_TABLE[$a])
     ;
@@ -378,7 +379,7 @@ typeCtorExpression
     : BNODE '(' expression ')' -> ^(BNODE expression)
     | URI '(' expression (COMMA expression)* ')' -> ^(URI ^(EXPRESSION_LIST expression*))
     | PLAIN_LITERAL '(' expression (',' expression)? ')' -> ^(PLAIN_LITERAL expression expression?)
-    | TYPED_LITERAL '(' expression ',' expression ')' -> ^(TYPED_LITERAL expression expression)
+    | TYPED_LITERAL '(' expression (',' expression)? ')' -> ^(TYPED_LITERAL expression expression?)
     ;
 
 

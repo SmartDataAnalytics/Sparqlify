@@ -13,6 +13,7 @@ import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.riot.out.SinkQuadBracedOutput;
 
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.sparql.core.QuadPattern;
@@ -181,15 +182,27 @@ public class ViewDefinition
 		//Head
 		writer.println("Create View " + name + " As");
 		writer.incIndent();
-		writer.println("Construct {");
-		writer.incIndent();
+		writer.println("Construct");
+		//writer.incIndent();
+		
+		SinkQuadBracedOutput sink = new SinkQuadBracedOutput(writer, null);
+		sink.open();
+
+		//sink.send(template);
+		
+		
+		//Map<Node, Set<Quad>> nodeToQuads = QuadUtils.partitionByGraph(template);
+		
 		
 		// Template
 		for(Quad quad : template) {
-			writer.println("" + quad);
+	        sink.send(quad);
+			//writer.println("" + quad);
 		}
-		writer.decIndent();		
-		writer.println("}");
+		sink.close();
+		writer.println(" ");
+		//writer.decIndent();		
+//		writer.println("}");
 		
 		// With
 		if(!mapping.getVarDefinition().isEmpty()) {
@@ -200,7 +213,11 @@ public class ViewDefinition
 				Var var = entry.getKey();
 				RestrictedExpr rexpr = entry.getValue();
 				
-				writer.println(var + " = " + rexpr.getExpr() + "; Constraints " + rexpr.getRestrictions());
+				//writer.println(var + " = " + rexpr.getExpr() + "; Constraints " + rexpr.getRestrictions());
+				writer.println(var + " = " + rexpr.getExpr());
+				
+				//if(rexpr.getRestrictions().)
+				//+ " Constraints " + rexpr.getRestrictions());
 			}
 			writer.decIndent();
 		}
@@ -215,8 +232,13 @@ public class ViewDefinition
 				SqlOpTable tmp = (SqlOpTable)op; 
 				writer.println(tmp.getTableName());
 			} else if (op instanceof SqlOpQuery) {
-				SqlOpQuery tmp = (SqlOpQuery)op;
-				writer.println("[[" + tmp + "]]");
+                SqlOpQuery tmp = (SqlOpQuery)op;
+			    String queryStr = tmp.getQueryString();
+
+			    // Cut off trailing ';'
+			    queryStr = queryStr.replaceAll("(;|\\s)+$", "");
+			    
+				writer.println("[[" + queryStr + "]]");
 			} else {
 				writer.println("" + op);
 			}

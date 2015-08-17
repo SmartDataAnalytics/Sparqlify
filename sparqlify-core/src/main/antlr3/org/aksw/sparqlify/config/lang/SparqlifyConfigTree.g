@@ -348,7 +348,7 @@ typeCtorExpression returns [Expr value]
     : ^(BNODE a=expression) {$value = createFunction(SparqlifyConstants.blankNodeLabel, $a.value); }
     | ^(URI c=expressionList) {$value = createUriFunction($c.value); }
     | ^(PLAIN_LITERAL a=expression b=expression?) {$value = createFunction(SparqlifyConstants.plainLiteralLabel, $a.value, $b.value); }
-    | ^(TYPED_LITERAL a=expression b=expression) {$value = createFunction(SparqlifyConstants.typedLiteralLabel, $a.value, $b.value); }
+    | ^(TYPED_LITERAL a=expression b=expression?) {$value = createFunction(SparqlifyConstants.typedLiteralLabel, $a.value, $b.value); }
     ;
 
 sqlRelationOld returns [Relation value]
