@@ -25,5 +25,12 @@
       validationQuery="SELECT VERSION();"
    />
 
+    <Parameter
+        name="contextConfigLocation"
+        value="workaround-for-JERSEY-2038"
+        override="false"
+    />
+
+
 </Context>
 

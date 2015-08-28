@@ -54,6 +54,15 @@ public class NodeExprSubstitutor {
     	this.map = map;
     }
 
+    public ExprList transformMM(ExprList exprs) {
+        ExprList result = new ExprList();
+        for(Expr expr : exprs) {
+            Expr item = transformMM(expr);
+            result.add(expr);
+        }
+        return result;
+    }
+    
     public Expr transformMM(Expr expr)
     {
     	return expr == null
@@ -119,7 +128,7 @@ public class NodeExprSubstitutor {
 
 	public Expr _transform(ExprAggregator eAgg) {
 		
-		Expr newAggExpr = this.transformMM(eAgg.getAggregator().getExpr()); 
+		ExprList newAggExpr = this.transformMM(eAgg.getAggregator().getExprList()); 
 		Aggregator newAgg = eAgg.getAggregator().copy(newAggExpr);
 		
 		Expr newAggVar = this.transformMM(eAgg.getAggVar());

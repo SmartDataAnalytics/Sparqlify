@@ -540,13 +540,17 @@ public class MappingRefactor {
 			Set<Var> varRefs = new HashSet<Var>();
 			for(ExprAggregator exprAgg : aggregators) {
 				Aggregator agg = exprAgg.getAggregator();
-				Expr expr = agg.getExpr();
-				if(expr == null) {
-					continue;
+//				Expr expr = agg.getExpr();
+//				if(expr == null) {
+//					continue;
+//				}
+//				
+//				Set<Var> tmp = expr.getVarsMentioned();
+//				varRefs.addAll(tmp);
+				for(Expr expr : agg.getExprList()) {
+	              Set<Var> tmp = expr.getVarsMentioned();
+	              varRefs.addAll(tmp);				    
 				}
-				
-				Set<Var> tmp = expr.getVarsMentioned();
-				varRefs.addAll(tmp);
 			}
 			
 			// Remove the group variables

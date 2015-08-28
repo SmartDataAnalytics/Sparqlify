@@ -139,7 +139,7 @@ public class MainSparqlifyWebManager {
             server.join();
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(1);
+            //System.exit(1);
         }
     }
 }

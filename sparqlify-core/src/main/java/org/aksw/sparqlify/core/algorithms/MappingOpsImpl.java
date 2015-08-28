@@ -52,9 +52,6 @@ import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.core.transformations.ExprTransformer;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
@@ -2087,12 +2084,14 @@ public class MappingOpsImpl
 	 * @return
 	 */
 	public static E_Function aggregatorToFunction(Aggregator agg) {
+	    ExprList args = agg.getExprList();
+	    /*
 		Expr arg = agg.getExpr();
 		
 		ExprList args = new ExprList();
 		if(arg != null) {
 			args.add(arg);
-		}
+		}*/
 		
 		String fnName = agg.getClass().getSimpleName();
 		

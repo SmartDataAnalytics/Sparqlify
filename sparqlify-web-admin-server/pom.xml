@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -45,18 +46,18 @@
                     <!-- </manifest> -->
                     <!-- </archive> -->
                     <!-- <packagingExcludes>WEB-INF/lib/jetty-*.jar,WEB-INF/lib/*EmbeddedJetty*.jar</packagingExcludes> -->
-<!-- 					<overlays> -->
-                        <!-- <overlay> -->
-                        <!-- <groupId>org.aksw.sparqlify</groupId> -->
-                        <!-- <artifactId>sparqlify-web-admin-server</artifactId> -->
-                        <!-- <type>jar</type> -->
-                        <!-- </overlay> -->
-                        <!-- <overlay> -->
-                        <!-- <groupId>org.aksw.sparqlify</groupId> -->
-                        <!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
-                        <!-- <type>war</type> -->
-                        <!-- </overlay> -->
-<!-- 					</overlays> -->
+                    <!-- <overlays> -->
+                    <!-- <overlay> -->
+                    <!-- <groupId>org.aksw.sparqlify</groupId> -->
+                    <!-- <artifactId>sparqlify-web-admin-server</artifactId> -->
+                    <!-- <type>jar</type> -->
+                    <!-- </overlay> -->
+                    <!-- <overlay> -->
+                    <!-- <groupId>org.aksw.sparqlify</groupId> -->
+                    <!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
+                    <!-- <type>war</type> -->
+                    <!-- </overlay> -->
+                    <!-- </overlays> -->
                 </configuration>
                 <!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId>
                     <artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath>
@@ -64,22 +65,22 @@
                     </excludes> </overlay> </overlays> </configuration> -->
             </plugin>
 
-<!-- 			<plugin> -->
-<!-- 				run "mvn hibernate3:hbm2ddl" to generate a schema -->
-<!-- 				<groupId>org.codehaus.mojo</groupId> -->
-<!-- 				<artifactId>hibernate3-maven-plugin</artifactId> -->
-<!-- 				<version>3.0</version> -->
+            <!-- <plugin> -->
+            <!-- run "mvn hibernate3:hbm2ddl" to generate a schema -->
+            <!-- <groupId>org.codehaus.mojo</groupId> -->
+            <!-- <artifactId>hibernate3-maven-plugin</artifactId> -->
+            <!-- <version>3.0</version> -->
 
-<!-- 				<configuration> -->
-<!-- 					<hibernatetool> -->
-<!-- 						<jpaconfiguration persistenceunit="unitname" /> -->
+            <!-- <configuration> -->
+            <!-- <hibernatetool> -->
+            <!-- <jpaconfiguration persistenceunit="unitname" /> -->
 
-<!-- 						<hbm2ddl export="false" create="true" update="true" -->
-<!-- 							format="true" outputfilename="schemaDiff.ddl" /> -->
+            <!-- <hbm2ddl export="false" create="true" update="true" -->
+            <!-- format="true" outputfilename="schemaDiff.ddl" /> -->
 
-<!-- 					</hibernatetool> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+            <!-- </hibernatetool> -->
+            <!-- </configuration> -->
+            <!-- </plugin> -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat6-maven-plugin</artifactId>
@@ -138,9 +139,12 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/" /> -->
-                                <symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.finalName}" />
-                                <!-- <symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.directory}/${project.build.finalName}" /> -->
+                                <!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/"
+                                    /> -->
+                                <symlink link="${project.build.directory}/${project.artifactId}"
+                                    resource="${project.build.finalName}" />
+                                <!-- <symlink link="${project.build.directory}/${project.artifactId}"
+                                    resource="${project.build.directory}/${project.build.finalName}" /> -->
                                 <!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
                                 <!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
                             </target>
@@ -165,14 +169,8 @@
         <dependency>
             <groupId>org.aksw.sparqlify</groupId>
             <artifactId>sparqlify-core</artifactId>
-<!--
-            <exclusions>
-                 <exclusion>
-                     <groupId>aopalliance</groupId>
-                     <artifactId>aopalliance</artifactId>
-                 </exclusion>
-            </exclusions>
--->
+            <!-- <exclusions> <exclusion> <groupId>aopalliance</groupId> <artifactId>aopalliance</artifactId>
+                </exclusion> </exclusions> -->
         </dependency>
 
         <dependency>
@@ -190,12 +188,16 @@
             <artifactId>sparqlify-jpa</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.aksw.sparqlify</groupId> -->
-<!-- 			<artifactId>sparqlify-web-admin-client</artifactId> -->
-<!-- 			<type>war</type> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.aksw.sparqlify</groupId> -->
+        <!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
+        <!-- <type>war</type> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -207,10 +209,10 @@
             <artifactId>spring-orm</artifactId>
         </dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework</groupId> -->
-<!-- 			<artifactId>spring-web</artifactId> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework</groupId> -->
+        <!-- <artifactId>spring-web</artifactId> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>org.tuckey</groupId>
