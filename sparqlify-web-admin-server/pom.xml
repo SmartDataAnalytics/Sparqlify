@@ -188,10 +188,12 @@
 			<artifactId>sparqlify-jpa</artifactId>
 		</dependency>
 
+<!--
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 		</dependency>
+-->
 
 		<!-- <dependency> -->
 		<!-- <groupId>org.aksw.sparqlify</groupId> -->
