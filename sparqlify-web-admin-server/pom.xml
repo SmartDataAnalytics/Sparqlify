@@ -1,226 +1,240 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.aksw.sparqlify</groupId>
-        <artifactId>sparqlify-parent</artifactId>
-        <version>0.6.17</version>
-    </parent>
-
-
-    <artifactId>sparqlify-web-admin-server</artifactId>
-    <name>Sparqlify SPARQL-&gt;SQL rewriter - Web Admin Server</name>
-    <packaging>war</packaging>
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.6.17</version>
+	</parent>
 
 
-    <properties>
-        <tomcat.server-id>tomcat-localhost</tomcat.server-id>
-
-        <tomcat6.server-id>${tomcat.server-id}</tomcat6.server-id>
-        <tomcat6.deploy-url>http://localhost:8080/manager</tomcat6.deploy-url>
-
-        <tomcat7.server-id>${tomcat.server-id}</tomcat7.server-id>
-        <tomcat7.deploy-url>http://localhost:8080/manager/text</tomcat7.deploy-url>
-    </properties>
+	<artifactId>sparqlify-web-admin-server</artifactId>
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Web Admin Server</name>
+	<packaging>war</packaging>
 
 
-    <!-- <pluginRepositories> <pluginRepository> <id>typescript-maven-plugin</id>
-        <url>https://github.com/maxlapp/typescript-maven-plugin/tree/master/repo</url>
-        - <url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url>
-        - </pluginRepository> </pluginRepositories> -->
+	<properties>
+		<tomcat.server-id>tomcat-localhost</tomcat.server-id>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+		<tomcat6.server-id>${tomcat.server-id}</tomcat6.server-id>
+		<tomcat6.deploy-url>http://localhost:8080/manager</tomcat6.deploy-url>
 
-                    <!-- <archive> -->
-                    <!-- <manifest> -->
-                    <!-- <mainClass>org.aksw.sparqlify.admin.web.main.MainSparqlifyWebManager</mainClass> -->
-                    <!-- </manifest> -->
-                    <!-- </archive> -->
-                    <!-- <packagingExcludes>WEB-INF/lib/jetty-*.jar,WEB-INF/lib/*EmbeddedJetty*.jar</packagingExcludes> -->
-                    <!-- <overlays> -->
-                    <!-- <overlay> -->
-                    <!-- <groupId>org.aksw.sparqlify</groupId> -->
-                    <!-- <artifactId>sparqlify-web-admin-server</artifactId> -->
-                    <!-- <type>jar</type> -->
-                    <!-- </overlay> -->
-                    <!-- <overlay> -->
-                    <!-- <groupId>org.aksw.sparqlify</groupId> -->
-                    <!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
-                    <!-- <type>war</type> -->
-                    <!-- </overlay> -->
-                    <!-- </overlays> -->
-                </configuration>
-                <!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId>
-                    <artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath>
-                    <includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude>
-                    </excludes> </overlay> </overlays> </configuration> -->
-            </plugin>
-
-            <!-- <plugin> -->
-            <!-- run "mvn hibernate3:hbm2ddl" to generate a schema -->
-            <!-- <groupId>org.codehaus.mojo</groupId> -->
-            <!-- <artifactId>hibernate3-maven-plugin</artifactId> -->
-            <!-- <version>3.0</version> -->
-
-            <!-- <configuration> -->
-            <!-- <hibernatetool> -->
-            <!-- <jpaconfiguration persistenceunit="unitname" /> -->
-
-            <!-- <hbm2ddl export="false" create="true" update="true" -->
-            <!-- format="true" outputfilename="schemaDiff.ddl" /> -->
-
-            <!-- </hibernatetool> -->
-            <!-- </configuration> -->
-            <!-- </plugin> -->
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat6-maven-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <server>${tomcat6.server-id}</server>
-                    <url>${tomcat6.deploy-url}</url>
-                </configuration>
-            </plugin>
+		<tomcat7.server-id>${tomcat.server-id}</tomcat7.server-id>
+		<tomcat7.deploy-url>http://localhost:8080/manager/text</tomcat7.deploy-url>
+	</properties>
 
 
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <server>${tomcat7.server-id}</server>
-                    <url>${tomcat7.deploy-url}</url>
-                </configuration>
-            </plugin>
+	<!-- <pluginRepositories> <pluginRepository> <id>typescript-maven-plugin</id>
+		<url>https://github.com/maxlapp/typescript-maven-plugin/tree/master/repo</url>
+		- <url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url>
+		- </pluginRepository> </pluginRepositories> -->
 
-            <!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId>
-                <extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor>
-                </configuration> </plugin> -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+
+					<!-- <archive> -->
+					<!-- <manifest> -->
+					<!-- <mainClass>org.aksw.sparqlify.admin.web.main.MainSparqlifyWebManager</mainClass> -->
+					<!-- </manifest> -->
+					<!-- </archive> -->
+					<!-- <packagingExcludes>WEB-INF/lib/jetty-*.jar,WEB-INF/lib/*EmbeddedJetty*.jar</packagingExcludes> -->
+					<!-- <overlays> -->
+					<!-- <overlay> -->
+					<!-- <groupId>org.aksw.sparqlify</groupId> -->
+					<!-- <artifactId>sparqlify-web-admin-server</artifactId> -->
+					<!-- <type>jar</type> -->
+					<!-- </overlay> -->
+					<!-- <overlay> -->
+					<!-- <groupId>org.aksw.sparqlify</groupId> -->
+					<!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
+					<!-- <type>war</type> -->
+					<!-- </overlay> -->
+					<!-- </overlays> -->
+				</configuration>
+				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId>
+					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath>
+					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude>
+					</excludes> </overlay> </overlays> </configuration> -->
+			</plugin>
+
+			<!-- <plugin> -->
+			<!-- run "mvn hibernate3:hbm2ddl" to generate a schema -->
+			<!-- <groupId>org.codehaus.mojo</groupId> -->
+			<!-- <artifactId>hibernate3-maven-plugin</artifactId> -->
+			<!-- <version>3.0</version> -->
+
+			<!-- <configuration> -->
+			<!-- <hibernatetool> -->
+			<!-- <jpaconfiguration persistenceunit="unitname" /> -->
+
+			<!-- <hbm2ddl export="false" create="true" update="true" -->
+			<!-- format="true" outputfilename="schemaDiff.ddl" /> -->
+
+			<!-- </hibernatetool> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<server>${tomcat6.server-id}</server>
+					<url>${tomcat6.deploy-url}</url>
+				</configuration>
+			</plugin>
 
 
-            <!-- TypeScript plugin for goal mvn typescript:tsc -->
-            <!-- http://ppedregal.github.io/typescript-maven-plugin/plugin-info.html -->
-            <!-- <plugin> -->
-            <!-- <groupId>com.ppedregal.typescript</groupId> -->
-            <!-- <artifactId>typescript-maven-plugin</artifactId> -->
-            <!-- <version>0.0.1-SNAPSHOT</version> -->
-            <!-- <groupId>ru.maxlapp</groupId> -->
-            <!-- <artifactId>typescript-maven-plugin</artifactId> -->
-            <!-- <version>0.1.2</version> -->
-            <!-- <configuration> -->
-            <!-- <sourceDirectory>src/main/webapp/resources/ts</sourceDirectory> -->
-            <!-- <targetDirectory>target/ts</targetDirectory> -->
-            <!-- </configuration> -->
-            <!-- </plugin> -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<server>${tomcat7.server-id}</server>
+					<url>${tomcat7.deploy-url}</url>
+				</configuration>
+			</plugin>
+
+			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId>
+				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor>
+				</configuration> </plugin> -->
 
 
-
-            <!-- Create a symlink to the target folder without version numbers -->
-            <plugin>
-                <!-- This plugin's configuration must come *after* the Maven Resources
-                    Plugin, and *before* the Debian Maven Plugin. -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-
-
-                    <execution>
-                        <id>create-symlinks</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/" /> -->
-                                <symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.finalName}" />
-                                <!-- <symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.directory}/${project.build.finalName}" /> -->
-                                <!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
-                                <!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
+			<!-- TypeScript plugin for goal mvn typescript:tsc -->
+			<!-- http://ppedregal.github.io/typescript-maven-plugin/plugin-info.html -->
+			<!-- <plugin> -->
+			<!-- <groupId>com.ppedregal.typescript</groupId> -->
+			<!-- <artifactId>typescript-maven-plugin</artifactId> -->
+			<!-- <version>0.0.1-SNAPSHOT</version> -->
+			<!-- <groupId>ru.maxlapp</groupId> -->
+			<!-- <artifactId>typescript-maven-plugin</artifactId> -->
+			<!-- <version>0.1.2</version> -->
+			<!-- <configuration> -->
+			<!-- <sourceDirectory>src/main/webapp/resources/ts</sourceDirectory> -->
+			<!-- <targetDirectory>target/ts</targetDirectory> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 
 
 
-
-    </build>
-
-
-    <dependencies>
-
-        <dependency>
-            <groupId>org.aksw.sparqlify</groupId>
-            <artifactId>sparqlify-core</artifactId>
-            <!-- <exclusions> <exclusion> <groupId>aopalliance</groupId> <artifactId>aopalliance</artifactId>
-                </exclusion> </exclusions> -->
-        </dependency>
-
-        <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aksw.sparqlify</groupId>
-            <artifactId>sparqlify-jpa</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.aksw.sparqlify</groupId> -->
-        <!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
-        <!-- <type>war</type> -->
-        <!-- </dependency> -->
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.springframework</groupId> -->
-        <!-- <artifactId>spring-web</artifactId> -->
-        <!-- </dependency> -->
-
-        <dependency>
-            <groupId>org.tuckey</groupId>
-            <artifactId>urlrewritefilter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
+			<!-- Create a symlink to the target folder without version numbers -->
+			<plugin>
+				<!-- This plugin's configuration must come *after* the Maven Resources
+					Plugin, and *before* the Debian Maven Plugin. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
 
 
-    </dependencies>
+					<execution>
+						<id>create-symlinks</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/"
+									/> -->
+								<symlink link="${project.build.directory}/${project.artifactId}"
+									resource="${project.build.finalName}" />
+								<!-- <symlink link="${project.build.directory}/${project.artifactId}"
+									resource="${project.build.directory}/${project.build.finalName}" /> -->
+								<!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
+								<!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+
+
+
+	</build>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-core</artifactId>
+			<!-- <exclusions> <exclusion> <groupId>aopalliance</groupId> <artifactId>aopalliance</artifactId>
+				</exclusion> </exclusions> -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-server</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-jpa</artifactId>
+		</dependency>
+
+<!--
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+-->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.aksw.sparqlify</groupId> -->
+		<!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
+		<!-- <type>war</type> -->
+		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework</groupId> -->
+		<!-- <artifactId>spring-web</artifactId> -->
+		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-jsp</artifactId>
+		</dependency>
+		<!-- TODO Maybe add the jena-sparql-api web module -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>javax.servlet.jsp</groupId> -->
+<!-- 			<artifactId>jsp-api</artifactId> -->
+<!-- 		</dependency> -->
+	</dependencies>
 </project>
 
