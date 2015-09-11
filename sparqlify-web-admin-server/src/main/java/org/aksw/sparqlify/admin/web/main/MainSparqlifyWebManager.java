@@ -7,6 +7,7 @@ import java.security.ProtectionDomain;
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
+import org.aksw.jena_sparql_api.web.server.ServerUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.SparqlifyCliHelper;
 import org.apache.commons.cli.CommandLine;
@@ -80,7 +81,10 @@ public class MainSparqlifyWebManager {
 
         port = (port == null) ? 7531 : port;
 
-        startServer(port);
+        WebAppInitializer initializer = new WebAppInitializer();
+        ServerUtils.startServer(MainSparqlifyWebManager.class, port, initializer);
+
+        //startServer(port);
     }
 
     public static void startServer(int port) {
