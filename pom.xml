@@ -955,6 +955,8 @@
 <!-- 				<artifactId>jsp-api</artifactId> -->
 <!-- 				<version>2.1</version> -->
 <!-- 			</dependency> -->
+
+                        <!-- TODO Remove dep once part of jena-sparql-api-server again -->
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-jsp</artifactId>
