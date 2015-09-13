@@ -28,6 +28,7 @@ run-panlex.sh
 deptree.txt
 
 dependency-reduced-pom.xml
+pom.xml.versionsBackup
 
 ## Temporary excludes
 dependency-tree.txt
@@ -54,3 +55,4 @@ dependency-reduced-pom.xml.releaseBackup
 sparqlify-dump.h2.db
 sparqlify-dump.trace.db
 trash
+
