@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.6.17</version>
+		<version>0.6.19-SNAPSHOT</version>
 	</parent>
 
 
@@ -139,12 +138,9 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/"
-									/> -->
-								<symlink link="${project.build.directory}/${project.artifactId}"
-									resource="${project.build.finalName}" />
-								<!-- <symlink link="${project.build.directory}/${project.artifactId}"
-									resource="${project.build.directory}/${project.build.finalName}" /> -->
+								<!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/" /> -->
+								<symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.finalName}" />
+								<!-- <symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.directory}/${project.build.finalName}" /> -->
 								<!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
 								<!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
 							</target>
