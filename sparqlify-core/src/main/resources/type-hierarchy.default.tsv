@@ -26,4 +26,5 @@ decimal	numeric
 float	numeric
 double	numeric
 
-timestamp	date
+timestamp	object
+date    object

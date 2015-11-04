@@ -13,6 +13,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
+import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseDate;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseInt;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_PassThrough;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlDecode;
@@ -224,6 +225,11 @@ public class SparqlifyCoreInit {
         {
             SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
             result.addSerializer("str@int", serializer);
+        }
+
+        {
+            SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
+            result.addSerializer("str@date", serializer);
         }
 
 
@@ -480,7 +486,8 @@ public class SparqlifyCoreInit {
         sqlModel.registerFunction(name + "@float", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Float, TypeToken.Float));
         sqlModel.registerFunction(name + "@double", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Double, TypeToken.Double));
         sqlModel.registerFunction(name + "@string", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
-        sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.Date));
+        sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.DateTime, TypeToken.DateTime));
+        sqlModel.registerFunction(name + "@date", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.Date));
     }
 
     public static TypeSystem createDefaultDatatypeSystem() {
@@ -520,6 +527,7 @@ public class SparqlifyCoreInit {
                 physicalTypeMap.put("INTEGER", "int");
                 physicalTypeMap.put("FLOAT", "float");
                 physicalTypeMap.put("DOUBLE", "double");
+                physicalTypeMap.put("DATE", "date");
 
                 //typeHierarchy.putAll(physicalTypeMap);
 
@@ -581,6 +589,7 @@ public class SparqlifyCoreInit {
             stm.register(XSD.decimal.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
 
 
+            stm.register(XSD.date.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
             stm.register(XSD.dateTime.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
 
 
@@ -689,6 +698,7 @@ public class SparqlifyCoreInit {
             sqlModel.registerFunction("str@double", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Double));
             sqlModel.registerFunction("str@float", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Float));
             sqlModel.registerFunction("str@int", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Int));
+            sqlModel.registerFunction("str@date", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Date));
 
             sqlModel.registerFunction("double@str", "double", MethodSignature.create(false, TypeToken.Double, TypeToken.String));
 
@@ -711,6 +721,7 @@ public class SparqlifyCoreInit {
             sparqlSqlDecls.put("str", "str@float");
             sparqlSqlDecls.put("str", "str@int");
             sparqlSqlDecls.put(XSD.xdouble.getURI(), "double@str");
+            sparqlSqlDecls.put("str", "str@date");
 
             sparqlSqlDecls.put("bound", "isNotNull@object");
 
@@ -734,8 +745,13 @@ public class SparqlifyCoreInit {
             NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("logicalAnd"), new SqlExprEvaluator_LogicalAnd());
 
             sqlModel.registerFunction("logicalOr@boolean", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
+            sqlModel.registerFunction("logicalOr@booleanError", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.TypeError));
+            sqlModel.registerFunction("logicalOr@errorBoolean", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.TypeError, TypeToken.Boolean));
+
             sparqlSqlDecls.putAll("||", sqlModel.getIdsByName("logicalOr"));
             NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("logicalOr"), new SqlExprEvaluator_LogicalOr());
+
+
 
             sqlModel.registerFunction("logicalNot@boolean", "logicalNot", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean));
             sparqlSqlDecls.putAll("!", sqlModel.getIdsByName("logicalNot"));
@@ -748,11 +764,16 @@ public class SparqlifyCoreInit {
 
             // register a parse int function
             sqlModel.registerFunction("parseInt@str", "parseInt", MethodSignature.create(false, TypeToken.Int, TypeToken.String));
+            sqlModel.registerFunction("parseDate@str", "parseDate", MethodSignature.create(false, TypeToken.Date, TypeToken.String));
+
+
             //sparqlSqlDecls.put("concat", "concat@object");
 
             FunctionModelMeta sqlMetaModel = typeSystem.getSqlFunctionMetaModel();
 
             sqlMetaModel.getInverses().put("str@int", "parseInt@str");
+            sqlMetaModel.getInverses().put("str@date", "parseDate@str");
+
 
             sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThan"));
             sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThanOrEqual"));
@@ -766,7 +787,7 @@ public class SparqlifyCoreInit {
 
             //sqlModel.getInverses().put();
             sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());
-
+            sqlImpls.put("parseDate@str", new SqlExprEvaluator_ParseDate());
 
             //sqlMetaModel.getInverses().put(key, value)
 
