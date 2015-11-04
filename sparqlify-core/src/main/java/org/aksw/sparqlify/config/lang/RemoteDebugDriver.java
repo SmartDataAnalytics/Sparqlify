@@ -41,6 +41,6 @@ public class RemoteDebugDriver {
 		Config example = walker.sparqlifyConfig();
 		logger.debug(example.toString());
 
-		System.exit(0);
+//		System.exit(0);
 	}
 }
