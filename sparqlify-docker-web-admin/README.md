@@ -23,5 +23,4 @@
 ## ToDos
 
  * current config is a bad hack, even it works though
- * fix facete2-tomcat7 package as it starts tomcat with error, thus causes regular build to fail
 
