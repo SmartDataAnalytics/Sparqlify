@@ -1,6 +1,4 @@
-# Sparqlify Docker for Web Admin
-
- * [facete2](https://github.com/AKSW/Sparqlify)
+# Sparqlify Docker for the Sparqlify Web Admin
 
 
 ## Build
