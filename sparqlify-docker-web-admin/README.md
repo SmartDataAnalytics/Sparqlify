@@ -13,6 +13,8 @@
 
    docker run -d -p 8060:8080 -p 8061:80 --name sparqlify sparqlify
 
+ * Web interface should be available under [http://localhost:8061/sparqlify](http://localhost:8061/sparqlify)
+
  * run many times, open http://<docker ip>:<container port>/sparqlify in your browser:
 
 
