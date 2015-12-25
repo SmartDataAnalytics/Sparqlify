@@ -81,21 +81,24 @@ angular.module('SparqlifyWebAdmin', [
         //					criteria = {};
         var promise = store.contexts.find(criteria).asList();
         //promise.done(function(x) {console.log('data', x); });
-        var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+        //var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+        var result = $q.when(promise);
         return result;
     },
 
     findServices: function(criteria) {
         var promise = store.contexts.find(criteria).asList();
         //promise.done(function(x) {console.log('data', x); });
-        var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+//        var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+        var result = $q.when(promise);
         return result;
     },
 
     findServiceLogs: function(criteria) {
         var promise = store.logs.find(criteria).asList();
         //promise.done(function(x) {console.log('data', x); });
-        var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+        //var result = sponate.angular.bridgePromise(promise, $q.defer(), $rootScope);
+        var result = $q.when(promise);
         return result;
     },
 
@@ -192,19 +195,27 @@ angular.module('SparqlifyWebAdmin', [
 //      };
 //}])
 
-.controller('CreateNewServiceModalInstanceCtrl', ['$scope', '$uibModalInstance', 'items', function ($scope, $uibModalInstance, items) {
+.controller('CreateNewServiceModalInstanceCtrl', ['$scope', '$uibModalInstance', 'newServiceState', function ($scope, $uibModalInstance, newServiceState) {
 
-//    $scope.createService = function() {
-//
-//
-//        //$scope.doFilterContexts();
-//    };
+    angular.extend($scope, newServiceState);
 
-//    $scope.items = items;
-//    $scope.selected = {
-//        item: $scope.items[0]
-//    };
-//
+    var scopeToJson = function(scope) {
+        var result = {};
+        angular.forEach(scope, function(v, k) {
+            var isSpecialKey = typeof k === 'string' && (k.charAt(0) === '$' || k === 'this');
+            if(!isSpecialKey) {
+                result[k] = v;
+            }
+        });
+        return result;
+    };
+
+    $scope.$on('modal.closing', function() {
+        var json = scopeToJson($scope);
+        angular.extend(newServiceState, json);
+    });
+
+
     $scope.ok = function () {
         var data = {
             contextPath : $scope.path,
@@ -219,7 +230,7 @@ angular.module('SparqlifyWebAdmin', [
                 username : $scope.username,
                 password : $scope.password
             },
-            maxResultRows: $scope.maxResultRows,
+            maxResultSetRows: $scope.maxResultSetRows,
             maxExecutionTimeInSeconds: $scope.maxExecutionTimeInSeconds
         };
 
@@ -227,21 +238,24 @@ angular.module('SparqlifyWebAdmin', [
     };
 
     $scope.cancel = function () {
+        console.log('cancelled');
         $uibModalInstance.dismiss('cancel');
     };
 }])
 
 .controller('ContextListCtrl', ['$scope', 'contextService', '$uibModal', function($scope, contextService, $uibModal) {
+    $scope.newServiceState = {};
+
     $scope.openAddNewService = function(size) {
 
         var modalInstance = $uibModal.open({
             animation: true, //$scope.animationsEnabled,
             templateUrl: 'resources/partials/add-new-service.html',
             controller: 'CreateNewServiceModalInstanceCtrl',
-            size: size,
+            size: 'lg',
             resolve: {
-                items: function () {
-                    return $scope.items;
+                newServiceState: function () {
+                    return $scope.newServiceState;
                 }
             }
         });
@@ -254,7 +268,7 @@ angular.module('SparqlifyWebAdmin', [
             var promise = contextService.createService(postData);
             promise.success(function() {
                 $scope.doFilterContexts();
-                alert('yay');
+                //alert('yay');
             }).error(function() {
                 alert('fail');
             });

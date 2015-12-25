@@ -5,12 +5,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <title>Sparqlify Web Admin</title>
-    <link rel="stylesheet" href="resources/libs/twitter-bootstrap/3.0.1/css/bootstrap.css" />
+    <link rel="stylesheet" href="resources/libs/twitter-bootstrap/3.3.6/css/bootstrap.css" />
     <link rel="stylesheet" href="resources/css/app.css" />
 
     <script src="resources/libs/jquery/1.9.1/jquery.js"></script>
 
-    <script src="resources/libs/twitter-bootstrap/3.0.1/js/bootstrap.js"></script>
+<!--     <script src="resources/libs/twitter-bootstrap/3.3.6/js/bootstrap.js"></script> -->
 
 <!--     <script src="resources/libs/angularjs/1.2.0-rc.2/angular.js"></script> -->
     <script src="resources/libs/angularjs/1.4.8/angular.js"></script>
@@ -92,13 +92,15 @@
                         jdbcUrl: '?durl',
                         username: '?duser'
                     },
+                    maxResultSetRows: '?mrsr',
+                    maxExecutionTimeInSeconds: '?met',
                     resource: {
                         id: '?r',
                         data: '?rdata'
                     }
                 }
             }],
-            from: '?s a o:Rdb2RdfExecution ; o:id ?sid ; o:status ?status ; o:config ?c . ?c o:id ?cid ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
+            from: '?s a o:Rdb2RdfExecution ; o:id ?sid ; o:status ?status ; o:config ?c . ?c o:id ?cid ; o:contextPath ?path ; o:dataSource ?d ; o:resource ?r  . Optional { ?c o:maxExecutionTime ?met } . Optional { ?c o:maxResultSetRows ?mrsr } . ?d o:jdbcUrl ?durl ; o:username ?duser . ?r o:data ?rdata .'
         });
 
         store.addMap({

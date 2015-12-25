@@ -28,112 +28,122 @@ import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class ServiceLauncherRdb2Rdf
-	implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService>
+    implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService>
 {
-	private static final Logger logger = LoggerFactory.getLogger(ServiceLauncherRdb2Rdf.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServiceLauncherRdb2Rdf.class);
 
-	
-	@Override
-	//public ServiceExecution<QueryExecutionFactory> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
-	public ServiceProvider<SparqlService> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
-		
+
+    @Override
+    //public ServiceExecution<QueryExecutionFactory> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
+    public ServiceProvider<SparqlService> launch(EntityManagerFactory emf, Rdb2RdfConfig serviceConfig, Rdb2RdfExecution context, boolean isRestart) {
+
 //		String serviceName = serviceConfig.getContextPath();
 //		ServiceExecution<?> serviceExecution = nameToExecution.get(serviceName);
 //		if(serviceExecution != null) {
 //			throw new RuntimeException("A service with the name " + serviceName + " is already executing");
 //		}
-		String serviceName = "foobar";
+        String serviceName = "foobar";
 
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-		
-		Object configId = emf.getPersistenceUnitUtil().getIdentifier(serviceConfig);
-		Object executionContextId = emf.getPersistenceUnitUtil().getIdentifier(context);
-		
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
 
-		serviceConfig = em.find(Rdb2RdfConfig.class, configId);
-		context = em.find(Rdb2RdfExecution.class, executionContextId);
-		
+        Object configId = emf.getPersistenceUnitUtil().getIdentifier(serviceConfig);
+        Object executionContextId = emf.getPersistenceUnitUtil().getIdentifier(context);
+
+
+        serviceConfig = em.find(Rdb2RdfConfig.class, configId);
+        context = em.find(Rdb2RdfExecution.class, executionContextId);
+
 //		em.merge(context);
 //		em.merge(serviceConfig);
 
-		//Rdb2RdfExecution serviceState = context.getEntity();
-		
-		//serviceState.setName(serviceName);
-		context.setStatus(ContextStateFlags.STARTING);
-		context.getLogMessages().clear();
-		context.getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
-		context.setConfig(serviceConfig);
+        //Rdb2RdfExecution serviceState = context.getEntity();
 
-		em.getTransaction().commit();
-		em.getTransaction().begin();
-		//context.commit();
+        //serviceState.setName(serviceName);
+        context.setStatus(ContextStateFlags.STARTING);
+        context.getLogMessages().clear();
+        context.getLogMessages().add(new LogMessage("info", "Starting service " + serviceName));
+        context.setConfig(serviceConfig);
 
-		//context.openSession();
-		
-		
-		ServiceProvider<SparqlService> result = null;
-		
-		try {
-			//
-			
-			JdbcDataSource dsConfig = serviceConfig.getJdbcDataSource();
-	
-			//LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
-			//LoggerFactory.getLogger(this.getClass()).
-			
-			
-			BoneCPConfig c = new BoneCPConfig();
-			c.setUsername(dsConfig.getUsername());
-			c.setPassword(dsConfig.getPassword());
-			c.setJdbcUrl(dsConfig.getJdbcUrl());
-			
-			BoneCPDataSource dataSource = new BoneCPDataSource(c);
-		
-	
-			LoggerMem loggerMem = new LoggerMem(logger);
-			LoggerCount loggerCount = new LoggerCount(loggerMem);
-			
-			String smlConfigStr = serviceConfig.getTextResource().getData();
-	
-			Config smlConfig = SparqlifyUtils.parseSmlConfig(smlConfigStr, loggerCount);
-	
-			List<LogMessage> lm = Lists.transform(loggerMem.getLogEvents(), LogUtils.convertLog);
-			
-			
-			
-			if(loggerCount.getErrorCount() != 0) {
-				context.getLogMessages().addAll(lm);
-				throw new RuntimeException("Errors encountered during parsing of the mapping");
-			}
-			
-	
-			QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, 1000l, 30);
-	
-			// A Test Query
-			qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
-	
-			SparqlService sparqlService = new SparqlServiceImpl<Config>(smlConfig, qef);
-			
-			result = new ServiceProviderRdb2Rdf(serviceName, dataSource, sparqlService);
-	
-			result = new ServiceProviderJpaRdbRdf<SparqlService>(result, emf, context);
-			
-			//nameToExecution.put(serviceName, sparqlServiceExecution);
-			context.setStatus(ContextStateFlags.RUNNING);
-			context.getLogMessages().add(new LogMessage("info", "Service successfully started."));
+        em.getTransaction().commit();
+        em.getTransaction().begin();
+        //context.commit();
 
-		} catch(Exception e) {
-			context.setStatus(ContextStateFlags.STOPPED);
-			context.getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
-			context.getLogMessages().add(new LogMessage("info", "Service failed to start."));
-		}
-		finally {
-			em.getTransaction().commit();
-			em.close();
-			//context.commit();
-		}
-		
-		return result;
-	}
+        //context.openSession();
+
+
+        ServiceProvider<SparqlService> result = null;
+
+        try {
+            //
+
+            JdbcDataSource dsConfig = serviceConfig.getJdbcDataSource();
+
+            //LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
+            //LoggerFactory.getLogger(this.getClass()).
+
+
+            BoneCPConfig c = new BoneCPConfig();
+            c.setUsername(dsConfig.getUsername());
+            c.setPassword(dsConfig.getPassword());
+            c.setJdbcUrl(dsConfig.getJdbcUrl());
+
+            BoneCPDataSource dataSource = new BoneCPDataSource(c);
+
+
+            LoggerMem loggerMem = new LoggerMem(logger);
+            LoggerCount loggerCount = new LoggerCount(loggerMem);
+
+            String smlConfigStr = serviceConfig.getTextResource().getData();
+
+            Config smlConfig = SparqlifyUtils.parseSmlConfig(smlConfigStr, loggerCount);
+
+            List<LogMessage> lm = Lists.transform(loggerMem.getLogEvents(), LogUtils.convertLog);
+
+
+
+            if(loggerCount.getErrorCount() != 0) {
+                context.getLogMessages().addAll(lm);
+                throw new RuntimeException("Errors encountered during parsing of the mapping");
+            }
+
+            Integer maxResultSetRows = serviceConfig.getMaxResultSetRows();
+            Integer maxExecutionTimeInSeconds = serviceConfig.getMaxExecutionTimeInSeconds();
+
+            if(maxResultSetRows == null || maxResultSetRows <= 0) {
+                maxResultSetRows = 1000;
+            }
+
+            if(maxExecutionTimeInSeconds == null || maxExecutionTimeInSeconds <= 0) {
+                maxExecutionTimeInSeconds = 30;
+            }
+
+            QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, maxResultSetRows.longValue(), maxExecutionTimeInSeconds);
+
+            // A Test Query
+            qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
+
+            SparqlService sparqlService = new SparqlServiceImpl<Config>(smlConfig, qef);
+
+            result = new ServiceProviderRdb2Rdf(serviceName, dataSource, sparqlService);
+
+            result = new ServiceProviderJpaRdbRdf<SparqlService>(result, emf, context);
+
+            //nameToExecution.put(serviceName, sparqlServiceExecution);
+            context.setStatus(ContextStateFlags.RUNNING);
+            context.getLogMessages().add(new LogMessage("info", "Service successfully started."));
+
+        } catch(Exception e) {
+            context.setStatus(ContextStateFlags.STOPPED);
+            context.getLogMessages().add(new LogMessage("error", ExceptionUtils.getFullStackTrace(e)));
+            context.getLogMessages().add(new LogMessage("info", "Service failed to start."));
+        }
+        finally {
+            em.getTransaction().commit();
+            em.close();
+            //context.commit();
+        }
+
+        return result;
+    }
 }

@@ -1,39 +1,38 @@
-<!--             <div class="modal fade"> -->
-<!--               <div class="modal-dialog"> -->
-<!--     <div class="modal-content"> -->
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title green bold">Add New Service</h4>
-                </div>
-                <div class="modal-body">
-                    <form novalidate class="css-form">
-                        <table class="table table-condensed">
-                        <tr><td>Path:</td><td><input type="text" ng-model="path" required /></td></tr>
-                        <tr><td>Hostname:</td><td><input type="text" ng-model="hostname" required /></td></tr>
-                        <tr><td>Database:</td><td><input type="text" ng-model="dbname" required /></td></tr>
+<div class="modal-header">
+    <button type="button" ng-click="cancel()" class="close" aria-hidden="true">&times;</button>
+    <h4 class="modal-title green bold">Add New Service</h4>
+</div>
+<div class="modal-body">
+    <form novalidate class="css-form">
+        <table class="table table-condensed table-borderless">
+        <tr>
+            <td>Hostname:</td><td><input type="text" ng-model="hostname" tabindex="1" required /></td>
+            <td>Path:</td><td><input type="text" ng-model="path" tabindex="5" required /></td>
+        </tr>
 
-                        <tr><td>Username:</td><td><input type="text" ng-model="username" required /></td></tr>
-                        <tr><td>Password:</td><td><input type="password" ng-model="password" required /></td></tr>
+        <tr>
+            <td>Database:</td><td><input type="text" ng-model="dbname" tabindex="2" required /></td>
+            <td>Max Result Set Rows:</td><td><input type="text" ng-model="maxResultSetRows" tabindex="6" required /></td>
+        </tr>
 
-                        <tr><td>Max Result Rows:</td><td><input type="text" ng-model="maxResultSetRows" required /></td></tr>
-                        <tr><td>Query Timeout (sec):</td><td><input type="text" ng-model="maxExecutionTimeInSeconds" required /></td></tr>
+        <tr>
+            <td>Username:</td><td><input type="text" ng-model="username" tabindex="3" required /></td>
+            <td>Query Timeout (sec):</td><td><input type="text" ng-model="maxExecutionTimeInSeconds" tabindex="7" required /></td>
+        </tr>
 
-                        <tr><td>Mapping:</td><td><textarea rows="25" cols="80" ng-model="mappingText" required></textarea></td></tr>
+        <tr><td>Password:</td><td><input type="password" ng-model="password" tabindex="4" required /></td><td colspan="2"></td></tr>
 
-            <!--            URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
+        <tr><td>Mapping:</td><td colspan="3"><textarea rows="15" cols="80" ng-model="mappingText" tabindex="8" required></textarea></td></tr>
+
+<!--            URL to Mapping: <input type="text" ng-model="mappingUrl" required /> -->
 
 <!--                        <tr><td></td><td><button ng-click="cancel()">Cancel</button> -->
 <!--                        <button ng-click="create()">Create</button></td></tr> -->
-                        </table>
-                    </form>
-                </div>
-                <div class="modal-footer">
+        </table>
+    </form>
+</div>
+<div class="modal-footer">
 <!--                ng-disabled="endpointForm.$invalid || isUnchanged(endpoint) -->
-                      <button type="submit" class="btn-sm btn-success" ng-click="ok">Save</button>
-                      <button type="button" class="btn-sm btn-default" ng-click="cancel()" data-dismiss="modal">Cancel</button>
-                </div>
-
-<!--             </div> -->
-<!--             </div> -->
-<!--             </div> -->
-<!--         </div> -->
+      <button type="submit" class="btn-sm btn-success" ng-click="ok()">Save</button>
+      <button type="button" class="btn-sm btn-default" ng-click="cancel()" data-dismiss="modal">Cancel</button>
+</div>

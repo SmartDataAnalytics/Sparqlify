@@ -35,7 +35,7 @@ Create View jdbcDataSource As
   From
     "jdbcdatasource"
 
-    
+
 Create View textResource As
   Construct {
     ?s
@@ -59,7 +59,7 @@ Create View textResource As
   From
     "textresource"
 
-    
+
 Create View rdb2rdfConfig As
   Construct {
     ?s
@@ -68,6 +68,8 @@ Create View rdb2rdfConfig As
       o:contextPath ?p ;
       o:dataSource ?d ;
       o:resource ?r ;
+      o:maxExecutionTime ?met ;
+      o:maxResultSetRows ?mrsr ;
       .
   }
   With
@@ -76,9 +78,11 @@ Create View rdb2rdfConfig As
     ?p = plainLiteral(?contextpath)
     ?d = uri(r:, 'jdbcDataSource', ?jdbcdatasource_id)
     ?r = uri(r:, 'textResource', ?textresource_id)
+    ?met = typedLiteral(?maxexecutiontimeinseconds, xsd:int)
+    ?mrsr = typedLiteral(?maxresultsetrows, xsd:int)
   From
     "rdb2rdfconfig"
-    
+
 
 /*
 Create View rdb2rdfExecution As
@@ -149,8 +153,7 @@ Create View rdb2rdfExecution_logmessages As
     ?s = uri(r:, 'rdb2RdfExecutionLogEntry', ?rdb2rdfexecution_id)
 //    ?e = uri(r:, 'rdb2RdfExecution', ?rdb2rdfexecution_id)
     ?e = plainLiteral(?text)
-//    ?lvl = plainLiteral(?level)    
+//    ?lvl = plainLiteral(?level)
   From
     "rdb2rdfexecution_logmessages"
 
-  

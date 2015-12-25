@@ -1,55 +1,59 @@
-	
-<div class="frame">
-	<div class="row-fluid">
-		<div class="span8 offset2">
-			<form ng-submit="doFilterContexts(filterText)">
-		    	<input type="text" ng-model="filterText" />
-				<input class="btn-primary" type="submit" value="Filter" />
-			</form>
-		
-			<table class="table table-striped">
-				<colgroup>
-					<col style="width: 75px" />
-					<col style="width: 75px" />
-					<col style="width: 75px" />
-				</colgroup>
-				<thead>
-<!-- 					<th>Id</th> -->
-					<th>View</th>
-					<th>Service</th>
-					<th>Config</th>
-					<th>Path</th>
-					<th>Status</th>
-					<th>Jdbc Url</th>
-					<th>Username</th>
-<!-- 					<th>Mappings</th> -->
-				</thead>
-				<tr ng-show="!contexts.length">
-					<td colspan="7" style="text-align: center"><span>(empty table)</span></td>
-				</tr>
-				<tr ng-repeat="context in contexts">
-<!-- 					<td>{{context.id}}</td> -->
-					<td>
-						<button title="View Details" type="button" class="btn btn-default btn-xs" ng-click="showServiceDetails(context.id)"><span class="glyphicon glyphicon-eye-open"></span></button>
-					</td>
-					<td>
-						<button title="Start Service" class="btn btn-default btn-xs" ng-show="context.status=='STOPPED'" ng-click="startService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-play"></span></button>
-						<button title="Stop Service" class="btn btn-default btn-xs" ng-show="context.status!='STOPPED'" ng-click="stopService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-stop"></span></button>
-						<button title="Restart Service" class="btn btn-default btn-xs" ng-click="restartService(context.id)"><span class="glyphicon glyphicon-refresh"></span></a>
-					</td>
-					<td>
-						<button title="Edit" type="button" class="btn btn-default btn-xs" ng-click="editService(context._id)"><span class="glyphicon glyphicon-edit"></span></button>
-						<button title="Delete" type="button" class="btn btn-default btn-xs" ng-click="deleteService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-trash"></span></button>					
-					</td>
-					<td><a href="services/{{context.config.contextPath}}/sparql" target="_blank">{{context.config.contextPath}}</a></td>
-					<td>{{context.status}}</td>
-					<td>{{context.config.dataSource.jdbcUrl}}</td>
-					<td>{{context.config.dataSource.username}}</td>
-<!-- 					<td>TODO Show a summary of view names</td> -->
-				</tr>
-				<tfoot></tfoot>
-			</table>
 
-		</div>
-	</div>
+<div class="frame">
+    <div class="row-fluid">
+        <div class="span8 offset2">
+            <form ng-submit="doFilterContexts(filterText)">
+                <input type="text" ng-model="filterText" />
+                <input class="btn-primary" type="submit" value="Filter" />
+            </form>
+
+            <table class="table table-striped">
+                <colgroup>
+                    <col style="width: 75px" />
+                    <col style="width: 75px" />
+                    <col style="width: 75px" />
+                </colgroup>
+                <thead>
+<!-- 					<th>Id</th> -->
+                    <th>View</th>
+                    <th>Service</th>
+                    <th>Config</th>
+                    <th>Path</th>
+                    <th>Status</th>
+                    <th>Jdbc Url</th>
+                    <th>Max Result<br />Set Rows</th>
+                    <th>Max Execution<br />Time (sec)</th>
+                    <th>Username</th>
+<!-- 					<th>Mappings</th> -->
+                </thead>
+                <tr ng-show="!contexts.length">
+                    <td colspan="9" style="text-align: center"><span>(empty table)</span></td>
+                </tr>
+                <tr ng-repeat="context in contexts">
+<!-- 					<td>{{context.id}}</td> -->
+                    <td>
+                        <button title="View Details" type="button" class="btn btn-default btn-xs" ng-click="showServiceDetails(context.id)"><span class="glyphicon glyphicon-eye-open"></span></button>
+                    </td>
+                    <td>
+                        <button title="Start Service" class="btn btn-default btn-xs" ng-show="context.status=='STOPPED'" ng-click="startService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-play"></span></button>
+                        <button title="Stop Service" class="btn btn-default btn-xs" ng-show="context.status!='STOPPED'" ng-click="stopService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-stop"></span></button>
+                        <button title="Restart Service" class="btn btn-default btn-xs" ng-click="restartService(context.id)"><span class="glyphicon glyphicon-refresh"></span></a>
+                    </td>
+                    <td>
+                        <button title="Edit" type="button" class="btn btn-default btn-xs" ng-click="editService(context._id)"><span class="glyphicon glyphicon-edit"></span></button>
+                        <button title="Delete" type="button" class="btn btn-default btn-xs" ng-click="deleteService(context.id.slice(1, -1))"><span class="glyphicon glyphicon-trash"></span></button>
+                    </td>
+                    <td><a href="services/{{context.config.contextPath}}/sparql" target="_blank">{{context.config.contextPath}}</a></td>
+                    <td>{{context.status}}</td>
+                    <td>{{context.config.dataSource.jdbcUrl}}</td>
+                    <td>{{context.config.maxResultSetRows}}</td>
+                    <td>{{context.config.maxExecutionTimeInSeconds}}</td>
+                    <td>{{context.config.dataSource.username}}</td>
+<!-- 					<td>TODO Show a summary of view names</td> -->
+                </tr>
+                <tfoot></tfoot>
+            </table>
+
+        </div>
+    </div>
 </div>
