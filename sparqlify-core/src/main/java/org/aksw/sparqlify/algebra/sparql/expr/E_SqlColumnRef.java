@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sparql.expr;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.datatypes.XClass;
 
-import com.hp.hpl.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.ExprVar;
 
 
 /**

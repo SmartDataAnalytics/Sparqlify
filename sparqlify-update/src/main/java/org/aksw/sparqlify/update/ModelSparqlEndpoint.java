@@ -2,7 +2,7 @@ package org.aksw.sparqlify.update;
 
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 public class ModelSparqlEndpoint
     extends QueryExecutionFactoryModel

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.config.syntax;
 
 import com.google.common.base.Joiner;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprList;
 
 
 

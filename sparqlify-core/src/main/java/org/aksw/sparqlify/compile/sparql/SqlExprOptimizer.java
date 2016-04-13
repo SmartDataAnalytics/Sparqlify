@@ -32,24 +32,24 @@ import org.slf4j.LoggerFactory;
 
 import sparql.DnfUtils;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.BindingRoot;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_Function;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
-import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_NotEquals;
-import com.hp.hpl.jena.sparql.expr.E_Regex;
-import com.hp.hpl.jena.sparql.expr.E_StrConcat;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.expr.ExprLib;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.BindingRoot;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.E_Function;
+import org.apache.jena.sparql.expr.E_GreaterThan;
+import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
+import org.apache.jena.sparql.expr.E_LessThan;
+import org.apache.jena.sparql.expr.E_LessThanOrEqual;
+import org.apache.jena.sparql.expr.E_NotEquals;
+import org.apache.jena.sparql.expr.E_Regex;
+import org.apache.jena.sparql.expr.E_StrConcat;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.expr.ExprLib;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 /**
@@ -346,7 +346,7 @@ public class SqlExprOptimizer {
         }
 
         Expr invConst = factory.create(constant);
-        Expr resultConst = com.hp.hpl.jena.sparql.util.ExprUtils.eval(invConst);
+        Expr resultConst = org.apache.jena.sparql.util.ExprUtils.eval(invConst);
 
         Expr resultFunc = function.getArg(1);
 

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.apache.jena.atlas.lib.Sink;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 class SinkQuadsToSet
 	implements Sink<Quad>

@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
 
 
 public abstract class ExprTransformerBase

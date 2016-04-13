@@ -6,13 +6,13 @@ import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprAggregator;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprFunctionOp;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprAggregator;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprFunctionOp;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class ConstantExpander {
 

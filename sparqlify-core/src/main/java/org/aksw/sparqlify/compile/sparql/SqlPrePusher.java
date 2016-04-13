@@ -8,13 +8,13 @@ import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeomFromText;
 import org.aksw.sparqlify.algebra.sparql.expr.old.E_Intersects;
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.sparql.expr.E_LangMatches;
-import com.hp.hpl.jena.sparql.expr.E_OneOf;
-import com.hp.hpl.jena.sparql.expr.E_Regex;
-import com.hp.hpl.jena.sparql.expr.E_Str;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.E_LangMatches;
+import org.apache.jena.sparql.expr.E_OneOf;
+import org.apache.jena.sparql.expr.E_Regex;
+import org.apache.jena.sparql.expr.E_Str;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
 
 /**
  * Methods of this class are invoked for each rdf-function

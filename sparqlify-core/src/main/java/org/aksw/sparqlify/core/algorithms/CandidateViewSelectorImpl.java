@@ -19,14 +19,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpDisjunction;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprVar;
 
 
 

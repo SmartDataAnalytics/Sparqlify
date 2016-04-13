@@ -6,7 +6,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 /**
  * 

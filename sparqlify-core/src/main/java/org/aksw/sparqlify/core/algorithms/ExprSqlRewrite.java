@@ -14,9 +14,9 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.core.TypeToken;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Expr is a Sparql level expressions, whose variables are

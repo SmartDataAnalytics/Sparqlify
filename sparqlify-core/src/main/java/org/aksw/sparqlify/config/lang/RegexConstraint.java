@@ -2,8 +2,8 @@ package org.aksw.sparqlify.config.lang;
 
 import java.util.Map;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
 import com.karneim.util.collection.regex.PatternPro;
 
 public class RegexConstraint

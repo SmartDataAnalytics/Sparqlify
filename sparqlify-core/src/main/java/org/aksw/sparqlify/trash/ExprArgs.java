@@ -2,9 +2,9 @@ package org.aksw.sparqlify.trash;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
 
 
 /**

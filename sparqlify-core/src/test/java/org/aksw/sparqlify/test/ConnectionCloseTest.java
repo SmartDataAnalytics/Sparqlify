@@ -10,8 +10,8 @@ import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class ConnectionCloseTest {

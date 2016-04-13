@@ -20,22 +20,22 @@ import org.slf4j.LoggerFactory;
 
 import sparql.DnfUtils;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
-import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
-import com.hp.hpl.jena.sparql.expr.E_StrConcat;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.FunctionLabel;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionRegistry;
-import com.hp.hpl.jena.sparql.sse.Tags;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.E_GreaterThan;
+import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
+import org.apache.jena.sparql.expr.E_LessThan;
+import org.apache.jena.sparql.expr.E_LessThanOrEqual;
+import org.apache.jena.sparql.expr.E_LogicalAnd;
+import org.apache.jena.sparql.expr.E_StrConcat;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.FunctionLabel;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionRegistry;
+import org.apache.jena.sparql.sse.Tags;
 
 
 /**

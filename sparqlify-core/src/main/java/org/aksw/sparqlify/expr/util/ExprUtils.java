@@ -13,14 +13,14 @@ import org.aksw.commons.factory.Factory2;
 import org.aksw.commons.util.Pair;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
-import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.FunctionLabel;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.E_LogicalAnd;
+import org.apache.jena.sparql.expr.E_LogicalOr;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.FunctionLabel;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 public class ExprUtils {

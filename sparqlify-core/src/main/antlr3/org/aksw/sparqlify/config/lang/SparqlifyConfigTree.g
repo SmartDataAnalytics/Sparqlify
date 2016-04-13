@@ -31,23 +31,23 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 @header {
     package org.aksw.sparqlify.config.lang;
 
-    import com.hp.hpl.jena.sparql.expr.*;
+    import org.apache.jena.sparql.expr.*;
     import org.apache.commons.lang.NotImplementedException;
-    import com.hp.hpl.jena.graph.*;
-    import com.hp.hpl.jena.vocabulary.*;
-    import com.hp.hpl.jena.sparql.syntax.*;
-    import com.hp.hpl.jena.shared.*;
+    import org.apache.jena.graph.*;
+    import org.apache.jena.vocabulary.*;
+    import org.apache.jena.sparql.syntax.*;
+    import org.apache.jena.shared.*;
     import org.aksw.sparqlify.config.syntax.*;
-    import com.hp.hpl.jena.shared.impl.*;
-    import com.hp.hpl.jena.sparql.core.*;
-    import com.hp.hpl.jena.datatypes.*;
+    import org.apache.jena.shared.impl.*;
+    import org.apache.jena.sparql.core.*;
+    import org.apache.jena.datatypes.*;
     import org.aksw.sparqlify.algebra.sparql.expr.*;
-    import com.hp.hpl.jena.rdf.model.AnonId;
+    import org.apache.jena.rdf.model.AnonId;
     import org.aksw.sparqlify.util.*;
     import org.aksw.jena_sparql_api.utils.*;
 
     import org.aksw.sparqlify.algebra.sql.nodes.*;
-    import com.hp.hpl.jena.sdb.core.JoinType;
+    import org.apache.jena.sdb.core.JoinType;
 
     import java.util.Collection;
     import java.util.List;
@@ -60,8 +60,8 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.slf4j.Logger;
     import org.slf4j.LoggerFactory;
 
-    import com.hp.hpl.jena.shared.PrefixMapping;
-    import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
+    import org.apache.jena.shared.PrefixMapping;
+    import org.apache.jena.shared.impl.PrefixMappingImpl;
 
 
     import org.aksw.sparqlify.core.SparqlifyConstants;
@@ -100,7 +100,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
             result = Quad.defaultGraphNodeGenerated;
            }
            else {
-               result = Node.createURI(value);
+               result = NodeFactory.createURI(value);
            }
 
         return result;
@@ -969,10 +969,10 @@ iriRefOrFunction returns [Expr value]
     ;
 
 rdfLiteral returns [Node value]
-    : ^(PLAIN_LITERAL a=string b=LANGTAG?) {$value = Node.createLiteral($a.value, $b.text, null);}
-    | ^(TYPED_LITERAL a=string c=iriRef) {$value = Node.createLiteral($a.value, null, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
+    : ^(PLAIN_LITERAL a=string b=LANGTAG?) {$value = NodeFactory.createLiteral($a.value, $b.text, null);}
+    | ^(TYPED_LITERAL a=string c=iriRef) {$value = NodeFactory.createLiteral($a.value, null, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
 
-    //: a=string ( b=LANGTAG | ( REFERENCE c=iriRef ) )? { $value = Node.createLiteral($a.value, $b.text, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
+    //: a=string ( b=LANGTAG | ( REFERENCE c=iriRef ) )? { $value = NodeFactory.createLiteral($a.value, $b.text, TypeMapper.getInstance().getSafeTypeByName($c.value == null ? null : $c.value.toString()));}
     ;
 
 numericLiteral returns [ NodeValue value ]
@@ -1012,18 +1012,18 @@ string returns [String value]
     ;
 
 iriRef returns [Node value]
-    : a=IRI_REF      {$value = Node.createURI($a.text);}
+    : a=IRI_REF      {$value = NodeFactory.createURI($a.text);}
     | b=prefixedName {$value = $b.value;}
     ;
 
 prefixedName returns [Node value]
-    : a=PNAME_LN  {$value = Node.createURI(expandUri($a.text));}
-    | a=PNAME_NS  {$value = Node.createURI(expandPrefix($a.text));}
+    : a=PNAME_LN  {$value = NodeFactory.createURI(expandUri($a.text));}
+    | a=PNAME_NS  {$value = NodeFactory.createURI(expandPrefix($a.text));}
     ;
 
 blankNode returns [Node value]
-    : a=BLANK_NODE_LABEL {$value = Node.createAnon(new AnonId($a.text));}
-    | anon {$value = Node.createAnon();}
+    : a=BLANK_NODE_LABEL {$value = NodeFactory.createBlankNode($a.text);}
+    | anon {$value = NodeFactory.createBlankNode();}
     ;
 
 anon

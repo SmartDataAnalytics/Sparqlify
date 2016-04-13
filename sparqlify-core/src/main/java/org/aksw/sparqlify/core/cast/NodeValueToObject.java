@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.cast;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public interface NodeValueToObject
 {

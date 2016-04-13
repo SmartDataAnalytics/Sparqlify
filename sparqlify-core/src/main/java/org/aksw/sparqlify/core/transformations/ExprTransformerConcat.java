@@ -6,10 +6,10 @@ import java.util.List;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.vocabulary.XSD;
 
 /**
  * Expand all arguments of any concat expression into this expression.

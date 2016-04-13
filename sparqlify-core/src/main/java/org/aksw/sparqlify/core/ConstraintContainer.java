@@ -13,8 +13,8 @@ import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.aksw.sparqlify.config.lang.RegexConstraint;
 import org.aksw.sparqlify.database.StartsWithConstraint;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
 
 
 public class ConstraintContainer {

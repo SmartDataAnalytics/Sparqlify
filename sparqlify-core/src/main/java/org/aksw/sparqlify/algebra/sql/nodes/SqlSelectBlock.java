@@ -6,11 +6,11 @@ import java.util.List;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlSortCondition;
 
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sdb.core.ScopeBase;
-import com.hp.hpl.jena.sdb.shared.SDBInternalError;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
+import org.apache.jena.sdb.core.ScopeBase;
+import org.apache.jena.sdb.shared.SDBInternalError;
+import org.apache.jena.sparql.core.Var;
 
 
 

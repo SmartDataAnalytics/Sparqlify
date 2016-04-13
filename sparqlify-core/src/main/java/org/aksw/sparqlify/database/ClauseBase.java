@@ -8,8 +8,8 @@ import org.apache.commons.collections.CollectionUtils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
 
 /**
  * Dnf, Clauses, and Exprs should be treated as immutable!

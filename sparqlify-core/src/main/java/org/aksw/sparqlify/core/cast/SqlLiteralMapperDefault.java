@@ -6,8 +6,8 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseDat
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 

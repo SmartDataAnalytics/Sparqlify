@@ -10,8 +10,8 @@ import org.aksw.sparqlify.config.syntax.FunctionTemplate;
 import org.aksw.sparqlify.config.syntax.ParamType;
 import org.aksw.sparqlify.core.algorithms.RegisteredFunction;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.ExprList;
 
 class SqlStringTransformerRegisteredFunction
 //	implements SqlStringTransformer

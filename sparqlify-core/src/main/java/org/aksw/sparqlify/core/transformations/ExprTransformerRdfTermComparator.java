@@ -6,15 +6,15 @@ import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.algorithms.ExprFactoryUtils;
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.sparql.expr.E_Conditional;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
-import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sparql.expr.E_Conditional;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.E_LogicalAnd;
+import org.apache.jena.sparql.expr.E_LogicalOr;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * 

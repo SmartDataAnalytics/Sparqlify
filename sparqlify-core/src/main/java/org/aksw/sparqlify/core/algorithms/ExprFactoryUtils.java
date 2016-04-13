@@ -6,15 +6,15 @@ import java.util.Map;
 import org.aksw.commons.factory.Factory2;
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.sparql.expr.E_GreaterThan;
-import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LessThan;
-import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
-import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
-import com.hp.hpl.jena.sparql.expr.E_LogicalOr;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.sse.Tags;
+import org.apache.jena.sparql.expr.E_GreaterThan;
+import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
+import org.apache.jena.sparql.expr.E_LessThan;
+import org.apache.jena.sparql.expr.E_LessThanOrEqual;
+import org.apache.jena.sparql.expr.E_LogicalAnd;
+import org.apache.jena.sparql.expr.E_LogicalOr;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.sse.Tags;
 
 class ExprFactory_LogicalAnd
 	implements Factory2<Expr>

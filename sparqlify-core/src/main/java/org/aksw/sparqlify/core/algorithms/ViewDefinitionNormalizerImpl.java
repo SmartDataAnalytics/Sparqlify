@@ -21,11 +21,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_StrConcat;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_StrConcat;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
 
 public class ViewDefinitionNormalizerImpl
 	implements ViewDefinitionNormalizer<ViewDefinition>

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.core.VarExprList;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.syntax.Template;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.syntax.Template;
 
 public class ViewTemplateDefinition {
 	//private static final Log

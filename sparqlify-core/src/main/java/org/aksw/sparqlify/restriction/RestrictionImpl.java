@@ -7,7 +7,7 @@ import java.util.Set;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 import com.karneim.util.collection.regex.PatternPro;
 
 
@@ -238,7 +238,7 @@ public class RestrictionImpl
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.aksw.sparqlify.restriction.IRestriction#stateNode(com.hp.hpl.jena.graph.Node)
+	 * @see org.aksw.sparqlify.restriction.IRestriction#stateNode(org.apache.jena.graph.Node)
 	 */
 	@Override
 	public boolean stateNode(Node newNode) {

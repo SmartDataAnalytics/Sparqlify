@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.restriction;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Interface for associating restrictions with

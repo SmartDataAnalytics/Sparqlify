@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.algebra.sparql.nodes;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.sse.Tags;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.sse.Tags;
 
 
 public class OpFilter

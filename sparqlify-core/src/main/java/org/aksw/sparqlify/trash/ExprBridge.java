@@ -4,7 +4,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.Expr;
 
 public class ExprBridge {
 

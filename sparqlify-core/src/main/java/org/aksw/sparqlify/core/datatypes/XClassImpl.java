@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 public class XClassImpl
 	implements XClass

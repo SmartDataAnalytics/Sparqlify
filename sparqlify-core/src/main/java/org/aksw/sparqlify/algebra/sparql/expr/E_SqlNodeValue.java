@@ -4,9 +4,9 @@ import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueVisitor;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueVisitor;
 
 public class E_SqlNodeValue
 	extends NodeValue

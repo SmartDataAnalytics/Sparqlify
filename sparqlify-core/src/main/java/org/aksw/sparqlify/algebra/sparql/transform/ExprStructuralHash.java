@@ -5,10 +5,10 @@ import java.util.Map;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.core.SqlDatatype;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Compares Expressions that are structurally equivalent, except for the variable names

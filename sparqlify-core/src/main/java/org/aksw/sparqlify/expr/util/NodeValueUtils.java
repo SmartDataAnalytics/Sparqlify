@@ -6,8 +6,8 @@ import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
 
 public class NodeValueUtils {
 

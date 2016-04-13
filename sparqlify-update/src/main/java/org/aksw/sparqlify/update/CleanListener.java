@@ -8,7 +8,7 @@ import org.aksw.commons.collections.CacheSet;
 
 import sparql.FilterCompiler;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 /**
  * A listener that avoids reporting duplicate insertions or removals

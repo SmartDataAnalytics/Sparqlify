@@ -19,9 +19,9 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.XSD;
 
 
 

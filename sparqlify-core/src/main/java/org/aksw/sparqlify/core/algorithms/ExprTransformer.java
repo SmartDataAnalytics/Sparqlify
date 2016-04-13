@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
 
 /**
  * The purpose of the ExprTransformer is to transform an expression

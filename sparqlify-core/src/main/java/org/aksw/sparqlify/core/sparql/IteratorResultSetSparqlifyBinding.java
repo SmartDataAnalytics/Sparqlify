@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 
 public class IteratorResultSetSparqlifyBinding
 	extends SinglePrefetchIterator<Binding>

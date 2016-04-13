@@ -3,7 +3,7 @@ package sparql;
 import java.util.List;
 import java.util.Set;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 /**
  * 

@@ -26,14 +26,14 @@ import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.NestedNormalForm;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class SparqlSqlInverseMapperImpl
 	implements SparqlSqlInverseMapper

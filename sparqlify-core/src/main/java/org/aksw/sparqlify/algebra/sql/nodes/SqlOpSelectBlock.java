@@ -8,10 +8,10 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.apache.jena.atlas.io.IndentedWriter;
 
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sdb.core.ScopeBase;
-import com.hp.hpl.jena.sdb.shared.SDBInternalError;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
+import org.apache.jena.sdb.core.ScopeBase;
+import org.apache.jena.sdb.shared.SDBInternalError;
 
 
 

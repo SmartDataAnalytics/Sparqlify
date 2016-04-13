@@ -7,10 +7,10 @@ import sparql.TwoWayBinding;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
 
 
 public class ViewInstanceOld {

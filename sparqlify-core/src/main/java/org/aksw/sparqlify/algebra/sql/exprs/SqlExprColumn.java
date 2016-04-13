@@ -12,7 +12,7 @@ public class SqlExprColumn
 	private String tableName;
 	private String columnName;
 	
-	com.hp.hpl.jena.sdb.core.sqlnode.SqlTable jenaTable = null;
+	org.apache.jena.sdb.core.sqlnode.SqlTable jenaTable = null;
 	
 	public SqlExprColumn(String tableName, String columnName, SqlDatatype datatype) {
 		super(datatype);
@@ -22,7 +22,7 @@ public class SqlExprColumn
 
 		
 		if(tableName != null) {
-			jenaTable = new com.hp.hpl.jena.sdb.core.sqlnode.SqlTable(tableName);	
+			jenaTable = new org.apache.jena.sdb.core.sqlnode.SqlTable(tableName);	
 		}
 	}
 	

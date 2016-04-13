@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
 
 public class ExprBindingSubstitutorImpl
 	implements ExprBindingSubstitutor

@@ -2,7 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 /**
  * Compares views by their name.

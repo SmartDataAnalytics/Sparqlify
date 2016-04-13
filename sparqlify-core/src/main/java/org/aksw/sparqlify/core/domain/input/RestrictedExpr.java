@@ -2,7 +2,7 @@ package org.aksw.sparqlify.core.domain.input;
 
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.Expr;
 
 /**
  * [SPARQL level]

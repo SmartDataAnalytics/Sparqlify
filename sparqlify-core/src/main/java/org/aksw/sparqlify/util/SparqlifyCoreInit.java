@@ -91,13 +91,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggGroupConcat;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggSum;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sparql.expr.aggregate.AggCount;
+import org.apache.jena.sparql.expr.aggregate.AggGroupConcat;
+import org.apache.jena.sparql.expr.aggregate.AggSum;
+import org.apache.jena.vocabulary.XSD;
 
 public class SparqlifyCoreInit {
     public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {

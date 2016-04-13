@@ -13,9 +13,9 @@ import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.core.Var;
 
 
 /**

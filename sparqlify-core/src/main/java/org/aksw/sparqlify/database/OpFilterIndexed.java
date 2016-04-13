@@ -4,11 +4,11 @@ import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.OpVisitor;
-import com.hp.hpl.jena.sparql.algebra.Transform;
-import com.hp.hpl.jena.sparql.algebra.op.Op1;
-import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.OpVisitor;
+import org.apache.jena.sparql.algebra.Transform;
+import org.apache.jena.sparql.algebra.op.Op1;
+import org.apache.jena.sparql.util.NodeIsomorphismMap;
 
 public class OpFilterIndexed
 	extends Op1

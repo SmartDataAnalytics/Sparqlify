@@ -33,9 +33,9 @@ import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sdb.core.JoinType;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
+import org.apache.jena.sdb.core.JoinType;
 
 interface JoinContext {
 	SqlOp getOp();

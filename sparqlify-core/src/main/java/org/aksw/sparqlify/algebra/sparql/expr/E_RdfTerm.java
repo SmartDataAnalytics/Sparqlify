@@ -6,14 +6,14 @@ import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunctionN;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.vocabulary.XSD;
 
 
 public class E_RdfTerm

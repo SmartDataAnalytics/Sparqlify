@@ -7,14 +7,14 @@ import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.FunctionLabel;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.FunctionLabel;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Factors out the common top-level expressions of two given expressions.

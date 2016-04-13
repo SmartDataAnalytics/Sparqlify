@@ -3,16 +3,16 @@ package sparql;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.sparql.algebra.OpVisitorByType;
-import com.hp.hpl.jena.sparql.algebra.op.Op0;
-import com.hp.hpl.jena.sparql.algebra.op.Op1;
-import com.hp.hpl.jena.sparql.algebra.op.Op2;
-import com.hp.hpl.jena.sparql.algebra.op.OpExt;
-import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpN;
-import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.algebra.OpVisitorByType;
+import org.apache.jena.sparql.algebra.op.Op0;
+import org.apache.jena.sparql.algebra.op.Op1;
+import org.apache.jena.sparql.algebra.op.Op2;
+import org.apache.jena.sparql.algebra.op.OpExt;
+import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpN;
+import org.apache.jena.sparql.algebra.op.OpQuadPattern;
+import org.apache.jena.sparql.core.Quad;
 
 
 public class IndexOpVisitor

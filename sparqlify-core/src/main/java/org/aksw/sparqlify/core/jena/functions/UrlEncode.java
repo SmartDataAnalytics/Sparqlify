@@ -6,8 +6,8 @@ import java.net.URLEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionBase1;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionBase1;
 
 public class UrlEncode extends FunctionBase1 {
 	private static final Logger logger = LoggerFactory.getLogger(UrlEncode.class);

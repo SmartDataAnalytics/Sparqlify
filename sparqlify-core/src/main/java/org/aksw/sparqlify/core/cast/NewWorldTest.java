@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
 import com.google.common.base.Function;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.util.ExprUtils;
 
 /* This is the SqlExprTransformer
  interface ExprTypeEvaluator {

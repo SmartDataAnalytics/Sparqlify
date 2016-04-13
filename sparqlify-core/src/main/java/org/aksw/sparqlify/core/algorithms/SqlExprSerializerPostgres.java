@@ -6,8 +6,8 @@ import org.aksw.commons.util.factory.Factory1;
 import org.aksw.sparqlify.core.TypeToken;
 import org.postgis.PGgeometry;
 
-import com.hp.hpl.jena.sdb.sql.SQLUtils;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sdb.sql.SQLUtils;
+import org.apache.jena.sparql.expr.NodeValue;
 
 interface DatatypeToString
 {

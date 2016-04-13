@@ -4,8 +4,8 @@ import org.aksw.sparqlify.core.RegexDerivation;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.util.ExprUtils;
 import com.karneim.util.collection.regex.PAutomaton;
 import com.karneim.util.collection.regex.PatternPro;
 

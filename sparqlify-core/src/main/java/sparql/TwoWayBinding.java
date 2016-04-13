@@ -11,9 +11,9 @@ import org.aksw.commons.collections.multimaps.ISetMultimap;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Var;
 
 class NodeV {
 	private Node node;

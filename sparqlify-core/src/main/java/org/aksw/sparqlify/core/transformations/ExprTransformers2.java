@@ -9,12 +9,12 @@ import org.aksw.sparqlify.core.cast.TypeSystemImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 
-import com.hp.hpl.jena.sparql.expr.E_Add;
-import com.hp.hpl.jena.sparql.expr.E_LogicalAnd;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.sparql.expr.E_Add;
+import org.apache.jena.sparql.expr.E_LogicalAnd;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.vocabulary.XSD;
 
 public class ExprTransformers2 {
 

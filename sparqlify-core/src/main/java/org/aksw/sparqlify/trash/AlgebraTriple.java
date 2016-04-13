@@ -3,16 +3,16 @@ package org.aksw.sparqlify.trash;
 
 import java.util.Stack;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.OpVisitor;
-import com.hp.hpl.jena.sparql.algebra.OpVisitorBase;
-import com.hp.hpl.jena.sparql.algebra.TransformCopy;
-import com.hp.hpl.jena.sparql.algebra.Transformer;
-import com.hp.hpl.jena.sparql.algebra.op.OpGraph;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.OpVisitor;
+import org.apache.jena.sparql.algebra.OpVisitorBase;
+import org.apache.jena.sparql.algebra.TransformCopy;
+import org.apache.jena.sparql.algebra.Transformer;
+import org.apache.jena.sparql.algebra.op.OpGraph;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpQuadPattern;
+import org.apache.jena.sparql.core.Quad;
 
 //not implemented yet
 

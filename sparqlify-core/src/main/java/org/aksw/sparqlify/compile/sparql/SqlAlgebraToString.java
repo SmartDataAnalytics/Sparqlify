@@ -35,12 +35,12 @@ import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.base.Joiner;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.JoinType;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
+import org.apache.jena.query.Query;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.JoinType;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprVar;
 
 
 

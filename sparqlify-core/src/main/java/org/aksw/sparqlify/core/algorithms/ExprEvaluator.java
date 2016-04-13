@@ -2,8 +2,8 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.Map;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
 
 /**
  * Implementations of this class transform expressions as to eliminate

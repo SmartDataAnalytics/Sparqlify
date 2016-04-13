@@ -6,11 +6,11 @@ import java.util.Set;
 
 import org.aksw.commons.collections.MultiMaps;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sparql.algebra.Algebra;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.QuadPattern;
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.algebra.Algebra;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.QuadPattern;
 
 public class PatternSignatureIndex
 {

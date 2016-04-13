@@ -21,25 +21,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpConditional;
-import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
-import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
-import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
-import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
-import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpNull;
-import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
-import com.hp.hpl.jena.sparql.algebra.op.OpProject;
-import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
-import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
-import com.hp.hpl.jena.sparql.algebra.op.OpTopN;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Bound;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpConditional;
+import org.apache.jena.sparql.algebra.op.OpDisjunction;
+import org.apache.jena.sparql.algebra.op.OpDistinct;
+import org.apache.jena.sparql.algebra.op.OpExtend;
+import org.apache.jena.sparql.algebra.op.OpGroup;
+import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpNull;
+import org.apache.jena.sparql.algebra.op.OpOrder;
+import org.apache.jena.sparql.algebra.op.OpProject;
+import org.apache.jena.sparql.algebra.op.OpSequence;
+import org.apache.jena.sparql.algebra.op.OpSlice;
+import org.apache.jena.sparql.algebra.op.OpTopN;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Bound;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 /**

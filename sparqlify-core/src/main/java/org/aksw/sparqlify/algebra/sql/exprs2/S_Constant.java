@@ -4,7 +4,7 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.apache.jena.atlas.io.IndentedWriter;
 
-import com.hp.hpl.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.TypeMapper;
 
 
 

@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterNullIterator;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.iterator.QueryIterNullIterator;
 
 /**
  * A query execution that can only do execSelect
@@ -117,7 +117,7 @@ public class QueryExecutionSelect
 		for(Var v : query.getProjectVars()) {
 			vars.add(v.getName());
 		}
-		return com.hp.hpl.jena.query.ResultSetFactory.create(new QueryIterNullIterator(null), vars);
+		return org.apache.jena.query.ResultSetFactory.create(new QueryIterNullIterator(null), vars);
 	}
 	
 	public ResultSet _execSelect() throws SQLException {

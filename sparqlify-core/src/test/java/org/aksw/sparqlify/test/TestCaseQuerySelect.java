@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 import org.aksw.sparqlify.core.test.TestHelper;
 import org.junit.Assert;
 
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.ResultSet;
 
 
 public class TestCaseQuerySelect

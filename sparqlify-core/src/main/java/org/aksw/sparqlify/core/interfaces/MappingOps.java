@@ -8,11 +8,11 @@ import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 
-import com.hp.hpl.jena.query.SortCondition;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.core.VarExprList;
-import com.hp.hpl.jena.sparql.expr.ExprAggregator;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.query.SortCondition;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
+import org.apache.jena.sparql.expr.ExprAggregator;
+import org.apache.jena.sparql.expr.ExprList;
 
 /**
  * Interface for the mapping algebra operations.

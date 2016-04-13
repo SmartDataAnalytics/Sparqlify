@@ -4,8 +4,8 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.apache.commons.lang.time.StopWatch;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
 
 public class RemoteTest {
 	public static void main(String[] args)

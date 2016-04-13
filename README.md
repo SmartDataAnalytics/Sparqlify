@@ -69,7 +69,7 @@ and add the content
 
 Import the public key with
 
-    wget -O - http://cstadler.aksw.org/repos/apt/conf/packages.precise.gpg.key | apt-key add -
+    wget -O - http://cstadler.aksw.org/repos/apt/conf/packages.precise.gpg.key | sudo apt-key add -
 
 
 Note that this also works with distros other than "precise" (ubuntu 12.04) such as ubuntu 14.04.

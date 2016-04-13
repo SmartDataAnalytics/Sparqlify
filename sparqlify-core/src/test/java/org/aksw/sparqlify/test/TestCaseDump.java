@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 import org.aksw.sparqlify.core.test.TestHelper;
 import org.junit.Assert;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 // TODO: We could distinguish between a task (a callable) and a testcase, that validates the output of the task
 public class TestCaseDump

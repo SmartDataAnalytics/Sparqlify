@@ -31,7 +31,7 @@ import org.jgrapht.graph.SimpleGraph;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sdb.core.JoinType;
+import org.apache.jena.sdb.core.JoinType;
 
 
 class SelfJoinResult {

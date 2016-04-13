@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.nodes;
 
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprList;
 
 /**
  * An op-node that may hold information about the applicable filter 

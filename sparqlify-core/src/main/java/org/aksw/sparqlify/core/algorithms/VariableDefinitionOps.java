@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.algorithms;
 import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 
-import com.hp.hpl.jena.sparql.expr.E_Add;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.E_Add;
+import org.apache.jena.sparql.expr.E_Equals;
 
 public class VariableDefinitionOps {
 

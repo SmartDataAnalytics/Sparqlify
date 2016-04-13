@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.transformations;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.vocabulary.XSD;
 
 public class ExprTransformerLogicalConjunction
 	extends ExprTransformerBase2

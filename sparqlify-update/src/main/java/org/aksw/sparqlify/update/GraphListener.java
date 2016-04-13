@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.update;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 interface GraphListener {
 	void onPreBatchStart();

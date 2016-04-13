@@ -4,7 +4,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.6.21-SNAPSHOT</version>
+	<version>0.8.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -60,10 +60,10 @@
 		<jetty.version>7.1.6.v20100715</jetty.version>
 
 		<!-- project defaults -->
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<java.version>1.7</java.version>
-		<java.version.javadoc>http://java.sun.com/javase/7/docs/api/</java.version.javadoc>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<java.version>1.8</java.version>
+		<java.version.javadoc>http://java.sun.com/javase/8/docs/api/</java.version.javadoc>
 		<file.encoding>UTF-8</file.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -78,7 +78,7 @@
 
 		<aksw.commons.version>0.7.5</aksw.commons.version>
 
-		<jena-sparql-api.version>2.13.0-1</jena-sparql-api.version>
+		<jena-sparql-api.version>3.0.1-2-SNAPSHOT</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -273,6 +273,7 @@
 					<excludes>
 						<exclude>commons-beanutils-core-</exclude>
 						<exclude>postgresql-</exclude>
+                                                <exclude>asm-</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -895,17 +896,17 @@
 			</dependency>
 
 			<dependency>
-				<groupId>de.fuberlin.wiwiss</groupId>
+				<groupId>org.aksw.de.fuberlin.wiwiss</groupId>
 				<artifactId>pubby</artifactId>
 				<type>war</type>
-				<version>0.3.4-1</version>
+				<version>0.4-2</version>
 			</dependency>
 
 			<dependency>
-				<groupId>de.fuberlin.wiwiss</groupId>
+				<groupId>org.aksw.de.fuberlin.wiwiss</groupId>
 				<artifactId>pubby</artifactId>
 				<classifier>classes</classifier>
-				<version>0.3.4-1</version>
+				<version>0.4-2</version>
 
 				<exclusions>
 					<exclusion>

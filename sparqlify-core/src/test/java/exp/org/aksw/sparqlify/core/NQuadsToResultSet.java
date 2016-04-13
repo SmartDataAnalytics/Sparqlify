@@ -9,12 +9,12 @@ import org.aksw.sparqlify.util.NQuadUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.engine.ResultSetStream;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIter;
-import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPlainWrapper;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.engine.ResultSetStream;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.iterator.QueryIter;
+import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 
 
 

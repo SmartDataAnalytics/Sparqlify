@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core;
 
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
 
 
 public class ColRelGenerator {

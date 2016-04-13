@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.jena.atlas.io.IndentedWriter;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.Expr;
 
 
 /**

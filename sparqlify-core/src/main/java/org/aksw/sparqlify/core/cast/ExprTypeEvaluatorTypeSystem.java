@@ -4,10 +4,10 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.type_system.MethodSignature;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class ExprTypeEvaluatorTypeSystem
 	implements ExprTypeEvaluator

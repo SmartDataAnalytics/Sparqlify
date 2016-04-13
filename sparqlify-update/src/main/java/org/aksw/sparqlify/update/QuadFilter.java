@@ -9,15 +9,15 @@ import org.aksw.jena_sparql_api.utils.QuadUtils;
 import sparql.FilterUtils;
 import sparql.ValueSet;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.BindingHashMap;
-import com.hp.hpl.jena.sparql.engine.binding.BindingMap;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.BindingHashMap;
+import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.util.ExprUtils;
 
 
 /**

@@ -4,12 +4,12 @@ import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.apache.jena.atlas.io.IndentedWriter;
 
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpExt;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.serializer.SerializationContext;
-import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpExt;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.serializer.SerializationContext;
+import org.apache.jena.sparql.util.NodeIsomorphismMap;
 
 public class OpMapping
 	extends OpExt

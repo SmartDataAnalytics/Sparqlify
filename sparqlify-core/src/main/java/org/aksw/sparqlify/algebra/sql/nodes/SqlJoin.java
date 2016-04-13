@@ -4,7 +4,7 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 
-import com.hp.hpl.jena.sdb.core.JoinType;
+import org.apache.jena.sdb.core.JoinType;
 
 
 

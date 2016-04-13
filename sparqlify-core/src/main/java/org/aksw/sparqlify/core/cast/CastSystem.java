@@ -2,8 +2,8 @@ package org.aksw.sparqlify.core.cast;
 
 import org.aksw.commons.util.factory.Factory1;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Note to myself: My initial idea was to have a method

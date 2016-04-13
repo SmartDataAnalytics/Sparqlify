@@ -25,13 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.hp.hpl.jena.sparql.expr.E_Function;
-import com.hp.hpl.jena.sparql.expr.E_StrDatatype;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.sparql.expr.E_Function;
+import org.apache.jena.sparql.expr.E_StrDatatype;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.vocabulary.XSD;
 
 interface IFactoryN<T>
 {

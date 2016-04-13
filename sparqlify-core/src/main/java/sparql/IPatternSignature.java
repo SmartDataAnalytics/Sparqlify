@@ -2,7 +2,7 @@ package sparql;
 
 import java.util.Set;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 /**
  * TODO Rename everything related to IPatternType to IPatternSignature

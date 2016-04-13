@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.Expr;
 
 /**
  * A clause with restrictions derived for the variables

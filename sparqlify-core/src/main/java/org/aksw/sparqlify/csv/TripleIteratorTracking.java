@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.aksw.commons.collections.SinglePrefetchIterator;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.Var;
 
 public class TripleIteratorTracking
 	extends SinglePrefetchIterator<Triple>

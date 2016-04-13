@@ -6,9 +6,9 @@ import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.junit.Test;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.function.FunctionRegistry;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.function.FunctionRegistry;
+import org.apache.jena.sparql.util.ExprUtils;
 
 
 

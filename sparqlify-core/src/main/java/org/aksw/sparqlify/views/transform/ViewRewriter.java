@@ -16,20 +16,20 @@ import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sdb.core.JoinType;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
-import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
-import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
-import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
-import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
-import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpNull;
-import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
-import com.hp.hpl.jena.sparql.algebra.op.OpProject;
-import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sdb.core.JoinType;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpDisjunction;
+import org.apache.jena.sparql.algebra.op.OpDistinct;
+import org.apache.jena.sparql.algebra.op.OpExtend;
+import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpGroup;
+import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpNull;
+import org.apache.jena.sparql.algebra.op.OpOrder;
+import org.apache.jena.sparql.algebra.op.OpProject;
+import org.apache.jena.sparql.algebra.op.OpSlice;
+import org.apache.jena.sparql.expr.ExprList;
 
 /**
  * Interface for generating ids.

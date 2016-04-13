@@ -7,11 +7,11 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.modify.TemplateLib;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.modify.TemplateLib;
 
 public class RowMapperSparqlify
 	implements RowMapper<QuadPattern>

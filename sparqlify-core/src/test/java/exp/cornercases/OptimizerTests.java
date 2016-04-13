@@ -3,8 +3,8 @@ package exp.cornercases;
 import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.junit.Test;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.util.ExprUtils;
 
 public class OptimizerTests {
 	

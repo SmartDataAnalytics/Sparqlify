@@ -2,7 +2,7 @@ package org.aksw.sparqlify.core.domain.input;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Var;
 
 
 /**

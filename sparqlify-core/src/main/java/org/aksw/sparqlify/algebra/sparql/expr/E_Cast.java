@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class E_Cast
 	extends ExprFunction2

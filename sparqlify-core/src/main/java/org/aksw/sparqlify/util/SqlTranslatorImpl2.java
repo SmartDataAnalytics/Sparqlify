@@ -15,8 +15,8 @@ import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
 
 public class SqlTranslatorImpl2
 	implements SqlTranslator

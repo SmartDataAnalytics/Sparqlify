@@ -6,10 +6,10 @@ import java.util.List;
 import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.vocabulary.XSD;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.vocabulary.XSD;
 
 public class ExprTransformerOneOf
     implements ExprTransformer

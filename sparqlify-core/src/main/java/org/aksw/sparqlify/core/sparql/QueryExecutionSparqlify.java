@@ -12,8 +12,8 @@ import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
 
 // TODO Replace with class from AKSW commons
 /*

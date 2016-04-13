@@ -8,7 +8,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * A class with knowlegde about the type hierarchy.

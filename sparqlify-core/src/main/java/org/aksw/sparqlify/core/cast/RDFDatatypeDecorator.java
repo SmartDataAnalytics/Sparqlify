@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.core.cast;
 
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.graph.impl.LiteralLabel;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.graph.impl.LiteralLabel;
 
 /**
  * FIXME WORKAROUND for Jena feature/bug

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Var;
 
 public class SparqlSqlOpRewrite {
 	// Whether the query is known to yield an empty result

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.sparql;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
 
 public abstract class QueryExecutionFactoryExBase
     implements QueryExecutionFactoryEx

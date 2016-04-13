@@ -54,7 +54,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-import com.hp.hpl.jena.shared.PrefixMapping;
+import org.apache.jena.shared.PrefixMapping;
 
 @Configuration
 @ComponentScan("org.aksw.sparqlify.admin.web")

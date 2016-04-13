@@ -9,7 +9,7 @@ import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.IViewDef;
 
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Var;
 
 
 /**

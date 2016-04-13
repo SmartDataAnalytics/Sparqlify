@@ -8,17 +8,17 @@ import java.util.List;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprAggregator;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprFunction0;
-import com.hp.hpl.jena.sparql.expr.ExprFunction1;
-import com.hp.hpl.jena.sparql.expr.ExprFunction2;
-import com.hp.hpl.jena.sparql.expr.ExprFunction3;
-import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprAggregator;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprFunction0;
+import org.apache.jena.sparql.expr.ExprFunction1;
+import org.apache.jena.sparql.expr.ExprFunction2;
+import org.apache.jena.sparql.expr.ExprFunction3;
+import org.apache.jena.sparql.expr.ExprFunctionN;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 class ExprCopySlow {

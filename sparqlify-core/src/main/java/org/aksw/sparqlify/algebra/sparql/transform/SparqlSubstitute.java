@@ -6,10 +6,10 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.core.SparqlifyConstants;
 
-import com.hp.hpl.jena.sparql.expr.E_Function;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.E_Function;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Macro Expansion, e.g. beef:uri - beef:term()

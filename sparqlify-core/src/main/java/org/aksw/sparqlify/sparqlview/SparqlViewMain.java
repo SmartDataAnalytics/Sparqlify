@@ -6,9 +6,9 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 
 
 public class SparqlViewMain {

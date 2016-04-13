@@ -16,20 +16,20 @@ import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpExt;
-import com.hp.hpl.jena.sparql.algebra.op.OpExtend;
-import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.core.VarExprList;
-import com.hp.hpl.jena.sparql.engine.ExecutionContext;
-import com.hp.hpl.jena.sparql.engine.QueryIterator;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.serializer.SerializationContext;
-import com.hp.hpl.jena.sparql.util.NodeIsomorphismMap;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpExt;
+import org.apache.jena.sparql.algebra.op.OpExtend;
+import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.engine.QueryIterator;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.serializer.SerializationContext;
+import org.apache.jena.sparql.util.NodeIsomorphismMap;
 
 
 public class OpSparqlViewPattern

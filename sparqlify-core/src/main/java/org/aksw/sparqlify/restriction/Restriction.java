@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import org.aksw.sparqlify.config.lang.PrefixSet;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 import com.karneim.util.collection.regex.PatternPro;
 
 

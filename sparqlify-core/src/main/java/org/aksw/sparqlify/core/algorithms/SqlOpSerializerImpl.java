@@ -33,9 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sdb.core.JoinType;
-import com.hp.hpl.jena.sdb.core.sqlnode.SqlSelectBlock;
+import org.apache.jena.query.Query;
+import org.apache.jena.sdb.core.JoinType;
+import org.apache.jena.sdb.core.sqlnode.SqlSelectBlock;
 
 
 

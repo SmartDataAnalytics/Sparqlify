@@ -4,9 +4,9 @@ import java.sql.SQLException;
 
 import org.postgis.PGgeometry;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction1;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction1;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class E_GeographyFromText
 	extends ExprFunction1

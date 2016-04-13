@@ -6,10 +6,10 @@ import java.util.List;
 import org.aksw.sparqlify.algebra.sparql.transform.SqlFunctionDefinition;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunctionN;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunctionN;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class E_GenericSqlExpr
 	extends ExprFunctionN 

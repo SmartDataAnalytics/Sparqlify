@@ -37,7 +37,7 @@ import org.aksw.sparqlify.core.SqlDatatype;
 import org.postgis.PGgeometry;
 
 import com.google.common.base.Joiner;
-import com.hp.hpl.jena.sdb.sql.SQLUtils;
+import org.apache.jena.sdb.sql.SQLUtils;
 
 interface DatatypeToString
 {

@@ -5,8 +5,8 @@ import java.util.Map;
 import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
 
 public interface IViewDef {
 	String getName();

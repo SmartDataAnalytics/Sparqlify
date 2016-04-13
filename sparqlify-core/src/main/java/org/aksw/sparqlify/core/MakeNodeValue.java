@@ -16,7 +16,7 @@ import org.h2.jdbc.JdbcClob;
 import org.postgis.PGgeometry;
 import org.postgresql.util.PGobject;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 public class MakeNodeValue

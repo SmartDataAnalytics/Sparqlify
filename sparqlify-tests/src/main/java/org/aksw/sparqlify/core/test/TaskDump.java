@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 public class TaskDump
 	implements Callable<Set<Quad>>

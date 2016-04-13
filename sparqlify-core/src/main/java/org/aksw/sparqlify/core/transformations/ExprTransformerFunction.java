@@ -6,8 +6,8 @@ import java.util.List;
 import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.trash.ExprCopy;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.sparql.expr.Expr;
 
 public class ExprTransformerFunction
 	implements ExprTransformer

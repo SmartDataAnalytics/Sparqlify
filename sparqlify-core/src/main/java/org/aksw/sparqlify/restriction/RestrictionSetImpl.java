@@ -9,7 +9,7 @@ import java.util.List;
 import org.aksw.sparqlify.config.lang.PrefixSet;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 import com.karneim.util.collection.regex.PatternPro;
 
 

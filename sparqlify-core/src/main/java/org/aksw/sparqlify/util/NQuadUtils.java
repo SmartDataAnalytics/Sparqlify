@@ -8,7 +8,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFLib;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 public class NQuadUtils {
 	public static Set<Quad> readNQuads(InputStream in) {

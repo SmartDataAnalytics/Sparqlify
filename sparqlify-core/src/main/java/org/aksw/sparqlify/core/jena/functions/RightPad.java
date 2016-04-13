@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.jena.functions;
 import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionBase2;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionBase2;
 
 /**
  * Right pad the string value of the first argument

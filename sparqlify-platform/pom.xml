@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.6.21-SNAPSHOT</version>
+        <version>0.8.0-SNAPSHOT</version>
     </parent>
 
 
@@ -82,13 +82,13 @@
         <!-- </dependency> -->
 
         <dependency>
-            <groupId>de.fuberlin.wiwiss</groupId>
+            <groupId>org.aksw.de.fuberlin.wiwiss</groupId>
             <artifactId>pubby</artifactId>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>de.fuberlin.wiwiss</groupId>
+            <groupId>org.aksw.de.fuberlin.wiwiss</groupId>
             <artifactId>pubby</artifactId>
             <classifier>classes</classifier>
         </dependency>

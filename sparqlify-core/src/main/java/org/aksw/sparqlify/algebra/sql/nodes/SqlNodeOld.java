@@ -9,7 +9,7 @@ import org.aksw.sparqlify.core.ConstraintContainer;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Var;
 
 
 /**

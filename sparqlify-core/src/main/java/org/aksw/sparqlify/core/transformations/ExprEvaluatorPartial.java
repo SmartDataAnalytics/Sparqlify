@@ -13,13 +13,13 @@ import org.aksw.sparqlify.trash.ExprCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Conditional;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprNotComparableException;
-import com.hp.hpl.jena.sparql.function.FunctionRegistry;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Conditional;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprNotComparableException;
+import org.apache.jena.sparql.function.FunctionRegistry;
+import org.apache.jena.sparql.util.ExprUtils;
 
 /**
  * Evaluator for expressions.

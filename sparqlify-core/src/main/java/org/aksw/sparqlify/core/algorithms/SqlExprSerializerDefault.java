@@ -12,8 +12,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 
-import com.hp.hpl.jena.sparql.expr.E_Cast;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.E_Cast;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public abstract class SqlExprSerializerDefault
 	implements SqlExprSerializer

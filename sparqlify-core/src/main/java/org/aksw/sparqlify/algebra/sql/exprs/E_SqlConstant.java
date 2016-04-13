@@ -2,11 +2,11 @@ package org.aksw.sparqlify.algebra.sql.exprs;
 
 import org.aksw.sparqlify.core.datatypes.XClass;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueVisitor;
-import com.hp.hpl.jena.sparql.function.FunctionEnv;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueVisitor;
+import org.apache.jena.sparql.function.FunctionEnv;
 
 /**
  * Duplicate of E_SqlNodeValue

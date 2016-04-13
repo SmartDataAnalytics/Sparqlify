@@ -15,9 +15,9 @@ import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.riot.out.SinkQuadBracedOutput;
 
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
 
 
 /**

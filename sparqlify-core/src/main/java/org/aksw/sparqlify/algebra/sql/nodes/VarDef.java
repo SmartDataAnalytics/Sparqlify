@@ -4,8 +4,8 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.restriction.RestrictionImpl;
 import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 public class VarDef {

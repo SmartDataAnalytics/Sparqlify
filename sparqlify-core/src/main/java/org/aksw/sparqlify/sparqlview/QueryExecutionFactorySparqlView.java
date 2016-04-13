@@ -6,9 +6,9 @@ import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.sparql.algebra.Op;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.sparql.algebra.Op;
 
 public class QueryExecutionFactorySparqlView
 	extends QueryExecutionFactoryBackQuery

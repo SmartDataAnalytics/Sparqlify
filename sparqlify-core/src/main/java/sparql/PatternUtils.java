@@ -7,15 +7,15 @@ import java.util.Set;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.apache.commons.lang.NotImplementedException;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
-import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpQuadPattern;
-import com.hp.hpl.jena.sparql.algebra.op.OpSequence;
-import com.hp.hpl.jena.sparql.algebra.op.OpUnion;
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpQuadPattern;
+import org.apache.jena.sparql.algebra.op.OpSequence;
+import org.apache.jena.sparql.algebra.op.OpUnion;
+import org.apache.jena.sparql.core.Quad;
 
 public class PatternUtils
 {
