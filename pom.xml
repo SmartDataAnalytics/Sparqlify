@@ -483,9 +483,15 @@
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
+                        <dependency>
+                                <groupId>org.aksw.jena-sparql-api</groupId>
+                                <artifactId>jena-sparql-api-server-utils</artifactId>
+                                <version>${jena-sparql-api.version}</version>
+                        </dependency>
+
 			<dependency>
 				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-server</artifactId>
+				<artifactId>jena-sparql-api-server-standalone</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
