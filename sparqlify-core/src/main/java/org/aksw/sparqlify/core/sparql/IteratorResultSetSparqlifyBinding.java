@@ -5,14 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.aksw.commons.collections.SinglePrefetchIterator;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.google.common.collect.Multimap;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.Binding;
 
 public class IteratorResultSetSparqlifyBinding
 	extends SinglePrefetchIterator<Binding>

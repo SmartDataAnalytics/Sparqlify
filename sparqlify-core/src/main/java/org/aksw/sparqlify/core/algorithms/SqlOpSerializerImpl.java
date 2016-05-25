@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,13 +28,12 @@ import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.query.Query;
+import org.apache.jena.sdb.core.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import org.apache.jena.query.Query;
-import org.apache.jena.sdb.core.JoinType;
-import org.apache.jena.sdb.core.sqlnode.SqlSelectBlock;
 
 
 

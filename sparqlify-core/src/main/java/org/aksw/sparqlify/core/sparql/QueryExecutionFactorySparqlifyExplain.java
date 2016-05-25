@@ -5,7 +5,6 @@ import javax.sql.DataSource;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 

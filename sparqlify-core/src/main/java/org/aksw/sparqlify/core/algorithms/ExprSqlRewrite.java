@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.core.TypeToken;
-
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.NodeValue;

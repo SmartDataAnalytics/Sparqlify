@@ -7,11 +7,10 @@ import javax.sql.DataSource;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Query execution that obtains fresh connections for each query from a datasource

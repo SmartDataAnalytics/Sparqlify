@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
-import au.com.bytecode.opencsv.CSVParser;
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+
+import au.com.bytecode.opencsv.CSVParser;
+import au.com.bytecode.opencsv.CSVReader;
 
 public class InputSupplierCSVReader
 	implements InputSupplier<CSVReader>

@@ -1,9 +1,8 @@
 package org.aksw.sparqlify.core.transformations;
 
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sparql.expr.E_Cast;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-
 import org.apache.jena.sparql.expr.E_Function;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;

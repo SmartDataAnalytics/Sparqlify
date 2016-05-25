@@ -3,12 +3,11 @@ package org.aksw.sparqlify.core.transformations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypeSystemImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-
 import org.apache.jena.sparql.expr.E_Add;
 import org.apache.jena.sparql.expr.E_LogicalAnd;
 import org.apache.jena.sparql.expr.Expr;

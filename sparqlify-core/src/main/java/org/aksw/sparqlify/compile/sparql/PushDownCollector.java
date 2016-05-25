@@ -3,10 +3,9 @@ package org.aksw.sparqlify.compile.sparql;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-import org.aksw.sparqlify.trash.ExprCopy;
-
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;

@@ -3,9 +3,8 @@ package org.aksw.sparqlify.core.transformations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.trash.ExprCopy;
-
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.expr.Expr;
 

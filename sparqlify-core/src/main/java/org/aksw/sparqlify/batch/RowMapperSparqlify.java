@@ -5,13 +5,12 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.modify.TemplateLib;
+import org.springframework.jdbc.core.RowMapper;
 
 public class RowMapperSparqlify
 	implements RowMapper<QuadPattern>

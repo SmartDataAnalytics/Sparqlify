@@ -5,7 +5,6 @@ import java.util.Date;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseDate;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.NodeValue;
 

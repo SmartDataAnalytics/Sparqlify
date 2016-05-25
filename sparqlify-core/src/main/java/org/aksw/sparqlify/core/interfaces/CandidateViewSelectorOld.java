@@ -3,7 +3,6 @@ package org.aksw.sparqlify.core.interfaces;
 import java.util.Collection;
 
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Op;
 

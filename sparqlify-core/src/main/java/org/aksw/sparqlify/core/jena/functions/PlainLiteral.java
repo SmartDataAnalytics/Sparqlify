@@ -8,7 +8,6 @@ import org.apache.jena.query.QueryBuildException;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.function.FunctionBase;
-import org.apache.jena.sparql.util.Utils;
 
 public class PlainLiteral
     extends FunctionBase

@@ -4,10 +4,9 @@ import java.util.Calendar;
 
 import org.aksw.commons.util.factory.Factory1;
 import org.aksw.sparqlify.core.TypeToken;
-import org.postgis.PGgeometry;
-
 import org.apache.jena.sdb.sql.SQLUtils;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.postgis.PGgeometry;
 
 interface DatatypeToString
 {

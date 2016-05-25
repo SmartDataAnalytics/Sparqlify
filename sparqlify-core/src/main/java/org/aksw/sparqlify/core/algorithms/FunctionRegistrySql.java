@@ -14,13 +14,13 @@ import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.type_system.MethodSignature;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.jena.sparql.expr.Expr;
-import org.apache.jena.sparql.expr.ExprFunction;
 
 public class FunctionRegistrySql {
 	private static final Logger logger = LoggerFactory.getLogger(FunctionRegistrySql.class);

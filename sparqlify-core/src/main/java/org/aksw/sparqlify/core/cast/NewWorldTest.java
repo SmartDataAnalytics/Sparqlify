@@ -8,31 +8,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.MethodDeclaration;
 import org.aksw.sparqlify.type_system.MethodEntry;
 import org.aksw.sparqlify.type_system.MethodSignature;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.util.ExprUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stringtemplate.v4.ST;
 
 import com.google.common.base.Function;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.expr.Expr;
-import org.apache.jena.sparql.util.ExprUtils;
 
 /* This is the SqlExprTransformer
  interface ExprTypeEvaluator {

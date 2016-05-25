@@ -12,6 +12,8 @@ import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
+import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
@@ -20,20 +22,18 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.domain.input.Mapping;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.jena.graph.Node;
-import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.sparql.core.QuadPattern;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.expr.Expr;
 
 /**
  *

@@ -4,18 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.normal_form.Clause;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.core.ColRelGenerator;
 import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.SqlNodeBinding;
-import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.OpFilterIndexed;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sdb.core.JoinType;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;
@@ -30,6 +27,8 @@ import org.apache.jena.sparql.algebra.op.OpOrder;
 import org.apache.jena.sparql.algebra.op.OpProject;
 import org.apache.jena.sparql.algebra.op.OpSlice;
 import org.apache.jena.sparql.expr.ExprList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Interface for generating ids.

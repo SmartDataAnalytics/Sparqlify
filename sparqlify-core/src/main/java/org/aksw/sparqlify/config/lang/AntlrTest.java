@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
+import org.aksw.jena_sparql_api.views.PatternUtils;
+import org.aksw.jena_sparql_api.views.SparqlSubstitute;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
@@ -23,13 +24,6 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.apache.log4j.PropertyConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import sparql.FilterUtils;
-import sparql.PatternUtils;
-
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
@@ -49,6 +43,11 @@ import org.apache.jena.sparql.util.ExprUtils;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sparql.FilterUtils;
 
 /**
  * Parser for the 0.1 config format

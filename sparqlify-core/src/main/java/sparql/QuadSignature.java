@@ -3,6 +3,7 @@ package sparql;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.views.PatternUtils;
 import org.apache.jena.graph.Node;
 
 /**

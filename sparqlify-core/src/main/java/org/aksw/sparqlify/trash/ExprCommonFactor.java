@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-
+import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;

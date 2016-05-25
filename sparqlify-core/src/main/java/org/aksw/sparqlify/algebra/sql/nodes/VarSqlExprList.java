@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-
 import org.apache.jena.sparql.core.Var;
 
 public class VarSqlExprList {

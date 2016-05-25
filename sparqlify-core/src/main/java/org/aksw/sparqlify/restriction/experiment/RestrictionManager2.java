@@ -12,14 +12,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.util.Pair;
+import org.aksw.jena_sparql_api.normal_form.Clause;
+import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
+import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
-import org.aksw.sparqlify.database.Clause;
 import org.aksw.sparqlify.database.IndirectEquiMap;
-import org.aksw.sparqlify.database.NestedNormalForm;
 import org.aksw.sparqlify.restriction.RdfTermType;
-import org.aksw.sparqlify.restriction.RestrictionImpl;
-import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;

@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core.domain.input;
 
 import java.util.List;
 
+import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.apache.jena.sparql.core.Var;
 
 public class SparqlSqlStringRewrite {

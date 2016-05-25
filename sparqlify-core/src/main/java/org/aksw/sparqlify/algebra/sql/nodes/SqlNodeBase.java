@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.views.VarDef;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.core.ConstraintContainer;
 import org.apache.jena.atlas.io.IndentedWriter;
+import org.apache.jena.sparql.core.Var;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.jena.sparql.core.Var;
 
 /*
  class SqlDatatypeSignature {

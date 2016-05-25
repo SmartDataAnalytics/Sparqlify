@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.aksw.commons.collections.SinglePrefetchIterator;
-
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.core.Var;
 

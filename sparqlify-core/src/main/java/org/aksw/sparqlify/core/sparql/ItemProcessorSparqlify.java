@@ -8,8 +8,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.sparqlify.core.MakeExprPermissive;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;

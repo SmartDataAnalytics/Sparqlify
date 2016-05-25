@@ -3,7 +3,6 @@ package org.aksw.sparqlify.core.cast;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.type_system.MethodSignature;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
+import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.graph.Node;

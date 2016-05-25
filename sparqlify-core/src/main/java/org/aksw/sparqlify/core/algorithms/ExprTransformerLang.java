@@ -2,8 +2,7 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.List;
 
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
-
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 

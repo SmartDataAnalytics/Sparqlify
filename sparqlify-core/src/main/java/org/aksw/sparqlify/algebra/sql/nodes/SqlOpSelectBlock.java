@@ -7,7 +7,6 @@ import java.util.Map;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.apache.jena.atlas.io.IndentedWriter;
-
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sdb.core.ScopeBase;

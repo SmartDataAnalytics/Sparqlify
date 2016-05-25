@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.cast;
 
 import org.aksw.commons.util.factory.Factory1;
-
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.NodeValue;
 

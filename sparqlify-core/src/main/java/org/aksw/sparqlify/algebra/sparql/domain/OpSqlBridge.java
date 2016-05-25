@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.domain;
 
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeOld;
-
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.OpVisitor;
 import org.apache.jena.sparql.algebra.Transform;

@@ -7,18 +7,17 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.core.MakeNodeValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.RowMapper;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.binding.BindingHashMap;
 import org.apache.jena.sparql.engine.binding.BindingMap;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
 
 public class RowMapperSparqlifyBinding
 	implements RowMapper<Binding>

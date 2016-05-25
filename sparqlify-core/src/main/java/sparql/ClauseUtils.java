@@ -3,13 +3,11 @@ package sparql;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.jena.sparql.algebra.optimize.ExprTransformConstantFold;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.BindingRoot;
 import org.apache.jena.sparql.expr.E_LogicalNot;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprLib;
-import org.apache.jena.sparql.expr.ExprTransform;
 import org.apache.jena.sparql.expr.NodeValue;
 
 public class ClauseUtils

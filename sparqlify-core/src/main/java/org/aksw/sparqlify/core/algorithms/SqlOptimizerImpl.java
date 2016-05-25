@@ -15,7 +15,6 @@ import org.aksw.commons.util.jdbc.ColumnsReference;
 import org.aksw.commons.util.jdbc.Index;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
@@ -25,13 +24,13 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoinN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpLeaf;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
+import org.apache.jena.sdb.core.JoinType;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.jena.sdb.core.JoinType;
 
 
 class SelfJoinResult {

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.jena.atlas.io.IndentedWriter;
-
 import org.apache.jena.sparql.expr.Expr;
 
 

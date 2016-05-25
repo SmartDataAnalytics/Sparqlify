@@ -7,7 +7,6 @@ import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.E_Add;
 import org.apache.jena.sparql.expr.E_Bound;

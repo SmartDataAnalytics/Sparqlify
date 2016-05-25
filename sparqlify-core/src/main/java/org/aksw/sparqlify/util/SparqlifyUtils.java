@@ -21,6 +21,9 @@ import org.aksw.commons.util.jdbc.SqlUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
+import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -32,7 +35,6 @@ import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
@@ -48,7 +50,6 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypedExprTransformer;
 import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
@@ -63,14 +64,12 @@ import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorWriteable;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.antlr.runtime.RecognitionException;
-import org.h2.jdbcx.JdbcDataSource;
-import org.slf4j.Logger;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
+import org.h2.jdbcx.JdbcDataSource;
+import org.slf4j.Logger;
 
 
 

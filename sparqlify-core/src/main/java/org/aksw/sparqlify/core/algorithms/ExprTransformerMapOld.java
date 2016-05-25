@@ -6,11 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This transformer is mainly intended for "local" transforms

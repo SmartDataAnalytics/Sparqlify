@@ -3,8 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.trash.ExprCopy;
-
+import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 

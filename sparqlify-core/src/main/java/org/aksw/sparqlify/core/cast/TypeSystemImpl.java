@@ -25,15 +25,15 @@ import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.TypeHierarchyUtils;
 import org.aksw.sparqlify.type_system.TypeModel;
 import org.aksw.sparqlify.type_system.TypeModelImpl;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.jena.datatypes.TypeMapper;
-import org.apache.jena.graph.Node;
-import org.apache.jena.sparql.expr.NodeValue;
-import org.apache.jena.vocabulary.XSD;
 
 
 public class TypeSystemImpl

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-
+import org.aksw.jena_sparql_api.views.OpQuadPattern2;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sdb.core.Generator;
@@ -27,7 +27,6 @@ import org.apache.jena.sparql.algebra.op.OpSlice;
 import org.apache.jena.sparql.algebra.op.OpTable;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
-import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;

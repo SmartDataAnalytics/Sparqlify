@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
-
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.core.VarExprList;

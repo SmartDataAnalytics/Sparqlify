@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.config.lang;
 
+import org.aksw.jena_sparql_api.views.SparqlView;
 import org.aksw.sparqlify.config.syntax.ConstructConfig;
 import org.aksw.sparqlify.config.syntax.ConstructViewDefinition;
-import org.aksw.sparqlify.sparqlview.SparqlView;
 import org.aksw.sparqlify.sparqlview.SparqlViewSystem;
 
 public class ConfiguratorConstructViewSystem {

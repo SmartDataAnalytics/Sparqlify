@@ -15,14 +15,13 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /*

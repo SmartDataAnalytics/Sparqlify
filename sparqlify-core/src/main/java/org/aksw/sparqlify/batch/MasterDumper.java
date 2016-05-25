@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.strings.StringUtils;
 import org.aksw.jena_sparql_api.utils.TripleUtils;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.config.lang.ConfigParser;
@@ -23,7 +24,6 @@ import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.Mapping;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
@@ -37,6 +37,11 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,11 +77,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
 import com.google.common.collect.Multimap;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.sparql.core.QuadPattern;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.Binding;
 
 
 class TaskletFactoryDump {

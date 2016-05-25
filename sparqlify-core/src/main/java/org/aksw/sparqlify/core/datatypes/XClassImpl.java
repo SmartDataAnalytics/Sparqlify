@@ -3,7 +3,6 @@ package org.aksw.sparqlify.core.datatypes;
 import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
-
 import org.apache.jena.graph.Node;
 
 public class XClassImpl

@@ -1,9 +1,8 @@
 package exp.cornercases;
 
-import org.aksw.sparqlify.core.algorithms.VarBinding;
-import org.junit.Test;
-
+import org.aksw.jena_sparql_api.views.VarBinding;
 import org.apache.jena.sparql.core.Var;
+import org.junit.Test;
 
 public class VarBindingTest {
 

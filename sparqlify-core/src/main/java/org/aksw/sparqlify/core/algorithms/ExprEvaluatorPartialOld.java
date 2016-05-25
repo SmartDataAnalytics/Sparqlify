@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.transformations.ExprEvaluatorPartial;
-import org.aksw.sparqlify.trash.ExprCopy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.ExprEvaluatorPartial;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_Conditional;
 import org.apache.jena.sparql.expr.Expr;
@@ -20,6 +18,8 @@ import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprNotComparableException;
 import org.apache.jena.sparql.function.FunctionRegistry;
 import org.apache.jena.sparql.util.ExprUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Evaluator for expressions.

@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
 import org.aksw.sparqlify.core.SqlDatatype;
-
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;

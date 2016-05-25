@@ -10,10 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.commons.util.Pair;
-import org.aksw.sparqlify.database.Clause;
-import org.aksw.sparqlify.database.Dnf;
+import org.aksw.jena_sparql_api.normal_form.Clause;
+import org.aksw.jena_sparql_api.normal_form.Dnf;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.algebra.Algebra;

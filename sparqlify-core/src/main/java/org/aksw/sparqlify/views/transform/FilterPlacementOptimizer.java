@@ -8,11 +8,6 @@ import java.util.Set;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-
-import sparql.ClauseUtils;
-import sparql.CnfUtils;
-
-import com.google.common.collect.Sets;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;
 import org.apache.jena.sparql.algebra.op.OpDistinct;
@@ -27,6 +22,11 @@ import org.apache.jena.sparql.algebra.op.OpSlice;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
+
+import com.google.common.collect.Sets;
+
+import sparql.ClauseUtils;
+import sparql.CnfUtils;
 
 /**
  * @author raven

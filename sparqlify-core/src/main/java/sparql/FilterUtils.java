@@ -12,8 +12,6 @@ import org.aksw.commons.collections.Sample;
 import org.aksw.commons.util.Pair;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.apache.commons.lang.NotImplementedException;
-
-import com.google.common.collect.Sets;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpFilter;
 import org.apache.jena.sparql.algebra.op.OpJoin;
@@ -31,6 +29,8 @@ import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprFunction2;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.NodeValue;
+
+import com.google.common.collect.Sets;
 
 
 

@@ -18,16 +18,15 @@ import org.aksw.sparqlify.core.test.TaskQuerySelect;
 import org.aksw.sparqlify.core.test.TestBundle;
 import org.aksw.sparqlify.util.NQuadUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.Quad;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 
 public class TestBundlerConverter {

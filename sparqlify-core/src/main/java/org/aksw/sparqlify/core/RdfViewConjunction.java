@@ -3,9 +3,8 @@ package org.aksw.sparqlify.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-
-import sparql.TwoWayBinding;
+import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
+import org.aksw.jena_sparql_api.views.TwoWayBinding;
 
 /***
  * A complete binding consists of a list of views and an overall binding

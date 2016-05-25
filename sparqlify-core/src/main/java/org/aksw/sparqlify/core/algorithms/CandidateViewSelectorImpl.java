@@ -4,21 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
+import org.aksw.jena_sparql_api.restriction.UnsatisfiabilityException;
+import org.aksw.jena_sparql_api.views.CandidateViewSelectorBase;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.OpQuadPattern2;
+import org.aksw.jena_sparql_api.views.OpViewInstanceJoin;
+import org.aksw.jena_sparql_api.views.RecursionResult;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
+import org.aksw.jena_sparql_api.views.VarBinding;
+import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.aksw.jena_sparql_api.views.ViewInstance;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
-import org.aksw.sparqlify.core.OpQuadPattern2;
 import org.aksw.sparqlify.core.domain.input.Mapping;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
+import org.aksw.sparqlify.sparqlview.ViewInstanceJoin;
 import org.aksw.sparqlify.views.transform.GetVarsMentioned;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sparql.algebra.Op;
@@ -27,6 +29,11 @@ import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprVar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 
 

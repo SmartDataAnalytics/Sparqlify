@@ -30,12 +30,11 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sdb.core.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 interface JoinContext {
 	SqlOp getOp();

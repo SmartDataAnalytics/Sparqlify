@@ -2,7 +2,6 @@ package org.aksw.sparqlify.core.sparql;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactoryDecorator;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 

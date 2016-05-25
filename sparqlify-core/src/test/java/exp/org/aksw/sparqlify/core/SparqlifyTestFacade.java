@@ -10,20 +10,19 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.jdbc.Schema;
+import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.Syntax;

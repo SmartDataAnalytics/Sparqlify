@@ -9,7 +9,6 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.config.syntax.FunctionTemplate;
 import org.aksw.sparqlify.config.syntax.ParamType;
 import org.aksw.sparqlify.core.algorithms.RegisteredFunction;
-
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.ExprList;
 

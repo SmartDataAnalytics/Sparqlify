@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**

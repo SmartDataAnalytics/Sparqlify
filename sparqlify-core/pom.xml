@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sparqlify-core</artifactId>
@@ -33,8 +34,8 @@
                     </execution>
                 </executions>
                 <configuration>
-<!-- 					<source>${maven.compiler.source}</source> -->
-<!-- 					<target>${maven.compiler.target}</target> -->
+                    <!-- <source>${maven.compiler.source}</source> -->
+                    <!-- <target>${maven.compiler.target}</target> -->
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <generatePackage>org.aksw.sparqlify.config.xml</generatePackage>
@@ -50,16 +51,21 @@
             <artifactId>jena-sparql-api-core</artifactId>
         </dependency>
 
-                <dependency>
-                        <groupId>org.aksw.sparqlify</groupId>
-                        <artifactId>sparqlify-type-system</artifactId>
-                </dependency>
+        <dependency>
+            <groupId>org.aksw.jena-sparql-api</groupId>
+            <artifactId>jena-sparql-api-views</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aksw.sparqlify</groupId>
+            <artifactId>sparqlify-type-system</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.aksw.sparqlify</groupId>
             <artifactId>sparqlify-tests</artifactId>
             <scope>runtime</scope>
-<!-- 			<scope>test</scope> -->
+            <!-- <scope>test</scope> -->
         </dependency>
 
         <!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId>
@@ -153,12 +159,8 @@
             </dependency> <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId>
             </dependency> -->
 
-<!--
-        <dependency>
-            <groupId>com.hp.hpl.jena</groupId>
-            <artifactId>sdb</artifactId>
-        </dependency>
--->
+        <!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId>
+            </dependency> -->
 
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -179,10 +181,10 @@
             <groupId>org.antlr</groupId>
             <artifactId>ST4</artifactId>
         </dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.antlr</groupId> -->
-<!-- 			<artifactId>stringtemplate</artifactId> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.antlr</groupId> -->
+        <!-- <artifactId>stringtemplate</artifactId> -->
+        <!-- </dependency> -->
 
 
         <!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId>
@@ -213,15 +215,15 @@
         </dependency>
 
         <!-- Spring dependencies -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework</groupId> -->
-<!-- 			<artifactId>spring-core</artifactId> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework</groupId> -->
+        <!-- <artifactId>spring-core</artifactId> -->
+        <!-- </dependency> -->
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework</groupId> -->
-<!-- 			<artifactId>spring-context</artifactId> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework</groupId> -->
+        <!-- <artifactId>spring-context</artifactId> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>junit</groupId>
@@ -237,22 +239,22 @@
         <!-- <groupId>org.hibernate</groupId> -->
         <!-- <artifactId>hibernate</artifactId> -->
         <!-- </dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.hibernate</groupId> -->
-<!-- 			<artifactId>hibernate-annotations</artifactId> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.hibernate</groupId> -->
+        <!-- <artifactId>hibernate-annotations</artifactId> -->
+        <!-- </dependency> -->
 
         <!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-entitymanager</artifactId>
             </dependency> -->
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.activiti</groupId> -->
-<!-- 			<artifactId>activiti-engine</artifactId> -->
-<!-- 		</dependency> -->
-         <dependency>
+        <!-- <dependency> -->
+        <!-- <groupId>org.activiti</groupId> -->
+        <!-- <artifactId>activiti-engine</artifactId> -->
+        <!-- </dependency> -->
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-          </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.batch</groupId>
@@ -268,18 +270,18 @@
             <artifactId>jsqlparser</artifactId>
         </dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework</groupId> -->
-<!-- 			<artifactId>spring-context</artifactId> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework</groupId> -->
-<!-- 			<artifactId>spring-jdbc</artifactId> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework</groupId> -->
-<!-- 			<artifactId>spring-tx</artifactId> -->
-<!-- 		</dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework</groupId> -->
+        <!-- <artifactId>spring-context</artifactId> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework</groupId> -->
+        <!-- <artifactId>spring-jdbc</artifactId> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework</groupId> -->
+        <!-- <artifactId>spring-tx</artifactId> -->
+        <!-- </dependency> -->
 
 
     </dependencies>

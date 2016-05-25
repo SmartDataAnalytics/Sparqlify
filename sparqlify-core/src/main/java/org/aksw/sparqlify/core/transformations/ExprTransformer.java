@@ -2,8 +2,7 @@ package org.aksw.sparqlify.core.transformations;
 
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.apache.jena.sparql.expr.Expr;
 
 /**

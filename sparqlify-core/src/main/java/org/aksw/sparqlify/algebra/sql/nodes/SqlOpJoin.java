@@ -8,7 +8,6 @@ import java.util.Map;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.apache.jena.atlas.io.IndentedWriter;
-
 import org.apache.jena.sdb.core.JoinType;
 
 

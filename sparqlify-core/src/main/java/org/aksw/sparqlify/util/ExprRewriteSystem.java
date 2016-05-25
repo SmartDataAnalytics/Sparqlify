@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.util;
 
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminator;

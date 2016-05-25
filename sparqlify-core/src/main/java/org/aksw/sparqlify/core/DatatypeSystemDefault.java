@@ -16,12 +16,11 @@ import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.Caster;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.XSD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 

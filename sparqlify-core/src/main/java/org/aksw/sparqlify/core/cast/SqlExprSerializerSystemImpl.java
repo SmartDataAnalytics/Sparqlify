@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.factory.Factory1;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;

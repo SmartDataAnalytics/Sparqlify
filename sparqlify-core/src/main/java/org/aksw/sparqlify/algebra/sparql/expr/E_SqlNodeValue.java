@@ -1,9 +1,8 @@
 package org.aksw.sparqlify.algebra.sparql.expr;
 
+import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.datatypes.XClass;
-import org.aksw.sparqlify.expr.util.NodeValueUtils;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueVisitor;

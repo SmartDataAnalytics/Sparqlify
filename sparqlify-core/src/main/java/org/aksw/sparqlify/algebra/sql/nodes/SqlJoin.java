@@ -3,7 +3,6 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
-
 import org.apache.jena.sdb.core.JoinType;
 
 

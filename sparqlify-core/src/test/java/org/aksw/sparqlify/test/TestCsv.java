@@ -30,9 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.google.common.io.InputSupplier;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 
 class InputSupplierResourceStream

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
 import org.apache.jena.atlas.io.IndentedWriter;
-
 import org.apache.jena.sparql.expr.Expr;
 
 /**

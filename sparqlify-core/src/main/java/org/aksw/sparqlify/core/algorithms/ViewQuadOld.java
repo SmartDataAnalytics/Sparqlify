@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-
 import org.apache.jena.sparql.core.Quad;
 
 public class ViewQuadOld {

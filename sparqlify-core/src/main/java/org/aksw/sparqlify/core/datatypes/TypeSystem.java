@@ -7,7 +7,6 @@ import org.aksw.commons.factory.Factory1;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
-
 import org.apache.jena.sparql.expr.NodeValue;
 
 /**

@@ -3,11 +3,11 @@ package org.aksw.sparqlify.algebra.sparql.transform;
 import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
-import org.aksw.sparqlify.trash.ExprCopy;
 
 
 

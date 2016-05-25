@@ -16,10 +16,10 @@ import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.TypeModel;
-
-import com.google.common.collect.Multimap;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.sparql.expr.NodeValue;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Purposes of the type system are storing information about the following

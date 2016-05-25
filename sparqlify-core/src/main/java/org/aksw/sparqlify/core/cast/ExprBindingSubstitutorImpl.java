@@ -2,8 +2,7 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
-
+import org.aksw.jena_sparql_api.views.NodeExprSubstitutor;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 

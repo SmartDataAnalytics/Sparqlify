@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.cast;
 
 import org.aksw.sparqlify.core.TypeToken;
-
 import org.apache.jena.sparql.expr.NodeValue;
 
 

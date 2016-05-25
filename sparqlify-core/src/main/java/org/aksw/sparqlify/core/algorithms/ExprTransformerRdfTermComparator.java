@@ -3,11 +3,12 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.List;
 
 import org.aksw.commons.factory.Factory2;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.ExprFactoryUtils;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-
 import org.apache.jena.sparql.expr.E_Conditional;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_LogicalAnd;

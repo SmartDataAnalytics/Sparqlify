@@ -7,6 +7,9 @@ import java.util.Map;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.XmlUtils;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Arithmetic;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
@@ -32,10 +35,8 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
-import org.aksw.sparqlify.core.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
 import org.aksw.sparqlify.core.cast.CoercionSystemImpl3;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
@@ -79,18 +80,12 @@ import org.aksw.sparqlify.core.transformations.ExprTransformerSparqlFunctionMode
 import org.aksw.sparqlify.core.transformations.ExprTransformerStr;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.transformations.RdfTermEliminatorWriteable;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.MethodDeclaration;
 import org.aksw.sparqlify.type_system.MethodSignature;
 import org.aksw.sparqlify.type_system.TypeModel;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -98,6 +93,11 @@ import org.apache.jena.sparql.expr.aggregate.AggCount;
 import org.apache.jena.sparql.expr.aggregate.AggGroupConcat;
 import org.apache.jena.sparql.expr.aggregate.AggSum;
 import org.apache.jena.vocabulary.XSD;
+
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class SparqlifyCoreInit {
     public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {

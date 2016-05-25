@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.jena.atlas.lib.Sink;
-
 import org.apache.jena.sparql.core.Quad;
 
 class SinkQuadsToSet

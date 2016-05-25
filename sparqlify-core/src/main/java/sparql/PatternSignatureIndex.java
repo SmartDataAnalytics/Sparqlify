@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.commons.collections.MultiMaps;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.Op;

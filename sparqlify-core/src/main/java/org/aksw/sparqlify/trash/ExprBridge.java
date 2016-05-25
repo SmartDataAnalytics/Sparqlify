@@ -1,9 +1,8 @@
 package org.aksw.sparqlify.trash;
 
+import org.aksw.jena_sparql_api.views.SqlExprOptimizer;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
-import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
-
 import org.apache.jena.sparql.expr.Expr;
 
 public class ExprBridge {

@@ -3,12 +3,12 @@ package org.aksw.sparqlify.core.sparql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.google.common.collect.Multimap;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.Binding;
 
 public class RowMapperSparqlifyCombined
 	implements RowMapper<Binding>

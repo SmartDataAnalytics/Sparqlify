@@ -1,11 +1,10 @@
 package exp.cornercases;
 
-import org.junit.Test;
-
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.junit.Test;
 
 public class CornerCases {
 	@Test

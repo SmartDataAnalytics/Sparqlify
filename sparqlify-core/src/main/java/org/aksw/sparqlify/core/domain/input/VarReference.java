@@ -1,7 +1,6 @@
 package org.aksw.sparqlify.core.domain.input;
 
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-
 import org.apache.jena.sparql.core.Var;
 
 

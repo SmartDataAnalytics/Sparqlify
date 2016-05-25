@@ -4,7 +4,6 @@ import java.io.PrintStream;
 
 import org.aksw.jena_sparql_api.utils.TripleUtils;
 import org.apache.jena.atlas.lib.Sink;
-
 import org.apache.jena.graph.Triple;
 
 @Deprecated // Use Jena's SinkTripleOutput instead.

@@ -16,7 +16,13 @@ import java.util.TreeMap;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.normal_form.Clause;
+import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
+import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.TwoWayBinding;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.lang.PrefixSet;
@@ -26,17 +32,8 @@ import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.RdfViewSystem;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ReplaceConstants;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.expr.util.NodeValueUtils;
 import org.aksw.sparqlify.restriction.RdfTermType;
-import org.aksw.sparqlify.restriction.RestrictionImpl;
-import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.apache.commons.collections15.Transformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import sparql.TwoWayBinding;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Algebra;
@@ -63,6 +60,8 @@ import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ConstraintContext
 {

@@ -7,10 +7,11 @@ import java.util.Map;
 
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.jena_sparql_api.exprs_ext.E_GeographyFromText;
+import org.aksw.jena_sparql_api.exprs_ext.E_GeomFromText;
+import org.aksw.jena_sparql_api.exprs_ext.E_Intersects;
+import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.sparqlify.algebra.sparql.expr.old.E_GenericSqlExpr;
-import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeographyFromText;
-import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeomFromText;
-import org.aksw.sparqlify.algebra.sparql.expr.old.E_Intersects;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Function;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
@@ -19,12 +20,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
 import org.aksw.sparqlify.core.SqlDatatype;
-import org.aksw.sparqlify.trash.ExprCopy;
 import org.aksw.sparqlify.type_system.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
 import org.apache.jena.sparql.expr.E_Function;
 import org.apache.jena.sparql.expr.E_StrDatatype;
 import org.apache.jena.sparql.expr.Expr;
@@ -32,6 +28,10 @@ import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.vocabulary.XSD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 interface IFactoryN<T>
 {

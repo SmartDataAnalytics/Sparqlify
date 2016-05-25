@@ -34,10 +34,10 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlStringTransformer;
 import org.aksw.sparqlify.core.SqlDatatype;
+import org.apache.jena.sdb.sql.SQLUtils;
 import org.postgis.PGgeometry;
 
 import com.google.common.base.Joiner;
-import org.apache.jena.sdb.sql.SQLUtils;
 
 interface DatatypeToString
 {

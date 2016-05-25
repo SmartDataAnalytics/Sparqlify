@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
-import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
+import org.aksw.jena_sparql_api.views.SparqlSubstitute;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;

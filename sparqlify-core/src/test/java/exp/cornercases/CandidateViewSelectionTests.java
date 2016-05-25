@@ -10,15 +10,15 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
+import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
+import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.jena_sparql_api.views.ViewQuad;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
-import org.aksw.sparqlify.core.algorithms.ViewQuad;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;

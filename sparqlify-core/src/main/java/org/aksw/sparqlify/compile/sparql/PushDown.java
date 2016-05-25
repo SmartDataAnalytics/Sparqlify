@@ -7,14 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.exprs_ext.E_GeographyFromText;
+import org.aksw.jena_sparql_api.exprs_ext.E_GeomFromText;
+import org.aksw.jena_sparql_api.exprs_ext.E_Intersects;
+import org.aksw.jena_sparql_api.exprs_ext.NodeValueGeom;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprArgs;
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jena_sparql_api.views.OgcVocab;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.SqlPrePusher;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sparql.expr.old.E_GenericSqlExpr;
-import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeographyFromText;
-import org.aksw.sparqlify.algebra.sparql.expr.old.E_GeomFromText;
-import org.aksw.sparqlify.algebra.sparql.expr.old.E_Intersects;
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
-import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Cast;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
@@ -40,14 +45,6 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExprList;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.DatatypeSystemOld;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.OgcVocab;
-import org.aksw.sparqlify.trash.ExprArgs;
-import org.aksw.sparqlify.trash.ExprCopy;
-import org.postgis.PGgeometry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.E_Add;
 import org.apache.jena.sparql.expr.E_Bound;
@@ -76,6 +73,9 @@ import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.expr.aggregate.AggCount;
 import org.apache.jena.sparql.expr.aggregate.Aggregator;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueDT;
+import org.postgis.PGgeometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 

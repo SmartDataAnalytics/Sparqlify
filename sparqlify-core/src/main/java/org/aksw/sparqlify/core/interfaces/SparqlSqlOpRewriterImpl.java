@@ -3,19 +3,20 @@ package org.aksw.sparqlify.core.interfaces;
 import java.util.List;
 
 import org.aksw.commons.util.jdbc.Schema;
+import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.jena_sparql_api.views.IViewDef;
+import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOptimizerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.apache.commons.lang.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.core.Var;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**

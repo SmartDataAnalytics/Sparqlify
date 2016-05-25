@@ -11,7 +11,6 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_Serialize;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
-
 import org.apache.jena.sparql.expr.E_Cast;
 import org.apache.jena.sparql.expr.NodeValue;
 

@@ -2,8 +2,8 @@ package org.aksw.sparqlify.core.domain.input;
 
 import java.util.List;
 
+import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-
 import org.apache.jena.sparql.core.Var;
 
 public class SparqlSqlOpRewrite {

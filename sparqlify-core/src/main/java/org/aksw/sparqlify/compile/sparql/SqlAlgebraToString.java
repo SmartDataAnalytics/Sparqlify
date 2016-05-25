@@ -12,8 +12,9 @@ import java.util.TreeSet;
 
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.NodeExprSubstitutor;
+import org.aksw.jena_sparql_api.views.VarDef;
 import org.aksw.sparqlify.algebra.sql.exprs.S_String;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
@@ -27,20 +28,19 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnionN;
-import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.core.DatatypeSystemDefault;
 import org.aksw.sparqlify.core.SqlDatatype;
 import org.aksw.sparqlify.core.SqlNodeBinding;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
-
-import com.google.common.base.Joiner;
 import org.apache.jena.query.Query;
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sdb.core.JoinType;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprVar;
+
+import com.google.common.base.Joiner;
 
 
 

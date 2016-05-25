@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.core.transformations;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.trash.ExprCopy;
-
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.expr.E_Conditional;
 import org.apache.jena.sparql.expr.E_Equals;

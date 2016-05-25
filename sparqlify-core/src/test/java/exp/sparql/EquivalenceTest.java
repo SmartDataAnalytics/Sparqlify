@@ -3,14 +3,13 @@ package exp.sparql;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
 import sparql.Equivalence;
-
-import org.apache.jena.graph.Node;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryFactory;
 
 
 public class EquivalenceTest

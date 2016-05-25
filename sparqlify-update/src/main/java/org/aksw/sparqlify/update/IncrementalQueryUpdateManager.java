@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jena_sparql_api.views.PatternUtils;
 
 import sparql.DnfUtils;
 import sparql.FilterCompiler;
 import sparql.FilterUtils;
-import sparql.PatternUtils;
 import sparql.ViewTable;
 
 import com.google.common.base.Joiner;

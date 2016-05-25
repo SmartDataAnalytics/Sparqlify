@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.aksw.jena_sparql_api.views.OpViewInstanceJoin;
+import org.aksw.jena_sparql_api.views.Ops;
+import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.aksw.jena_sparql_api.views.ViewInstance;
 import org.aksw.sparqlify.core.domain.input.Mapping;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.database.OpFilterIndexed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.SortCondition;
 import org.apache.jena.sparql.algebra.Op;
@@ -32,6 +32,8 @@ import org.apache.jena.sparql.algebra.op.OpSlice;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
 import org.apache.jena.sparql.expr.ExprList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class OpMappingRewriterImpl

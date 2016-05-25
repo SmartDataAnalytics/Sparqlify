@@ -6,10 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.sparqlify.database.Clause;
-import org.aksw.sparqlify.database.NestedNormalForm;
+import org.aksw.jena_sparql_api.normal_form.Clause;
+import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.sparql.algebra.Algebra;

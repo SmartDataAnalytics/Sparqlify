@@ -14,9 +14,6 @@ import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprColumn;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprValue;
 import org.aksw.sparqlify.core.MakeNodeValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_LogicalAnd;
@@ -28,6 +25,8 @@ import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * WARNING: This method is used in satisfiablity checks.

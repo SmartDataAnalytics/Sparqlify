@@ -2,8 +2,10 @@ package org.aksw.sparqlify.config.lang;
 
 import java.util.Map;
 
+import org.aksw.jena_sparql_api.views.Constraint;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
+
 import com.karneim.util.collection.regex.PatternPro;
 
 public class RegexConstraint

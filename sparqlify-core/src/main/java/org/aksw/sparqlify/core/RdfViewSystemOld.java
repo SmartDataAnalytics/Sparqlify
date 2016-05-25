@@ -21,6 +21,9 @@ import org.aksw.commons.collections.iterators.StackCartesianProductIterator;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jena_sparql_api.views.EquiMap;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.TwoWayBinding;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfUnionViewPattern;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
@@ -30,7 +33,6 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.compile.sparql.SqlGenerator;
 import org.aksw.sparqlify.core.jena.functions.BNode;
 import org.aksw.sparqlify.core.jena.functions.PlainLiteral;
-import org.aksw.sparqlify.core.jena.functions.RdfTerm;
 import org.aksw.sparqlify.core.jena.functions.RightPad;
 import org.aksw.sparqlify.core.jena.functions.TypedLiteral;
 import org.aksw.sparqlify.core.jena.functions.Uri;
@@ -39,21 +41,6 @@ import org.aksw.sparqlify.core.jena.functions.UrlEncode;
 import org.aksw.sparqlify.trash.RdfViewDatabase;
 import org.aksw.sparqlify.views.transform.FilterPlacementOptimizer;
 import org.aksw.sparqlify.views.transform.ViewRewriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import sparql.DnfUtils;
-import sparql.EquiMap;
-import sparql.FilterUtils;
-import sparql.TwoWayBinding;
-import sparql.ValueSet;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Algebra;
@@ -81,6 +68,19 @@ import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.function.FunctionRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+
+import sparql.DnfUtils;
+import sparql.FilterUtils;
+import sparql.ValueSet;
 
 
 

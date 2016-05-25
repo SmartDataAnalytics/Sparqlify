@@ -1,11 +1,11 @@
 package exp.sparql;
 
 import org.aksw.sparqlify.core.RegexDerivation;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.util.ExprUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.apache.jena.sparql.expr.Expr;
-import org.apache.jena.sparql.util.ExprUtils;
 import com.karneim.util.collection.regex.PAutomaton;
 import com.karneim.util.collection.regex.PatternPro;
 

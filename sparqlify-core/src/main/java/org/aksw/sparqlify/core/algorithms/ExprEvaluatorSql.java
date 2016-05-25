@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.jena_sparql_api.views.ExprEvaluatorPartial;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
@@ -13,7 +14,6 @@ import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.Invocable;
 import org.aksw.sparqlify.core.datatypes.SqlMethodCandidate;
 import org.aksw.sparqlify.core.datatypes.XClass;
-import org.aksw.sparqlify.core.transformations.ExprEvaluatorPartial;
 
 // NOTE This file should become the replacement for the class PushDown
 

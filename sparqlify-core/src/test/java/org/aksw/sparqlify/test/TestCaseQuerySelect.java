@@ -3,9 +3,8 @@ package org.aksw.sparqlify.test;
 import java.util.concurrent.Callable;
 
 import org.aksw.sparqlify.core.test.TestHelper;
-import org.junit.Assert;
-
 import org.apache.jena.query.ResultSet;
+import org.junit.Assert;
 
 
 public class TestCaseQuerySelect

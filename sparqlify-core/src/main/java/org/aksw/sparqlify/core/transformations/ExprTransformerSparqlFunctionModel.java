@@ -3,22 +3,20 @@ package org.aksw.sparqlify.core.transformations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.cast.SqlValue;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.sparqlify.type_system.CandidateMethod;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.MethodDeclaration;
 import org.aksw.sparqlify.type_system.TypeSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.sparql.expr.E_Function;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.vocabulary.XSD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExprTransformerSparqlFunctionModel
 	implements ExprTransformer

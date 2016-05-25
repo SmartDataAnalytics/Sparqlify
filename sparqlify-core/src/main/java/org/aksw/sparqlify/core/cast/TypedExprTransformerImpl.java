@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
@@ -20,21 +22,14 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
-import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
 import org.aksw.sparqlify.expr.util.ExprUtils;
-import org.aksw.sparqlify.trash.ExprCopy;
 import org.aksw.sparqlify.type_system.CandidateMethod;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.MethodEntry;
 import org.aksw.sparqlify.type_system.MethodSignature;
 import org.aksw.sparqlify.type_system.TypeSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Multimap;
 import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sparql.core.Var;
@@ -42,6 +37,10 @@ import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Multimap;
 
 
 

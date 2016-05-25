@@ -6,10 +6,9 @@ import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
+import org.apache.jena.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.jena.query.Query;
 
 public class SparqlSqlStringRewriterImpl
 	implements SparqlSqlStringRewriter

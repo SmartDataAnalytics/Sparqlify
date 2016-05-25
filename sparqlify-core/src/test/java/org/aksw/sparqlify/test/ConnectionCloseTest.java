@@ -7,11 +7,11 @@ import javax.sql.DataSource;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.rdf.model.Model;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class ConnectionCloseTest {

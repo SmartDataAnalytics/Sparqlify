@@ -7,14 +7,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
+import org.aksw.jena_sparql_api.views.Constraint;
+import org.aksw.jena_sparql_api.views.VarDef;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
-import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
-import org.aksw.sparqlify.config.lang.Constraint;
 import org.apache.jena.atlas.io.IndentedWriter;
-import org.apache.jena.riot.system.PrefixMap;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;

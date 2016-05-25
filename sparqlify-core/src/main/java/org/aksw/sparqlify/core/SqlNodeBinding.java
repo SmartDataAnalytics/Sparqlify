@@ -12,12 +12,18 @@ import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
+import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
+import org.aksw.jena_sparql_api.views.ConstantExpander;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jena_sparql_api.views.NodeExprSubstitutor;
+import org.aksw.jena_sparql_api.views.SqlExprOptimizer;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
+import org.aksw.jena_sparql_api.views.VarDef;
 import org.aksw.sparqlify.algebra.sparql.expr.old.ExprSqlBridge;
-import org.aksw.sparqlify.algebra.sparql.transform.ConstantExpander;
 import org.aksw.sparqlify.algebra.sparql.transform.ExprDatatypeHash;
 import org.aksw.sparqlify.algebra.sparql.transform.FunctionExpander;
-import org.aksw.sparqlify.algebra.sparql.transform.NodeExprSubstitutor;
 import org.aksw.sparqlify.algebra.sparql.transform.SqlExprUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
@@ -40,27 +46,12 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSlice;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnionN;
-import org.aksw.sparqlify.algebra.sql.nodes.VarDef;
 import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.compile.sparql.SqlAlgebraToString;
-import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
-import org.aksw.sparqlify.expr.util.NodeValueUtils;
-import org.aksw.sparqlify.restriction.RestrictionImpl;
-import org.aksw.sparqlify.restriction.RestrictionSetImpl;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
-import org.aksw.sparqlify.trash.ExprCopy;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
 import org.apache.commons.lang.NotImplementedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import sparql.DnfUtils;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.SortCondition;
 import org.apache.jena.sdb.core.Generator;
@@ -75,6 +66,14 @@ import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.util.ExprUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+
+import sparql.DnfUtils;
 
 
 /**

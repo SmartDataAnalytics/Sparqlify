@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.core.SqlDatatype;
-
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprVar;

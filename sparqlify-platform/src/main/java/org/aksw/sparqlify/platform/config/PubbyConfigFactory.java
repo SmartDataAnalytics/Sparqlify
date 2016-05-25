@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.views.Constraint;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
-import org.aksw.sparqlify.config.lang.Constraint;
-import org.aksw.sparqlify.config.lang.PrefixConstraint;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
-import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.database.PrefixConstraint;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;

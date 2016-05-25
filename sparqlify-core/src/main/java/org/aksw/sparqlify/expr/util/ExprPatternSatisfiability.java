@@ -6,7 +6,6 @@ import java.util.Set;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.core.RdfTermPattern;
 import org.aksw.sparqlify.core.RdfTermPatternDerivation;
-
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_LogicalAnd;

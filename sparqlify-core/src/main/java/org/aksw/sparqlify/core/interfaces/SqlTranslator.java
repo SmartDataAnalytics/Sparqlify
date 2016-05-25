@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
-
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 

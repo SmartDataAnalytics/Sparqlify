@@ -19,9 +19,6 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.ResultSet;
@@ -32,6 +29,8 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.binding.BindingHashMap;
 import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import org.apache.jena.sparql.expr.NodeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 class WatchDog implements Runnable {

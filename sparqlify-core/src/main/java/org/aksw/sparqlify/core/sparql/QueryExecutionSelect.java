@@ -13,14 +13,14 @@ import java.util.Map.Entry;
 import org.aksw.jena_sparql_api.core.QueryExecutionAdapter;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Multimap;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.iterator.QueryIterNullIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Multimap;
 
 /**
  * A query execution that can only do execSelect
