@@ -1,7 +1,8 @@
 package org.aksw.sparqlify.restrictions;
 
+import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
-import org.aksw.sparqlify.restriction.RdfTermType;
+import org.aksw.jena_sparql_api.views.RdfTermType;
 import org.aksw.sparqlify.restriction.experiment.RestrictionManager2;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.sparql.core.Var;
