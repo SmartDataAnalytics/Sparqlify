@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
+import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprCopy;
@@ -57,7 +58,6 @@ import org.aksw.sparqlify.core.domain.input.MappingUnion;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
 import org.aksw.sparqlify.type_system.CandidateMethod;
 import org.aksw.sparqlify.type_system.FunctionModel;

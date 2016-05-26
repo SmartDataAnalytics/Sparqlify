@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.jena.functions;
 
-import org.aksw.sparqlify.core.RdfTerm;
+import org.aksw.jena_sparql_api.views.RdfTerm;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.sparql.expr.NodeValue;
