@@ -21,7 +21,6 @@ import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.PrefixSet;
 import org.aksw.jena_sparql_api.views.RdfTermType;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
@@ -35,6 +34,7 @@ import org.aksw.sparqlify.core.RdfViewInstance;
 import org.aksw.sparqlify.core.RdfViewSystem;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ReplaceConstants;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.apache.commons.collections15.Transformer;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
@@ -304,7 +304,7 @@ public class RdfViewSystem2
 
                 Expr arg = termCtor.getArg(1);
                 if(arg.isConstant()) {
-                    Object o = NodeValueUtils.getValue(arg.getConstant());
+                    Object o = NodeValueUtilsSparqlify.getValue(arg.getConstant());
 
                     Number number = (Number)o;
                     switch(number.intValue()) {
@@ -554,7 +554,7 @@ public class RdfViewSystem2
             return null;
         }
 
-        Object value = NodeValueUtils.getValue(b.getConstant());
+        Object value = NodeValueUtilsSparqlify.getValue(b.getConstant());
 
 
         return new VariableConstraint(a.getVarName(), new IsPrefixOfConstraint(value.toString()));

@@ -23,7 +23,6 @@ import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.NestedStack;
 import org.aksw.jena_sparql_api.views.OpViewInstanceJoin;
 import org.aksw.jena_sparql_api.views.PrefixSet;
@@ -53,6 +52,7 @@ import org.aksw.sparqlify.database.Table;
 import org.aksw.sparqlify.database.TableBuilder;
 import org.aksw.sparqlify.database.TreeIndex;
 import org.aksw.sparqlify.database.VariableConstraint;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.aksw.sparqlify.sparqlview.ViewInstanceJoin;
 import org.apache.commons.collections15.Transformer;
 import org.apache.jena.graph.Node;
@@ -462,7 +462,7 @@ public class CandidateViewSelectorImplUseTheGenericImplInstead
             return null;
         }
 
-        Object value = NodeValueUtils.getValue(b.getConstant());
+        Object value = NodeValueUtilsSparqlify.getValue(b.getConstant());
 
 
         return new VariableConstraint(a.getVarName(), new IsPrefixOfConstraint(value.toString()));

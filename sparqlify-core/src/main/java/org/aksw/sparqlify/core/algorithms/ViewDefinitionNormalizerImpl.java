@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.PrefixSet;
 import org.aksw.jena_sparql_api.views.RdfTermType;
@@ -16,6 +15,7 @@ import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_StrConcat;
@@ -220,7 +220,7 @@ public class ViewDefinitionNormalizerImpl
     public static RdfTermType deriveType(E_RdfTerm termCtor) {
         Expr arg = termCtor.getArg(1);
         if(arg.isConstant()) {
-            Object o = NodeValueUtils.getValue(arg.getConstant());
+            Object o = NodeValueUtilsSparqlify.getValue(arg.getConstant());
 
             Number number = (Number)o;
             switch(number.intValue()) {

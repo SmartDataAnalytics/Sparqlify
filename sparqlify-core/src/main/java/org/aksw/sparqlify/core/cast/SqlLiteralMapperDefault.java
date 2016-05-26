@@ -79,7 +79,7 @@ public class SqlLiteralMapperDefault
             value = NodeValue.FALSE;
         }
 
-        Object o = NodeValueUtils.getValue(value);
+        Object o = NodeValueUtilsSparqlify.getValue(value);
 
         String typeName = value.asNode().getLiteralDatatype().toString();
         TypeToken typeToken = TypeToken.alloc(typeName);

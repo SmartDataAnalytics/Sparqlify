@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import org.aksw.commons.util.reflect.Caster;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.graph.Node;
@@ -57,7 +57,7 @@ class CoercionWrapper
             throw new CastException();
         }
 
-        Object value = NodeValueUtils.getValue(source);
+        Object value = NodeValueUtilsSparqlify.getValue(source);
 
         Object targetValue = Caster.tryCast(value, targetClass);
         String targetForm = targetType.unparse(targetValue);

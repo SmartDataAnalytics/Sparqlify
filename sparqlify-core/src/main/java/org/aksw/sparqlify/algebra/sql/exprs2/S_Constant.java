@@ -129,7 +129,7 @@ public class S_Constant
 	/*
 	@Override
 	public <T> T getValue() {
-		Object tmp = NodeValueUtils.getValue(nodeValue);
+		Object tmp = NodeValueUtilsSparqlify.getValue(nodeValue);
 		T tmp = (T)
 	}
 	*/
@@ -264,7 +264,7 @@ public class S_Constant
 //	/*
 //	@Override
 //	public <T> T getValue() {
-//		Object tmp = NodeValueUtils.getValue(nodeValue);
+//		Object tmp = NodeValueUtilsSparqlify.getValue(nodeValue);
 //		T tmp = (T)
 //	}
 //	*/

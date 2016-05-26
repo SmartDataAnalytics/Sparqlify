@@ -15,7 +15,6 @@ import java.util.Set;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
 import org.aksw.jena_sparql_api.utils.ExprUtils;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.jena_sparql_api.views.NodeExprSubstitutor;
@@ -58,6 +57,7 @@ import org.aksw.sparqlify.core.domain.input.MappingUnion;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
 import org.aksw.sparqlify.type_system.CandidateMethod;
 import org.aksw.sparqlify.type_system.FunctionModel;
@@ -1401,7 +1401,7 @@ public class MappingOpsImpl
 
 
                     // TODO Get the proper SQL literal for the constant
-                    String str = "" + NodeValueUtils.getValue(constant);
+                    String str = "" + NodeValueUtilsSparqlify.getValue(constant);
                     S_Constant sqlExpr = new S_Constant(new SqlValue(TypeToken.String, str));
                     projection.put(alias, sqlExpr);
 
@@ -5104,7 +5104,7 @@ public class MappingOpsImpl
 //						sqlNode.getSparqlVarToExprs().remove(var, termDef);
 //
 //						NodeValue nv = null; // TODO Fix package of: ExprUtils.eval(expr);
-//						Object o = NodeValueUtils.getValue(nv);
+//						Object o = NodeValueUtilsSparqlify.getValue(nv);
 //
 //						SqlExprValue sv = new SqlExprValue(o);
 //

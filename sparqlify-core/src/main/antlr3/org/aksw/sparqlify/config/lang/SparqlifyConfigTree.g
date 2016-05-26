@@ -47,6 +47,10 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.aksw.jena_sparql_api.utils.*;
 
     import org.aksw.sparqlify.algebra.sql.nodes.*;
+
+    import org.aksw.sparqlify.database.PrefixConstraint;
+    import org.aksw.jena_sparql_api.views.Constraint;
+
     import org.apache.jena.sdb.core.JoinType;
 
     import java.util.Collection;
@@ -64,7 +68,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.apache.jena.shared.impl.PrefixMappingImpl;
 
 
-    import org.aksw.sparqlify.core.SparqlifyConstants;
+    import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 }
 
 

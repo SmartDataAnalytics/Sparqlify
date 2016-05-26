@@ -111,7 +111,7 @@ public class ExprEvaluatorSql {
 					SqlExpr tmp = transformedArgs.get(i);
 					SqlExprConstant c = tmp.asConstant();
 					//NodeValue nodeValue = c.getValue();
-					//Object value = NodeValueUtils.getValue(nodeValue);
+					//Object value = NodeValueUtilsSparqlify.getValue(nodeValue);
 					SqlValue sqlValue = c.getValue();
 					Object value = sqlValue.getValue();
 					

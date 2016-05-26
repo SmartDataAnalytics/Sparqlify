@@ -17,11 +17,11 @@ import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.Caster;
 import org.aksw.commons.util.reflect.ClassUtils;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.ExprSubstitutorSql;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.graph.Node;
@@ -413,7 +413,7 @@ public class DatatypeSystemCustom
     public NodeValue tryCast(NodeValue nodeValue, XClass targetType) {
         Class<?> targetClazz = targetType.getClass();
 
-        Object value = NodeValueUtils.getValue(nodeValue);
+        Object value = NodeValueUtilsSparqlify.getValue(nodeValue);
         Object castedValue = Caster.tryCast(value, targetClazz);
 
         TypeMapper typeMapper = TypeMapper.getInstance();

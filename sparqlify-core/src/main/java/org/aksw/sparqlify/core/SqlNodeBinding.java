@@ -14,7 +14,6 @@ import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.util.Pair;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.ConstantExpander;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprCopy;
@@ -50,6 +49,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlUnionN;
 import org.aksw.sparqlify.compile.sparql.PushDown;
 import org.aksw.sparqlify.compile.sparql.SqlAlgebraToString;
 import org.aksw.sparqlify.compile.sparql.SqlSelectBlockCollector;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
 import org.aksw.sparqlify.views.transform.SqlExprToExpr;
 import org.apache.commons.lang.NotImplementedException;
@@ -2160,7 +2160,7 @@ public class SqlNodeBinding {
                         sqlNode.getSparqlVarToExprs().remove(var, termDef);
 
                         NodeValue nv = ExprUtils.eval(expr);
-                        Object o = NodeValueUtils.getValue(nv);
+                        Object o = NodeValueUtilsSparqlify.getValue(nv);
 
                         SqlExprValue sv = new SqlExprValue(o);
 
