@@ -9,7 +9,6 @@ import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.restriction.UnsatisfiabilityException;
 import org.aksw.jena_sparql_api.views.CandidateViewSelectorBase;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
-import org.aksw.jena_sparql_api.views.OpQuadPattern2;
 import org.aksw.jena_sparql_api.views.OpViewInstanceJoin;
 import org.aksw.jena_sparql_api.views.RecursionResult;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
@@ -27,6 +26,7 @@ import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;
+import org.apache.jena.sparql.algebra.op.OpQuadBlock;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
@@ -127,8 +127,9 @@ public class CandidateViewSelectorImpl
         return viewConjunction;
     }
     */
+
     @Override
-    public Op createOp(OpQuadPattern2 opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
+    public Op createOp(OpQuadBlock opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
 
         OpDisjunction result = OpDisjunction.create();
 
@@ -153,7 +154,7 @@ public class CandidateViewSelectorImpl
 
 
     //@Override
-    public Op createOpOldButWorking(OpQuadPattern2 opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
+    public Op createOpOldButWorking(OpQuadBlock opQuadPattern, List<RecursionResult<ViewDefinition, Mapping>> conjunctions) {
 
         for(RecursionResult<ViewDefinition, Mapping> tmp : conjunctions) {
             ViewInstanceJoin<ViewDefinition> conjunction = tmp.getViewInstances();
@@ -182,8 +183,8 @@ public class CandidateViewSelectorImpl
 
     public static Generator emptyViewNameGenerator = Gensym.create("emptyView");
 
-    public static Op createEmptyViewInstance(OpQuadPattern2 opQuadPattern) {
-        Set<Var> vars = GetVarsMentioned.getVarsMentioned(opQuadPattern);
+    public static Op createEmptyViewInstance(OpQuadBlock opQuadBlock) {
+        Set<Var> vars = GetVarsMentioned.getVarsMentioned(opQuadBlock);
 
 
         VarBinding binding = new VarBinding();

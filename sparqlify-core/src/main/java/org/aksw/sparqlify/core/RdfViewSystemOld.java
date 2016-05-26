@@ -21,6 +21,7 @@ import org.aksw.commons.collections.iterators.StackCartesianProductIterator;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jena_sparql_api.utils.ReplaceConstants;
 import org.aksw.jena_sparql_api.views.EquiMap;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.jena_sparql_api.views.TwoWayBinding;
