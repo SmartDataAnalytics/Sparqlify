@@ -28,6 +28,7 @@ import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.jena_sparql_api.views.TwoWayBinding;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
 import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.sparqlify.algebra.sparql.transform.FilterPlacementOptimizer2Sparqlify;
 import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.RdfViewConjunction;
 import org.aksw.sparqlify.core.RdfViewInstance;
@@ -524,8 +525,7 @@ public class RdfViewSystem2
 
         Op augmented = _getApplicableViews(op);
 
-
-        Op optimizedFilters = FilterPlacementOptimizer2.optimize(augmented);
+        Op optimizedFilters = FilterPlacementOptimizer2Sparqlify.optimize(augmented);
 
         //System.out.println(optimizedFilters);
 
