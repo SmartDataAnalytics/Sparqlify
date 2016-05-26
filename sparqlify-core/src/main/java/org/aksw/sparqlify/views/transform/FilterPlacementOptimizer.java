@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
+import org.aksw.sparqlify.database.GetVarsMentioned;
 import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;
