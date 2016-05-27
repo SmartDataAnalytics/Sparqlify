@@ -20,7 +20,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -37,11 +37,11 @@ import org.apache.jena.sparql.expr.NodeValue;
 public class SparqlSqlInverseMapperImpl
 	implements SparqlSqlInverseMapper
 {
-	private CandidateViewSelectorImpl candidateViewSelector;
+	private CandidateViewSelectorSparqlify candidateViewSelector;
 	private SqlTranslator sqlTranslator;
 
 
-	public SparqlSqlInverseMapperImpl(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
+	public SparqlSqlInverseMapperImpl(CandidateViewSelectorSparqlify candidateViewSelector, SqlTranslator sqlTranslator) {
 		this.candidateViewSelector = candidateViewSelector;
 		this.sqlTranslator = sqlTranslator;
 	}
@@ -171,7 +171,7 @@ public class SparqlSqlInverseMapperImpl
 	 * @param quad
 	 * @return
 	 */
-	public static Set<ViewQuad<ViewDefinition>> getCandidateViews(CandidateViewSelectorImpl candidateSelector, Quad quad) {
+	public static Set<ViewQuad<ViewDefinition>> getCandidateViews(CandidateViewSelectorSparqlify candidateSelector, Quad quad) {
 		Var g = Var.alloc("g");
 		Var s = Var.alloc("s");
 		Var p = Var.alloc("p");

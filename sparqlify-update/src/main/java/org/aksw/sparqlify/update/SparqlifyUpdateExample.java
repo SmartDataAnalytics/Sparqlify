@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMap;
@@ -74,7 +74,7 @@ public class SparqlifyUpdateExample {
 
 
 
-        CandidateViewSelectorImpl candidateViewSelector = new CandidateViewSelectorImpl();
+        CandidateViewSelectorSparqlify candidateViewSelector = new CandidateViewSelectorSparqlify();
         candidateViewSelector.addView(personView);
         candidateViewSelector.addView(deptView);
         candidateViewSelector.addView(personToDeptView);

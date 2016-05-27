@@ -32,7 +32,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderDummy;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
@@ -406,7 +406,7 @@ public class SparqlifyUtils {
 			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
-			candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+			candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
 
 		
 			//	RdfViewSystem system = new RdfViewSystem2();
@@ -683,8 +683,8 @@ public class SparqlifyUtils {
 		return result;
 	}
 
-	public static CandidateViewSelectorImpl unwrapCandidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
-		CandidateViewSelectorImpl result = (CandidateViewSelectorImpl) opRewriter.getCandidateViewSelector();
+	public static CandidateViewSelectorSparqlify unwrapCandidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
+		CandidateViewSelectorSparqlify result = (CandidateViewSelectorSparqlify) opRewriter.getCandidateViewSelector();
 		return result;
 	}
 	

@@ -525,7 +525,7 @@ public class RdfViewSystem2
 
         Op augmented = _getApplicableViews(op);
 
-        Op optimizedFilters = FilterPlacementOptimizer2Sparqlify.optimize(augmented);
+        Op optimizedFilters = FilterPlacementOptimizer2Sparqlify.optimizeStatic(augmented);
 
         //System.out.println(optimizedFilters);
 

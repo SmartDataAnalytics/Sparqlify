@@ -19,14 +19,28 @@ public class FilterPlacementOptimizer2Sparqlify
     }
 
 
-    public static Op optimize(Op op) {
-        RestrictionManagerImpl cnf = new RestrictionManagerImpl();
+    public static Op optimizeStatic(Op op) {
+        Op result = optimizeStatic(op, null);
+        return result;
+//        RestrictionManagerImpl cnf = new RestrictionManagerImpl();
+//
+//        FilterPlacementOptimizer2Sparqlify x = get();
+//        //Op result = MultiMethod.invoke(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
+//        Op result = MultiMethod.invoke(x, "_optimize", op, cnf);
+//        return result;
+    }
+
+    public static Op optimizeStatic(Op op, RestrictionManagerImpl cnf) {
+        if(cnf == null) {
+            cnf = new RestrictionManagerImpl();
+        }
 
         FilterPlacementOptimizer2Sparqlify x = get();
-        //Op result = MultiMethod.invoke(FilterPlacementOptimizer2.class, "_optimize", op, cnf);
-        Op result = MultiMethod.invoke(x, "_optimize", op, cnf);
+        Op result = x.optimize(op,  cnf);
+        //Op result = MultiMethod.invoke(x, "_optimize", op, cnf);
         return result;
     }
+
 
     public Op _optimize(OpMapping op, RestrictionManagerImpl cnf) {
         return surroundWithFilterIfNeccessary(op, cnf);

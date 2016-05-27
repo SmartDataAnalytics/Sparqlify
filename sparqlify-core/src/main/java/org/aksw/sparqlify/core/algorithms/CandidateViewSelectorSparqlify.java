@@ -16,6 +16,7 @@ import org.aksw.jena_sparql_api.views.VarBinding;
 import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.jena_sparql_api.views.ViewInstance;
 import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
+import org.aksw.sparqlify.algebra.sparql.transform.FilterPlacementOptimizer2Sparqlify;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -46,27 +47,28 @@ import com.google.common.collect.Multimap;
  *
  * @param <T>
  */
-public class CandidateViewSelectorImpl
+public class CandidateViewSelectorSparqlify
     extends CandidateViewSelectorBase<ViewDefinition, Mapping>
 {
-    private static final Logger logger = LoggerFactory.getLogger(CandidateViewSelectorImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CandidateViewSelectorSparqlify.class);
 
     //private OpMappingRewriter opMappingRewriter;// = new OpMappingRewriterImpl(new MappingOps)
     private MappingOps mappingOps;
 
     private ViewDefinitionNormalizer<ViewDefinition> viewDefinitionNormalizer;
 
-    public CandidateViewSelectorImpl() {
+    public CandidateViewSelectorSparqlify() {
         this(null);
 
         logger.warn("No mappingOps provided. This means that view candidates cannot be pruned efficently which is most likely not what you want!!!");
     }
 
-    public CandidateViewSelectorImpl(MappingOps mappingOps) {
+    public CandidateViewSelectorSparqlify(MappingOps mappingOps) {
         this(mappingOps, new ViewDefinitionNormalizerImpl());
     }
 
-    public CandidateViewSelectorImpl(MappingOps mappingOps, ViewDefinitionNormalizer<ViewDefinition> viewDefinitionNormalizer) {
+    public CandidateViewSelectorSparqlify(MappingOps mappingOps, ViewDefinitionNormalizer<ViewDefinition> viewDefinitionNormalizer) {
+        super((op, rm) -> FilterPlacementOptimizer2Sparqlify.optimizeStatic(op, rm));
         //super(viewDefinitionNormalizer);
 
         this.viewDefinitionNormalizer = viewDefinitionNormalizer;

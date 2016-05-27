@@ -14,7 +14,7 @@ import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ViewQuad;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
@@ -61,7 +61,7 @@ public class CandidateViewSelectionTests {
         //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
         MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 
-        CandidateViewSelector<ViewDefinition> system = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+        CandidateViewSelector<ViewDefinition> system = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
         system.addView(coreVd);
 
 
@@ -101,7 +101,7 @@ public class CandidateViewSelectionTests {
 
         MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 
-        CandidateViewSelectorImpl candidateSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+        CandidateViewSelectorSparqlify candidateSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
         candidateSelector.addView(personView);
         candidateSelector.addView(deptView);
         candidateSelector.addView(personToDeptView);

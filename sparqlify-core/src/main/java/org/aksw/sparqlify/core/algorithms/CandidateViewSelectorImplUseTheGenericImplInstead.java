@@ -432,7 +432,7 @@ public class CandidateViewSelectorImplUseTheGenericImplInstead
         logger.debug("[Algebra] View Candidates: " + augmented);
 
 
-        Op optimizedFilters = FilterPlacementOptimizer2.optimize(augmented);
+        Op optimizedFilters = FilterPlacementOptimizer2.optimizeStatic(augmented);
 
         logger.debug("[Algebra] Filter Placement Optimized: " + optimizedFilters);
         //System.out.println(optimizedFilters);

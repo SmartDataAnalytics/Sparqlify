@@ -24,7 +24,7 @@ import org.aksw.sparqlify.admin.web.api.ServiceEventListenerRegister;
 import org.aksw.sparqlify.admin.web.api.ServiceManager;
 import org.aksw.sparqlify.admin.web.api.ServiceManagerImpl;
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
@@ -257,7 +257,7 @@ public class AppConfig
 
 
     @Bean
-    public SparqlSqlInverseMapper sparqlSqlInverseMapper(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
+    public SparqlSqlInverseMapper sparqlSqlInverseMapper(CandidateViewSelectorSparqlify candidateViewSelector, SqlTranslator sqlTranslator) {
         SparqlSqlInverseMapper result = new SparqlSqlInverseMapperImpl(candidateViewSelector, sqlTranslator);
 
         return result;
@@ -365,8 +365,8 @@ public class AppConfig
     }
 
     @Bean
-    public CandidateViewSelectorImpl candidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
-        CandidateViewSelectorImpl result = SparqlifyUtils.unwrapCandidateViewSelector(opRewriter);
+    public CandidateViewSelectorSparqlify candidateViewSelector(SparqlSqlOpRewriterImpl opRewriter) {
+        CandidateViewSelectorSparqlify result = SparqlifyUtils.unwrapCandidateViewSelector(opRewriter);
         return result;
     }
 

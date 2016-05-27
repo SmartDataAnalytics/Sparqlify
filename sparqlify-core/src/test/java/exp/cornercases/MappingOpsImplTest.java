@@ -14,7 +14,7 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
@@ -86,7 +86,7 @@ public class MappingOpsImplTest {
 		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
 		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		
-		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
 		//candidateViewSelector.addView(personView);
 		candidateViewSelector.addView(deptView);
 		//candidateViewSelector.addView(personToDeptView);
