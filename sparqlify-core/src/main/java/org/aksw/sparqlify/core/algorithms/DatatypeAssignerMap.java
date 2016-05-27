@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.ExprSql;
 import org.aksw.sparqlify.core.datatypes.TypeSystem;
 import org.aksw.sparqlify.core.datatypes.XClass;

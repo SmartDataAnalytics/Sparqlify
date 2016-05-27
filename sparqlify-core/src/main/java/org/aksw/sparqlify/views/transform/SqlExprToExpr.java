@@ -3,7 +3,7 @@ package org.aksw.sparqlify.views.transform;
 import java.util.Arrays;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
+import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs.S_LogicalAnd;

@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.algebra.sparql.transform;
 
-import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.sparqlify.core.algorithms.OpMapping;
 import org.aksw.sparqlify.database.FilterPlacementOptimizer2;

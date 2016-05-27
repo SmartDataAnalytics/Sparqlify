@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.sparqlify.core.MakeExprPermissive;
 import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.impl.RDFLangString;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.riot.process.normalize.CanonicalizeLiteral;
@@ -21,6 +22,7 @@ import org.apache.jena.sparql.engine.binding.BindingMap;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.util.ExprUtils;
+import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,9 +148,15 @@ public class ItemProcessorSparqlify
                         if(resultValue.isLiteral()) {
                             RDFDatatype originalType = resultValue.getLiteralDatatype();
 
+
                             if(originalType != null) {
+                                String typeUri = originalType.getURI();
+                                boolean isStringType =  typeUri.equals(RDFLangString.rdfLangString.getURI()) ||typeUri.equals(XSD.xstring.getURI());
+
                             //String typeUri = resultValue.getLiteralDatatypeURI();
-                                canonResultValue = NodeFactory.createLiteral(lex, originalType);
+                                if(!isStringType) {
+                                    canonResultValue = NodeFactory.createLiteral(lex, originalType);
+                                }
                             }
                         } else {
                             throw new RuntimeException("Should not happen: Non-literal canonicalized to literal: " + resultValue + " became " + canonResultValue);

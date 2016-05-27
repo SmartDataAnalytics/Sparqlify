@@ -3,6 +3,7 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
@@ -12,7 +13,6 @@ import org.aksw.jena_sparql_api.views.RdfTermType;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.jena_sparql_api.views.VarDefinition;
-import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
