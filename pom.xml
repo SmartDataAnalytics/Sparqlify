@@ -922,16 +922,16 @@
 
                 <exclusions>
                     <exclusion>
-                        <groupId>com.hp.hpl.jena</groupId>
-                        <artifactId>jena</artifactId>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-arq</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.hp.hpl.jena</groupId>
-                        <artifactId>iri</artifactId>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-core</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.hp.hpl.jena</groupId>
-                        <artifactId>arq</artifactId>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-iri</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

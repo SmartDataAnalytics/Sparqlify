@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
 import org.aksw.jena_sparql_api.views.Constraint;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
-import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.database.PrefixConstraint;
