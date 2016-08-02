@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.aksw.commons.collections.CartesianProduct;
-import org.aksw.commons.collections.stack.NestedStack;
+import org.aksw.commons.collections.stacks.NestedStack;
 import org.aksw.commons.util.Pair;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.commons.util.strings.StringUtils;

@@ -79,14 +79,15 @@ public class ExprTests {
 		
 		
 		Expr[] exprs = new Expr[] {
-				ExprUtils.parse("?a = '1'"),
+				ExprUtils.parse("?a = 1"),
 				ExprUtils.parse("?b = '1'"),
 		};
 		
 		// Null means skip result
 		String[] expecteds = new String[] {
-				"\"x\" = 1",
-				"\"y\" = 1",
+				"(\"x\" = 1)",
+				"false"
+				//"\"y\" = 1",
 		};
 		
 
@@ -124,7 +125,7 @@ public class ExprTests {
 			SqlExpr sqlExpr = rewriteToString(expr, binding, typeMap);
 			String actual = serializerSystem.serialize(sqlExpr);
 			
-			System.out.println("" + actual);
+			logger.debug("Got expression: " + actual + " - expected: " + expected);
 			if(expected != null) {
 				Assert.assertEquals(expected, actual);
 			}

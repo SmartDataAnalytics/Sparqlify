@@ -72,19 +72,22 @@
             </dependency> <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-server</artifactId>
             </dependency> -->
 
+<!--
         <dependency>
             <groupId>org.aksw.commons</groupId>
             <artifactId>aksw-commons-util</artifactId>
             <scope>compile</scope>
         </dependency>
-
+-->
         <!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId>
             <scope>compile</scope> </dependency> -->
+<!--
         <dependency>
             <groupId>org.aksw.commons</groupId>
             <artifactId>aksw-commons-collections</artifactId>
             <scope>compile</scope>
         </dependency>
+-->
         <dependency>
             <groupId>com.jolbox</groupId>
             <artifactId>bonecp</artifactId>
