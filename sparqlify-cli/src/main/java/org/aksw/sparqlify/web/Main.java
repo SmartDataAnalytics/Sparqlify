@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.web;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
+import org.aksw.commons.util.StreamUtils;
 import org.aksw.jena_sparql_api.core.GraphQueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
@@ -54,6 +56,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.Resource;
 
 
 public class Main {
@@ -67,7 +72,6 @@ public class Main {
      *            the command line arguments
      */
     public static void main(String[] args) throws Exception {
-
         LoggerCount loggerCount = new LoggerCount(logger);
 
         Class.forName("org.postgresql.Driver");

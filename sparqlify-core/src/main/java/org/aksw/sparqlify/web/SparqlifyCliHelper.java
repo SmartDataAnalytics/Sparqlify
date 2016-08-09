@@ -26,12 +26,17 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.Resource;
 
 import com.jolbox.bonecp.BoneCPConfig;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class SparqlifyCliHelper {
 
+    public static final ApplicationContext appContext = new AnnotationConfigApplicationContext();
+    
     public static void addDatabaseOptions(Options cliOptions) {
         cliOptions.addOption("t", "type", true,
                 "Database type (posgres, mysql,...)");
@@ -155,23 +160,31 @@ public class SparqlifyCliHelper {
         return result;
     }
 
-    public static List<File> parseFiles(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
-        String[] fileNames = commandLine.getOptionValues(optName);
+    public static List<Resource> parseFiles(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
+        String[] locations = commandLine.getOptionValues(optName);
 
-        if (fileNames == null || fileNames.length == 0) {
+        if (locations == null || locations.length == 0) {
             logger.error("File or folder name required for option '" + optName + "'"); //"No mapping file given");
             return null;
         }
 
-        List<File> result = new ArrayList<File>();
-        for(String fileName : fileNames) {
-            File file = new File(fileName);
-            if (mustExist && !file.exists()) {
-                logger.error("File does not exist: " + fileName);
+        List<Resource> result = new ArrayList<Resource>();
+        for(String location : locations) {
+            Resource resource = appContext.getResource(location);
+            if(!resource.exists()) {
+                Resource fallback = appContext.getResource("file://" + location);
+                if(fallback.exists()) {
+                    resource = fallback;
+                }
+            }
+            
+            //File file = new File(fileName);
+            if (mustExist && !resource.exists()) {
+                logger.error("Resource does not exist: " + location);
                 return null;
             }
 
-            result.add(file);
+            result.add(resource);
         }
 
         return result;
@@ -204,19 +217,20 @@ public class SparqlifyCliHelper {
      * @throws RecognitionException
      */
     public static Config parseSmlConfigs(CommandLine commandLine, Logger logger) throws IOException, RecognitionException {
-        List<File> configFiles = parseFiles(commandLine, "m", true, logger);
+        List<Resource> configFiles = parseFiles(commandLine, "m", true, logger);
         if(configFiles == null) {
             return null;
         }
 
         Config result = null;
-        for(File configFile : configFiles) {
-            InputStream in = new FileInputStream(configFile);
-            Config tmp = SparqlifyUtils.parseSmlConfig(in, logger);
-            if(result == null) {
-                result = tmp;
-            } else {
-                result.merge(tmp);
+        for(Resource configFile : configFiles) {
+            try(InputStream in = configFile.getInputStream()) {
+                Config tmp = SparqlifyUtils.parseSmlConfig(in, logger);
+                if(result == null) {
+                    result = tmp;
+                } else {
+                    result.merge(tmp);
+                }
             }
         }
 
