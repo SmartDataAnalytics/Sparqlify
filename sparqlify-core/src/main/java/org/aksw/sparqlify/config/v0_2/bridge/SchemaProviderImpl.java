@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.aksw.sparqlify.algebra.sql.nodes.Schema;
 import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.slf4j.Logger;
@@ -53,11 +54,13 @@ public class SchemaProviderImpl
 	private Connection conn;
 	private TypeSystem datatypeSystem;
 	private Map<String, String> aliasMap; // TODO Maybe this has to be a function to capture int([0-9]*) -> int
-	
-	public SchemaProviderImpl(Connection conn, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
+    private SqlEscaper sqlEscaper;
+
+	public SchemaProviderImpl(Connection conn, TypeSystem datatypeSystem, Map<String, String> aliasMap, SqlEscaper sqlEscaper) {
 		this.conn = conn;
 		this.datatypeSystem = datatypeSystem;
 		this.aliasMap = aliasMap;
+		this.sqlEscaper = sqlEscaper;
 	}
 	
 	
@@ -68,7 +71,7 @@ public class SchemaProviderImpl
 
 		
 		// TODD We might have to escape table names...
-		String escTableName = "\"" + tableName + "\"";
+		String escTableName = sqlEscaper.escapeTableName(tableName); //"\"" + tableName + "\"";
 		
 		// FIXME Use database metadata for fetching schemas of tables
 		Schema result = createSchemaForQueryString("SELECT * FROM " + escTableName);

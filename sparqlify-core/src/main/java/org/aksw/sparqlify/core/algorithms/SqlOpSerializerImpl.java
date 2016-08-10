@@ -22,6 +22,8 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
+import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
@@ -45,6 +47,8 @@ public class SqlOpSerializerImpl
 	private SqlExprSerializer exprSerializer; //new SqlExprSerializerMySql();
 	//private static SqlExprSerializer sqlExprSerializer = new SqlExprSerializerPostgres();
 
+	
+	protected SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
 
 	public SqlOpSerializerImpl(SqlExprSerializer exprSerializer) {
 		this.exprSerializer = exprSerializer;
@@ -138,7 +142,7 @@ public class SqlOpSerializerImpl
     		//String asSeparator = " AS ";
     		String asSeparator = " ";
 
-    		strs.add(exprStr + asSeparator + escapeAlias(columnName));
+    		strs.add(exprStr + asSeparator + sqlEscaper.escapeColumnName(columnName));
     	}
 
     	result = Joiner.on(", ").join(strs);
@@ -152,10 +156,10 @@ public class SqlOpSerializerImpl
 	 * @param columnName
 	 * @return
 	 */
-	public static String escapeAlias(String columnName)
-	{
-		return "\"" + columnName + "\"";
-	}
+//	public static String escapeAlias(String columnName)
+//	{
+//		return "\"" + columnName + "\"";
+//	}
 
 
 
@@ -635,9 +639,9 @@ public class SqlOpSerializerImpl
     	//return result;
     }
 
-    public static void _serialize(SqlOpTable op, IndentedWriter writer)
+    public void _serialize(SqlOpTable op, IndentedWriter writer)
     {
-    	String encTableName = "\"" + op.getTableName() + "\"";
+    	String encTableName = sqlEscaper.escapeTableName(op.getTableName());
     	writer.print(encTableName);
     	writer.print(getAliasNameNotNull(op));
     }
