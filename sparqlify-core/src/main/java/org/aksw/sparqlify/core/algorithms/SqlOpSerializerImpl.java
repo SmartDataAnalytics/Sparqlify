@@ -48,9 +48,10 @@ public class SqlOpSerializerImpl
 	//private static SqlExprSerializer sqlExprSerializer = new SqlExprSerializerPostgres();
 
 	
-	protected SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+	protected SqlEscaper sqlEscaper;
 
-	public SqlOpSerializerImpl(SqlExprSerializer exprSerializer) {
+	public SqlOpSerializerImpl(SqlEscaper sqlEscaper, SqlExprSerializer exprSerializer) {
+	    this.sqlEscaper = sqlEscaper;
 		this.exprSerializer = exprSerializer;
 	}
 

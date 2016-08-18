@@ -171,6 +171,8 @@ public class SchemaProviderImpl
 			ResultSetMetaData meta = rs.getMetaData();
 			
 			for(int i = 1; i <= meta.getColumnCount(); ++i) {
+			    //String name = meta.getColumnName(i);
+
 				String name = meta.getColumnLabel(i);
 				int isNullable = meta.isNullable(i);
 				

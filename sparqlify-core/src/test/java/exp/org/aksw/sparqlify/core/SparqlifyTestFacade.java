@@ -83,7 +83,7 @@ public class SparqlifyTestFacade {
 		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
 		//TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
-		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+		ExprRewriteSystem ers = SparqlifyUtils.createDefaultExprRewriteSystem();
 		TypeSystem typeSystem = ers.getTypeSystem();
 
 		

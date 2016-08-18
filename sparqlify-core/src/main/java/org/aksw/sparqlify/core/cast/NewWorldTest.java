@@ -14,6 +14,7 @@ import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
@@ -254,7 +255,7 @@ public class NewWorldTest {
 		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
 				typeSerializer);
 		SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
-				typeSerializer, sqlLiteralMapper);
+				typeSerializer, new SqlEscaperDoubleQuote(), sqlLiteralMapper);
 
 
 		// SqlTranslationUtils;

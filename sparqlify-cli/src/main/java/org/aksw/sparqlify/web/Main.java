@@ -1,6 +1,5 @@
 package org.aksw.sparqlify.web;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
-import org.aksw.commons.util.StreamUtils;
 import org.aksw.jena_sparql_api.core.GraphQueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
@@ -16,6 +14,8 @@ import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
+import org.aksw.sparqlify.config.dialects.SqlEscaperBacktick;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
@@ -56,9 +56,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.io.Resource;
 
 
 public class Main {
@@ -182,16 +179,18 @@ public class Main {
         //TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
         //TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 
-        ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+        ExprRewriteSystem ers = SparqlifyUtils.createDefaultExprRewriteSystem();
         TypeSystem typeSystem = ers.getTypeSystem();
 
         // typeAliases for the H2 datatype
         Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
+        
+        SqlEscaper sqlEscaper = new SqlEscaperBacktick();
 
         Connection conn = dataSource.getConnection();
         try {
-            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
@@ -252,7 +251,7 @@ public class Main {
 
         Long mrs = useSparql11Wrapper ? null : maxResultSetSize;
 
-        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, mrs, maxQueryExecutionTime);
+        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, sqlEscaper, mrs, maxQueryExecutionTime);
 
 
         if(useSparql11Wrapper) {

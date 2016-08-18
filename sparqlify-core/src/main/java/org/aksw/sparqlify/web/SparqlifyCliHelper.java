@@ -119,26 +119,26 @@ public class SparqlifyCliHelper {
         return dataSource;
     }
 
-
-    public static List<ViewDefinition> extractViewDefinitions(List<org.aksw.sparqlify.config.syntax.ViewDefinition> viewDefinitions, DataSource dataSource, TypeSystem typeSystem, Map<String, String> typeAlias, Logger logger) throws SQLException {
-//		Connection conn;
-//		ViewDefinitionFactory x = SparqlifyUtils.createViewDefinitionFactory(conn, typeSystem, typeAlias);
-
-        List<ViewDefinition> result;
-
-        Connection conn = dataSource.getConnection();
-        try {
-            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
-            SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
-
-            result = SyntaxBridge.bridge(syntaxBridge, viewDefinitions, logger);
-        }
-        finally {
-            conn.close();
-        }
-
-        return result;
-    }
+//
+//    public static List<ViewDefinition> extractViewDefinitions(List<org.aksw.sparqlify.config.syntax.ViewDefinition> viewDefinitions, DataSource dataSource, TypeSystem typeSystem, Map<String, String> typeAlias, Logger logger) throws SQLException {
+////		Connection conn;
+////		ViewDefinitionFactory x = SparqlifyUtils.createViewDefinitionFactory(conn, typeSystem, typeAlias);
+//
+//        List<ViewDefinition> result;
+//
+//        Connection conn = dataSource.getConnection();
+//        try {
+//            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
+//            SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
+//
+//            result = SyntaxBridge.bridge(syntaxBridge, viewDefinitions, logger);
+//        }
+//        finally {
+//            conn.close();
+//        }
+//
+//        return result;
+//    }
 
     public static Integer parseInt(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
         String valueStr = commandLine.getOptionValue(optName);

@@ -32,6 +32,7 @@ import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPass
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerWhen;
 import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
@@ -100,14 +101,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class SparqlifyCoreInit {
-    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
+    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, SqlEscaper sqlEscaper) {
 
         DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
 
         SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
                 typeSerializer);
         SqlExprSerializerSystem result = new SqlExprSerializerSystemImpl(
-                typeSerializer, sqlLiteralMapper);
+                typeSerializer, sqlEscaper, sqlLiteralMapper);
 
         FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
 
@@ -636,24 +637,24 @@ public class SparqlifyCoreInit {
 
             // FunctionRegistry functionRegistry = new FunctionRegistry();
 
-            ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
+//            ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
 
             // Eliminates rdf terms from Expr (this is datatype independent)
-            ExprEvaluator exprEvaluator = SqlTranslationUtils
-                    .createDefaultEvaluator();
+//            ExprEvaluator exprEvaluator = SqlTranslationUtils
+//                    .createDefaultEvaluator();
 
             // Computes types for Expr, thereby yielding SqlExpr
-            TypedExprTransformer typedExprTransformer = new TypedExprTransformerImpl(
-                    typeSystem);
+//            TypedExprTransformer typedExprTransformer = new TypedExprTransformerImpl(
+//                    typeSystem);
 
             // Obtain DBMS specific string representation for SqlExpr
 
-            DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
+//            DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
 
-            SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
-                    typeSerializer);
-            SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
-                    typeSerializer, sqlLiteralMapper);
+//            SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
+//                    typeSerializer);
+//            SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
+//                    typeSerializer, sqlEscaper, sqlLiteralMapper);
 
             // ExprEvaluator exprEvaluator = new
             // ExprEvaluatorPartial(functionRegistry, typedExprTransformer)

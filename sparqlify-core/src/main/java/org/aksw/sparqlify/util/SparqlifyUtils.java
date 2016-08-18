@@ -24,6 +24,8 @@ import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
+import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -182,20 +184,32 @@ public class SparqlifyUtils {
 	
 //
 //
-	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias) throws IOException {
+	@Deprecated
+    public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias) throws IOException {
+        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+        TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
+        
+        ViewDefinitionFactory result = createViewDefinitionFactory(conn, typeSystem, typeAlias, sqlEscaper);
+        
+        return result;
+    }
+
+	
+	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias, SqlEscaper sqlEscaper) throws IOException {
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		
-		ViewDefinitionFactory result = createViewDefinitionFactory(conn, typeSystem, typeAlias);
+		
+		ViewDefinitionFactory result = createViewDefinitionFactory(conn, typeSystem, typeAlias, sqlEscaper);
 		
 		return result;
 	}
 //	
 //	
-	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, TypeSystem datatypeSystem, Map<String, String> typeAlias) throws IOException {
+	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, TypeSystem datatypeSystem, Map<String, String> typeAlias, SqlEscaper sqlEscaper) throws IOException {
 	
 		ConfigParser parser = new ConfigParser();
 
-		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias);
+		SchemaProvider schemaProvider = new SchemaProviderImpl(conn, datatypeSystem, typeAlias, sqlEscaper);
 		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
 		ViewDefinitionFactory result = new ViewDefinitionFactory(parser, syntaxBridge);
@@ -210,6 +224,7 @@ public class SparqlifyUtils {
 		
 		ConfigParser parser = new ConfigParser();
 		
+		SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		SchemaProvider schemaProvider = new SchemaProviderDummy(typeSystem, typeAlias);
 		SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
@@ -222,7 +237,7 @@ public class SparqlifyUtils {
 	
 	@Deprecated
 	public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
-		SqlExprSerializerSystem result = SparqlifyCoreInit.createSerializerSystem(typeSystem);
+		SqlExprSerializerSystem result = SparqlifyCoreInit.createSerializerSystem(typeSystem, new SqlEscaperDoubleQuote());
 
 		return result;
 	}
@@ -340,8 +355,8 @@ public class SparqlifyUtils {
 	//public static QueryExecutionFactory
 	
 	
-	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
-		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, maxResultSetSize, maxQueryExecutionTimeInSeconds);
+	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
+		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, sqlEscaper, maxResultSetSize, maxQueryExecutionTimeInSeconds);
 		
 		SparqlSqlOpRewriter ssoRewriter = rewriter.getSparqlSqlOpRewriter();
 		SqlOpSerializer sqlOpSerializer = rewriter.getSqlOpSerializer();
@@ -379,10 +394,10 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
+	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
 		RdfViewSystemOld.initSparqlifyFunctions();
 
-		ExprRewriteSystem ers = createExprRewriteSystem();
+		ExprRewriteSystem ers = createExprRewriteSystem(sqlEscaper);
 		
 		
 		TypeSystem typeSystem = ers.getTypeSystem();
@@ -403,7 +418,7 @@ public class SparqlifyUtils {
 		CandidateViewSelector<ViewDefinition> candidateViewSelector;
 		Schema databaseSchema; 
 		try {
-			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+			SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
 			SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
 			candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
@@ -424,7 +439,7 @@ public class SparqlifyUtils {
 		//SqlExprSerializerSystem serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
 		SqlExprSerializerSystem serializerSystem = ers.getSerializerSystem();
 		
-		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
+		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(sqlEscaper, serializerSystem);
 
 		
 		SparqlSqlStringRewriterImpl rewriter = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);//SparqlifyUtils.createSparqlSqlStringRewriter(ssoRewriter);
@@ -503,12 +518,13 @@ public class SparqlifyUtils {
 //	}
 	
 
-	
+
+	@Deprecated
 	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter, TypeSystem typeSystem)  {
 
 		
 		SqlExprSerializerSystem serializerSystem = createSerializerSystem(typeSystem);
-		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(serializerSystem);
+		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(new SqlEscaperDoubleQuote(), serializerSystem);
 
 		SparqlSqlStringRewriter result = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);
 
@@ -639,14 +655,20 @@ public class SparqlifyUtils {
 
 	
 	
-	
-	public static ExprRewriteSystem createExprRewriteSystem() {
+
+	public static ExprRewriteSystem createDefaultExprRewriteSystem() {
+	    SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+	    ExprRewriteSystem result = createExprRewriteSystem(sqlEscaper);
+	    return result;
+	}
+	   
+	public static ExprRewriteSystem createExprRewriteSystem(SqlEscaper sqlEscaper) {
 
 		RdfViewSystemOld.initSparqlifyFunctions();
 
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		RdfTermEliminatorWriteable exprTransformer = SparqlifyCoreInit.createDefaultTransformer(typeSystem);
-		SqlExprSerializerSystem serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem);
+		SqlExprSerializerSystem serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem, sqlEscaper);
 		ExprEvaluator exprEvaluator = SqlTranslationUtils.createDefaultEvaluator();
 		
 		ExprRewriteSystem result = new ExprRewriteSystem(typeSystem, exprTransformer, exprEvaluator, serializerSystem);

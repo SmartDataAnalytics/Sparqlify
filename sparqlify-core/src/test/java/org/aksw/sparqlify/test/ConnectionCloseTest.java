@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import javax.sql.DataSource;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.query.QueryExecution;
@@ -36,7 +37,7 @@ public class ConnectionCloseTest {
 		
 		Config config = SparqlifyUtils.readConfig(in);
 		//DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
-		final QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
+		final QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, new SqlEscaperDoubleQuote(), null, null);
 
 		final Runnable test = new Runnable() {
 			

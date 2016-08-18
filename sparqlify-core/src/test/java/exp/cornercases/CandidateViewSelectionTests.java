@@ -13,6 +13,8 @@ import org.aksw.commons.util.MapReader;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ViewQuad;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
+import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
@@ -57,7 +59,7 @@ public class CandidateViewSelectionTests {
         System.out.println("VD: " + coreVd);
 
         //TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
-        ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+        ExprRewriteSystem ers = SparqlifyUtils.createDefaultExprRewriteSystem();
         //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
         MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 
@@ -97,7 +99,7 @@ public class CandidateViewSelectionTests {
         ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
         ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
 
-        ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+        ExprRewriteSystem ers = SparqlifyUtils.createDefaultExprRewriteSystem();
 
         MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 

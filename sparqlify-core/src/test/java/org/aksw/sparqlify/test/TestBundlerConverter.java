@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.test.MappingBundle;
 import org.aksw.sparqlify.core.test.QueryBundle;
@@ -81,7 +82,7 @@ public class TestBundlerConverter {
 		throws Exception
 	{
 		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
-		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
+		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, new SqlEscaperDoubleQuote(), null, null);
 
 		
 		String mappingName = bundle.getName();

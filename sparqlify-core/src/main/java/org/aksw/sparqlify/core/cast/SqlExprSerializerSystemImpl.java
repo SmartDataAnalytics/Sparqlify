@@ -13,6 +13,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
+import org.aksw.sparqlify.config.dialects.SqlEscaper;
 import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 
 public class SqlExprSerializerSystemImpl
@@ -22,9 +23,11 @@ public class SqlExprSerializerSystemImpl
 
 	private DatatypeToStringPostgres typeSerializer;
 	private SqlLiteralMapper sqlLiteralMapper;
+	private SqlEscaper sqlEscaper;
 
-	public SqlExprSerializerSystemImpl(DatatypeToStringPostgres typeSerializer, SqlLiteralMapper sqlLiteralMapper) {
+	public SqlExprSerializerSystemImpl(DatatypeToStringPostgres typeSerializer, SqlEscaper sqlEscaper, SqlLiteralMapper sqlLiteralMapper) {
 		this.typeSerializer = typeSerializer;
+		this.sqlEscaper = sqlEscaper;
 		this.sqlLiteralMapper = sqlLiteralMapper;
 	}
 	
@@ -94,10 +97,12 @@ public class SqlExprSerializerSystemImpl
 			SqlExprVar v = expr.asVariable();
 			S_ColumnRef ref = (S_ColumnRef)v;
 
-			result = "\"" + ref.getColumnName() + "\"";
+			result = sqlEscaper.escapeColumnName(ref.getColumnName());
+			//result = "\"" + ref.getColumnName() + "\"";
 			
 			if(ref.getRelationAlias() != null) {
-				result = ref.getRelationAlias() + "." + result;
+			    String alias = sqlEscaper.escapeAliasName(ref.getRelationAlias());
+				result = alias + "." + result;
 			} 
 			
 		} else {
