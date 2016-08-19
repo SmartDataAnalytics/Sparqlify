@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.utils.FilterUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
-
-import sparql.FilterUtils;
-import sparql.ValueSet;
-
+import org.aksw.jena_sparql_api.utils.ValueSet;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;

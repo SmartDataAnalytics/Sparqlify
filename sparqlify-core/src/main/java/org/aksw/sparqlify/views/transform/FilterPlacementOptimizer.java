@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
+import org.aksw.jena_sparql_api.utils.ClauseUtils;
+import org.aksw.jena_sparql_api.utils.CnfUtils;
+import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.sparqlify.database.GetVarsMentioned;
-import org.aksw.sparqlify.expr.util.ExprUtils;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;
 import org.apache.jena.sparql.algebra.op.OpDistinct;
@@ -25,9 +26,6 @@ import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
 
 import com.google.common.collect.Sets;
-
-import sparql.ClauseUtils;
-import sparql.CnfUtils;
 
 /**
  * @author raven
@@ -192,9 +190,9 @@ public class FilterPlacementOptimizer {
 		}		
 	}
 	
-	public static Op _optimize(OpRdfViewPattern op, Set<Set<Expr>> cnf) {
-		return surroundWithFilterIfNeccessary(op, cnf);
-	}
+//	public static Op _optimize(OpRdfViewPattern op, Set<Set<Expr>> cnf) {
+//		return surroundWithFilterIfNeccessary(op, cnf);
+//	}
 
 	/*
 	public static Op _optimize(OpUnion op, Set<Set<Expr>> cnf) {

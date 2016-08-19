@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
-import org.aksw.sparqlify.core.RdfView;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
@@ -14,30 +13,6 @@ import com.google.common.collect.Sets;
 
 
 public class Validation {
-
-    @Deprecated
-    public static void validateView(RdfView view, Logger logger) {
-        Set<Var> patternVars = QuadPatternUtils.getVarsMentioned(view.getQuadPattern());
-
-        Set<Var> bindingVars = new HashSet<Var>();
-        for(Node bindingVar : view.getBinding().keySet()) {
-            bindingVars.add((Var)bindingVar);
-        }
-
-        Set<Var> unboundPatternVars = Sets.difference(patternVars, bindingVars);
-
-        if(!unboundPatternVars.isEmpty()) {
-            //throw new RuntimeException("View " + view.getName() + ": Unbound pattern variables: " + unboundPatternVars);
-            logger.error("View " + view.getName() + ": Unbound pattern variables: " + unboundPatternVars);
-        }
-
-
-        Set<Var> unreferencedBindingVars = Sets.difference(bindingVars, patternVars);
-        if(!unreferencedBindingVars.isEmpty()) {
-            logger.warn("View " + view.getName() + ": Unreferenced binding variables: " + unreferencedBindingVars);
-        }
-    }
-
 
     public static void validateView(ViewDefinition view, Logger logger) {
         Set<Var> patternVars = QuadPatternUtils.getVarsMentioned(view.getTemplate());

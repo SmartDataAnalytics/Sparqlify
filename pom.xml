@@ -535,6 +535,7 @@
 <!-- 				<version>1.2.14</version> -->
 <!-- 			</dependency> -->
 
+
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>jstl</artifactId>
@@ -632,14 +633,23 @@
 			<!-- <scope>compile</scope> -->
 			<!-- </dependency> -->
 
+<!--
 			<dependency>
 				<groupId>postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>8.4-701.jdbc4</version>
-				<!-- <version>9.3-1100-jdbc41</version> -->
+				< ! - - <version>9.3-1100-jdbc41</version> - - >
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+-->
+
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>9.4.1209.jre7</version>
+</dependency>
+
 
 			<dependency>
 				<groupId>org.postgis</groupId>
@@ -669,6 +679,14 @@
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hive</groupId>
+                        <artifactId>hive-service</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hive</groupId>
+                        <artifactId>hive-service-rpc</artifactId>
                     </exclusion>
 				</exclusions>
 			</dependency>
@@ -875,7 +893,7 @@
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.3.170</version>
+				<version>1.4.192</version>
 			</dependency>
 
 
@@ -985,6 +1003,7 @@
 			<!-- </dependency> -->
 
 			<!-- TODO Remove dep once part of jena-sparql-api-server again -->
+
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-jsp</artifactId>

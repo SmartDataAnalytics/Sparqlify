@@ -27,6 +27,8 @@ import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapperImpl;
 import org.aksw.sparqlify.jpa.EntityInverseMapper;
@@ -51,10 +53,6 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import org.apache.jena.shared.PrefixMapping;
 
 @Configuration
 @ComponentScan("org.aksw.sparqlify.admin.web")
@@ -240,7 +238,7 @@ public class AppConfig
      */
     @Bean
     @DependsOn("entityManagerFactory")
-    public QueryExecutionFactory managerApiQef(DataSource dataSource)
+    public QueryExecutionFactory managerApiQef(DataSource dataSource, SqlEscaper sqlEscaper)
         throws Exception
     {
         LoggerCount loggerCount = new LoggerCount(logger);
@@ -251,10 +249,14 @@ public class AppConfig
             throw new RuntimeException("Errors reading mapping encountered");
         }
 
-        QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, 1000l, 60);
+        QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, sqlEscaper, 1000l, 60);
         return result;
     }
 
+    @Bean
+    public SqlEscaper sqlEscaper() {
+        return new SqlEscaperDoubleQuote();
+    }
 
     @Bean
     public SparqlSqlInverseMapper sparqlSqlInverseMapper(CandidateViewSelectorSparqlify candidateViewSelector, SqlTranslator sqlTranslator) {

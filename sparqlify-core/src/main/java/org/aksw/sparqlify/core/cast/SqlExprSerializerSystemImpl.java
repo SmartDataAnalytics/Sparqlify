@@ -5,16 +5,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
-import org.aksw.commons.util.factory.Factory1;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
+import org.aksw.commons.collections.MapUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
-import org.aksw.sparqlify.config.dialects.SqlEscaper;
-import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
 
 public class SqlExprSerializerSystemImpl
 	implements SqlExprSerializerSystem
@@ -38,7 +39,7 @@ public class SqlExprSerializerSystemImpl
 
 	@Override
 	public void addSerializer(Collection<String> functionIds, SqlFunctionSerializer serializer) {
-		NewWorldTest.putForAll(nameToSerializer, functionIds, serializer);
+		MapUtils.putForAll(nameToSerializer, functionIds, serializer);
 	}
 
 	
@@ -52,8 +53,8 @@ public class SqlExprSerializerSystemImpl
 			Object o = sqlValue.getValue();
 			
 			if(o == null) {
-				Factory1<String> nullSerializer = typeSerializer.asString(c.getDatatype());
-				result = nullSerializer.create("NULL");
+				UnaryOperator<String> nullSerializer = typeSerializer.asString(c.getDatatype());
+				result = nullSerializer.apply("NULL");
 			} else {			
 				result = sqlLiteralMapper.serialize(sqlValue);
 			}
@@ -73,13 +74,13 @@ public class SqlExprSerializerSystemImpl
 			String functionName = f.getName();
 			
 			if(functionName.equals("cast")) {
-				Factory1<String> castSerializer = typeSerializer.asString(f.getDatatype());
+				UnaryOperator<String> castSerializer = typeSerializer.asString(f.getDatatype());
 				
 				assert args.size() == 1 : "Excactly one argument expected for cast, got: " + args;
 				
 				String argStr = strs.get(0);
 				
-				result = castSerializer.create(argStr);
+				result = castSerializer.apply(argStr);
 				
 			} else {
 			

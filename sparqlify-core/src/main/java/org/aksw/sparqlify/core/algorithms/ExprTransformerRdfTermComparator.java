@@ -1,8 +1,8 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
 
-import org.aksw.commons.util.factory.Factory2;
 import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
@@ -89,7 +89,7 @@ public class ExprTransformerRdfTermComparator
             rightTerm = SqlTranslationUtils.expandConstant(right);
         }
 
-        Factory2<Expr> exprFactory = ExprFactoryUtils.createCopyFactory2((ExprFunction2)fn);
+        BinaryOperator<Expr> exprFactory = ExprFactoryUtils.createCopyFactory2((ExprFunction2)fn);
 
         if(leftTerm != null && rightTerm != null) {
 
@@ -106,7 +106,7 @@ public class ExprTransformerRdfTermComparator
     }
 
 
-    public Expr processOpRdfTerm(E_RdfTerm a, E_RdfTerm b, Factory2<Expr> opFactory) {
+    public Expr processOpRdfTerm(E_RdfTerm a, E_RdfTerm b, BinaryOperator<Expr> opFactory) {
 
         Expr result;
 
@@ -135,7 +135,7 @@ public class ExprTransformerRdfTermComparator
 
         //Expr eqV = new E_Equals(a.getLexicalValue(), b.getLexicalValue());
 
-        Expr tmpEqV = opFactory.create(a.getLexicalValue(), b.getLexicalValue());
+        Expr tmpEqV = opFactory.apply(a.getLexicalValue(), b.getLexicalValue());
         Expr eqV = transform((ExprFunction2)tmpEqV);
 
 

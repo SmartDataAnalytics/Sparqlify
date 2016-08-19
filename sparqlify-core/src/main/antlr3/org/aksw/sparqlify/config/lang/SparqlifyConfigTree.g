@@ -41,7 +41,6 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.apache.jena.shared.impl.*;
     import org.apache.jena.sparql.core.*;
     import org.apache.jena.datatypes.*;
-    import org.aksw.sparqlify.algebra.sparql.expr.*;
     import org.apache.jena.rdf.model.AnonId;
     import org.aksw.sparqlify.util.*;
     import org.aksw.jena_sparql_api.utils.*;

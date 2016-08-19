@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.sql.schema.Schema;
+import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 
 public class SqlOpEmpty
 	extends SqlOpLeaf

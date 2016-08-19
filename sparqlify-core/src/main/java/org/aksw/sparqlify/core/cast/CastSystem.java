@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
-import org.aksw.commons.util.factory.Factory1;
+import java.util.function.UnaryOperator;
+
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.NodeValue;
 
@@ -33,7 +34,7 @@ public interface CastSystem {
 			throws CastException;
 
 	
-	public Factory1<Expr> lookupCast(String sourceTypeName, String targetTypeName);
+	public UnaryOperator<Expr> lookupCast(String sourceTypeName, String targetTypeName);
 	
 }
 

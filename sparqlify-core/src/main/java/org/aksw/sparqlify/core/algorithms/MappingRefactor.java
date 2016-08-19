@@ -14,8 +14,8 @@ import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.VarDefinition;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Coalesce;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlAggFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -573,7 +573,7 @@ public class MappingRefactor {
 				groupByExprs.add(sqlExpr);
 			}
 			
-			SqlOpGroupBy sqlOp = SqlOpGroupBy.create(subOp, groupByExprs, new ArrayList<SqlExprAggregator>());
+			SqlOpGroupBy sqlOp = SqlOpGroupBy.create(subOp, groupByExprs, new ArrayList<SqlAggFunction>());
 
 			
 			VarDefinition vd = new VarDefinition(varDef);

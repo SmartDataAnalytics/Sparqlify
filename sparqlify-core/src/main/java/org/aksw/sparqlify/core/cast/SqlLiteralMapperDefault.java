@@ -2,9 +2,9 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.Date;
 
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseDate;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.NodeValue;
 
@@ -15,11 +15,11 @@ public class SqlLiteralMapperDefault
 {
     // TODO we need to lookup the 'toString' method for the appropriate type.
 
-    private DatatypeToStringPostgres typeSerializer;
+    private DatatypeToString typeSerializer;
 
     //SqlExprSerializerPostgres
     @Deprecated // The typeSerializer should not be needed here anymore
-    public SqlLiteralMapperDefault(DatatypeToStringPostgres typeSerializer) {
+    public SqlLiteralMapperDefault(DatatypeToString typeSerializer) {
         this.typeSerializer = typeSerializer;
     }
 

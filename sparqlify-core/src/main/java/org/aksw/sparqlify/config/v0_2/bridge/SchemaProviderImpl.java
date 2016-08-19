@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.sparqlify.algebra.sql.nodes.Schema;
-import org.aksw.sparqlify.algebra.sql.nodes.SchemaImpl;
-import org.aksw.sparqlify.config.dialects.SqlEscaper;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.TypeSystem;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.schema.Schema;
+import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

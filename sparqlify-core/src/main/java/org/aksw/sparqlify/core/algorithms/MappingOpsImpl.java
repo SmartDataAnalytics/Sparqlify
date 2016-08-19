@@ -23,7 +23,6 @@ import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.jena_sparql_api.views.ViewInstance;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
@@ -39,7 +38,6 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpDistinct;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlOpGroupBy;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
@@ -57,6 +55,7 @@ import org.aksw.sparqlify.core.domain.input.MappingUnion;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
 import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
 import org.aksw.sparqlify.type_system.CandidateMethod;
@@ -87,7 +86,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -125,7 +123,7 @@ class AggCandidate {
             args.add(context.getSqlExpr());
         }
 
-        List<TypeToken> argTypes = org.aksw.sparqlify.expr.util.SqlExprUtils.getTypes(args);
+        List<TypeToken> argTypes = SqlExprUtils.getTypes(args);
 
         AggCandidate result = new AggCandidate(contexts, args, argTypes);
         return result;
@@ -1956,124 +1954,124 @@ public class MappingOpsImpl
 
         return result;
     }
-
-    //@Override
-    public Mapping groupByOld(Mapping a, VarExprList groupVars,
-            List<ExprAggregator> aggregators) {
-
-
-        // TODO Add variables mentioned in aggregators aswell?
-        List<Var> vars = new ArrayList<Var>(groupVars.getVars());
-
-
-
-
-        List<Mapping> ms = MappingRefactor.refactorToUnion(a, vars);
-
-
-
-
-        ListMultimap<String, Mapping> groups = MappingRefactor.groupByOld(exprNormalizer, ms, vars);
-
-
-        List<Mapping> gg = new ArrayList<Mapping>();
-        for(Collection<Mapping> group : groups.asMap().values()) {
-            List<Mapping> list = new ArrayList<Mapping>(group);
-
-            Mapping u = union(list);
-            // Get the SQL column references
-
-
-            // Collect all column names we have to group by
-            List<String> columnNames = new ArrayList<String>();
-            for(Var var : vars) {
-
-                Collection<RestrictedExpr> defs = u.getVarDefinition().getDefinitions(var);
-                if(defs.size() > 1) {
-                    throw new RuntimeException("Should not happen");
-                }
-                else if(defs.isEmpty()) {
-                    continue;
-                } else {
-                    RestrictedExpr restExpr = defs.iterator().next();
-                    Expr expr = restExpr.getExpr();
-                    Set<Var> mentionedVars = expr.getVarsMentioned();
-
-                    for(Var mv : mentionedVars) {
-                        String varName = mv.getVarName();
-                        if(!columnNames.contains(varName)) {
-                            columnNames.add(varName);
-                        }
-                    }
-                }
-            }
-
-
-            Map<String, TypeToken> typeMap = u.getSqlOp().getSchema().getTypeMap();
-            List<SqlExpr> columnRefs = new ArrayList<SqlExpr>();
-            for(String columnName : columnNames) {
-                TypeToken type = typeMap.get(columnName);
-
-                SqlExpr expr = new S_ColumnRef(type, columnName);
-                columnRefs.add(expr);
-            }
-
-            List<SqlExprAggregator> sqlAggregators = new ArrayList<SqlExprAggregator>();
-
-            SqlOpGroupBy sqlOpGroupBy = SqlOpGroupBy.create(u.getSqlOp(), columnRefs, sqlAggregators);
-
-
-            Mapping tmp = new Mapping(u.getVarDefinition(), sqlOpGroupBy);
-
-            gg.add(tmp);
-        }
-
-        Mapping result = unionIfNeeded(gg);
-
-
-
-        // Gensym for SPARQL variables
-        Gensym varsym = Gensym.create("v");
-
-        // Gensym for SQL columns
-        Gensym aggSym = Gensym.create("G");
-
-        // HACK
-        for(ExprAggregator ea : aggregators) {
-
-            Aggregator agg = ea.getAggregator();
-            ExprSqlRewrite rewrite = rewrite(a, agg, aggSym, getTypeSystem(), sqlTranslator);
-
-
-            Projection ex = new Projection();
-            ex.add(rewrite.getProjection());
-            //ex.put("dummy", new S_Constant(TypeToken.Int, null));
-
-            SqlOp newOp = SqlOpExtend.create(result.getSqlOp(), ex);
-
-            /*
-            ExprList args = new ExprList();
-            ExprVar dummyCol = new ExprVar(Var.alloc("dummy"));
-            args.add(dummyCol);
-            args.add(NodeValue.makeString(XSD.xlong.getURI()));
-            Expr t = new E_Function(SparqlifyConstants.typedLiteralLabel, args);
-
-            logger.warn("Using hack, no aggregator will be present - implement this properly");
-            Var var = ea.getVar();
-            */
-
-            Var var = ea.getVar(); //Var.alloc(varsym.next());
-
-            Multimap<Var, RestrictedExpr> map = HashMultimap.create(result.getVarDefinition().getMap());
-            map.put(var, new RestrictedExpr(rewrite.getExpr()));
-
-            VarDefinition newVd = new VarDefinition(map);
-
-            result = new Mapping(newVd, newOp);
-        }
-
-        return result;
-    }
+//
+//    //@Override
+//    public Mapping groupByOld(Mapping a, VarExprList groupVars,
+//            List<ExprAggregator> aggregators) {
+//
+//
+//        // TODO Add variables mentioned in aggregators aswell?
+//        List<Var> vars = new ArrayList<Var>(groupVars.getVars());
+//
+//
+//
+//
+//        List<Mapping> ms = MappingRefactor.refactorToUnion(a, vars);
+//
+//
+//
+//
+//        ListMultimap<String, Mapping> groups = MappingRefactor.groupByOld(exprNormalizer, ms, vars);
+//
+//
+//        List<Mapping> gg = new ArrayList<Mapping>();
+//        for(Collection<Mapping> group : groups.asMap().values()) {
+//            List<Mapping> list = new ArrayList<Mapping>(group);
+//
+//            Mapping u = union(list);
+//            // Get the SQL column references
+//
+//
+//            // Collect all column names we have to group by
+//            List<String> columnNames = new ArrayList<String>();
+//            for(Var var : vars) {
+//
+//                Collection<RestrictedExpr> defs = u.getVarDefinition().getDefinitions(var);
+//                if(defs.size() > 1) {
+//                    throw new RuntimeException("Should not happen");
+//                }
+//                else if(defs.isEmpty()) {
+//                    continue;
+//                } else {
+//                    RestrictedExpr restExpr = defs.iterator().next();
+//                    Expr expr = restExpr.getExpr();
+//                    Set<Var> mentionedVars = expr.getVarsMentioned();
+//
+//                    for(Var mv : mentionedVars) {
+//                        String varName = mv.getVarName();
+//                        if(!columnNames.contains(varName)) {
+//                            columnNames.add(varName);
+//                        }
+//                    }
+//                }
+//            }
+//
+//
+//            Map<String, TypeToken> typeMap = u.getSqlOp().getSchema().getTypeMap();
+//            List<SqlExpr> columnRefs = new ArrayList<SqlExpr>();
+//            for(String columnName : columnNames) {
+//                TypeToken type = typeMap.get(columnName);
+//
+//                SqlExpr expr = new S_ColumnRef(type, columnName);
+//                columnRefs.add(expr);
+//            }
+//
+//            List<SqlExprAggregator> sqlAggregators = new ArrayList<SqlExprAggregator>();
+//
+//            SqlOpGroupBy sqlOpGroupBy = SqlOpGroupBy.create(u.getSqlOp(), columnRefs, sqlAggregators);
+//
+//
+//            Mapping tmp = new Mapping(u.getVarDefinition(), sqlOpGroupBy);
+//
+//            gg.add(tmp);
+//        }
+//
+//        Mapping result = unionIfNeeded(gg);
+//
+//
+//
+//        // Gensym for SPARQL variables
+//        Gensym varsym = Gensym.create("v");
+//
+//        // Gensym for SQL columns
+//        Gensym aggSym = Gensym.create("G");
+//
+//        // HACK
+//        for(ExprAggregator ea : aggregators) {
+//
+//            Aggregator agg = ea.getAggregator();
+//            ExprSqlRewrite rewrite = rewrite(a, agg, aggSym, getTypeSystem(), sqlTranslator);
+//
+//
+//            Projection ex = new Projection();
+//            ex.add(rewrite.getProjection());
+//            //ex.put("dummy", new S_Constant(TypeToken.Int, null));
+//
+//            SqlOp newOp = SqlOpExtend.create(result.getSqlOp(), ex);
+//
+//            /*
+//            ExprList args = new ExprList();
+//            ExprVar dummyCol = new ExprVar(Var.alloc("dummy"));
+//            args.add(dummyCol);
+//            args.add(NodeValue.makeString(XSD.xlong.getURI()));
+//            Expr t = new E_Function(SparqlifyConstants.typedLiteralLabel, args);
+//
+//            logger.warn("Using hack, no aggregator will be present - implement this properly");
+//            Var var = ea.getVar();
+//            */
+//
+//            Var var = ea.getVar(); //Var.alloc(varsym.next());
+//
+//            Multimap<Var, RestrictedExpr> map = HashMultimap.create(result.getVarDefinition().getMap());
+//            map.put(var, new RestrictedExpr(rewrite.getExpr()));
+//
+//            VarDefinition newVd = new VarDefinition(map);
+//
+//            result = new Mapping(newVd, newOp);
+//        }
+//
+//        return result;
+//    }
 
 
     /**

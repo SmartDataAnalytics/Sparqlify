@@ -18,7 +18,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
-import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
+import org.aksw.sparqlify.core.sql.algebra.serialization.SqlOpSerializer;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.ResultSet;

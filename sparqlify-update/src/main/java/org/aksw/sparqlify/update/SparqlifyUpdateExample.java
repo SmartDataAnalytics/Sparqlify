@@ -9,13 +9,13 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.jdbc.Schema;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMap;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapperImpl;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.apache.jena.graph.NodeFactory;
@@ -36,7 +36,7 @@ public class SparqlifyUpdateExample {
         /*
          * Register some custom functions to the Jena framework
          */
-        RdfViewSystemOld.initSparqlifyFunctions();
+        SparqlifyCoreInit.initSparqlifyFunctions();
 
 
         //TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();

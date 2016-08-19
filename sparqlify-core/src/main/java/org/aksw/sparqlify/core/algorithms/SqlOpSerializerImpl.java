@@ -10,8 +10,6 @@ import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
-import org.aksw.sparqlify.algebra.sql.nodes.Schema;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlNodeEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
@@ -21,13 +19,12 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpUnionN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
-import org.aksw.sparqlify.algebra.sql.nodes.SqlUnion;
-import org.aksw.sparqlify.config.dialects.SqlEscaper;
-import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
-import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
+import org.aksw.sparqlify.core.sql.algebra.serialization.SqlOpSerializer;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.query.Query;
@@ -234,9 +231,9 @@ public class SqlOpSerializerImpl
 	}
 
 
-	public void _serialize(SqlNodeEmpty node, IndentedWriter writer) {
-		writer.print("EMPTY_SQL_NODE");
-	}
+//	public void _serialize(SqlNodeEmpty node, IndentedWriter writer) {
+//		writer.print("EMPTY_SQL_NODE");
+//	}
 
 
 	public void _serialize(SqlOpQuery node, IndentedWriter writer)
@@ -257,14 +254,14 @@ public class SqlOpSerializerImpl
 
 
 
-	public static String getAliasNameNotNull(SqlOp op) {
+	public String getAliasNameNotNull(SqlOp op) {
 
 		String aliasName = SqlOpSelectBlock.getAliasName(op);
 
 		if(aliasName == null || aliasName.isEmpty()) {
 			return "";
 		} else {
-			return " " + aliasName;
+			return " " + sqlEscaper.escapeAliasName(aliasName);
 		}
 	}
 
@@ -460,17 +457,17 @@ public class SqlOpSerializerImpl
     	String result = left + " UNION " + right;
     	return result;
     }*/
-
-    public void _serialize(SqlUnion node, IndentedWriter writer) {
-    	throw new RuntimeException("SqlUnion is deprecated. Use SqlUnionN instead.");
-    	/*
-    	String left =  serialize(node.getLeft());
-    	String right = serialize(node.getRight());
-
-    	String result = left + " UNION ALL " + right;
-    	return result;
-    	*/
-    }
+//
+//    public void _serialize(SqlUnion node, IndentedWriter writer) {
+//    	throw new RuntimeException("SqlUnion is deprecated. Use SqlUnionN instead.");
+//    	/*
+//    	String left =  serialize(node.getLeft());
+//    	String right = serialize(node.getRight());
+//
+//    	String result = left + " UNION ALL " + right;
+//    	return result;
+//    	*/
+//    }
 
     public void _serialize(SqlOpUnionN op, IndentedWriter writer) {
     	//writer.println("(");

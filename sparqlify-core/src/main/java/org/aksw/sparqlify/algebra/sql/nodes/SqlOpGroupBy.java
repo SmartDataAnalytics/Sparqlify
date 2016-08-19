@@ -2,15 +2,16 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExprAggregator;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlAggFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 public class SqlOpGroupBy
 	extends SqlOpBase1
 {
 	private List<SqlExpr> groupByExprs;
-	private List<SqlExprAggregator> aggregators;
+	private List<SqlAggFunction> aggregators;
 	
 	/*
 	public SqlOpGroupBy(Schema schema, SqlOp subOp) {
@@ -18,21 +19,21 @@ public class SqlOpGroupBy
 	}
 	*/
 
-	public SqlOpGroupBy(Schema schema, SqlOp subOp, List<SqlExpr> groupByExprs, List<SqlExprAggregator> aggregators) {
+	public SqlOpGroupBy(Schema schema, SqlOp subOp, List<SqlExpr> groupByExprs, List<SqlAggFunction> aggregators) {
 		super(schema, subOp);
 		this.groupByExprs = groupByExprs;
-		this.aggregators = aggregators;
+		//this.aggregators = aggregators;
 	}
 	
 	public List<SqlExpr> getGroupByExprs() {
 		return groupByExprs;
 	}
 
-	public List<SqlExprAggregator> getAggregators() {
+	public List<SqlAggFunction> getAggregators() {
 		return aggregators;
 	}
 
-	public static SqlOpGroupBy create(SqlOp subOp, List<SqlExpr> groupByExprs, List<SqlExprAggregator> aggregators) {
+	public static SqlOpGroupBy create(SqlOp subOp, List<SqlExpr> groupByExprs, List<SqlAggFunction> aggregators) {
 		SqlOpGroupBy result = new SqlOpGroupBy(subOp.getSchema(), subOp, groupByExprs, aggregators);
 		return result;
 	}

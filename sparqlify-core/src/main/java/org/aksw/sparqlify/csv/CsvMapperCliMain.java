@@ -29,9 +29,9 @@ import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
 import org.aksw.sparqlify.core.sparql.IteratorResultSetSparqlifyBinding;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.SparqlifyCliHelper;
 import org.antlr.runtime.RecognitionException;
@@ -429,7 +429,7 @@ public class CsvMapperCliMain {
         //System.out.println("Test here");
 
         // TODO Move the method to a better place
-        RdfViewSystemOld.initSparqlifyFunctions();
+        SparqlifyCoreInit.initSparqlifyFunctions();
 
         //ResultSetMetaData meta = rs.getMetaData();
 

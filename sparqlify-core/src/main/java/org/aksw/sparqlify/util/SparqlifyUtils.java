@@ -24,8 +24,7 @@ import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
-import org.aksw.sparqlify.config.dialects.SqlEscaper;
-import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -33,14 +32,11 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderDummy;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
-import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
-import org.aksw.sparqlify.core.algorithms.SqlOpSelectBlockCollectorImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOpSerializerImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
@@ -57,15 +53,18 @@ import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
-import org.aksw.sparqlify.core.interfaces.SqlOpSelectBlockCollector;
-import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminator;
+import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminatorWriteable;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExImpl;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyExplain;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminatorWriteable;
+import org.aksw.sparqlify.core.sql.algebra.serialization.SqlOpSerializer;
+import org.aksw.sparqlify.core.sql.algebra.transform.SqlOpSelectBlockCollector;
+import org.aksw.sparqlify.core.sql.algebra.transform.SqlOpSelectBlockCollectorImpl;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.antlr.runtime.RecognitionException;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
@@ -395,7 +394,7 @@ public class SparqlifyUtils {
 	 * @throws IOException
 	 */
 	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
-		RdfViewSystemOld.initSparqlifyFunctions();
+		SparqlifyCoreInit.initSparqlifyFunctions();
 
 		ExprRewriteSystem ers = createExprRewriteSystem(sqlEscaper);
 		
@@ -664,7 +663,7 @@ public class SparqlifyUtils {
 	   
 	public static ExprRewriteSystem createExprRewriteSystem(SqlEscaper sqlEscaper) {
 
-		RdfViewSystemOld.initSparqlifyFunctions();
+	    SparqlifyCoreInit.initSparqlifyFunctions();
 
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		RdfTermEliminatorWriteable exprTransformer = SparqlifyCoreInit.createDefaultTransformer(typeSystem);

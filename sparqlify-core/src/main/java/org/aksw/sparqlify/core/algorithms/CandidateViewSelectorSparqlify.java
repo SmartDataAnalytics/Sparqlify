@@ -15,12 +15,11 @@ import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.VarBinding;
 import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.jena_sparql_api.views.ViewInstance;
-import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
-import org.aksw.sparqlify.algebra.sparql.transform.FilterPlacementOptimizer2Sparqlify;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
+import org.aksw.sparqlify.core.sparql.algebra.transform.FilterPlacementOptimizer2Sparqlify;
 import org.aksw.sparqlify.database.GetVarsMentioned;
 import org.aksw.sparqlify.sparqlview.ViewInstanceJoin;
 import org.apache.jena.sdb.core.Generator;
@@ -245,12 +244,12 @@ public class CandidateViewSelectorSparqlify
     @Override
     public void getRestrictions(Op op,
             Collection<RestrictionManagerImpl> result) {
-         if(op instanceof OpRdfViewPattern) {
-            OpRdfViewPattern o = (OpRdfViewPattern)op;
-            result.add(o.getConjunction().getRestrictions());
-         } else {
+//         if(op instanceof OpRdfViewPattern) {
+//            OpRdfViewPattern o = (OpRdfViewPattern)op;
+//            result.add(o.getConjunction().getRestrictions());
+//         } else {
              super.getRestrictions(op, result);
-         }
+//         }
     }
 
 }

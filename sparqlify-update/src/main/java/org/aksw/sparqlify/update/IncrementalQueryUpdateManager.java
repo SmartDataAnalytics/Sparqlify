@@ -9,15 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
+import org.aksw.jena_sparql_api.utils.DnfUtils;
+import org.aksw.jena_sparql_api.utils.FilterUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.jena_sparql_api.views.PatternUtils;
-
-import sparql.DnfUtils;
-import sparql.FilterCompiler;
-import sparql.FilterUtils;
-import sparql.ViewTable;
-
-import com.google.common.base.Joiner;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
@@ -29,6 +24,8 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.resultset.ResultSetMem;
+
+import com.google.common.base.Joiner;
 
 
 

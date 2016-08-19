@@ -11,6 +11,7 @@ import org.aksw.sparqlify.core.algorithms.SparqlSqlStringRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlOptimizerImpl;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlOpRewrite;
+import org.aksw.sparqlify.core.sql.algebra.transform.SqlOpSelectBlockCollector;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Op;

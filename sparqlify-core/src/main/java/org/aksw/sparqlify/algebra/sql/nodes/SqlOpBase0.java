@@ -1,5 +1,7 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import org.aksw.sparqlify.core.sql.schema.Schema;
+
 public abstract class SqlOpBase0
 	extends SqlOpBase
 {

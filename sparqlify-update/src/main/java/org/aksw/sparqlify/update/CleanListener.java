@@ -5,9 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.commons.collections.CacheSet;
-
-import sparql.FilterCompiler;
-
 import org.apache.jena.sparql.core.Quad;
 
 /**

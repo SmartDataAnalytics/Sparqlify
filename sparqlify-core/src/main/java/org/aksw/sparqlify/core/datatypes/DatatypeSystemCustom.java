@@ -10,17 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import org.aksw.commons.collections.MultiMaps;
 import org.aksw.commons.collections.multimaps.BiHashMultimap;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.reflect.Caster;
 import org.aksw.commons.util.reflect.ClassUtils;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.ExprSubstitutorSql;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
 import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.TypeMapper;
@@ -427,7 +427,7 @@ public class DatatypeSystemCustom
 
 
     @Override
-    public Factory1<SqlExpr> cast(TypeToken from, TypeToken to) {
+    public UnaryOperator<SqlExpr> cast(TypeToken from, TypeToken to) {
         // TODO Auto-generated method stub
         return null;
     }

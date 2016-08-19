@@ -9,24 +9,8 @@ import java.util.Map.Entry;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 
-class ProjectionMulti {
-	private Map<String, Projection> aliasToProjection;
-	
-	public void add(Projection projection, String alias) {
-		Projection tmp = aliasToProjection.get(alias);
-		if(tmp != null) {
-			throw new RuntimeException("Projection for alias " + alias + " already set.");
-		}
-		
-		
-		aliasToProjection.put(alias, projection);
-	}
-	
-	public Projection getProjection(String alias) {
-		return aliasToProjection.get(alias);
-	}
-}
 
 public class Projection {
 	private List<String> names = new ArrayList<String>();
@@ -152,3 +136,23 @@ public class Projection {
 	
 	
 }
+
+
+//class ProjectionMulti {
+//    private Map<String, Projection> aliasToProjection;
+//    
+//    public void add(Projection projection, String alias) {
+//        Projection tmp = aliasToProjection.get(alias);
+//        if(tmp != null) {
+//            throw new RuntimeException("Projection for alias " + alias + " already set.");
+//        }
+//        
+//        
+//        aliasToProjection.put(alias, projection);
+//    }
+//    
+//    public Projection getProjection(String alias) {
+//        return aliasToProjection.get(alias);
+//    }
+//}
+

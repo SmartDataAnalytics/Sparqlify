@@ -13,9 +13,6 @@ import org.aksw.commons.util.MapReader;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ViewQuad;
-import org.aksw.sparqlify.config.dialects.SqlEscaper;
-import org.aksw.sparqlify.config.dialects.SqlEscaperDoubleQuote;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
@@ -80,7 +77,7 @@ public class CandidateViewSelectionTests {
 
     //@Test
     public void test2() throws Exception {
-        RdfViewSystemOld.initSparqlifyFunctions();
+        SparqlifyCoreInit.initSparqlifyFunctions();
 
 
         TypeSystem datatypeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();

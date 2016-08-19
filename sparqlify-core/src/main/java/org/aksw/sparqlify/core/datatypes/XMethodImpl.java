@@ -4,9 +4,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerDefault;
 import org.aksw.sparqlify.type_system.MethodSignature;
 
 public class XMethodImpl implements XMethod

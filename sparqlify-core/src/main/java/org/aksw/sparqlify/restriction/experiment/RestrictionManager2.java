@@ -19,6 +19,7 @@ import org.aksw.jena_sparql_api.normal_form.Clause;
 import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
+import org.aksw.jena_sparql_api.utils.CnfUtils;
 import org.aksw.jena_sparql_api.views.RdfTermType;
 import org.aksw.sparqlify.database.IndirectEquiMap;
 import org.apache.commons.lang.NotImplementedException;
@@ -35,7 +36,6 @@ import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.util.ExprUtils;
 
-import sparql.CnfUtils;
 
 /**
  * A monotone container for assigning constraints to expressions.
@@ -575,10 +575,21 @@ public class RestrictionManager2 {
      * @param expr
      */
     public void stateExpr(Expr expr) {
-        NestedNormalForm newCnf = CnfUtils.toCnf(expr);
+        NestedNormalForm newCnf = toCnf(expr);
         stateCnf(newCnf);
     }
 
+
+    public static NestedNormalForm toCnf(Expr expr) {
+        Set<Set<Expr>> ss = CnfUtils.toSetCnf(expr);
+        
+        Set<Clause> clauses = new HashSet<Clause>();
+        for(Set<Expr> s : ss) {
+            clauses.add(new Clause(s));
+        }
+
+        return new NestedNormalForm(clauses);
+    }
 
     public void stateCnf(NestedNormalForm newCnf) {
         deriveRestrictions(newCnf);
