@@ -116,8 +116,7 @@ public class IteratorResultSetSparqlifyBinding
 			try {
 				rs.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                logger.warn("Something went wrong", e);
 			}
 		}
 		
@@ -125,8 +124,7 @@ public class IteratorResultSetSparqlifyBinding
 			try {
 				conn.commit();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    logger.warn("Something went wrong", e);
 			}
 		}
 	}

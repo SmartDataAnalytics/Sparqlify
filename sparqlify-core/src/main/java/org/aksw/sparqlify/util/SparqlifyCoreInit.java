@@ -19,12 +19,14 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Multiply;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Substract;
-import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringCast;
+import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
 import org.aksw.sparqlify.core.RdfTerm;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.cast.CoercionSystemImpl3;
 import org.aksw.sparqlify.core.cast.MethodDeclarationParserSimple;
 import org.aksw.sparqlify.core.cast.NodeValueToObjectDefault;
@@ -34,7 +36,6 @@ import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystemImpl;
 import org.aksw.sparqlify.core.cast.SqlFunctionSerializerStringTemplate;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
-import org.aksw.sparqlify.core.cast.SqlLiteralMapperDefault;
 import org.aksw.sparqlify.core.cast.SqlTypeMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.SqlValueTransformerFloat;
@@ -131,10 +132,10 @@ public class SparqlifyCoreInit {
     
     public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, SqlEscaper sqlEscaper) {
 
-        DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
+        DatatypeToString typeSerializer = new DatatypeToStringCast();//new DatatypeToStringPostgres();
 
-        SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
-                typeSerializer);
+        SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperPostgres(
+                typeSerializer, sqlEscaper);
         SqlExprSerializerSystem result = new SqlExprSerializerSystemImpl(
                 typeSerializer, sqlEscaper, sqlLiteralMapper);
 

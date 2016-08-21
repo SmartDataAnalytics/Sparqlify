@@ -13,7 +13,7 @@ import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprVar;
-import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
 
@@ -22,11 +22,11 @@ public class SqlExprSerializerSystemImpl
 {
 	private Map<String, SqlFunctionSerializer> nameToSerializer = new HashMap<String, SqlFunctionSerializer>();
 
-	private DatatypeToStringPostgres typeSerializer;
+	private DatatypeToString typeSerializer;
 	private SqlLiteralMapper sqlLiteralMapper;
 	private SqlEscaper sqlEscaper;
 
-	public SqlExprSerializerSystemImpl(DatatypeToStringPostgres typeSerializer, SqlEscaper sqlEscaper, SqlLiteralMapper sqlLiteralMapper) {
+	public SqlExprSerializerSystemImpl(DatatypeToString typeSerializer, SqlEscaper sqlEscaper, SqlLiteralMapper sqlLiteralMapper) {
 		this.typeSerializer = typeSerializer;
 		this.sqlEscaper = sqlEscaper;
 		this.sqlLiteralMapper = sqlLiteralMapper;

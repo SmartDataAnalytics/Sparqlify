@@ -25,6 +25,7 @@ import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
+import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -43,7 +44,6 @@ import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
-import org.aksw.sparqlify.core.cast.SqlLiteralMapperDefault;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypedExprTransformer;
 import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
@@ -542,7 +542,7 @@ public class SparqlifyUtils {
 		
 		
 		DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres(); 
-		SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(typeSerializer);
+		//SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(typeSerializer);
 		//SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(typeSerializer, sqlLiteralMapper);
 
 		

@@ -9,21 +9,21 @@ import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatatypeToStringPostgres
+public class DatatypeToStringCast
 	implements DatatypeToString
 {
 	
-	private static final Logger logger = LoggerFactory.getLogger(DatatypeToStringPostgres.class);
+	private static final Logger logger = LoggerFactory.getLogger(DatatypeToStringCast.class);
 	
 	private Map<String, String> nameToPostgres = new HashMap<String, String>();
 
-	public DatatypeToStringPostgres() {
+	public DatatypeToStringCast() {
 		// TODO: Use the datatype system map for reverse mapping
 		nameToPostgres.put("boolean", "boolean");
 		nameToPostgres.put("float", "double precision");
 		nameToPostgres.put("double", "double precision");
 		nameToPostgres.put("integer", "integer");
-		nameToPostgres.put("string", "text");
+		nameToPostgres.put("string", "string");
 		nameToPostgres.put("geometry", "geometry");
 		nameToPostgres.put("geography", "geography");
 		nameToPostgres.put("int", "integer");
@@ -39,7 +39,7 @@ public class DatatypeToStringPostgres
 		// FIXME Not sure if we really have to may every type explicitely here
 		// I guess this should be inferred from the config
 		nameToPostgres.put("int4", "int4");
-		nameToPostgres.put("text", "text");
+		nameToPostgres.put("text", "string");
 		nameToPostgres.put("VARCHAR", "VARCHAR");
 		nameToPostgres.put("DOUBLE", "DOUBLE");
 		nameToPostgres.put("INTEGER", "INTEGER");
@@ -83,8 +83,9 @@ public class DatatypeToStringPostgres
 		final String result = tmp;
 		//return result;
 
-		
-		return (a) -> a + "::" + result;
+	      System.out.println("CAST TO " + result);
+
+		return (a) -> "CAST(" + a + " AS " + result + ")";
 
 		//String result = (String)MultiMethod.invoke(this, "_asString", datatype);
 		//return result;		
