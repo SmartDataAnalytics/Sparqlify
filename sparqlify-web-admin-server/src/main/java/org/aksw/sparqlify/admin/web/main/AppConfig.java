@@ -23,8 +23,10 @@ import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
 import org.aksw.sparqlify.admin.web.api.ServiceEventListenerRegister;
 import org.aksw.sparqlify.admin.web.api.ServiceManager;
 import org.aksw.sparqlify.admin.web.api.ServiceManagerImpl;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriterImpl;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
@@ -249,7 +251,9 @@ public class AppConfig
             throw new RuntimeException("Errors reading mapping encountered");
         }
 
-        QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, sqlEscaper, 1000l, 60);
+        DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+
+        QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, 1000l, 60);
         return result;
     }
 
