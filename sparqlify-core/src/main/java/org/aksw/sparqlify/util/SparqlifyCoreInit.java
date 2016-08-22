@@ -19,7 +19,6 @@ import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Multiply;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Substract;
-import org.aksw.sparqlify.backend.postgres.DatatypeToStringCast;
 import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
@@ -129,10 +128,9 @@ public class SparqlifyCoreInit {
         FunctionRegistry.get().put(SparqlifyConstants.rightPadLabel, RightPad.class);
     }
     
-    
-    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, SqlEscaper sqlEscaper) {
+    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, DatatypeToString typeSerializer, SqlEscaper sqlEscaper) {
 
-        DatatypeToString typeSerializer = new DatatypeToStringCast();//new DatatypeToStringPostgres();
+        //DatatypeToString typeSerializer = new DatatypeToStringCast();//new DatatypeToStringPostgres();
         //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
 
         SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperPostgres(

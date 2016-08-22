@@ -82,7 +82,7 @@ public class TestBundlerConverter {
 		throws Exception
 	{
 		Config config = SparqlifyUtils.readConfig(bundle.getMapping().getInputStream());
-		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, new SqlEscaperDoubleQuote(), null, null);
+		QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
 
 		
 		String mappingName = bundle.getName();

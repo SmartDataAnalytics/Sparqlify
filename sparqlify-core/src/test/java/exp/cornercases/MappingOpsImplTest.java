@@ -178,7 +178,7 @@ public class MappingOpsImplTest {
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
+		SparqlSqlStringRewriter rewriter = null; //SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 
 

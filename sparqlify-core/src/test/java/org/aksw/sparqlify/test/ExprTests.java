@@ -5,11 +5,15 @@ import java.util.Map;
 
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
@@ -36,7 +40,11 @@ public class ExprTests {
 	public ExprTests() {
 		sqlRewriter = SparqlifyUtils.createSqlRewriter();
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
-		serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+
+		DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+
+		serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem, typeSerializer, sqlEscaper);
 	}
 
 	public SqlExpr rewriteToString(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {

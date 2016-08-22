@@ -15,12 +15,14 @@ import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
@@ -36,6 +38,8 @@ import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperBacktick;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.SqlBackendConfig;
+import org.aksw.sparqlify.util.SqlBackendRegistry;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -187,13 +191,25 @@ public class Main {
         Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
         
-        SqlEscaper sqlEscaper = new SqlEscaperBacktick();
+        //SqlEscaper sqlEscaper = new SqlEscaperBacktick();
 
         Connection conn = dataSource.getConnection();
         
         DatabaseMetaData dbMeta = conn.getMetaData();
-        String dbProduct = dbMeta.getDatabaseProductName();
-        logger.info("Database product: " + dbProduct);
+        String dbProductName = dbMeta.getDatabaseProductName();
+        logger.info("Database product: " + dbProductName);
+        
+        SqlBackendRegistry backendRegistry = SqlBackendRegistry.get();
+        Map<String, SqlBackendConfig> map = backendRegistry.getMap();
+        
+        SqlBackendConfig backendConfig = map.get(dbProductName);
+        if(backendConfig == null) {
+            throw new RuntimeException("Could not find backend for " + dbProductName);
+        }
+        
+        
+        SqlEscaper sqlEscaper = backendConfig.getSqlEscaper();
+        DatatypeToString typeSerializer = backendConfig.getTypeSerializer();
         
         try {
             SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
@@ -257,7 +273,10 @@ public class Main {
 
         Long mrs = useSparql11Wrapper ? null : maxResultSetSize;
 
-        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, sqlEscaper, mrs, maxQueryExecutionTime);
+        
+        
+        //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
 
 
         if(useSparql11Wrapper) {

@@ -25,7 +25,6 @@ import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
-import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
@@ -34,6 +33,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderDummy;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.algorithms.ExprDatatypeNorm;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
@@ -43,7 +43,6 @@ import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
 import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
-import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypedExprTransformer;
 import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
@@ -234,12 +233,12 @@ public class SparqlifyUtils {
 	}
 	
 	
-	@Deprecated
-	public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
-		SqlExprSerializerSystem result = SparqlifyCoreInit.createSerializerSystem(typeSystem, new SqlEscaperDoubleQuote());
-
-		return result;
-	}
+//	@Deprecated
+//	public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
+//		SqlExprSerializerSystem result = SparqlifyCoreInit.createSerializerSystem(typeSystem, new SqlEscaperDoubleQuote());
+//
+//		return result;
+//	}
 	
 	
 	public static SqlTranslator createSqlRewriter() {
@@ -353,9 +352,17 @@ public class SparqlifyUtils {
 
 	//public static QueryExecutionFactory
 	
+    public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
+        DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote(); 
+        
+        //final QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, typeSerializer, sqlEscaper, null, null);
+        QueryExecutionFactoryEx result = createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, maxResultSetSize, maxQueryExecutionTimeInSeconds);
+        return result;
+    }
 	
-	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
-		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, sqlEscaper, maxResultSetSize, maxQueryExecutionTimeInSeconds);
+	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
+		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, typeSerializer, sqlEscaper, maxResultSetSize, maxQueryExecutionTimeInSeconds);
 		
 		SparqlSqlOpRewriter ssoRewriter = rewriter.getSparqlSqlOpRewriter();
 		SqlOpSerializer sqlOpSerializer = rewriter.getSqlOpSerializer();
@@ -393,10 +400,11 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
+	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
 		SparqlifyCoreInit.initSparqlifyFunctions();
 
-		ExprRewriteSystem ers = createExprRewriteSystem(sqlEscaper);
+		//DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+		ExprRewriteSystem ers = createExprRewriteSystem(typeSerializer, sqlEscaper);
 		
 		
 		TypeSystem typeSystem = ers.getTypeSystem();
@@ -518,17 +526,17 @@ public class SparqlifyUtils {
 	
 
 
-	@Deprecated
-	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter, TypeSystem typeSystem)  {
-
-		
-		SqlExprSerializerSystem serializerSystem = createSerializerSystem(typeSystem);
-		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(new SqlEscaperDoubleQuote(), serializerSystem);
-
-		SparqlSqlStringRewriter result = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);
-
-		return result;
-	}
+//	@Deprecated
+//	public static SparqlSqlStringRewriter createSparqlSqlStringRewriter(SparqlSqlOpRewriter ssoRewriter, TypeSystem typeSystem)  {
+//
+//		
+//		SqlExprSerializerSystem serializerSystem = createSerializerSystem(typeSystem);
+//		SqlOpSerializer sqlOpSerializer = new SqlOpSerializerImpl(new SqlEscaperDoubleQuote(), serializerSystem);
+//
+//		SparqlSqlStringRewriter result = new SparqlSqlStringRewriterImpl(ssoRewriter, sqlOpSerializer);
+//
+//		return result;
+//	}
 	
 	public static SparqlSqlOpRewriter createSqlOpRewriter(CandidateViewSelector<ViewDefinition> candidateViewSelector, OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem, Schema databaseSchema) throws SQLException, IOException {
 		//DatatypeSystem datatypeSystem = TestUtils.createDefaultDatatypeSystem();
@@ -564,21 +572,21 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	@Deprecated
-	public static SparqlSqlStringRewriter createTestRewriter(
-			CandidateViewSelector<ViewDefinition> candidateViewSelector,
-			OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem,
-			Schema databaseSchema) throws SQLException, IOException {
-
-		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(
-				candidateViewSelector, opMappingRewriter, datatypeSystem,
-				databaseSchema);
-		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(
-				ssoRewriter, datatypeSystem);
-
-		return result;
-
-	}
+//	@Deprecated
+//	public static SparqlSqlStringRewriter createTestRewriter(
+//			CandidateViewSelector<ViewDefinition> candidateViewSelector,
+//			OpMappingRewriter opMappingRewriter, TypeSystem datatypeSystem,
+//			Schema databaseSchema) throws SQLException, IOException {
+//
+//		SparqlSqlOpRewriter ssoRewriter = createSqlOpRewriter(
+//				candidateViewSelector, opMappingRewriter, datatypeSystem,
+//				databaseSchema);
+//		SparqlSqlStringRewriter result = createSparqlSqlStringRewriter(
+//				ssoRewriter, datatypeSystem);
+//
+//		return result;
+//
+//	}
 
 	/*
 	public static org.aksw.sparqlify.config.syntax.ViewDefinition parse(String str) throws RecognitionException {
@@ -657,17 +665,18 @@ public class SparqlifyUtils {
 
 	public static ExprRewriteSystem createDefaultExprRewriteSystem() {
 	    SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
-	    ExprRewriteSystem result = createExprRewriteSystem(sqlEscaper);
+	    DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+	    ExprRewriteSystem result = createExprRewriteSystem(typeSerializer, sqlEscaper);
 	    return result;
 	}
 	   
-	public static ExprRewriteSystem createExprRewriteSystem(SqlEscaper sqlEscaper) {
+	public static ExprRewriteSystem createExprRewriteSystem(DatatypeToString typeSerializer, SqlEscaper sqlEscaper) {
 
 	    SparqlifyCoreInit.initSparqlifyFunctions();
 
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 		RdfTermEliminatorWriteable exprTransformer = SparqlifyCoreInit.createDefaultTransformer(typeSystem);
-		SqlExprSerializerSystem serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem, sqlEscaper);
+		SqlExprSerializerSystem serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem, typeSerializer, sqlEscaper);
 		ExprEvaluator exprEvaluator = SqlTranslationUtils.createDefaultEvaluator();
 		
 		ExprRewriteSystem result = new ExprRewriteSystem(typeSystem, exprTransformer, exprEvaluator, serializerSystem);
