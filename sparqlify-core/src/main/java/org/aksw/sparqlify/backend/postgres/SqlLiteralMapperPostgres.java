@@ -9,9 +9,6 @@ import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
-import org.apache.jena.graph.Node;
-import org.apache.jena.sparql.expr.NodeValue;
-import org.glassfish.jersey.internal.util.collection.Values;
 
 
 

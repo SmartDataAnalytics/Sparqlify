@@ -25,7 +25,6 @@ public class RowMapperSparqlifyCombined
 	protected Multimap<Var, RestrictedExpr> sparqlVarMap;
 	
 	protected boolean adjustVarNames = true;
-	//transient protected Map<Var, Var> adjustMap = new HashMap<>();
 	protected Map<Var, Var> normalizedToVar = new HashMap<>();
 	
 	public RowMapperSparqlifyCombined(Multimap<Var, RestrictedExpr> sparqlVarMap) {
@@ -35,7 +34,7 @@ public class RowMapperSparqlifyCombined
 	public RowMapperSparqlifyCombined(Multimap<Var, RestrictedExpr> sparqlVarMap, String rowIdName) {
 		this(sparqlVarMap, rowIdName == null ? null : Var.alloc(rowIdName));
 	}
-	
+    
 	public RowMapperSparqlifyCombined(Multimap<Var, RestrictedExpr> sparqlVarMap, Var rowIdVar) {
 		this.sparqlVarMap = sparqlVarMap;
 		this.rowIdVar = rowIdVar;
@@ -66,8 +65,7 @@ public class RowMapperSparqlifyCombined
                     lookupVar = v;
                 }
                 else {
-                    Var normalizedVar = Var.alloc(v.getName().toLowerCase());
-                    
+                    Var normalizedVar = Var.alloc(v.getName().toLowerCase());                    
                     lookupVar = normalizedToVar.get(normalizedVar);                    
                 }
                 
