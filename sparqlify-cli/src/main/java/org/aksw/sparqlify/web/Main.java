@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.web;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -189,6 +190,11 @@ public class Main {
         SqlEscaper sqlEscaper = new SqlEscaperBacktick();
 
         Connection conn = dataSource.getConnection();
+        
+        DatabaseMetaData dbMeta = conn.getMetaData();
+        String dbProduct = dbMeta.getDatabaseProductName();
+        logger.info("Database product: " + dbProduct);
+        
         try {
             SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
