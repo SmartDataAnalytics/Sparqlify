@@ -47,6 +47,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.query.ARQ;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
@@ -55,6 +56,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.system.InitJenaCore;
+import org.apache.jena.system.JenaSystem;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -74,6 +77,11 @@ public class Main {
      *            the command line arguments
      */
     public static void main(String[] args) throws Exception {
+        JenaSystem.init();
+        InitJenaCore.init();
+        ARQ.init();
+
+
         LoggerCount loggerCount = new LoggerCount(logger);
 
         Class.forName("org.postgresql.Driver");
@@ -190,27 +198,27 @@ public class Main {
         // typeAliases for the H2 datatype
         Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
-        
+
         //SqlEscaper sqlEscaper = new SqlEscaperBacktick();
 
         Connection conn = dataSource.getConnection();
-        
+
         DatabaseMetaData dbMeta = conn.getMetaData();
         String dbProductName = dbMeta.getDatabaseProductName();
         logger.info("Database product: " + dbProductName);
-        
+
         SqlBackendRegistry backendRegistry = SqlBackendRegistry.get();
         Map<String, SqlBackendConfig> map = backendRegistry.getMap();
-        
+
         SqlBackendConfig backendConfig = map.get(dbProductName);
         if(backendConfig == null) {
             throw new RuntimeException("Could not find backend for " + dbProductName);
         }
-        
-        
+
+
         SqlEscaper sqlEscaper = backendConfig.getSqlEscaper();
         DatatypeToString typeSerializer = backendConfig.getTypeSerializer();
-        
+
         try {
             SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
@@ -273,8 +281,8 @@ public class Main {
 
         Long mrs = useSparql11Wrapper ? null : maxResultSetSize;
 
-        
-        
+
+
         //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
         QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
 
