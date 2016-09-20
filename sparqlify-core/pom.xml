@@ -21,26 +21,118 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<!-- Any eclipse problem with the plugin should disappear with m2e 1.1 -->
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.9.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<!-- <source>${maven.compiler.source}</source> -->
-					<!-- <target>${maven.compiler.target}</target> -->
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-					<generatePackage>org.aksw.sparqlify.config.xml</generatePackage>
-				</configuration>
-			</plugin>
+<!-- 				Any eclipse problem with the plugin should disappear with m2e 1.1 -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.jvnet.jaxb2.maven2</groupId> -->
+<!-- 				<artifactId>maven-jaxb2-plugin</artifactId> -->
+<!-- 				<version>0.13.1</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<goals> -->
+<!-- 							<goal>generate</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 				<configuration> -->
+<!-- 					<source>${maven.compiler.source}</source> -->
+<!-- 					<target>${maven.compiler.target}</target> -->
+<!-- 					<generatePackage>org.aksw.sparqlify.config.xml</generatePackage> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+
+<!-- 				Any eclipse problem with the plugin should disappear with m2e 1.1 -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.codehaus.mojo</groupId> -->
+<!-- 				<artifactId>jaxb2-maven-plugin</artifactId> -->
+<!-- 				<version>2.3</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>xjc</id> -->
+<!-- 						<goals> -->
+<!--             				<goal>xjc</goal> -->
+<!--         				</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 				<configuration> -->
+<!-- 					<packageName>org.aksw.sparqlify.config.xml</packageName> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+
+
+<!-- Create target dir -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <version>1.4</version>
+    <executions>
+        <execution>
+            <phase>generate-sources</phase>
+            <configuration>
+                <tasks>
+                    <echo message="Creating target/generated-sources/jaxb"/>
+                    <mkdir dir="./target/generated-sources/jaxb"/>
+                </tasks>
+            </configuration>
+            <goals>
+                <goal>run</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
+<!-- Invoke xjc -->
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <version>1.5.0</version>
+    <executions>
+        <execution>
+            <id>generate schema types</id>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>exec</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <executable>xjc</executable>
+        <arguments>
+<!--             <argument>-enableIntrospection</argument> -->
+            <argument>-p</argument>
+            <argument>org.aksw.sparqlify.config.xml</argument>
+            <argument>-extension</argument>
+            <argument>-target</argument>
+            <argument>2.1</argument>
+            <argument>-d</argument>
+            <argument>target/generated-sources/jaxb</argument>
+            <argument>src/main/xsd/sparqlify-function-declarations.xsd</argument>
+<!--             <argument>-b</argument> -->
+<!--             <argument>src/main/xjb/binding-customization.xjb</argument> -->
+        </arguments>
+    </configuration>
+</plugin>
+
+<!-- Add target dir to compilation -->
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>build-helper-maven-plugin</artifactId>
+    <version>1.12</version>
+    <executions>
+        <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>add-source</goal>
+            </goals>
+            <configuration>
+                <sources>
+                    <source>target/generated-sources/jaxb</source>
+                </sources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+
 
 		</plugins>
 	</build>
@@ -68,15 +160,15 @@
 			<!-- <scope>test</scope> -->
 		</dependency>
 
-		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId> 
-			</dependency> <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-server</artifactId> 
+		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId>
+			</dependency> <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-server</artifactId>
 			</dependency> -->
 
-		<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-util</artifactId> 
+		<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-util</artifactId>
 			<scope>compile</scope> </dependency> -->
-		<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId> 
+		<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId>
 			<scope>compile</scope> </dependency> -->
-		<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId> 
+		<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId>
 			<scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>com.jolbox</groupId>
@@ -150,13 +242,13 @@
 			<artifactId>commons-collections</artifactId>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId> 
-			</dependency> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId> 
-			</dependency> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
-			</dependency> <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> 
+		<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId>
+			</dependency> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId>
+			</dependency> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId>
+			</dependency> <dependency> <groupId>xerces</groupId> <artifactId>xercesImpl</artifactId>
 			</dependency> -->
 
-		<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId> 
+		<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId>
 			</dependency> -->
 
 		<dependency>
@@ -184,8 +276,8 @@
 		<!-- </dependency> -->
 
 
-		<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
-			</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId> 
+		<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId>
+			</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId>
 			</dependency> -->
 
 		<dependency>
@@ -204,7 +296,7 @@
 			<artifactId>jxl</artifactId>
 		</dependency>
 
-		<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV 
+		<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV
 			files -->
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -241,7 +333,7 @@
 		<!-- <artifactId>hibernate-annotations</artifactId> -->
 		<!-- </dependency> -->
 
-		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-entitymanager</artifactId> 
+		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-entitymanager</artifactId>
 			</dependency> -->
 
 		<!-- <dependency> -->
@@ -253,7 +345,7 @@
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.springframework.batch</groupId> <artifactId>spring-batch-core</artifactId> 
+		<!-- <dependency> <groupId>org.springframework.batch</groupId> <artifactId>spring-batch-core</artifactId>
 			</dependency> -->
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
@@ -277,6 +369,9 @@
 		<!-- <groupId>org.springframework</groupId> -->
 		<!-- <artifactId>spring-tx</artifactId> -->
 		<!-- </dependency> -->
+
+
+
 
 
 	</dependencies>
