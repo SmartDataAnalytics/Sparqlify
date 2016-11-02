@@ -15,7 +15,6 @@ import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
-import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
@@ -23,18 +22,15 @@ import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
-import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperBacktick;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
@@ -47,7 +43,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.ARQ;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
@@ -56,8 +51,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
 import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.system.InitJenaCore;
-import org.apache.jena.system.JenaSystem;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -77,14 +70,14 @@ public class Main {
      *            the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        JenaSystem.init();
-        InitJenaCore.init();
-        ARQ.init();
+//        JenaSystem.init();
+//        InitJenaCore.init();
+//        ARQ.init();
+//        Class.forName("org.postgresql.Driver");
 
 
         LoggerCount loggerCount = new LoggerCount(logger);
 
-        Class.forName("org.postgresql.Driver");
 
         CommandLineParser cliParser = new GnuParser();
 
@@ -226,7 +219,7 @@ public class Main {
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
             //MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
             MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
-            OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+            //OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 
 
             CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());

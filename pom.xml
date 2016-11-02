@@ -171,18 +171,51 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-assembly-plugin</artifactId> -->
+			<!-- <version>2.3</version> -->
+			<!-- <configuration> -->
+			<!-- <descriptorRefs> -->
+			<!-- <descriptorRef>jar-with-dependencies</descriptorRef> -->
+			<!-- </descriptorRefs> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<!-- Run shade goal on package phase -->
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<!-- add Main-Class to manifest file -->
+								<!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> -->
+								<!-- <mainClass>com.mkyong.core.utils.App</mainClass> -->
+								<!-- </transformer> -->
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
-
-
 
 			<!-- http://stackoverflow.com/questions/5586515/idea-to-avoid-that-spring-handlers-spring-schemas-get-overwritten-when-merging-m -->
 			<!-- <plugin> -->
@@ -269,7 +302,7 @@
 						<profile>java6</profile>
 					</profiles>
 					<failOnWarn>true</failOnWarn>
-					<!-- excluding some jars, if jar name contains any of these strings 
+					<!-- excluding some jars, if jar name contains any of these strings
 						it won't be analyzed -->
 					<excludes>
 						<exclude>commons-beanutils-core-</exclude>
@@ -282,7 +315,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<!-- <plugin> -->
 				<!-- <groupId>org.eclipse.m2e</groupId> -->
@@ -312,7 +345,7 @@
 				<!-- </lifecycleMappingMetadata> -->
 				<!-- </configuration> -->
 				<!-- </plugin> -->
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -403,7 +436,7 @@
 			<layout>default</layout>
 		</repository>
 
-		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate 
+		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate
 			classes in war files -->
 		<repository>
 			<id>jboss</id>
@@ -506,9 +539,9 @@
 			<!-- </dependency> -->
 
 
-			<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId> 
-				<version>${jersey.version}</version> </dependency> <dependency> <groupId>com.sun.jersey</groupId> 
-				<artifactId>jersey-server</artifactId> <version>${jersey.version}</version> 
+			<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId>
+				<version>${jersey.version}</version> </dependency> <dependency> <groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-server</artifactId> <version>${jersey.version}</version>
 				</dependency> -->
 
 			<!-- Jena SPARQL API -->
@@ -544,13 +577,13 @@
 
 
 
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>commons</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>commons</artifactId>
 				<version>1.0-SNAPSHOT</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-util</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-util</artifactId>
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId>
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId>
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>com.jolbox</groupId>
@@ -567,11 +600,11 @@
 			<!-- <artifactId>secondstring</artifactId> -->
 			<!-- <version>20060615</version> -->
 			<!-- </dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>log4j</groupId> -->
-<!-- 				<artifactId>log4j</artifactId> -->
-<!-- 				<version>1.2.14</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>log4j</groupId> -->
+			<!-- <artifactId>log4j</artifactId> -->
+			<!-- <version>1.2.14</version> -->
+			<!-- </dependency> -->
 
 
 			<dependency>
@@ -620,8 +653,8 @@
 				</exclusions>
 			</dependency>
 
-			<!-- commons-validator depends on commons-beanutils, which in turn depend 
-				on commons-beanutils-bean-collections. The latter conflicts with commons-collections, 
+			<!-- commons-validator depends on commons-beanutils, which in turn depend
+				on commons-beanutils-bean-collections. The latter conflicts with commons-collections,
 				because of overlap in defined classes -->
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -671,22 +704,15 @@
 			<!-- <scope>compile</scope> -->
 			<!-- </dependency> -->
 
-<!--
-			<dependency>
-				<groupId>postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>8.4-701.jdbc4</version>
-				< ! - - <version>9.3-1100-jdbc41</version> - - >
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
--->
+			<!-- <dependency> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId>
+				<version>8.4-701.jdbc4</version> < ! - - <version>9.3-1100-jdbc41</version>
+				- - > <type>jar</type> <scope>compile</scope> </dependency> -->
 
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <version>9.4.1209.jre7</version>
-</dependency>
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>9.4.1209.jre7</version>
+			</dependency>
 
 
 			<dependency>
@@ -702,124 +728,114 @@
 				<artifactId>hive-jdbc</artifactId>
 				<version>2.1.0</version>
 				<exclusions>
-				    <exclusion>
-				        <groupId>org.apache.logging.log4j</groupId>
-				        <artifactId>log4j-1.2-api</artifactId>
-				    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-web</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-slf4j-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
+					<exclusion>
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-1.2-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-web</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-slf4j-impl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
 
-                    <exclusion>
-                        <groupId>org.apache.hbase</groupId>
-                        <artifactId>hbase-server</artifactId>
-                    </exclusion>
+					<exclusion>
+						<groupId>org.apache.hbase</groupId>
+						<artifactId>hbase-server</artifactId>
+					</exclusion>
 
-                    <exclusion>
-                        <groupId>org.apache.hbase</groupId>
-                        <artifactId>hbase-common</artifactId>
-                    </exclusion>
-                    
-                    <exclusion>
-                        <groupId>com.github.joshelser</groupId>
-                        <artifactId>dropwizard-metrics-hadoop-metrics2-reporter</artifactId>
-                    </exclusion>
-                    
-                    <exclusion>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty-util</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-json</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-server</artifactId>
-                    </exclusion>
-                    
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>                        
-                        <artifactId>hadoop-yarn-common</artifactId>
-                    </exclusion>
-                    
-                    <exclusion>
-                        <groupId>org.apache.hbase</groupId>
-                        <artifactId>hbase-hadoop2-compat</artifactId>
-                    </exclusion>
-<!--                     <exclusion> -->
-<!--                         <groupId>org.apache.hadoop</groupId> -->
-<!--                         <artifactId>hadoop-common</artifactId> -->
-<!--                     </exclusion> -->
-                    
-                    <exclusion>
-                        <groupId>org.apache.slider</groupId>
-                        <artifactId>slider-core</artifactId>
-                    </exclusion>
+					<exclusion>
+						<groupId>org.apache.hbase</groupId>
+						<artifactId>hbase-common</artifactId>
+					</exclusion>
 
-<!--                     <exclusion> -->
-<!--                         <groupId>org.apache.hive</groupId> -->
-<!--                         <artifactId>hive-llap-server</artifactId> -->
-<!--                     </exclusion> -->
-                    
-                    <exclusion>
-                        <groupId>org.eclipse.jetty.aggregate</groupId>
-                        <artifactId>jetty-all</artifactId>
-                    </exclusion>
-                    
-                    <exclusion>
-                        <groupId>tomcat</groupId>
-                        <artifactId>jasper-compiler</artifactId>
-                    </exclusion>
+					<exclusion>
+						<groupId>com.github.joshelser</groupId>
+						<artifactId>dropwizard-metrics-hadoop-metrics2-reporter</artifactId>
+					</exclusion>
 
-                    <exclusion>
-                        <groupId>tomcat</groupId>
-                        <artifactId>jasper-runtime</artifactId>
-                    </exclusion>
+					<exclusion>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty-util</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.jersey</groupId>
+						<artifactId>jersey-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.jersey</groupId>
+						<artifactId>jersey-json</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.jersey</groupId>
+						<artifactId>jersey-server</artifactId>
+					</exclusion>
 
-<!--
-                    <exclusion>
-                        <groupId>org.apache.hive</groupId>
-                        <artifactId>hive-service</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hive</groupId>
-                        <artifactId>hive-service-rpc</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hive</groupId>
-                        <artifactId>hive-common</artifactId>
-                    </exclusion>
--->
-                    <exclusion>
-                        <groupId>org.apache.hive</groupId>
-                        <artifactId>hive-orc</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hive</groupId>
-                        <artifactId>hive-metastore</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hive</groupId>
-                        <artifactId>hive-shims</artifactId>
-                    </exclusion>
+					<exclusion>
+						<groupId>org.apache.hadoop</groupId>
+						<artifactId>hadoop-yarn-common</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>org.apache.hbase</groupId>
+						<artifactId>hbase-hadoop2-compat</artifactId>
+					</exclusion>
+					<!-- <exclusion> -->
+					<!-- <groupId>org.apache.hadoop</groupId> -->
+					<!-- <artifactId>hadoop-common</artifactId> -->
+					<!-- </exclusion> -->
+
+					<exclusion>
+						<groupId>org.apache.slider</groupId>
+						<artifactId>slider-core</artifactId>
+					</exclusion>
+
+					<!-- <exclusion> -->
+					<!-- <groupId>org.apache.hive</groupId> -->
+					<!-- <artifactId>hive-llap-server</artifactId> -->
+					<!-- </exclusion> -->
+
+					<exclusion>
+						<groupId>org.eclipse.jetty.aggregate</groupId>
+						<artifactId>jetty-all</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>tomcat</groupId>
+						<artifactId>jasper-compiler</artifactId>
+					</exclusion>
+
+					<exclusion>
+						<groupId>tomcat</groupId>
+						<artifactId>jasper-runtime</artifactId>
+					</exclusion>
+
+					<!-- <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-service</artifactId>
+						</exclusion> <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-service-rpc</artifactId>
+						</exclusion> <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-common</artifactId>
+						</exclusion> -->
+					<exclusion>
+						<groupId>org.apache.hive</groupId>
+						<artifactId>hive-orc</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.hive</groupId>
+						<artifactId>hive-metastore</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.hive</groupId>
+						<artifactId>hive-shims</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 
@@ -842,11 +858,11 @@
 				<version>1.7.21</version>
 				<scope>runtime</scope>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.slf4j</groupId> -->
-<!-- 				<artifactId>slf4j-ext</artifactId> -->
-<!-- 				<version>1.7.21</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.slf4j</groupId> -->
+			<!-- <artifactId>slf4j-ext</artifactId> -->
+			<!-- <version>1.7.21</version> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
@@ -878,7 +894,7 @@
 			<!-- </dependency> -->
 
 
-			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-top</artifactId> 
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-top</artifactId>
 				<version>0-incubating</version> <scope>compile</scope> </dependency> -->
 
 			<dependency>
@@ -895,12 +911,12 @@
 			<!-- </exclusions> -->
 
 
-			<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer 
-				version - -> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId> 
-				<version>2.7.0-incubating</version> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId> 
+			<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer
+				version - -> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId>
+				<version>2.7.0-incubating</version> <scope>compile</scope> </dependency>
+				<dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId>
 				<version>2.9.0-incubating</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId>
 				<version>0.9.0-incubating</version> <scope>compile</scope> </dependency> -->
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->
@@ -939,23 +955,23 @@
 			<!-- </exclusions> -->
 			<!-- </dependency> -->
 
-			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId> 
-				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> <exclusions> 
-				<exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId> 
-				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>iri</artifactId> 
-				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId> 
-				</exclusion> <exclusion> <groupId>junit</groupId> <artifactId>junit</artifactId> 
+			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId>
+				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> <exclusions>
+				<exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId>
+				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>iri</artifactId>
+				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId>
+				</exclusion> <exclusion> <groupId>junit</groupId> <artifactId>junit</artifactId>
 				</exclusion> </exclusions> </dependency> -->
 
-			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId> 
-				<version>2.8.8</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq-extra</artifactId> 
-				<version>2.7.0</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId> 
-				<version>2.6.4</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId> 
-				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>tdb</artifactId> 
+			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId>
+				<version>2.8.8</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq-extra</artifactId>
+				<version>2.7.0</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId>
+				<version>2.6.4</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId>
+				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>tdb</artifactId>
 				<version>0.8.9</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -973,7 +989,7 @@
 				<scope>compile</scope>
 			</dependency>
 
-			<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId>
 				<version>5.1.16</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>org.antlr</groupId>
@@ -994,10 +1010,10 @@
 			<!-- <version>4.0.2</version> -->
 			<!-- </dependency> -->
 
-			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
-				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
-				</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId> 
-				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
+			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId>
+				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope>
+				</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId>
+				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope>
 				</dependency> -->
 			<dependency>
 				<groupId>jrexx</groupId>
@@ -1020,7 +1036,7 @@
 				<version>2.6.12</version>
 			</dependency>
 
-			<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV 
+			<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV
 				files -->
 			<dependency>
 				<groupId>com.h2database</groupId>
@@ -1061,7 +1077,7 @@
 			<!-- <version>${spring.version}</version> -->
 			<!-- </dependency> -->
 
-			<!-- <dependency> <groupId>com.sun.jersey.contribs</groupId> <artifactId>jersey-spring</artifactId> 
+			<!-- <dependency> <groupId>com.sun.jersey.contribs</groupId> <artifactId>jersey-spring</artifactId>
 				<version>${jersey.version}</version> </dependency> -->
 
 			<dependency>
