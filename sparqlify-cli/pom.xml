@@ -20,6 +20,11 @@
 
     <build>
         <plugins>
+        	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+        	</plugin>
+
             <plugin>
                 <!-- Any eclipse problem with the plugin should disappear with m2e 1.1 -->
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
