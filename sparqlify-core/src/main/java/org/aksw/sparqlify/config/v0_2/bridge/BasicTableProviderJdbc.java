@@ -3,8 +3,8 @@ package org.aksw.sparqlify.config.v0_2.bridge;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +33,7 @@ public class BasicTableProviderJdbc
 	public static BasicTableInfo getRawTypes(Connection conn, String queryStr)
 			throws Exception
 	{
-		Map<String, String> rawTypeMap = new HashMap<String,String>();
+		Map<String, String> rawTypeMap = new LinkedHashMap<String,String>();
 		// TODO We need full column metadata after all I guess
 		//Map<String, Integer> paddingMap = new HashMap<String, String>();
 		Set<String> nullableColumns = new HashSet<String>();

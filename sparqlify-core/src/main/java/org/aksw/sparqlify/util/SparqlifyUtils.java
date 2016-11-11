@@ -375,7 +375,7 @@ public class SparqlifyUtils {
     }
 
 	public static QueryExecutionFactoryEx createDefaultSparqlifyEngine(DataSource dataSource, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
-		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, typeSerializer, sqlEscaper, maxResultSetSize, maxQueryExecutionTimeInSeconds);
+		SparqlSqlStringRewriterImpl rewriter = createDefaultSparqlSqlStringRewriter(dataSource, config, typeSerializer, sqlEscaper);
 
 		SparqlSqlOpRewriter ssoRewriter = rewriter.getSparqlSqlOpRewriter();
 		SqlOpSerializer sqlOpSerializer = rewriter.getSqlOpSerializer();
@@ -413,19 +413,19 @@ public class SparqlifyUtils {
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
+	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(DataSource dataSource, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper) throws SQLException, IOException {
 		SparqlSqlStringRewriterImpl result;
 		try(Connection conn = dataSource.getConnection()) {
 			BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
 			Schema databaseSchema = Schema.create(conn);
 
-			result = createDefaultSparqlSqlStringRewriter(basicTableInfoProvider, databaseSchema, config, typeSerializer, sqlEscaper, maxResultSetSize, maxQueryExecutionTime);
+			result = createDefaultSparqlSqlStringRewriter(basicTableInfoProvider, databaseSchema, config, typeSerializer, sqlEscaper);
 		}
 
 		return result;
 	}
 
-	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(BasicTableInfoProvider basicTableInfoProvider, Schema databaseSchema, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper, Long maxResultSetSize, Integer maxQueryExecutionTime) throws SQLException, IOException {
+	public static SparqlSqlStringRewriterImpl createDefaultSparqlSqlStringRewriter(BasicTableInfoProvider basicTableInfoProvider, Schema databaseSchema, Config config, DatatypeToString typeSerializer, SqlEscaper sqlEscaper) throws SQLException, IOException {
 		SparqlifyCoreInit.initSparqlifyFunctions();
 
 		//DatatypeToString typeSerializer = new DatatypeToStringPostgres();

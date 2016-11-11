@@ -19,4 +19,9 @@ public class BasicTableInfo {
 	public Set<String> getNullableColumns() {
 		return nullableColumns;
 	}
+
+	@Override
+	public String toString() {
+		return "BasicTableInfo [rawTypeMap=" + rawTypeMap + ", nullableColumns=" + nullableColumns + "]";
+	}
 }
