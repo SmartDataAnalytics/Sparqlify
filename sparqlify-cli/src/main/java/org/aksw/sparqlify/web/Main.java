@@ -16,6 +16,8 @@ import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.config.v0_2.bridge.BasicTableInfoProvider;
+import org.aksw.sparqlify.config.v0_2.bridge.BasicTableProviderJdbc;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
@@ -213,7 +215,8 @@ public class Main {
         DatatypeToString typeSerializer = backendConfig.getTypeSerializer();
 
         try {
-            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias, sqlEscaper);
+        	BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
+            SchemaProvider schemaProvider = new SchemaProviderImpl(basicTableInfoProvider, typeSystem, typeAlias, sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
