@@ -23,7 +23,7 @@ public class RowMapperSparqlifyBinding
 	implements RowMapper<Binding>
 {
 	private static final Logger logger = LoggerFactory.getLogger(RowMapperSparqlifyBinding.class);
-	
+
 	//private long nextRowId;
 	private Var rowIdVar;
 
@@ -44,7 +44,7 @@ public class RowMapperSparqlifyBinding
 		Binding result = _map(rs, rowId, rowIdVar);
 		return result;
 	}
-	
+
 	public static Binding _map(ResultSet rs, long rowId, Var rowIdVar) {
 		Binding result;
 		try {
@@ -52,110 +52,121 @@ public class RowMapperSparqlifyBinding
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
-		
-		return result;		
+
+		return result;
 	}
-	
+
+	public static boolean addAttr(BindingHashMap binding, int i, String colName, Object colValue) {
+		NodeValue nodeValue;
+
+		// NOTE Char right padding is handled as a special expression (similar to urlEncode)
+//		String colType = meta.getColumnTypeName(i);
+//
+//		//System.out.println(colValue == null ? "null" : colValue.getClass());
+//
+//		// TODO: Make datatype serialization configurable
+//		if(isCharType(colType)) {
+//			if(colValue == null) {
+//				nodeValue = null;
+//			} else {
+//				int displaySize = meta.getPrecision(i);
+//				int scale = meta.getScale(i);
+//				String tmp = "" + colValue;
+//				String v = StringUtils.rightPad(tmp, displaySize);
+//				nodeValue = NodeValue.makeString(v);
+//			}
+//		}
+//		else
+		if(colValue instanceof Date) {
+			String tmp = colValue.toString();
+			nodeValue = NodeValue.makeDate(tmp);
+		}
+		else if(colValue instanceof Timestamp) {
+			String tmp = colValue.toString();
+			String val = tmp.replace(' ', 'T');
+			nodeValue = NodeValue.makeDateTime(val);
+		} else if(colValue instanceof UUID) {
+		    nodeValue = NodeValue.makeString(colValue.toString());
+		} else {
+			try {
+				nodeValue = MakeNodeValue.makeNodeValue(colValue);
+			} catch (Exception e) {
+				logger.error("TODO: Handle unknown column type for " + colValue + " type: " + colValue.getClass());
+				nodeValue = null;
+				//throw new RuntimeException(e);
+			}
+		}
+
+		if(nodeValue == null) {
+			return true;
+			//continue;
+		}
+
+		if(nodeValue.equals(E_RdfTerm.TYPE_ERROR)) {
+			return true;
+            //continue;
+        }
+
+//		if(nodeValue.isDateTime()) {
+//			XSDDateTime val = nodeValue.getDateTime();
+//			String str = val.timeLexicalForm();
+//			String b = val.toString();
+//
+//			System.out.println("foo");
+//		}
+
+		Node node = nodeValue.asNode();
+
+
+		// FIXME We also add bindings that enable us to reference the columns by their index
+		// However, indexes and column-names are in the same namespace here, so there might be clashes
+		Var indexVar = Var.alloc("" + i);
+		binding.add(indexVar, node);
+
+		Var colVar = Var.alloc(colName);
+		if(!binding.contains(colVar)) {
+			binding.add(colVar, node);
+		}
+
+		return false;
+	}
+
 	public static Binding map(ResultSet rs, long rowId, Var rowIdVar) throws SQLException {
 
 		// OPTIMIZE refactor these to attributes
 		//NodeExprSubstitutor substitutor = new NodeExprSubstitutor(sparqlVarMap);
-		BindingMap binding = new BindingHashMap();
+		BindingHashMap binding = new BindingHashMap();
 
-		
+
 		ResultSetMetaData meta = rs.getMetaData();
-		
+
 		/*
 		for(int i = 1; i <= meta.getColumnCount(); ++i) {
 			binding.add(Var.alloc("" + i), node)
-		}*/	
+		}*/
 
-		
+
 		// Substitute the variables in the expressions
 		for(int i = 1; i <= meta.getColumnCount(); ++i) {
 			String colName = meta.getColumnLabel(i);
 			Object colValue = rs.getObject(i);
 
-			NodeValue nodeValue;
-
-			// NOTE Char right padding is handled as a special expression (similar to urlEncode)
-//			String colType = meta.getColumnTypeName(i);
-//			
-//			//System.out.println(colValue == null ? "null" : colValue.getClass());
-//			
-//			// TODO: Make datatype serialization configurable
-//			if(isCharType(colType)) {
-//				if(colValue == null) {
-//					nodeValue = null;
-//				} else {
-//					int displaySize = meta.getPrecision(i);
-//					int scale = meta.getScale(i);
-//					String tmp = "" + colValue;
-//					String v = StringUtils.rightPad(tmp, displaySize);
-//					nodeValue = NodeValue.makeString(v);
-//				}
-//			}
-//			else
-			if(colValue instanceof Date) {
-				String tmp = colValue.toString();
-				nodeValue = NodeValue.makeDate(tmp); 
-			}
-			else if(colValue instanceof Timestamp) {
-				String tmp = colValue.toString();
-				String val = tmp.replace(' ', 'T');
-				nodeValue = NodeValue.makeDateTime(val);
-			} else if(colValue instanceof UUID) {
-			    nodeValue = NodeValue.makeString(colValue.toString());
-			} else {
-				try {
-					nodeValue = MakeNodeValue.makeNodeValue(colValue);
-				} catch (Exception e) {
-					logger.error("TODO: Handle unknown column type for " + colValue + " type: " + colValue.getClass());
-					nodeValue = null;
-					//throw new RuntimeException(e);
-				}
-			}
-
-			if(nodeValue == null) {
+			boolean skip = addAttr(binding, i, colName, colValue);
+			if(skip) {
 				continue;
 			}
-
-			if(nodeValue.equals(E_RdfTerm.TYPE_ERROR)) {
-                continue;
-            }
-			
-//			if(nodeValue.isDateTime()) {
-//				XSDDateTime val = nodeValue.getDateTime();
-//				String str = val.timeLexicalForm();
-//				String b = val.toString();
-//
-//				System.out.println("foo");
-//			}
-			
-			Node node = nodeValue.asNode();
-			
-			
-			// FIXME We also add bindings that enable us to reference the columns by their index
-			// However, indexes and column-names are in the same namespace here, so there might be clashes
-			Var indexVar = Var.alloc("" + i);
-			binding.add(indexVar, node);
-			
-			Var colVar = Var.alloc(colName);
-			if(!binding.contains(colVar)) {
-				binding.add(colVar, node);
-			}
 		}
-		
 
-		
+
+
 		// Additional "virtual" columns
 		// FIXME Ideally this should be part of a class "ResultSetExtend" that extends a result set with additional columns
 		if(rowIdVar != null) {
 			Node node = NodeValue.makeInteger(rowId).asNode();
-			
+
 			binding.add(rowIdVar, node);
 		}
-		
+
 		return binding;
 	}
 }
