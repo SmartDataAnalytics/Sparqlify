@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.aksw.sparqlify</groupId>
@@ -54,6 +55,7 @@
 
 
 	<properties>
+		<gpg.keyname>AKSW</gpg.keyname>
 
 		<gwt.version>2.0.4</gwt.version>
 
@@ -87,7 +89,7 @@
 		<connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
 		<!-- developerConnection></developerConnection -->
 		<!-- url>https://my-project.googlecode.com/svn</url -->
-		<tag>sparqlify-parent-0.6.17</tag>
+		<tag>sparqlify-parent-0.8.0</tag>
 	</scm>
 
 
@@ -323,7 +325,8 @@
 									</filter>
 								</filters>
 								<transformers>
-									<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+									<transformer
+										implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 									<!-- add Main-Class to manifest file -->
 									<!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> -->
 									<!-- <mainClass>com.mkyong.core.utils.App</mainClass> -->
@@ -1306,11 +1309,51 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<keyname>AKSW</keyname>
+									<passphraseServerId>${gpg.keyname}</passphraseServerId>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<distributionManagement>
+		<!-- <repository> -->
+		<!-- <id>maven.aksw.internal</id> -->
+		<!-- <name>AKSW Internal Release Repository</name> -->
+		<!-- <url>http://maven.aksw.org/repository/internal</url> -->
+		<!-- </repository> -->
+
 		<repository>
-			<id>maven.aksw.internal</id>
-			<name>AKSW Internal Release Repository</name>
-			<url>http://maven.aksw.org/repository/internal</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 
 		<snapshotRepository>
