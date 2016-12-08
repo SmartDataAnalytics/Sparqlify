@@ -101,17 +101,17 @@
 
 
 			<!-- That's a sledge hammer solution - but at least it works ... -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<arguments>-P!source-artifacts</arguments>
-					<useReleaseProfile>false</useReleaseProfile>
-					<goals>-Dmaven.test.skip=true deploy</goals>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-				</configuration>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-release-plugin</artifactId> -->
+<!-- 				<version>2.5.1</version> -->
+<!-- 				<configuration> -->
+<!-- 					<arguments>-P!source-artifacts</arguments> -->
+<!-- 					<useReleaseProfile>false</useReleaseProfile> -->
+<!-- 					<goals>-Dmaven.test.skip=true deploy</goals> -->
+<!-- 					<autoVersionSubmodules>true</autoVersionSubmodules> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
 
 			<!--Maven Compiler Plugin -->
 			<plugin>
