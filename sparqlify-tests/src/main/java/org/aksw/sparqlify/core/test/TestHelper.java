@@ -5,12 +5,12 @@ import java.util.Set;
 import org.aksw.jena_sparql_api.utils.CompareUtils;
 
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.query.ResultSetRewindable;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.resultset.ResultSetCompare;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.query.ResultSetRewindable;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.resultset.ResultSetCompare;
 
 public class TestHelper {
 

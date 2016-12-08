@@ -3,10 +3,10 @@ package exp.org.aksw.sparqlify.core;
 import javax.annotation.Nullable;
 
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.engine.binding.Binding;
 
 import com.google.common.base.Function;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 public class FunctionQuadToBinding
 	implements Function<Quad, Binding>

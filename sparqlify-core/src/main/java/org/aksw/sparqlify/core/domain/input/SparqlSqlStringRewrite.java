@@ -2,7 +2,8 @@ package org.aksw.sparqlify.core.domain.input;
 
 import java.util.List;
 
-import com.hp.hpl.jena.sparql.core.Var;
+import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.apache.jena.sparql.core.Var;
 
 public class SparqlSqlStringRewrite {
 	// Whether the query is known to yield an empty result

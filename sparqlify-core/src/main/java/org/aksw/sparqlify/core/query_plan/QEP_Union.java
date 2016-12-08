@@ -3,7 +3,7 @@ package org.aksw.sparqlify.core.query_plan;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.ResultSet;
 
 /**
  * Combine the result sets of sub-plans

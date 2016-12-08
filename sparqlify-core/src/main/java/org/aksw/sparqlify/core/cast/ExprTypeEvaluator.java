@@ -1,8 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import org.aksw.sparqlify.core.TypeToken;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.Expr;
 
 /**
  * Interface for obtaining the result types of expressions.

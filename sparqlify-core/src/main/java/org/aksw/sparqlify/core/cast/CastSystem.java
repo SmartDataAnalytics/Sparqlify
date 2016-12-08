@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.core.cast;
 
-import org.aksw.commons.util.factory.Factory1;
+import java.util.function.UnaryOperator;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * Note to myself: My initial idea was to have a method
@@ -34,7 +34,7 @@ public interface CastSystem {
 			throws CastException;
 
 	
-	public Factory1<Expr> lookupCast(String sourceTypeName, String targetTypeName);
+	public UnaryOperator<Expr> lookupCast(String sourceTypeName, String targetTypeName);
 	
 }
 

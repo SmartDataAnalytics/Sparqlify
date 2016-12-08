@@ -2,6 +2,8 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 
 import java.util.List;
 
+import org.aksw.sparqlify.core.sql.schema.Schema;
+
 public class SqlOpOrder
 	extends SqlOpBase1
 {

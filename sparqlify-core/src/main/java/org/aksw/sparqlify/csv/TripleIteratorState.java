@@ -3,7 +3,7 @@ package org.aksw.sparqlify.csv;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Var;
 
 public class TripleIteratorState {
 	private int totalTripleCount = 0;

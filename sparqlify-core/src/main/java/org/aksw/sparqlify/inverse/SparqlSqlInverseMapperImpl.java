@@ -7,42 +7,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.normal_form.Clause;
+import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
+import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.aksw.jena_sparql_api.views.ViewQuad;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
-import org.aksw.sparqlify.core.algorithms.ViewQuad;
 import org.aksw.sparqlify.core.cast.SqlValue;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.database.Clause;
-import org.aksw.sparqlify.database.NestedNormalForm;
-import org.aksw.sparqlify.restriction.RestrictionManagerImpl;
-
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Quad;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
 
 public class SparqlSqlInverseMapperImpl
 	implements SparqlSqlInverseMapper
 {
-	private CandidateViewSelectorImpl candidateViewSelector;
+	private CandidateViewSelectorSparqlify candidateViewSelector;
 	private SqlTranslator sqlTranslator;
 
 
-	public SparqlSqlInverseMapperImpl(CandidateViewSelectorImpl candidateViewSelector, SqlTranslator sqlTranslator) {
+	public SparqlSqlInverseMapperImpl(CandidateViewSelectorSparqlify candidateViewSelector, SqlTranslator sqlTranslator) {
 		this.candidateViewSelector = candidateViewSelector;
 		this.sqlTranslator = sqlTranslator;
 	}
@@ -172,7 +171,7 @@ public class SparqlSqlInverseMapperImpl
 	 * @param quad
 	 * @return
 	 */
-	public static Set<ViewQuad<ViewDefinition>> getCandidateViews(CandidateViewSelectorImpl candidateSelector, Quad quad) {
+	public static Set<ViewQuad<ViewDefinition>> getCandidateViews(CandidateViewSelectorSparqlify candidateSelector, Quad quad) {
 		Var g = Var.alloc("g");
 		Var s = Var.alloc("s");
 		Var p = Var.alloc("p");

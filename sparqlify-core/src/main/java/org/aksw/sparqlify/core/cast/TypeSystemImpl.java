@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import org.aksw.commons.collections.MultiMaps;
 import org.aksw.commons.collections.multimaps.BiHashMultimap;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.commons.factory.Factory1;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XClass;
 import org.aksw.sparqlify.core.datatypes.XMethod;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
 import org.aksw.sparqlify.type_system.DirectSuperTypeProvider;
 import org.aksw.sparqlify.type_system.DirectSuperTypeProviderBiSetMultimap;
 import org.aksw.sparqlify.type_system.FunctionModel;
@@ -25,15 +25,15 @@ import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.TypeHierarchyUtils;
 import org.aksw.sparqlify.type_system.TypeModel;
 import org.aksw.sparqlify.type_system.TypeModelImpl;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.vocabulary.XSD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 
 public class TypeSystemImpl
@@ -327,7 +327,7 @@ public class TypeSystemImpl
 	}
 
 	@Override
-	public Factory1<SqlExpr> cast(TypeToken fromTypeUri, TypeToken toTypeUri) {
+	public UnaryOperator<SqlExpr> cast(TypeToken fromTypeUri, TypeToken toTypeUri) {
 		// TODO Auto-generated method stub
 		return null;
 	}

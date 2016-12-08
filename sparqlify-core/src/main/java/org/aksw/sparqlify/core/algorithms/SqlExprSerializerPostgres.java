@@ -1,24 +1,18 @@
 package org.aksw.sparqlify.core.algorithms;
 
 import java.util.Calendar;
+import java.util.function.UnaryOperator;
 
-import org.aksw.commons.util.factory.Factory1;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.TypeToken;
+import org.apache.jena.sdb.sql.SQLUtils;
+import org.apache.jena.sparql.expr.NodeValue;
 import org.postgis.PGgeometry;
-
-import com.hp.hpl.jena.sdb.sql.SQLUtils;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-
-interface DatatypeToString
-{
-	public Factory1<String> asString(TypeToken datatype);
-}
 
 
 public class SqlExprSerializerPostgres
 	extends SqlExprSerializerDefault
 {
-
 	public SqlExprSerializerPostgres() {
 		super(new DatatypeToStringPostgres());
 	}
@@ -41,9 +35,9 @@ public class SqlExprSerializerPostgres
 		if(value == null) {
 			//String cast = "::" + datatypeSerializer.asString(datatype);
 			
-			Factory1<String> caster = datatypeSerializer.asString(datatype);
+			UnaryOperator<String> caster = datatypeSerializer.asString(datatype);
 			
-			return caster.create("NULL");
+			return caster.apply("NULL");
 		} else if(value instanceof NodeValue) {
 			if(true) {
 				throw new RuntimeException("HACK");

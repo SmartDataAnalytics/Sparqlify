@@ -10,13 +10,12 @@ import java.util.GregorianCalendar;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.commons.util.strings.StringUtils;
-import org.aksw.sparqlify.algebra.sparql.expr.old.NodeValueGeom;
+import org.aksw.jena_sparql_api.exprs_ext.NodeValueGeom;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.jena.sparql.expr.NodeValue;
 import org.h2.jdbc.JdbcClob;
 import org.postgis.PGgeometry;
 import org.postgresql.util.PGobject;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 
 public class MakeNodeValue

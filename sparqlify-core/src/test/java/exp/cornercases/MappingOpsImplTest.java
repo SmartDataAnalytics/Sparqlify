@@ -11,32 +11,30 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.jdbc.Schema;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
+import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
 import org.aksw.sparqlify.core.algorithms.SqlTranslatorImpl;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.antlr.runtime.RecognitionException;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 
 
 
@@ -48,11 +46,11 @@ public class MappingOpsImplTest {
 	//@Test
 	public void creationTest() throws RecognitionException, SQLException, IOException {
 
-		RdfViewSystemOld.initSparqlifyFunctions();
+		SparqlifyCoreInit.initSparqlifyFunctions();
 		
 		
 		//TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
-		ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+		ExprRewriteSystem ers = SparqlifyUtils.createDefaultExprRewriteSystem();
 		TypeSystem typeSystem = ers.getTypeSystem();
 
 		SqlTranslator sqlTranslator = new SqlTranslatorImpl(typeSystem);
@@ -88,7 +86,7 @@ public class MappingOpsImplTest {
 		//OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
 		MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
 		
-		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+		CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
 		//candidateViewSelector.addView(personView);
 		candidateViewSelector.addView(deptView);
 		//candidateViewSelector.addView(personToDeptView);
@@ -180,7 +178,7 @@ public class MappingOpsImplTest {
 
 		//SparqlSqlRewriter rewriter = new SparqlSqlRewriterImpl();
 		OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
+		SparqlSqlStringRewriter rewriter = null; //SparqlifyUtils.createTestRewriter(candidateViewSelector, opMappingRewriter, typeSystem, databaseSchema);
 		QueryExecutionFactory qef = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
 
 

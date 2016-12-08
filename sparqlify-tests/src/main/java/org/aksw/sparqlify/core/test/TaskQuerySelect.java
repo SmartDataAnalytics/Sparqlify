@@ -4,9 +4,9 @@ import java.util.concurrent.Callable;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
 
 public class TaskQuerySelect
 	implements Callable<ResultSet>

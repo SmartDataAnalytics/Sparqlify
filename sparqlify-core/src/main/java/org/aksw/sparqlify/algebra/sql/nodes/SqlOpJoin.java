@@ -7,9 +7,10 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.sql.schema.Schema;
+import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 import org.apache.jena.atlas.io.IndentedWriter;
-
-import com.hp.hpl.jena.sdb.core.JoinType;
+import org.apache.jena.sdb.core.JoinType;
 
 
 public class SqlOpJoin

@@ -6,27 +6,26 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.domain.OpRdfViewPattern;
-import org.aksw.sparqlify.expr.util.ExprUtils;
-
-import sparql.ClauseUtils;
-import sparql.CnfUtils;
+import org.aksw.jena_sparql_api.utils.ClauseUtils;
+import org.aksw.jena_sparql_api.utils.CnfUtils;
+import org.aksw.jena_sparql_api.utils.ExprUtils;
+import org.aksw.sparqlify.database.GetVarsMentioned;
+import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.op.OpDisjunction;
+import org.apache.jena.sparql.algebra.op.OpDistinct;
+import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpGroup;
+import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.algebra.op.OpLeftJoin;
+import org.apache.jena.sparql.algebra.op.OpNull;
+import org.apache.jena.sparql.algebra.op.OpOrder;
+import org.apache.jena.sparql.algebra.op.OpProject;
+import org.apache.jena.sparql.algebra.op.OpSlice;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprList;
 
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.sparql.algebra.Op;
-import com.hp.hpl.jena.sparql.algebra.op.OpDisjunction;
-import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
-import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
-import com.hp.hpl.jena.sparql.algebra.op.OpGroup;
-import com.hp.hpl.jena.sparql.algebra.op.OpJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpLeftJoin;
-import com.hp.hpl.jena.sparql.algebra.op.OpNull;
-import com.hp.hpl.jena.sparql.algebra.op.OpOrder;
-import com.hp.hpl.jena.sparql.algebra.op.OpProject;
-import com.hp.hpl.jena.sparql.algebra.op.OpSlice;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprList;
 
 /**
  * @author raven
@@ -191,9 +190,9 @@ public class FilterPlacementOptimizer {
 		}		
 	}
 	
-	public static Op _optimize(OpRdfViewPattern op, Set<Set<Expr>> cnf) {
-		return surroundWithFilterIfNeccessary(op, cnf);
-	}
+//	public static Op _optimize(OpRdfViewPattern op, Set<Set<Expr>> cnf) {
+//		return surroundWithFilterIfNeccessary(op, cnf);
+//	}
 
 	/*
 	public static Op _optimize(OpUnion op, Set<Set<Expr>> cnf) {

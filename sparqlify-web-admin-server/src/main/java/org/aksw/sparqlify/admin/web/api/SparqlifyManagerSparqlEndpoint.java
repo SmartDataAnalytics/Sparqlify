@@ -13,11 +13,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.stmt.SparqlStmtUpdate;
 import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.update.UpdateProcessor;
 import org.springframework.stereotype.Service;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
 
 
 @Service
@@ -37,6 +38,11 @@ public class SparqlifyManagerSparqlEndpoint
     public QueryExecution createQueryExecution(Query query) {
         QueryExecution result = qef.createQueryExecution(query);
         return result;
+    }
+
+    @Override
+    public UpdateProcessor createUpdateProcessor(SparqlStmtUpdate stmt) {
+        return null;
     }
 
     @GET

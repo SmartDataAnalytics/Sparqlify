@@ -10,11 +10,11 @@ import java.util.Iterator;
 import org.aksw.jena_sparql_api.core.QueryExecutionDecorator;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
+import org.aksw.jena_sparql_api.views.Dialect;
 import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
 import org.aksw.sparqlify.config.lang.ConstructConfigParser;
 import org.aksw.sparqlify.config.syntax.ConstructConfig;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
-import org.aksw.sparqlify.sparqlview.Dialect;
 import org.aksw.sparqlify.sparqlview.SparqlViewSystem;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -28,11 +28,11 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.StmtIterator;
 
 
 class TripleIterator

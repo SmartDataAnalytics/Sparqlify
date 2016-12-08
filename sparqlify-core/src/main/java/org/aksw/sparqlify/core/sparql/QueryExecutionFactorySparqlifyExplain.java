@@ -4,10 +4,9 @@ import javax.sql.DataSource;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlOpRewriter;
-import org.aksw.sparqlify.core.interfaces.SqlOpSerializer;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
+import org.aksw.sparqlify.core.sql.algebra.serialization.SqlOpSerializer;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
 
 public class QueryExecutionFactorySparqlifyExplain
 	extends QueryExecutionFactoryBackQuery

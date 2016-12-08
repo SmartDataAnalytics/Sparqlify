@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

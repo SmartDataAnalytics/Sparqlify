@@ -7,11 +7,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
+import org.aksw.jena_sparql_api.views.VarBinding;
+import org.aksw.jena_sparql_api.views.ViewInstance;
+import org.aksw.sparqlify.sparqlview.ViewInstanceJoin;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
 
 
 

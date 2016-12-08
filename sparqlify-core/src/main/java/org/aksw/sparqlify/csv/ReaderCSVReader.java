@@ -2,9 +2,9 @@ package org.aksw.sparqlify.csv;
 
 import java.io.IOException;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.google.common.base.Joiner;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * Wraps a opencsv CSVReader as a java Reader object.

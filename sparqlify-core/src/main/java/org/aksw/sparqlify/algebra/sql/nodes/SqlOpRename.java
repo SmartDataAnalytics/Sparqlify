@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.sql.schema.Schema;
+import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 import org.apache.commons.collections15.BidiMap;
 import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 import org.apache.jena.atlas.io.IndentedWriter;

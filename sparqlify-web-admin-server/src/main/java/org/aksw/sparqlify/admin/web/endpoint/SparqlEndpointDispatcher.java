@@ -18,16 +18,17 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionAndType;
+import org.aksw.jena_sparql_api.stmt.SparqlStmtUpdate;
 import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
 import org.aksw.service_framework.core.SparqlService;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.update.UpdateProcessor;
 import org.springframework.stereotype.Service;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryFactory;
 
 
 @Service
@@ -66,7 +67,7 @@ public class SparqlEndpointDispatcher
     }
 
     @Override
-    public QueryExecutionAndType createQueryExecution(String queryString) {
+    public QueryExecutionAndType createQueryExecutionAndType(String queryString) {
 
         QueryExecutionFactory qef = requireService();
 
@@ -102,6 +103,12 @@ public class SparqlEndpointDispatcher
         InputStream r = servletContext.getResourceAsStream("/resources/snorql/index.html");
         System.out.println("Resource is " + r);
         return Response.ok(r, MediaType.TEXT_HTML).build();
+    }
+
+    @Override
+    public UpdateProcessor createUpdateProcessor(SparqlStmtUpdate stmt) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
 

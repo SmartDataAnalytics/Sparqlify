@@ -45,19 +45,19 @@ public class SparqlSqlRewriterTests {
 	 */
 	//@Test
 	public void nestedOptionalsTest() throws RecognitionException, SQLException, IOException {
-		
-		SparqlifyTestFacade facade = SparqlifyTestFacade.createWithTestDb();
-		facade.addView("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?pn } With ?s = uri(?ID) ?pn = plainLiteral(?NAME) From person");
-		facade.addView("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?s ex:dept ?d } With ?s = uri(?PERSON_ID) ?d = uri(?DEPT_ID) From person_to_dept");
-		//facade.addView("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Dept ; ex:name ?dn } With ?s = uri(?ID) ?dn = uri(?NAME) From dept");
-		
-//		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn . Filter(?dn = ?pn) } } }");
-//		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn } } }");
-		SparqlSqlStringRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select Distinct * { ?s ex:name ?pn . Optional { ?s ex:dept ?d } } Limit 10 Offset 20	");
-//		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn }");
-//		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ?p ?pn }");
-
-		System.out.println(rewrite);
+//		
+//		SparqlifyTestFacade facade = SparqlifyTestFacade.createWithTestDb();
+//		facade.addView("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?pn } With ?s = uri(?ID) ?pn = plainLiteral(?NAME) From person");
+//		facade.addView("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?s ex:dept ?d } With ?s = uri(?PERSON_ID) ?d = uri(?DEPT_ID) From person_to_dept");
+//		//facade.addView("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Dept ; ex:name ?dn } With ?s = uri(?ID) ?dn = uri(?NAME) From dept");
+//		
+////		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn . Filter(?dn = ?pn) } } }");
+////		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn . Optional { ?s ex:dept ?d . Optional { ?d ex:name ?dn } } }");
+//		SparqlSqlStringRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select Distinct * { ?s ex:name ?pn . Optional { ?s ex:dept ?d } } Limit 10 Offset 20	");
+////		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ex:name ?pn }");
+////		SparqlSqlRewrite rewrite = facade.rewrite("Prefix ex:<http://ex.org/> Select * { ?s ?p ?pn }");
+//
+//		System.out.println(rewrite);
 	}
 
 	

@@ -52,14 +52,14 @@ public class SparqlifyQefFactory {
 	}
 	
 	
-	public QueryExecutionFactoryEx create()
-		throws Exception
-	{
-
-		QueryExecutionFactoryEx result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetRowCount, maxQueryExecutionTime);
-		
-		return result;
-	}
+//	public QueryExecutionFactoryEx create()
+//		throws Exception
+//	{
+//
+//		QueryExecutionFactoryEx result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, maxResultSetRowCount, maxQueryExecutionTime);
+//		
+//		return result;
+//	}
 	
 //	public QueryExecutionFactory create() throws Exception {
 //

@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.query_plan;
 
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * Time the execution of a sub plan (TODO: Maybe this should be hard wired into a base class in the first place)

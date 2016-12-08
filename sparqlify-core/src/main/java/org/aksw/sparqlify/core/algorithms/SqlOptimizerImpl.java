@@ -9,13 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
-import org.aksw.commons.factory.Factory1;
 import org.aksw.commons.util.jdbc.ColumnsReference;
 import org.aksw.commons.util.jdbc.Index;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
-import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
@@ -25,21 +24,22 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoinN;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpLeaf;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
+import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
+import org.apache.jena.sdb.core.JoinType;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sdb.core.JoinType;
 
 
 class SelfJoinResult {
 	private List<SqlOp> ops;
 	//private List<Collection<SqlExpr>> cnf;
-	private Factory1<SqlExpr> aliasSubstitutor;
+	private UnaryOperator<SqlExpr> aliasSubstitutor;
 	
-	public SelfJoinResult(List<SqlOp> ops, Factory1<SqlExpr> aliasSubstitutor) {
+	public SelfJoinResult(List<SqlOp> ops, UnaryOperator<SqlExpr> aliasSubstitutor) {
 		super();
 		this.ops = ops;
 		this.aliasSubstitutor = aliasSubstitutor;
@@ -49,7 +49,7 @@ class SelfJoinResult {
 		return ops;
 	}
 
-	public Factory1<SqlExpr> getAliasSubstitutor() {
+	public UnaryOperator<SqlExpr> getAliasSubstitutor() {
 		return aliasSubstitutor;
 	}
 }
@@ -64,7 +64,7 @@ class SelfJoinResult {
  *
  */
 class AliasSubstitutor
-	implements Factory1<SqlExpr>
+	implements UnaryOperator<SqlExpr>
 {
 	private Map<String, String> aliasMap;
 	
@@ -73,7 +73,7 @@ class AliasSubstitutor
 	}
 	
 	@Override
-	public SqlExpr create(SqlExpr a) {
+	public SqlExpr apply(SqlExpr a) {
 		
 		SqlExpr result;
 
@@ -615,7 +615,7 @@ public class SqlOptimizerImpl
 		transitiveMapInPlace(aliasRemap);
 		
 		
-		Factory1<SqlExpr> aliasSubstitutor = new AliasSubstitutor(aliasRemap);
+		UnaryOperator<SqlExpr> aliasSubstitutor = new AliasSubstitutor(aliasRemap);
 		
 
 		List<SqlOp> newOps = new ArrayList<SqlOp>();
@@ -681,7 +681,7 @@ public class SqlOptimizerImpl
 //	}
 	
 	
-	public static void substituteProjectionInPlace(Projection proj, Factory1<SqlExpr> transformer) {
+	public static void substituteProjectionInPlace(Projection proj, UnaryOperator<SqlExpr> transformer) {
 		for(Entry<String, SqlExpr> entry : proj.getNameToExpr().entrySet()) {
 			
 			SqlExpr expr = entry.getValue();
@@ -692,7 +692,7 @@ public class SqlOptimizerImpl
 		}
 	}
 	
-	public static List<SqlSortCondition> transformSortConditions(List<SqlSortCondition> sortConditions, Factory1<SqlExpr> transformer) {
+	public static List<SqlSortCondition> transformSortConditions(List<SqlSortCondition> sortConditions, UnaryOperator<SqlExpr> transformer) {
 		List<SqlSortCondition> result = new ArrayList<SqlSortCondition>(sortConditions.size());
 		for(SqlSortCondition sc : sortConditions) {
 			int direction = sc.getDirection();
@@ -728,7 +728,7 @@ public class SqlOptimizerImpl
 			SelfJoinResult sjr = eliminateSelfJoins(subOps, cnf);
 			List<SqlOp> newOps = sjr.getOps();
 			
-			Factory1<SqlExpr> aliasRemapper = sjr.getAliasSubstitutor();
+			UnaryOperator<SqlExpr> aliasRemapper = sjr.getAliasSubstitutor();
 			List<Collection<SqlExpr>> newCnf = SqlExprSubstitutor2.substitute(cnf, aliasRemapper);
 			
 			SqlExprUtils.optimizeEqualityInPlace(newCnf);

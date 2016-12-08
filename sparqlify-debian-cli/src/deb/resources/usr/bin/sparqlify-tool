@@ -140,10 +140,11 @@ if [ -z "$queryString" ]; then
     exit 1
 fi
 
+# Note: ${arr[@]/#/-m } will turn an array of mapping file names m1, ... m2 into multiple command line options -m m1 ... -m m2
 if [ -z "$dbJdbc" ]; then
-    "$sparqlifyCmd" -h "$dbHost" -p "$dbPort" -d "$dbName" -U "$dbUser" -W "$dbPass" -m "$mappingFile" -Q "$queryString"
+    "$sparqlifyCmd" -h "$dbHost" -p "$dbPort" -d "$dbName" -U "$dbUser" -W "$dbPass" ${arr[@]/#/-m } -Q "$queryString"
 else
-    "$sparqlifyCmd" -j "$dbJdbc" -U "$dbUser" -W "$dbPass" -m "$mappingFile" -Q "$queryString"
+    "$sparqlifyCmd" -j "$dbJdbc" -U "$dbUser" -W "$dbPass" ${arr[@]/#/-m } -Q "$queryString"
 fi
 
 

@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core;
 
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.Expr;
 
 /**
  * An expr + metadata

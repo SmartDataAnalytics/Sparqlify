@@ -2,7 +2,7 @@ package org.aksw.sparqlify.inverse;
 
 import java.util.List;
 
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Quad;
 
 /**
  * Map a quad back to a set to which views could have generated it

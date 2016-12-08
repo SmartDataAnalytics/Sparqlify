@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.config.syntax;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.sparql.lang.SPARQLParser;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.sparql.lang.SPARQLParser;
 
 
 

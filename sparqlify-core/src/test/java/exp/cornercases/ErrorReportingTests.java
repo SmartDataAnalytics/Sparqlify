@@ -35,7 +35,7 @@ public class ErrorReportingTests {
 		
 		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
-		String testViewStr = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) ?x = uri(?ID) From PERSON";
+		String testViewStr = "Create View testview As Construct { ?s a ?t } With ?s = uri(?ID) ?t = uri(?NAME) ?x = uri(?ID) From person";
 
 		ViewDefinition vd = vdFactory.create(testViewStr);
 		
@@ -58,7 +58,7 @@ public class ErrorReportingTests {
 		
 		ViewDefinitionFactory vdFactory = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
-		String testViewStr = "Create View testview As Construct { ?s a ?t } With ?t = uri(?NAME) From PERSON";
+		String testViewStr = "Create View testview As Construct { ?s a ?t } With ?t = uri(?NAME) From person";
 
 		ViewDefinition vd = vdFactory.create(testViewStr);
 		

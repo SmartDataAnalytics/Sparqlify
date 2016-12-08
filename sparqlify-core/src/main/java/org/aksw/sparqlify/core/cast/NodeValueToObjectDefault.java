@@ -1,8 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
-import org.aksw.sparqlify.expr.util.NodeValueUtils;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.aksw.sparqlify.expr.util.NodeValueUtilsSparqlify;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /*
 class NodeValueToConstant
@@ -31,7 +30,7 @@ public class NodeValueToObjectDefault
 
 	@Override
 	public Object toObject(NodeValue nodeValue) {
-		Object result = NodeValueUtils.getValue(nodeValue);
+		Object result = NodeValueUtilsSparqlify.getValue(nodeValue);
 		return result;
 	}
 }

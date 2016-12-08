@@ -17,7 +17,11 @@ import org.aksw.sparqlify.admin.model.Rdb2RdfExecution;
 import org.aksw.sparqlify.admin.web.common.ContextStateFlags;
 import org.aksw.sparqlify.admin.web.common.LoggerMem;
 import org.aksw.sparqlify.admin.web.common.ServiceProviderRdb2Rdf;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -118,7 +122,9 @@ public class ServiceLauncherRdb2Rdf
                 maxExecutionTimeInSeconds = 30;
             }
 
-            QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, maxResultSetRows.longValue(), maxExecutionTimeInSeconds);
+            SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+            DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+            QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds);
 
             // A Test Query
             qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");

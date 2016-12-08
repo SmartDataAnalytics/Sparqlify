@@ -3,7 +3,7 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 import java.util.List;
 
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.expr.util.SqlExprUtils;
+import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 public class SqlAggFunction

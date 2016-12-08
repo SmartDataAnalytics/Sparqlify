@@ -16,15 +16,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.WorkbookSettings;
-
 import org.aksw.commons.collections.SinglePrefetchIterator;
 import org.apache.commons.collections15.Transformer;
 
 import au.com.bytecode.opencsv.CSVReader;
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.WorkbookSettings;
 
 
 class CellToStringTransformer

@@ -1,6 +1,7 @@
 package org.aksw.sparqlify.web;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -13,33 +14,45 @@ import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
+import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.config.v0_2.bridge.BasicTableInfoProvider;
+import org.aksw.sparqlify.config.v0_2.bridge.BasicTableProviderJdbc;
 import org.aksw.sparqlify.config.v0_2.bridge.ConfiguratorCandidateSelector;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
-import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorImpl;
-import org.aksw.sparqlify.core.algorithms.OpMappingRewriterImpl;
+import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-import org.aksw.sparqlify.core.interfaces.CandidateViewSelector;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
-import org.aksw.sparqlify.core.interfaces.OpMappingRewriter;
 import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.SqlBackendConfig;
+import org.aksw.sparqlify.util.SqlBackendRegistry;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
+import org.apache.jena.sparql.core.Quad;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -47,20 +60,11 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sparql.core.Quad;
-
 
 public class Main {
 
     private static final Logger logger = LoggerFactory
-            .getLogger(HttpSparqlEndpoint.class);
+            .getLogger(Main.class);
     private static final Options cliOptions = new Options();
 
     /**
@@ -68,10 +72,14 @@ public class Main {
      *            the command line arguments
      */
     public static void main(String[] args) throws Exception {
+//        JenaSystem.init();
+//        InitJenaCore.init();
+//        ARQ.init();
+//        Class.forName("org.postgresql.Driver");
+
 
         LoggerCount loggerCount = new LoggerCount(logger);
 
-        Class.forName("org.postgresql.Driver");
 
         CommandLineParser cliParser = new GnuParser();
 
@@ -172,32 +180,52 @@ public class Main {
         SparqlifyCliHelper.onErrorPrintHelpAndExit(cliOptions, loggerCount, -1);
 
 
-        RdfViewSystemOld.initSparqlifyFunctions();
+        SparqlifyCoreInit.initSparqlifyFunctions();
 
 
 
         //TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
         //TypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
 
-        ExprRewriteSystem ers = SparqlifyUtils.createExprRewriteSystem();
+        ExprRewriteSystem ers = SparqlifyUtils.createDefaultExprRewriteSystem();
         TypeSystem typeSystem = ers.getTypeSystem();
 
         // typeAliases for the H2 datatype
         Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");
 
 
+        //SqlEscaper sqlEscaper = new SqlEscaperBacktick();
+
         Connection conn = dataSource.getConnection();
+
+        DatabaseMetaData dbMeta = conn.getMetaData();
+        String dbProductName = dbMeta.getDatabaseProductName();
+        logger.info("Database product: " + dbProductName);
+
+        SqlBackendRegistry backendRegistry = SqlBackendRegistry.get();
+        Map<String, SqlBackendConfig> map = backendRegistry.getMap();
+
+        SqlBackendConfig backendConfig = map.get(dbProductName);
+        if(backendConfig == null) {
+            throw new RuntimeException("Could not find backend for " + dbProductName);
+        }
+
+
+        SqlEscaper sqlEscaper = backendConfig.getSqlEscaper();
+        DatatypeToString typeSerializer = backendConfig.getTypeSerializer();
+
         try {
-            SchemaProvider schemaProvider = new SchemaProviderImpl(conn, typeSystem, typeAlias);
+        	BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
+            SchemaProvider schemaProvider = new SchemaProviderImpl(basicTableInfoProvider, typeSystem, typeAlias, sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
             //MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(typeSystem);
             MappingOps mappingOps = SparqlifyUtils.createDefaultMappingOps(ers);
-            OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
+            //OpMappingRewriter opMappingRewriter = new OpMappingRewriterImpl(mappingOps);
 
 
-            CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorImpl(mappingOps, new ViewDefinitionNormalizerImpl());
+            CandidateViewSelector<ViewDefinition> candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
 
 
             //RdfViewSystem system = new RdfViewSystem2();
@@ -249,7 +277,10 @@ public class Main {
 
         Long mrs = useSparql11Wrapper ? null : maxResultSetSize;
 
-        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, mrs, maxQueryExecutionTime);
+
+
+        //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
 
 
         if(useSparql11Wrapper) {
