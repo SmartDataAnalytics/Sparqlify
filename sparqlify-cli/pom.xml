@@ -25,27 +25,6 @@
 				<artifactId>maven-shade-plugin</artifactId>
         	</plugin>
 
-            <plugin>
-                <!-- Any eclipse problem with the plugin should disappear with m2e 1.1 -->
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.9.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-<!-- 					<source>${maven.compiler.source}</source> -->
-<!-- 					<target>${maven.compiler.target}</target> -->
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <generatePackage>org.aksw.sparqlify.config.xml</generatePackage>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 
