@@ -1,10 +1,10 @@
 package org.aksw.sparqlify.util;
 
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminator;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminatorWriteable;
+import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminator;
+import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminatorWriteable;
 
 /**
  * This class bundles the distinct layers of expression rewriting

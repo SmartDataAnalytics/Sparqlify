@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.cast;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.RDFDatatype;
 
 public class RDFDatatypeCustomUri
 	extends RDFDatatypeDecorator

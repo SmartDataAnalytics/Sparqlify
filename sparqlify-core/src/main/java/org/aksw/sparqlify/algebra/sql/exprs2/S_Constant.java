@@ -3,8 +3,7 @@ package org.aksw.sparqlify.algebra.sql.exprs2;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.apache.jena.atlas.io.IndentedWriter;
-
-import com.hp.hpl.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.TypeMapper;
 
 
 
@@ -130,7 +129,7 @@ public class S_Constant
 	/*
 	@Override
 	public <T> T getValue() {
-		Object tmp = NodeValueUtils.getValue(nodeValue);
+		Object tmp = NodeValueUtilsSparqlify.getValue(nodeValue);
 		T tmp = (T)
 	}
 	*/
@@ -265,7 +264,7 @@ public class S_Constant
 //	/*
 //	@Override
 //	public <T> T getValue() {
-//		Object tmp = NodeValueUtils.getValue(nodeValue);
+//		Object tmp = NodeValueUtilsSparqlify.getValue(nodeValue);
 //		T tmp = (T)
 //	}
 //	*/

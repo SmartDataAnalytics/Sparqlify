@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.core.test.MappingBundle;
 import org.aksw.sparqlify.core.test.QueryBundle;
 import org.aksw.sparqlify.core.test.TaskDump;
@@ -18,16 +19,15 @@ import org.aksw.sparqlify.core.test.TaskQuerySelect;
 import org.aksw.sparqlify.core.test.TestBundle;
 import org.aksw.sparqlify.util.NQuadUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.sparql.core.Quad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.sparql.core.Quad;
 
 
 public class TestBundlerConverter {

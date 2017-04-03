@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
-import org.aksw.commons.factory.Factory1;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 
@@ -12,7 +12,7 @@ import com.google.common.collect.Iterables;
 
 public class SqlExprSubstitutor2 {
 	
-	public static List<Collection<SqlExpr>> substitute(List<Collection<SqlExpr>> nf, Factory1<SqlExpr> postTraversalTransformer) {
+	public static List<Collection<SqlExpr>> substitute(List<Collection<SqlExpr>> nf, UnaryOperator<SqlExpr> postTraversalTransformer) {
 		List<Collection<SqlExpr>> result = new ArrayList<Collection<SqlExpr>>();
 		for(Collection<SqlExpr> clause : nf) {
 			Collection<SqlExpr> newClause = substitute(clause, postTraversalTransformer);
@@ -23,7 +23,7 @@ public class SqlExprSubstitutor2 {
 		return result;
 	}
 	
-	public static List<SqlExpr> substitute(Collection<SqlExpr> exprs, Factory1<SqlExpr> postTraversalTransformer) {
+	public static List<SqlExpr> substitute(Collection<SqlExpr> exprs, UnaryOperator<SqlExpr> postTraversalTransformer) {
 		List<SqlExpr> result = new ArrayList<SqlExpr>(exprs.size());
 		
 		for(SqlExpr expr : exprs) {
@@ -35,7 +35,7 @@ public class SqlExprSubstitutor2 {
 		return result;
 	}
 
-	public static SqlExpr substitute(SqlExpr expr, Factory1<SqlExpr> postTraversalTransformer) {
+	public static SqlExpr substitute(SqlExpr expr, UnaryOperator<SqlExpr> postTraversalTransformer) {
 
 		if(expr == null) {
 			System.out.println("Null expr");
@@ -48,7 +48,7 @@ public class SqlExprSubstitutor2 {
 		switch(expr.getType()) {
 		case Constant: {
 			//result = expr;
-			result = postTraversalTransformer.create(expr);
+			result = postTraversalTransformer.apply(expr);
 			break;
 		}
 		case Function: {
@@ -61,7 +61,7 @@ public class SqlExprSubstitutor2 {
 			List<SqlExpr> newArgs = substitute(args, postTraversalTransformer);
 			SqlExpr tmp = fn.copy(newArgs);
 			
-			result = postTraversalTransformer.create(tmp);
+			result = postTraversalTransformer.apply(tmp);
 			break;
 		}
 		case Variable: {
@@ -69,7 +69,7 @@ public class SqlExprSubstitutor2 {
 			//SqlExprVar var = expr.asVariable();
 			//String name = var.getVarName();
 			
-			result = postTraversalTransformer.create(expr);//map.get(name);
+			result = postTraversalTransformer.apply(expr);//map.get(name);
 			
 			/*
 			if(substitute != null) {

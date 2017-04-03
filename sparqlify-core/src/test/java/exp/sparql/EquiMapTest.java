@@ -3,11 +3,10 @@ package exp.sparql;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Assert;
-
+import org.aksw.jena_sparql_api.views.EquiMap;
 import org.junit.Test;
 
-import sparql.EquiMap;
+import junit.framework.Assert;
 
 
 public class EquiMapTest

@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.algebra.sql.nodes;
 
+import org.aksw.sparqlify.core.sql.schema.Schema;
 
 public class SqlOpSlice
 	extends SqlOpBase1

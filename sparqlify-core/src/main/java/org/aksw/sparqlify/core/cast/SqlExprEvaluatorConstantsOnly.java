@@ -2,9 +2,9 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.expr.util.SqlExprUtils;
+import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
 
 public abstract class SqlExprEvaluatorConstantsOnly
 	implements SqlExprEvaluator

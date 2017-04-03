@@ -1,8 +1,7 @@
 package org.aksw.sparqlify.core.cast;
 
 import org.aksw.sparqlify.core.TypeToken;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.expr.NodeValue;
 
 
 public class SqlDatatypeDefault

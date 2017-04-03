@@ -1,54 +1,40 @@
 package org.aksw.sparqlify.util;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.XmlUtils;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Arithmetic;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_Compare;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalAnd;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalNot;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_LogicalOr;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_ParseInt;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_PassThrough;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlDecode;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator_UrlEncode;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerCase;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerDefault;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerElse;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp1Prefix;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerOp2;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerPassThrough;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializerWhen;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer_Join;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Equals;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThan;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_GreaterThanOrEqual;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThan;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_LessThanOrEqual;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Multiply;
+import org.aksw.sparqlify.algebra.sql.exprs2.S_Substract;
+import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
-import org.aksw.sparqlify.core.SparqlifyConstants;
+import org.aksw.sparqlify.core.RdfTerm;
 import org.aksw.sparqlify.core.TypeToken;
-import org.aksw.sparqlify.core.algorithms.DatatypeToStringPostgres;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.cast.CoercionSystemImpl3;
-import org.aksw.sparqlify.core.cast.ExprBindingSubstitutor;
-import org.aksw.sparqlify.core.cast.ExprBindingSubstitutorImpl;
 import org.aksw.sparqlify.core.cast.MethodDeclarationParserSimple;
-import org.aksw.sparqlify.core.cast.NewWorldTest;
 import org.aksw.sparqlify.core.cast.NodeValueToObjectDefault;
 import org.aksw.sparqlify.core.cast.SqlDatatypeConstant;
 import org.aksw.sparqlify.core.cast.SqlDatatypeDefault;
-import org.aksw.sparqlify.core.cast.SqlExprFactoryUtils;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystemImpl;
 import org.aksw.sparqlify.core.cast.SqlFunctionSerializerStringTemplate;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
-import org.aksw.sparqlify.core.cast.SqlLiteralMapperDefault;
 import org.aksw.sparqlify.core.cast.SqlTypeMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.cast.SqlValueTransformerFloat;
@@ -56,57 +42,101 @@ import org.aksw.sparqlify.core.cast.SqlValueTransformerInteger;
 import org.aksw.sparqlify.core.cast.TransformUtils;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypeSystemImpl;
-import org.aksw.sparqlify.core.cast.TypedExprTransformer;
-import org.aksw.sparqlify.core.cast.TypedExprTransformerImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.SparqlFunctionImpl;
-import org.aksw.sparqlify.core.transformations.ExprTransformer;
-import org.aksw.sparqlify.core.transformations.ExprTransformerArithmetic;
-import org.aksw.sparqlify.core.transformations.ExprTransformerCast;
-import org.aksw.sparqlify.core.transformations.ExprTransformerConcat;
-import org.aksw.sparqlify.core.transformations.ExprTransformerFunction;
-import org.aksw.sparqlify.core.transformations.ExprTransformerHasRdfTermType;
-import org.aksw.sparqlify.core.transformations.ExprTransformerIsNumeric;
-import org.aksw.sparqlify.core.transformations.ExprTransformerLang;
-import org.aksw.sparqlify.core.transformations.ExprTransformerLangMatches;
-import org.aksw.sparqlify.core.transformations.ExprTransformerLogicalConjunction;
-import org.aksw.sparqlify.core.transformations.ExprTransformerOneOf;
-import org.aksw.sparqlify.core.transformations.ExprTransformerPassAsTypedLiteral;
-import org.aksw.sparqlify.core.transformations.ExprTransformerRdfTermComparator;
-import org.aksw.sparqlify.core.transformations.ExprTransformerRdfTermCtor;
-import org.aksw.sparqlify.core.transformations.ExprTransformerSparqlFunctionModel;
-import org.aksw.sparqlify.core.transformations.ExprTransformerStr;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminatorImpl;
-import org.aksw.sparqlify.core.transformations.RdfTermEliminatorWriteable;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
+import org.aksw.sparqlify.core.jena.functions.BNode;
+import org.aksw.sparqlify.core.jena.functions.PlainLiteral;
+import org.aksw.sparqlify.core.jena.functions.RightPad;
+import org.aksw.sparqlify.core.jena.functions.TypedLiteral;
+import org.aksw.sparqlify.core.jena.functions.Uri;
+import org.aksw.sparqlify.core.jena.functions.UrlDecode;
+import org.aksw.sparqlify.core.jena.functions.UrlEncode;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformer;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerArithmetic;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerCast;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerConcat;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerFunction;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerHasRdfTermType;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerIsNumeric;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerLang;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerLangMatches;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerLogicalConjunction;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerOneOf;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerPassAsTypedLiteral;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerRdfTermComparator;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerRdfTermCtor;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerSparqlFunctionModel;
+import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerStr;
+import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminatorImpl;
+import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminatorWriteable;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_Arithmetic;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_Compare;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_LogicalAnd;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_LogicalNot;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_LogicalOr;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseInt;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_PassThrough;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_UrlDecode;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_UrlEncode;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerCase;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerDefault;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerElse;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerOp1;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerOp1Prefix;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerOp2;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerPassThrough;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializerWhen;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer_Join;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.MethodDeclaration;
 import org.aksw.sparqlify.type_system.MethodSignature;
 import org.aksw.sparqlify.type_system.TypeModel;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sparql.expr.aggregate.AggCount;
+import org.apache.jena.sparql.expr.aggregate.AggGroupConcat;
+import org.apache.jena.sparql.expr.aggregate.AggSum;
+import org.apache.jena.sparql.function.FunctionRegistry;
+import org.apache.jena.vocabulary.XSD;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggCount;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggGroupConcat;
-import com.hp.hpl.jena.sparql.expr.aggregate.AggSum;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class SparqlifyCoreInit {
-    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem) {
+    public static void initSparqlifyFunctions() {
+        FunctionRegistry.get().put(SparqlifyConstants.rdfTermLabel, RdfTerm.class);
 
-        DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
+        FunctionRegistry.get().put(SparqlifyConstants.blankNodeLabel, BNode.class);
+        FunctionRegistry.get().put(SparqlifyConstants.uriLabel, Uri.class);
+        FunctionRegistry.get().put(SparqlifyConstants.plainLiteralLabel, PlainLiteral.class);
+        FunctionRegistry.get().put(SparqlifyConstants.typedLiteralLabel, TypedLiteral.class);
 
-        SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
-                typeSerializer);
+        FunctionRegistry.get().put("http://aksw.org/sparqlify/urlDecode", UrlDecode.class);
+
+        // Jena does not yet seem to have this strangely named encode_for_uri function
+        FunctionRegistry.get().put("http://aksw.org/sparqlify/urlEncode", UrlEncode.class);
+
+        FunctionRegistry.get().put(SparqlifyConstants.rightPadLabel, RightPad.class);
+    }
+    
+    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, DatatypeToString typeSerializer, SqlEscaper sqlEscaper) {
+
+        //DatatypeToString typeSerializer = new DatatypeToStringCast();//new DatatypeToStringPostgres();
+        //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+
+        SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperPostgres(
+                typeSerializer, sqlEscaper);
         SqlExprSerializerSystem result = new SqlExprSerializerSystemImpl(
-                typeSerializer, sqlLiteralMapper);
+                typeSerializer, sqlEscaper, sqlLiteralMapper);
 
         FunctionModel<TypeToken> sqlModel = typeSystem.getSqlFunctionModel();
 
@@ -224,6 +254,11 @@ public class SparqlifyCoreInit {
         {
             SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
             result.addSerializer("str@int", serializer);
+        }
+
+        {
+            SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
+            result.addSerializer("str@date", serializer);
         }
 
 
@@ -480,7 +515,8 @@ public class SparqlifyCoreInit {
         sqlModel.registerFunction(name + "@float", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Float, TypeToken.Float));
         sqlModel.registerFunction(name + "@double", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Double, TypeToken.Double));
         sqlModel.registerFunction(name + "@string", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
-        sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.Date));
+        sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.DateTime, TypeToken.DateTime));
+        sqlModel.registerFunction(name + "@date", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.Date));
     }
 
     public static TypeSystem createDefaultDatatypeSystem() {
@@ -520,6 +556,7 @@ public class SparqlifyCoreInit {
                 physicalTypeMap.put("INTEGER", "int");
                 physicalTypeMap.put("FLOAT", "float");
                 physicalTypeMap.put("DOUBLE", "double");
+                physicalTypeMap.put("DATE", "date");
 
                 //typeHierarchy.putAll(physicalTypeMap);
 
@@ -581,6 +618,7 @@ public class SparqlifyCoreInit {
             stm.register(XSD.decimal.getURI(),  new SqlDatatypeDefault(TypeToken.Int, new NodeValueToObjectDefault()));
 
 
+            stm.register(XSD.date.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
             stm.register(XSD.dateTime.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
 
 
@@ -627,24 +665,24 @@ public class SparqlifyCoreInit {
 
             // FunctionRegistry functionRegistry = new FunctionRegistry();
 
-            ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
+//            ExprBindingSubstitutor exprBindingSubstitutor = new ExprBindingSubstitutorImpl();
 
             // Eliminates rdf terms from Expr (this is datatype independent)
-            ExprEvaluator exprEvaluator = SqlTranslationUtils
-                    .createDefaultEvaluator();
+//            ExprEvaluator exprEvaluator = SqlTranslationUtils
+//                    .createDefaultEvaluator();
 
             // Computes types for Expr, thereby yielding SqlExpr
-            TypedExprTransformer typedExprTransformer = new TypedExprTransformerImpl(
-                    typeSystem);
+//            TypedExprTransformer typedExprTransformer = new TypedExprTransformerImpl(
+//                    typeSystem);
 
             // Obtain DBMS specific string representation for SqlExpr
 
-            DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
+//            DatatypeToStringPostgres typeSerializer = new DatatypeToStringPostgres();
 
-            SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
-                    typeSerializer);
-            SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
-                    typeSerializer, sqlLiteralMapper);
+//            SqlLiteralMapper sqlLiteralMapper = new SqlLiteralMapperDefault(
+//                    typeSerializer);
+//            SqlExprSerializerSystem serializerSystem = new SqlExprSerializerSystemImpl(
+//                    typeSerializer, sqlEscaper, sqlLiteralMapper);
 
             // ExprEvaluator exprEvaluator = new
             // ExprEvaluatorPartial(functionRegistry, typedExprTransformer)
@@ -689,6 +727,7 @@ public class SparqlifyCoreInit {
             sqlModel.registerFunction("str@double", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Double));
             sqlModel.registerFunction("str@float", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Float));
             sqlModel.registerFunction("str@int", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Int));
+            sqlModel.registerFunction("str@date", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Date));
 
             sqlModel.registerFunction("double@str", "double", MethodSignature.create(false, TypeToken.Double, TypeToken.String));
 
@@ -711,35 +750,41 @@ public class SparqlifyCoreInit {
             sparqlSqlDecls.put("str", "str@float");
             sparqlSqlDecls.put("str", "str@int");
             sparqlSqlDecls.put(XSD.xdouble.getURI(), "double@str");
+            sparqlSqlDecls.put("str", "str@date");
 
             sparqlSqlDecls.put("bound", "isNotNull@object");
 
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("lessThan"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryLessThan));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("lessThanOrEqual"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryLessThanOrEqual));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("equal"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryEqual));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("greaterThan"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryGreaterThan));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("greaterThanOrEqual"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryGreaterThanOrEqual));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("lessThan"), new SqlExprEvaluator_Compare(typeSystem, S_LessThan::new));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("lessThanOrEqual"), new SqlExprEvaluator_Compare(typeSystem, S_LessThanOrEqual::new));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("equal"), new SqlExprEvaluator_Compare(typeSystem, S_Equals::new));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("greaterThan"), new SqlExprEvaluator_Compare(typeSystem, S_GreaterThan::new));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("greaterThanOrEqual"), new SqlExprEvaluator_Compare(typeSystem, S_GreaterThanOrEqual::new));
 
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("numericPlus"), new SqlExprEvaluator_Arithmetic());
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("numericPlus"), new SqlExprEvaluator_Arithmetic());
 
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("+"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericPlus));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("-"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericMinus));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("*"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericMultiply));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("+"), new SqlExprEvaluator_Compare(typeSystem, S_Add::new));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("-"), new SqlExprEvaluator_Compare(typeSystem, S_Substract::new));
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("*"), new SqlExprEvaluator_Compare(typeSystem, S_Multiply::new));
     //		putForAll(sqlImpls, sqlModel.getIdsByName("/"), new SqlExprEvaluator_Compare(typeSystem, SqlExprFactoryUtils.factoryNumericDivide));
 
 
 
             sqlModel.registerFunction("logicalAnd@boolean", "logicalAnd", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
             sparqlSqlDecls.putAll("&&", sqlModel.getIdsByName("logicalAnd"));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("logicalAnd"), new SqlExprEvaluator_LogicalAnd());
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("logicalAnd"), new SqlExprEvaluator_LogicalAnd());
 
             sqlModel.registerFunction("logicalOr@boolean", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.Boolean));
+            sqlModel.registerFunction("logicalOr@booleanError", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean, TypeToken.TypeError));
+            sqlModel.registerFunction("logicalOr@errorBoolean", "logicalOr", MethodSignature.create(false, TypeToken.Boolean, TypeToken.TypeError, TypeToken.Boolean));
+
             sparqlSqlDecls.putAll("||", sqlModel.getIdsByName("logicalOr"));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("logicalOr"), new SqlExprEvaluator_LogicalOr());
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("logicalOr"), new SqlExprEvaluator_LogicalOr());
+
+
 
             sqlModel.registerFunction("logicalNot@boolean", "logicalNot", MethodSignature.create(false, TypeToken.Boolean, TypeToken.Boolean));
             sparqlSqlDecls.putAll("!", sqlModel.getIdsByName("logicalNot"));
-            NewWorldTest.putForAll(sqlImpls, sqlModel.getIdsByName("logicalNot"), new SqlExprEvaluator_LogicalNot());
+            MapUtils.putForAll(sqlImpls, sqlModel.getIdsByName("logicalNot"), new SqlExprEvaluator_LogicalNot());
 
 
             sqlModel.registerFunction("concat@str", "concat", MethodSignature.create(true, TypeToken.String, TypeToken.String));
@@ -748,11 +793,16 @@ public class SparqlifyCoreInit {
 
             // register a parse int function
             sqlModel.registerFunction("parseInt@str", "parseInt", MethodSignature.create(false, TypeToken.Int, TypeToken.String));
+            sqlModel.registerFunction("parseDate@str", "parseDate", MethodSignature.create(false, TypeToken.Date, TypeToken.String));
+
+
             //sparqlSqlDecls.put("concat", "concat@object");
 
             FunctionModelMeta sqlMetaModel = typeSystem.getSqlFunctionMetaModel();
 
             sqlMetaModel.getInverses().put("str@int", "parseInt@str");
+            sqlMetaModel.getInverses().put("str@date", "parseDate@str");
+
 
             sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThan"));
             sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThanOrEqual"));
@@ -766,7 +816,7 @@ public class SparqlifyCoreInit {
 
             //sqlModel.getInverses().put();
             sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());
-
+            sqlImpls.put("parseDate@str", new SqlExprEvaluator_ParseDate());
 
             //sqlMetaModel.getInverses().put(key, value)
 
@@ -1139,7 +1189,7 @@ public class SparqlifyCoreInit {
 
                 Function<String, String> fnTypeToUri = Functions.forMap(typeNameToUri);
 
-                InputStream in = NewWorldTest.class.getClassLoader().getResourceAsStream("functions.xml");
+                InputStream in = SparqlifyCoreInit.class.getClassLoader().getResourceAsStream("functions.xml");
                 SparqlifyConfig config = XmlUtils.unmarshallXml(SparqlifyConfig.class, in);
 
 
@@ -1170,10 +1220,10 @@ public class SparqlifyCoreInit {
                             serializer = SqlFunctionSerializerStringTemplate.create(patternStr, dec);
                         }
 
-                        MethodDeclaration<TypeToken> sqlDec = NewWorldTest.transform(dec, TransformUtils.toTypeToken);
+                        MethodDeclaration<TypeToken> sqlDec = transform(dec, TransformUtils.toTypeToken);
 
                         String translationName = sparqlName + "@" + sqlDec.getSignature().getReturnType();
-                        MethodDeclaration<String> sparqlDec = MethodDeclaration.create(translationName, NewWorldTest.transform(dec.getSignature(), fnTypeToUri));
+                        MethodDeclaration<String> sparqlDec = MethodDeclaration.create(translationName, transform(dec.getSignature(), fnTypeToUri));
 
 
                         sparqlModel.registerFunction(sparqlName, sparqlDec);
@@ -1203,5 +1253,31 @@ public class SparqlifyCoreInit {
 
         }
 
+    // TODO Move these transform methods to an appropriate place
+    
+    public static <I, O> MethodDeclaration<O> transform(MethodDeclaration<I> dec, Function<I, O> fn) {
+        MethodSignature<O> s = transform(dec.getSignature(), fn);
+        MethodDeclaration<O> result = MethodDeclaration.create(dec.getName(), s);
+        
+        return result;
+    }
+    
 
+    public static <I, O> MethodSignature<O> transform(MethodSignature<I> sig, Function<I, O> fn) {
+        O returnType = fn.apply(sig.getReturnType());
+        
+        List<I> items = sig.getParameterTypes();
+        List<O> paramTypes = new ArrayList<O>(items.size());
+        for(I item : items) {
+            O paramType = fn.apply(item);
+            paramTypes.add(paramType);
+        }
+        
+        I vat = sig.getVarArgType();
+        O varArgType = vat == null ? null : fn.apply(vat); 
+        
+        MethodSignature<O> result = MethodSignature.create(returnType, paramTypes, varArgType);
+        
+        return result;
+    }
 }

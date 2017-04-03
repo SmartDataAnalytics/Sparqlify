@@ -2,13 +2,12 @@ package org.aksw.sparqlify.core.datatypes;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
-import org.aksw.commons.factory.Factory1;
-import org.aksw.sparqlify.algebra.sql.exprs.SqlExpr;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
+import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
-
-import com.hp.hpl.jena.sparql.expr.NodeValue;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
+import org.apache.jena.sparql.expr.NodeValue;
 
 /**
  * A class with knowlegde about the type hierarchy.
@@ -60,7 +59,7 @@ public interface TypeSystem {
 	 * So cast(string, int).create(NodeValue.makeString('666')) may return
 	 * Cast((string, int), NodeValue('666')) rather than NodeValue.makeInteger(666)
 	 */
-	Factory1<SqlExpr> cast(TypeToken from, TypeToken to);
+	UnaryOperator<SqlExpr> cast(TypeToken from, TypeToken to);
 
 	
 	boolean isSuperClassOf(TypeToken a, TypeToken b);

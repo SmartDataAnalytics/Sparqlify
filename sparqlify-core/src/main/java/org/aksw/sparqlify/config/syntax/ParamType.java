@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.config.syntax;
 
-import com.hp.hpl.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.Var;
 
 public class ParamType {
 	private String datatypeName;

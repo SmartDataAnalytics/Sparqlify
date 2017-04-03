@@ -1,9 +1,8 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import org.aksw.sparqlify.compile.sparql.SqlExprOptimizer;
+import org.aksw.jena_sparql_api.views.SqlExprOptimizer;
 import org.aksw.sparqlify.core.interfaces.OptimizerSparqlExpr;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.Expr;
 
 // TODO I think we do not need any special optimizer anymore
 // It can be built directly into the SQL translation

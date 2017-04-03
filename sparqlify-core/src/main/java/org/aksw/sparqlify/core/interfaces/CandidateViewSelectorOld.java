@@ -3,9 +3,8 @@ package org.aksw.sparqlify.core.interfaces;
 import java.util.Collection;
 
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sparql.algebra.Op;
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.algebra.Op;
 
 
 public interface CandidateViewSelectorOld

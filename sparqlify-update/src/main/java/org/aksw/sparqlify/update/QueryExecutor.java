@@ -3,9 +3,9 @@ package org.aksw.sparqlify.update;
 import java.util.Collection;
 import java.util.Set;
 
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.core.Quad;
 
 /**
  * A query executor can be seen as a sparql endpoint with

@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 
 public class ResultSetFactory {

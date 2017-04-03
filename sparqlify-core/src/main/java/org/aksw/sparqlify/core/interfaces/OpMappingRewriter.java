@@ -1,8 +1,7 @@
 package org.aksw.sparqlify.core.interfaces;
 
 import org.aksw.sparqlify.core.domain.input.Mapping;
-
-import com.hp.hpl.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.Op;
 
 /**
  * Interface for rewriters

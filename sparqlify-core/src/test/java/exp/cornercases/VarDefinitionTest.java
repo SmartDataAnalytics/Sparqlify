@@ -3,16 +3,16 @@ package exp.cornercases;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
-import org.aksw.sparqlify.core.domain.input.VarDefinition;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
+import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.ExprVar;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
 
 
 

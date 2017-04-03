@@ -2,8 +2,8 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.Collection;
 
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlFunctionSerializer;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
+import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
 
 public interface SqlExprSerializerSystem
 	extends SqlExprSerializer

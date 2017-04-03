@@ -3,23 +3,23 @@ package org.aksw.sparqlify.core.cast;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.commons.factory.Factory1;
-import org.aksw.sparqlify.algebra.sql.exprs.evaluators.SqlExprEvaluator;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;
 import org.aksw.sparqlify.core.datatypes.XMethod;
+import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
 import org.aksw.sparqlify.type_system.DirectSuperTypeProvider;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.FunctionModelAliased;
 import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.TypeModel;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.sparql.expr.NodeValue;
 
 import com.google.common.collect.Multimap;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 
 /**
  * Purposes of the type system are storing information about the following
@@ -122,7 +122,7 @@ public interface TypeSystem
 	 * So cast(string, int).create(NodeValue.makeString('666')) may return
 	 * Cast((string, int), NodeValue('666')) rather than NodeValue.makeInteger(666)
 	 */
-	Factory1<SqlExpr> cast(TypeToken fromTypeUri, TypeToken toTypeUri);
+	UnaryOperator<SqlExpr> cast(TypeToken fromTypeUri, TypeToken toTypeUri);
 
 	@Deprecated
 	boolean isSuperClassOf(TypeToken a, TypeToken b);

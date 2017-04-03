@@ -7,9 +7,9 @@ import java.util.Collection;
 import org.aksw.commons.collections.diff.HashSetDiff;
 import org.aksw.commons.util.Files;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sparql.engine.binding.Binding;
 
 public class UpdateMain {
 	public static void main(String[] args)

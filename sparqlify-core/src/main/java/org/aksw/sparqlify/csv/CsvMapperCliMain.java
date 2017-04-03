@@ -19,24 +19,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.WorkbookSettings;
-import jxl.read.biff.BiffException;
-
 import org.aksw.jena_sparql_api.core.ConstructIterator;
 import org.aksw.jena_sparql_api.core.ResultSetCloseable;
 import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
-import org.aksw.sparqlify.algebra.sparql.transform.SparqlSubstitute;
+import org.aksw.jena_sparql_api.views.RestrictedExpr;
+import org.aksw.jena_sparql_api.views.SparqlSubstitute;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
-import org.aksw.sparqlify.core.RdfViewSystemOld;
 import org.aksw.sparqlify.core.ResultSetSparqlify;
-import org.aksw.sparqlify.core.domain.input.RestrictedExpr;
 import org.aksw.sparqlify.core.sparql.IteratorResultSetSparqlifyBinding;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.SparqlifyCliHelper;
 import org.antlr.runtime.RecognitionException;
@@ -45,25 +40,28 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang.StringUtils;
-import org.apache.jena.atlas.lib.MapUtils;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.BasicPattern;
+import org.apache.jena.sparql.core.QuadPattern;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.syntax.Template;
 import org.h2.tools.Csv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.InputSupplier;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.sparql.core.BasicPattern;
-import com.hp.hpl.jena.sparql.core.QuadPattern;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.core.VarExprList;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.syntax.Template;
+
+import au.com.bytecode.opencsv.CSVReader;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.WorkbookSettings;
+import jxl.read.biff.BiffException;
 
 
 public class CsvMapperCliMain {
@@ -113,10 +111,12 @@ public class CsvMapperCliMain {
 
     public static void countVariable(Node node, Map<Var, Integer> countMap) {
         if(node == null) {
-            MapUtils.increment(countMap, null);
+            //MapUtils.increment(countMap, null);
+            countMap.merge(null, 1, Integer::sum);
         }
         else if(node.isVariable()) {
-            MapUtils.increment(countMap, (Var)node);
+            //MapUtils.increment(countMap, (Var)node);
+            countMap.merge((Var)node, 1, Integer::sum);
         }
     }
 
@@ -429,7 +429,7 @@ public class CsvMapperCliMain {
         //System.out.println("Test here");
 
         // TODO Move the method to a better place
-        RdfViewSystemOld.initSparqlifyFunctions();
+        SparqlifyCoreInit.initSparqlifyFunctions();
 
         //ResultSetMetaData meta = rs.getMetaData();
 

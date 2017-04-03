@@ -5,13 +5,17 @@ import java.io.ByteArrayInputStream;
 import javax.sql.DataSource;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.rdf.model.Model;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.jolbox.bonecp.BoneCPDataSource;
 
 public class ConnectionCloseTest {
@@ -36,7 +40,9 @@ public class ConnectionCloseTest {
 		
 		Config config = SparqlifyUtils.readConfig(in);
 		//DataSource ds = SparqlifyUtils.createDefaultDatabase("test", bundle.getSql().getInputStream());
-		final QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, null, null);
+        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+		DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+		final QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, typeSerializer, sqlEscaper, null, null);
 
 		final Runnable test = new Runnable() {
 			

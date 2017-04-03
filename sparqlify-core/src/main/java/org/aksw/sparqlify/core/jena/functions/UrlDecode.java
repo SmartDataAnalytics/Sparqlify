@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.jena.functions;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.function.FunctionBase1;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.function.FunctionBase1;
 
 /**
  * The opposite of the Sparql standards' "encode_for_uri" (right now its my UrlEncode):

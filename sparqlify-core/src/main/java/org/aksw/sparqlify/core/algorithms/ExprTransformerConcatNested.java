@@ -3,12 +3,11 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
-import org.aksw.sparqlify.trash.ExprCopy;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
 
 /**
  * Expand all arguments of any concat expression into this expression.

@@ -2,12 +2,13 @@ package org.aksw.sparqlify.core;
 
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.apache.jena.graph.Node;
+import org.apache.jena.sparql.expr.E_Function;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.NodeValue;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.sparql.expr.E_Function;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
 import com.karneim.util.collection.regex.PatternPro;
 
 public class RdfTermPatternDerivation {

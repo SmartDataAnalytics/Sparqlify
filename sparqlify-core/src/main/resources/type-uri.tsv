@@ -22,7 +22,7 @@ double	http://www.w3.org/2001/XMLSchema#double
 boolean	http://www.w3.org/2001/XMLSchema#boolean
 date	http://www.w3.org/2001/XMLSchema#date
 dateTime	http://www.w3.org/2001/XMLSchema#dateTime
-timestamp	http://www.w3.org/2001/XMLSchema#dataTime
+timestamp	http://www.w3.org/2001/XMLSchema#dateTime
 string	http://www.w3.org/2001/XMLSchema#string
 
 geometry http://www.opengis.net/ont/geosparql#wktLiteral

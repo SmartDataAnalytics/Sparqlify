@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.6.19-SNAPSHOT</version>
+        <version>0.8.0</version>
     </parent>
 
     <!-- <build> -->
@@ -20,6 +20,11 @@
 
     <build>
         <plugins>
+        	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+        	</plugin>
+
             <plugin>
                 <!-- Any eclipse problem with the plugin should disappear with m2e 1.1 -->
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -52,7 +57,7 @@
 
         <dependency>
             <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-server</artifactId>
+            <artifactId>jena-sparql-api-server-standalone</artifactId>
         </dependency>
 
         <dependency>

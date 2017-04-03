@@ -1,14 +1,13 @@
 package exp.cornercases;
 
 
-import org.aksw.sparqlify.core.SparqlifyConstants;
-import org.aksw.sparqlify.core.algorithms.ExprEvaluator;
-import org.aksw.sparqlify.core.transformations.SqlTranslationUtils;
+import org.aksw.jena_sparql_api.views.ExprEvaluator;
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.function.FunctionRegistry;
+import org.apache.jena.sparql.util.ExprUtils;
 import org.junit.Test;
-
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.function.FunctionRegistry;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
 
 
 

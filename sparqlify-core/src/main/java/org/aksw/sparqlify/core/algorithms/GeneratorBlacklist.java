@@ -2,8 +2,8 @@ package org.aksw.sparqlify.core.algorithms;
 
 import java.util.Collection;
 
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
 
 public class GeneratorBlacklist
 	implements Generator 

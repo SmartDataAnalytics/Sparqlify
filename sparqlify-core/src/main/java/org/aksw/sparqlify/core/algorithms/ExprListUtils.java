@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.algorithms;
 
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.apache.jena.sparql.expr.ExprList;
 
 public class ExprListUtils {
 	enum Type {

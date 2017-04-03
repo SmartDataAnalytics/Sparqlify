@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core;
 
-import com.hp.hpl.jena.graph.Node;
+import org.apache.jena.graph.Node;
 
 /**
  * This class describes what a certain datatype corresponds to in xsd, java and sql.

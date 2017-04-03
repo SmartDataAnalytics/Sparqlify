@@ -1,16 +1,16 @@
 package org.aksw.sparqlify.core;
 
-import org.aksw.sparqlify.config.lang.PrefixSet;
+import org.aksw.jena_sparql_api.views.PrefixSet;
 
 public class RdfTermPrefix
-	extends RdfTerm<PrefixSet>
+    extends RdfTerm<PrefixSet>
 {
-	public RdfTermPrefix() {
-		super();
-	}
-	
-	public RdfTermPrefix(PrefixSet type, PrefixSet value, PrefixSet language,
-			PrefixSet datatype) {
-		super(type, value, language, datatype);
-	}
+    public RdfTermPrefix() {
+        super();
+    }
+
+    public RdfTermPrefix(PrefixSet type, PrefixSet value, PrefixSet language,
+            PrefixSet datatype) {
+        super(type, value, language, datatype);
+    }
 }

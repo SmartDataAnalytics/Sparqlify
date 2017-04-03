@@ -3,28 +3,31 @@ package org.aksw.sparqlify.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
-import org.aksw.sparqlify.algebra.sparql.expr.E_RdfTerm;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_Equals;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.NodeValue;
+import org.apache.jena.sparql.util.ExprUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.expr.E_Equals;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprVar;
-import com.hp.hpl.jena.sparql.expr.NodeValue;
-import com.hp.hpl.jena.sparql.util.ExprUtils;
+import junit.framework.Assert;
 
 public class ExprTests {
 
@@ -37,7 +40,11 @@ public class ExprTests {
 	public ExprTests() {
 		sqlRewriter = SparqlifyUtils.createSqlRewriter();
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
-		serializerSystem = SparqlifyUtils.createSerializerSystem(typeSystem);
+
+		DatatypeToString typeSerializer = new DatatypeToStringPostgres();
+        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+
+		serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem, typeSerializer, sqlEscaper);
 	}
 
 	public SqlExpr rewriteToString(Expr expr, Map<Var, Expr> binding, Map<String, TypeToken> typeMap) {
@@ -80,14 +87,15 @@ public class ExprTests {
 		
 		
 		Expr[] exprs = new Expr[] {
-				ExprUtils.parse("?a = '1'"),
+				ExprUtils.parse("?a = 1"),
 				ExprUtils.parse("?b = '1'"),
 		};
 		
 		// Null means skip result
 		String[] expecteds = new String[] {
-				"\"x\" = 1",
-				"\"y\" = 1",
+				"(\"x\" = 1)",
+				"false"
+				//"\"y\" = 1",
 		};
 		
 
@@ -125,7 +133,7 @@ public class ExprTests {
 			SqlExpr sqlExpr = rewriteToString(expr, binding, typeMap);
 			String actual = serializerSystem.serialize(sqlExpr);
 			
-			System.out.println("" + actual);
+			logger.debug("Got expression: " + actual + " - expected: " + expected);
 			if(expected != null) {
 				Assert.assertEquals(expected, actual);
 			}

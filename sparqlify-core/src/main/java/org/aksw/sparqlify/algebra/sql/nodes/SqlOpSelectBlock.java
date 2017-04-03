@@ -6,12 +6,12 @@ import java.util.Map;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
+import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.apache.jena.atlas.io.IndentedWriter;
-
-import com.hp.hpl.jena.sdb.core.Generator;
-import com.hp.hpl.jena.sdb.core.Gensym;
-import com.hp.hpl.jena.sdb.core.ScopeBase;
-import com.hp.hpl.jena.sdb.shared.SDBInternalError;
+import org.apache.jena.sdb.core.Generator;
+import org.apache.jena.sdb.core.Gensym;
+import org.apache.jena.sdb.core.ScopeBase;
+import org.apache.jena.sdb.shared.SDBInternalError;
 
 
 
@@ -201,7 +201,7 @@ public class SqlOpSelectBlock
 		return SqlOpSelectBlock.create(subOp, this.getAliasName());
 	}
 
-    private SqlTable vTable ;           // Naming base for renamed columns
+//    private SqlTable vTable ;           // Naming base for renamed columns
 
     // Calculate renames
     // Map all vars in the scope to names in the rename.

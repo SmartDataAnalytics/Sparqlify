@@ -3,13 +3,12 @@ package org.aksw.sparqlify.core;
 
 import java.util.List;
 
-import org.aksw.sparqlify.algebra.sparql.expr.E_StrConcatPermissive;
-import org.aksw.sparqlify.trash.ExprCopy;
-
-import com.hp.hpl.jena.sparql.expr.E_StrConcat;
-import com.hp.hpl.jena.sparql.expr.Expr;
-import com.hp.hpl.jena.sparql.expr.ExprFunction;
-import com.hp.hpl.jena.sparql.expr.ExprList;
+import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
+import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.apache.jena.sparql.expr.E_StrConcat;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprList;
 
 /**
  * We replace the original StrConcat with a custom version,

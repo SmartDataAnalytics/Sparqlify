@@ -56,23 +56,19 @@ sudo apt-get update
 ```
 
 
-#### Bleeding Edge (WARNING: Do not use this for production!!!)
+#### Bleeding Edge (Not recommended for production)
 For the latest development version (built on every commit) perform the following steps
-
-Create the file
-
-    /etc/apt/sources.list.d/cstadler.aksw.org.list
-
-and add the content
-
-    deb     http://cstadler.aksw.org/repos/apt precise main contrib non-free
 
 Import the public key with
 
-    wget -O - http://cstadler.aksw.org/repos/apt/conf/packages.precise.gpg.key | apt-key add -
+    wget -qO - http://cstadler.aksw.org/repos/apt/conf/packages.precise.gpg.key  | sudo apt-key add -
+
+Add the repository
+
+    echo 'deb http://cstadler.aksw.org/repos/apt precise main contrib non-free' | sudo tee -a /etc/apt/sources.list.d/cstadler.aksw.org.list
 
 
-Note that this also works with distros other than "precise" (ubuntu 12.04) such as ubuntu 14.04.
+Note that this also works with distros other than "precise" (ubuntu 12.04) such as ubuntu 14.04 or 16.04.
 
 
 

@@ -3,6 +3,8 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.Collections;
 import java.util.List;
 
+import org.aksw.sparqlify.core.sql.schema.Schema;
+
 /**
  * Leaf nodes in an SQL expression. May carry aliases.
  * 

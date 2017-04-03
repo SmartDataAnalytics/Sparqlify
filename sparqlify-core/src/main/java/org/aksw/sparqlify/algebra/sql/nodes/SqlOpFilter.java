@@ -3,7 +3,8 @@ package org.aksw.sparqlify.algebra.sql.nodes;
 import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.core.algorithms.SqlExprUtils;
+import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
+import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.apache.jena.atlas.io.IndentedWriter;
 
 public class SqlOpFilter
