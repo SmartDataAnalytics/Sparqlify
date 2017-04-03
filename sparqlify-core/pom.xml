@@ -179,10 +179,10 @@
             <artifactId>postgis-jdbc</artifactId>
         </dependency>
 
-<!--         <dependency> -->
-<!--             <groupId>org.apache.hive</groupId> -->
-<!--             <artifactId>hive-jdbc</artifactId> -->
-<!--         </dependency> -->
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
