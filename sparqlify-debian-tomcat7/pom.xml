@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.aksw.sparqlify</groupId>
-		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.0</version>
-	</parent>
+    <parent>
+        <groupId>org.aksw.sparqlify</groupId>
+        <artifactId>sparqlify-parent</artifactId>
+        <version>0.8.1-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>sparqlify-debian-tomcat7</artifactId>
-	<packaging>jar</packaging>
-
-
-	<name>Sparqlify - Debian Packaging - Tomcat7</name>
+    <artifactId>sparqlify-debian-tomcat7</artifactId>
+    <packaging>jar</packaging>
 
 
-	<properties>
-		<deb.packageName>sparqlify-tomcat7</deb.packageName>
+    <name>Sparqlify - Debian Packaging - Tomcat7</name>
+
+
+    <properties>
+        <deb.packageName>sparqlify-tomcat7</deb.packageName>
+        <deb.jarFile>${project.artifactId}-${project.version}-jar-with-dependencies.jar</deb.jarFile>
+
 <!-- 		<tomcat.context.name>sparqlify</tomcat.context.name> -->
-	</properties>
+    </properties>
 
-	<profiles>
-		<profile>
-			<id>tomcat</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<project.description>A web application for working with SPARQL accessible data.</project.description>
-			</properties>
-		</profile>
-		<profile>
-			<id>tomcat-lod2</id>
-			<properties>
+    <profiles>
+        <profile>
+            <id>tomcat</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <project.description>A web application for working with SPARQL accessible data.</project.description>
+            </properties>
+        </profile>
+        <profile>
+            <id>tomcat-lod2</id>
+            <properties>
 <project.description>A web application for working with SPARQL accessible data.
  .
  LOD2 is a large-scale integrating project co-funded by the European
@@ -42,28 +44,27 @@
  researchers, companies, and service providers from across 7 European
  countries and is coordinated by the AKSW research group at the
  University of Leipzig.</project.description>
-			</properties>
-		</profile>
-	</profiles>
+            </properties>
+        </profile>
+    </profiles>
 
-	<description>${project.description}</description>
+    <description>${project.description}</description>
 
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>jdeb</artifactId>
-				<groupId>org.vafer</groupId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jdeb</goal>
-						</goals>
-						<configuration>
-							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
-							<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>jdeb</artifactId>
+                <groupId>org.vafer</groupId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <configuration>
+                            <deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
+                            <changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
 
                                                         <snapshotExpand>true</snapshotExpand>
                                                         <snapshotEnv />
@@ -75,13 +76,13 @@
                                                         <key>${jdeb.key}</key>
                                                         <passphrase>${jdeb.passphrase}</passphrase>
 
-							<dataSet>
-			
-								<data>
-									<type>directory</type>
-									<src>${basedir}/src/deb/resources</src>
-								</data>
-			
+                            <dataSet>
+
+                                <data>
+                                    <type>directory</type>
+                                    <src>${basedir}/src/deb/resources</src>
+                                </data>
+
 <!-- 								<data> -->
 <!-- 									<type>file</type> -->
 <!-- 									<src>${project.build.directory}/${project.build.finalName}.war</src> -->
@@ -100,14 +101,14 @@
 <!-- 									<linkTarget>/usr/share/lib/${deb.tomcatCommon.name}/${project.build.finalName}.war</linkTarget> -->
 <!-- 								</data> -->
 
-							</dataSet>
-			
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                            </dataSet>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
 
