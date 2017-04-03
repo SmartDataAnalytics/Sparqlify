@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -15,8 +16,8 @@
 
     <properties>
         <deb.packageName>sparqlify-cli</deb.packageName>
-        <deb.jarFile>${project.artifactId}-${project.version}.jar</deb.jarFile>
-<!-- 		<deb.jarFile>${project.artifactId}-${project.version}-jar-with-dependencies.jar</deb.jarFile> -->
+        <!-- <deb.jarFile>${project.artifactId}-${project.version}.jar</deb.jarFile> -->
+        <deb.jarFile>${project.artifactId}-${project.version}-jar-with-dependencies.jar</deb.jarFile>
     </properties>
 
     <profiles>
@@ -26,89 +27,64 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <project.description>A middleware featuring SPARQL to SQL rewriting over relational databases.</project.description>
+                <project.description>A middleware featuring SPARQL to SQL rewriting
+                    over relational databases.</project.description>
             </properties>
         </profile>
         <profile>
             <id>lod2</id>
             <properties>
-<project.description>A middleware featuring SPARQL to SQL rewriting over relational databases.
- .
- LOD2 is a large-scale integrating project co-funded by the European
- Commission within the FP7 Information and Communication Technologies
- Work Programme (Grant Agreement No. 257943). Commencing in September
- 2010, this 4-year project comprises leading Linked Open Data technology
- researchers, companies, and service providers from across 7 European
- countries and is coordinated by the AKSW research group at the
- University of Leipzig.</project.description>
+                <project.description>A middleware featuring SPARQL to SQL rewriting
+                    over relational databases.
+                    .
+                    LOD2 is a large-scale integrating project co-funded by the European
+                    Commission within the FP7 Information and Communication
+                    Technologies
+                    Work Programme (Grant Agreement No. 257943). Commencing in September
+                    2010, this 4-year project comprises leading Linked Open Data
+                    technology
+                    researchers, companies, and service providers from across 7 European
+                    countries and is coordinated by the AKSW research group at the
+                    University of Leipzig.</project.description>
             </properties>
         </profile>
     </profiles>
 
-<!-- 	<description>${project.description}</description> -->
+    <!-- <description>${project.description}</description> -->
 
     <build>
         <plugins>
 
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-assembly-plugin</artifactId> -->
-<!-- 				<version>2.4</version> -->
-<!-- 				<configuration> -->
-<!-- 					<descriptorRefs> -->
-<!-- 						<descriptorRef>jar-with-dependencies</descriptorRef> -->
-<!-- 					</descriptorRefs> -->
-<!-- 				</configuration> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>make-assembly</id> -->
-<!-- 						<phase>package</phase> append to the packaging phase. -->
-<!-- 						<goals> -->
-<!-- 							<goal>single</goal> goals == mojos -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
-
-       <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>2.4.2</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                    <configuration>
-                        <createDependencyReducedPom>false</createDependencyReducedPom>
-<!--                        <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation> -->
-                        <transformers>
-                        <!--  use transformer to handle merge of META-INF/services - see http://java.net/jira/browse/JERSEY-440?focusedCommentId=14822&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_14822 -->
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                        </transformers>
-                        <filters>
-                            <!--  filter to address "Invalid signature file" issue - see http://stackoverflow.com/a/6743609/589215-->
-                            <filter>
-                                <artifact>*:*</artifact>
-                                <excludes>
-                                    <exclude>META-INF/*.SF</exclude>
-                                    <exclude>META-INF/*.DSA</exclude>
-                                    <exclude>META-INF/*.RSA</exclude>
-                                </excludes>
-                            </filter>
-                        </filters>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+            <!-- <plugin> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-assembly-plugin</artifactId> -->
+            <!-- <version>2.4</version> -->
+            <!-- <configuration> -->
+            <!-- <descriptorRefs> -->
+            <!-- <descriptorRef>jar-with-dependencies</descriptorRef> -->
+            <!-- </descriptorRefs> -->
+            <!-- </configuration> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <id>make-assembly</id> -->
+            <!-- <phase>package</phase> append to the packaging phase. -->
+            <!-- <goals> -->
+            <!-- <goal>single</goal> goals == mojos -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
 
 
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+
+            <plugin>
                 <artifactId>jdeb</artifactId>
                 <groupId>org.vafer</groupId>
-                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
