@@ -9,22 +9,23 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 
 public class TaskQuerySelect
-	implements Callable<ResultSet>
+    implements Callable<ResultSet>
 {
-	private QueryExecutionFactory qef;
-	private Query query;
+    private QueryExecutionFactory qef;
+    private Query query;
 
-	public TaskQuerySelect(QueryExecutionFactory qef, Query query)
-	{
-		this.qef = qef;
-		this.query = query;
-	}
+    public TaskQuerySelect(QueryExecutionFactory qef, Query query)
+    {
+        this.qef = qef;
+        this.query = query;
+    }
 
-	@Override
-	public ResultSet call() throws Exception {
-		QueryExecution qe = qef.createQueryExecution(query);
-		ResultSet result = qe.execSelect();
-		
-		return result;
-	}
+    @Override
+    public ResultSet call() throws Exception {
+        QueryExecution qe = qef.createQueryExecution(query);
+        ResultSet result = qe.execSelect();
+        qe.close();
+
+        return result;
+    }
 }

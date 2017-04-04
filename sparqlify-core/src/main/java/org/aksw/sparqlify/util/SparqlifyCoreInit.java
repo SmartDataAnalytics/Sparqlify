@@ -23,7 +23,7 @@ import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
-import org.aksw.sparqlify.core.RdfTerm;
+import org.aksw.jena_sparql_api.views.RdfTerm;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.cast.CoercionSystemImpl3;
@@ -127,7 +127,7 @@ public class SparqlifyCoreInit {
 
         FunctionRegistry.get().put(SparqlifyConstants.rightPadLabel, RightPad.class);
     }
-    
+
     public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, DatatypeToString typeSerializer, SqlEscaper sqlEscaper) {
 
         //DatatypeToString typeSerializer = new DatatypeToStringCast();//new DatatypeToStringPostgres();
@@ -1254,30 +1254,30 @@ public class SparqlifyCoreInit {
         }
 
     // TODO Move these transform methods to an appropriate place
-    
+
     public static <I, O> MethodDeclaration<O> transform(MethodDeclaration<I> dec, Function<I, O> fn) {
         MethodSignature<O> s = transform(dec.getSignature(), fn);
         MethodDeclaration<O> result = MethodDeclaration.create(dec.getName(), s);
-        
+
         return result;
     }
-    
+
 
     public static <I, O> MethodSignature<O> transform(MethodSignature<I> sig, Function<I, O> fn) {
         O returnType = fn.apply(sig.getReturnType());
-        
+
         List<I> items = sig.getParameterTypes();
         List<O> paramTypes = new ArrayList<O>(items.size());
         for(I item : items) {
             O paramType = fn.apply(item);
             paramTypes.add(paramType);
         }
-        
+
         I vat = sig.getVarArgType();
-        O varArgType = vat == null ? null : fn.apply(vat); 
-        
+        O varArgType = vat == null ? null : fn.apply(vat);
+
         MethodSignature<O> result = MethodSignature.create(returnType, paramTypes, varArgType);
-        
+
         return result;
     }
 }
