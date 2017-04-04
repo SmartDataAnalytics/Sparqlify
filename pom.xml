@@ -80,7 +80,7 @@
 
         <aksw.commons.version>0.8.1</aksw.commons.version>
 
-        <jena-sparql-api.version>3.1.1-2-SNAPSHOT</jena-sparql-api.version>
+        <jena-sparql-api.version>3.2.0-1-SNAPSHOT</jena-sparql-api.version>
 
         <platform.linkedData.contextPath>/</platform.linkedData.contextPath>
     </properties>
@@ -226,7 +226,10 @@
                     <!-- <forkCount>1C</forkCount> -->
                     <!-- <reuseForks>true</reuseForks> -->
                     <useSystemClassLoader>false</useSystemClassLoader>
-                    <forkMode>pertest</forkMode>
+<!--
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+-->
                     <argLine>-Xms256m -Xmx512m</argLine>
                     <testFailureIgnore>false</testFailureIgnore>
                     <skipTests>false</skipTests>
