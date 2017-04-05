@@ -1,0 +1,4 @@
+release date=15:43 01.03.2014,version=0.6.9,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=ldstack-nightly
+ * Several general bug fixes
+release date=12:25 09.07.2012,version=0.2,urgency=low,by=Claus Stadler <cstadler@informatik.uni-leipzig.de>,distribution=ldstack-nightly
+ * Initial version

@@ -1,0 +1,36 @@
+<Context path="/sparqlify"
+   docBase="/usr/share/lib/sparqlify-tomcat-common/sparqlify-tomcat-common.war"
+   crossContext="false"
+   reloadable="false">
+
+   <Resource
+      name="jdbc/sparqlifyDs"
+      auth="Container"
+      type="javax.sql.DataSource"
+      driverClassName="org.postgresql.Driver"
+      url="jdbc:postgresql://localhost:5432/sparqlifytomcatcommon"
+      username="postgres"
+      password="postgres"
+      maxActive="-1"
+      minIdle="0"
+      maxIdle="10"
+      maxWait="10000"
+      minEvictableIdleTimeMillis="300000"
+      timeBetweenEvictionRunsMillis="300000"
+      numTestsPerEvictionRun="20"
+      poolPreparedStatements="true"
+      maxOpenPreparedStatements="100"
+      testOnBorrow="true"
+      accessToUnderlyingConnectionAllowed="true"
+      validationQuery="SELECT VERSION();"
+   />
+
+    <Parameter
+        name="contextConfigLocation"
+        value="workaround-for-JERSEY-2038"
+        override="false"
+    />
+
+
+</Context>
+
