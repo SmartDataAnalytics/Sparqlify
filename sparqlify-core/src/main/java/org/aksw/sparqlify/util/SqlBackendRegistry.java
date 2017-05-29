@@ -27,7 +27,7 @@ public class SqlBackendRegistry
     
     
     public static final String HIVE = "Apache Hive";
-    public static final String POSTGRES = "Postgresql";
+    public static final String POSTGRES = "PostgreSQL";
     
     public static void init(Map<String, SqlBackendConfig> map) {
         map.put(HIVE, new SqlBackendConfig(new DatatypeToStringCast(), new SqlEscaperBacktick()));
