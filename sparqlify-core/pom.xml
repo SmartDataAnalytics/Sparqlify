@@ -217,9 +217,15 @@
             <artifactId>h2</artifactId>
         </dependency>
 
+<!--
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.aksw.jena-sparql-api</groupId>
+            <artifactId>jena-sparql-api-jgrapht</artifactId>
         </dependency>
 
         <dependency>
