@@ -36,15 +36,15 @@ import com.jolbox.bonecp.BoneCPDataSource;
 public class SparqlifyCliHelper {
 
     public static final ApplicationContext appContext = new AnnotationConfigApplicationContext();
-    
+
     public static void addDatabaseOptions(Options cliOptions) {
         cliOptions.addOption("t", "type", true,
                 "Database type (posgres, mysql,...)");
         cliOptions.addOption("d", "database", true, "Database name");
-        cliOptions.addOption("p", "port", true, "");
-        cliOptions.addOption("U", "username", true, "");
-        cliOptions.addOption("W", "password", true, "");
-        cliOptions.addOption("h", "hostname", true, "");
+        cliOptions.addOption("p", "port", true, "Database port");
+        cliOptions.addOption("U", "username", true, "Database username");
+        cliOptions.addOption("W", "password", true, "Database password");
+        cliOptions.addOption("h", "hostname", true, "Database hostname");
         cliOptions.addOption("c", "class", true, "JDBC driver class");
         cliOptions.addOption("j", "jdbcurl", true, "JDBC URL");
     }
@@ -177,7 +177,7 @@ public class SparqlifyCliHelper {
                     resource = fallback;
                 }
             }
-            
+
             //File file = new File(fileName);
             if (mustExist && !resource.exists()) {
                 logger.error("Resource does not exist: " + location);
