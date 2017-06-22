@@ -29,6 +29,7 @@ date    date
 timestamp	timestamp
 geography	geography
 geometry	geometry
+String	string
 
 
 #declare sql int sql_plus(int, int) with "${1} + ${2}"
