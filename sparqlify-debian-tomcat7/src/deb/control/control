@@ -3,7 +3,7 @@ Version: [[version]]
 Section: web
 Priority: optional
 Architecture: all
-Depends: sparqlify-tomcat-common, xsltproc, tomcat7
+Depends: tomcat7, aksw-deb-util-tomcat7, sparqlify-tomcat-common, xsltproc
 Maintainer: Claus Stadler <cstadler@informatik.uni-leipzig.de>
-Description: Sparqlify Tomcat Common
+Description: Sparqlify Tomcat7
 Distribution: ldstack-nightly

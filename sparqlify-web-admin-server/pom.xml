@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.2</version>
+		<version>0.8.3</version>
 	</parent>
 
 
@@ -222,10 +222,15 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 
+
+
+<!--
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 		</dependency>
+-->
+
 		<!-- TODO Maybe add the jena-sparql-api web module -->
 <!-- 		<dependency> -->
 <!-- 			<groupId>javax.servlet.jsp</groupId> -->

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.aksw.sparqlify</groupId>
     <artifactId>sparqlify-parent</artifactId>
-    <version>0.8.2</version>
+    <version>0.8.3</version>
     <packaging>pom</packaging>
     <description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -59,7 +58,7 @@
 
         <gwt.version>2.0.4</gwt.version>
 
-        <jetty.version>7.1.6.v20100715</jetty.version>
+<!--        <jetty.version>7.1.6.v20100715</jetty.version> -->
 
         <!-- project defaults -->
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -71,16 +70,16 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 
-        <jersey.version>1.8</jersey.version>
+        <!-- <jersey.version>2.26</jersey.version> -->
 
         <!-- prior: 3.1.2.RELEASE -->
-        <spring.version>4.1.4.RELEASE</spring.version>
+        <spring.version>4.3.10.RELEASE</spring.version>
         <spring.batch.version>3.0.3.RELEASE</spring.batch.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
 
         <aksw.commons.version>0.8.1</aksw.commons.version>
 
-        <jena-sparql-api.version>3.1.1-2-SNAPSHOT</jena-sparql-api.version>
+        <jena-sparql-api.version>3.5.0-2</jena-sparql-api.version>
 
         <platform.linkedData.contextPath>/</platform.linkedData.contextPath>
     </properties>
@@ -89,7 +88,7 @@
         <connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
         <!-- developerConnection></developerConnection -->
         <!-- url>https://my-project.googlecode.com/svn</url -->
-        <tag>sparqlify-parent-0.8.0</tag>
+        <tag>sparqlify-parent-0.8.3</tag>
     </scm>
 
 
@@ -320,6 +319,9 @@
                                 <goal>shade</goal>
                             </goals>
                             <configuration>
+                            	<!-- TODO Shading is currently needed for the debian packages, which is slow and causes huge deployments -->
+                            	<!-- The deb packaging should be modified to work similar to the dockerfile maven plugin: -->
+                            	<!-- Use the resource plugin to copy deps to a lib folder and adjust the bash scripts -->
                                 <shadedArtifactAttached>true</shadedArtifactAttached>
                                 <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
                                 <filters>
@@ -333,8 +335,7 @@
                                     </filter>
                                 </filters>
                                 <transformers>
-                                    <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                                     <!-- add Main-Class to manifest file -->
                                     <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> -->
                                     <!-- <mainClass>com.mkyong.core.utils.App</mainClass> -->
@@ -604,6 +605,12 @@
                 <version>${jena-sparql-api.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.aksw.jena-sparql-api</groupId>
+                <artifactId>jena-sparql-api-jgrapht</artifactId>
+                <version>${jena-sparql-api.version}</version>
+            </dependency>
+
 
 
             <!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>commons</artifactId>
@@ -755,8 +762,12 @@
             <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-jdbc</artifactId>
-                <version>2.1.1</version>
+                <version>2.3.0</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>jdk.tools</groupId>
+                        <artifactId>jdk.tools</artifactId>
+                    </exclusion>
 <!--                     <exclusion> -->
 <!--                         <groupId>com.sun</groupId> -->
 <!--                         <artifactId>tools</artifactId> -->
@@ -868,6 +879,11 @@
                     <exclusion>
                         <groupId>org.apache.hive</groupId>
                         <artifactId>hive-shims</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.orbit</groupId>
+                        <artifactId>javax.servlet</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1171,11 +1187,13 @@
                 <scope>test</scope>
             </dependency>
 
+<!--
             <dependency>
                 <groupId>org.jgrapht</groupId>
                 <artifactId>jgrapht-core</artifactId>
                 <version>0.9.0</version>
             </dependency>
+-->
 
             <!-- <dependency> -->
             <!-- <groupId>javax.servlet.jsp</groupId> -->
@@ -1185,12 +1203,13 @@
 
             <!-- TODO Remove dep once part of jena-sparql-api-server again -->
 
+<!--
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jsp</artifactId>
                 <version>8.1.17.v20150415</version>
             </dependency>
-
+-->
 
             <!-- <dependency> -->
             <!-- <groupId>org.hibernate</groupId> -->

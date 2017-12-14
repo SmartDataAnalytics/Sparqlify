@@ -1,9 +1,9 @@
-Package: sparqlify-tomcat-common
+Package: sparqlify-tomcat8
 Version: [[version]]
 Section: web
 Priority: optional
 Architecture: all
-Depends: dbconfig-common, postgresql
+Depends: sparqlify-tomcat-common, xsltproc, tomcat8
 Maintainer: Claus Stadler <cstadler@informatik.uni-leipzig.de>
 Description: Sparqlify Tomcat Common
 Distribution: ldstack-nightly

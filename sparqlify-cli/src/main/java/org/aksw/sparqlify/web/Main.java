@@ -203,9 +203,9 @@ public class Main {
         logger.info("Database product: " + dbProductName);
 
         SqlBackendRegistry backendRegistry = SqlBackendRegistry.get();
-        Map<String, SqlBackendConfig> map = backendRegistry.getMap();
+        //Map<String, SqlBackendConfig> map = backendRegistry.getMap();
 
-        SqlBackendConfig backendConfig = map.get(dbProductName);
+        SqlBackendConfig backendConfig = backendRegistry.apply(dbProductName);
         if(backendConfig == null) {
             throw new RuntimeException("Could not find backend for " + dbProductName);
         }
@@ -215,7 +215,7 @@ public class Main {
         DatatypeToString typeSerializer = backendConfig.getTypeSerializer();
 
         try {
-        	BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
+            BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
             SchemaProvider schemaProvider = new SchemaProviderImpl(basicTableInfoProvider, typeSystem, typeAlias, sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 

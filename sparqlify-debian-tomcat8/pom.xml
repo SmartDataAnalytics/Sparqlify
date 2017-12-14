@@ -5,18 +5,18 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.8.3</version>
+        <version>0.8.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sparqlify-debian-tomcat7</artifactId>
+    <artifactId>sparqlify-debian-tomcat8</artifactId>
     <packaging>jar</packaging>
 
 
-    <name>Sparqlify - Debian Packaging - Tomcat7</name>
+    <name>Sparqlify - Debian Packaging - Tomcat8</name>
 
 
     <properties>
-        <deb.packageName>sparqlify-tomcat7</deb.packageName>
+        <deb.packageName>sparqlify-tomcat8</deb.packageName>
         <deb.jarFile>${project.artifactId}-${project.version}-jar-with-dependencies.jar</deb.jarFile>
 
 <!-- 		<tomcat.context.name>sparqlify</tomcat.context.name> -->

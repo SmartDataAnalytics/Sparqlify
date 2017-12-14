@@ -128,7 +128,7 @@ echoerr "  Password: $dbPassText..."
 echoerr ""
 echoerr "Paths:"
 echoerr "  Sparqlify command: $sparqlifyCmd"
-echoerr "  View definition: $mappingFile"
+echoerr "  View definition(s): $mappingFile"
 echoerr ""
 echoerr "Query:"
 echoerr "  $queryString"
@@ -141,10 +141,11 @@ if [ -z "$queryString" ]; then
 fi
 
 # Note: ${arr[@]/#/-m } will turn an array of mapping file names m1, ... m2 into multiple command line options -m m1 ... -m m2
+
 if [ -z "$dbJdbc" ]; then
-    "$sparqlifyCmd" -h "$dbHost" -p "$dbPort" -d "$dbName" -U "$dbUser" -W "$dbPass" ${arr[@]/#/-m } -Q "$queryString"
+    "$sparqlifyCmd" -h "$dbHost" -p "$dbPort" -d "$dbName" -U "$dbUser" -W "$dbPass" ${mappingFile[@]/#/-m } -Q "$queryString"
 else
-    "$sparqlifyCmd" -j "$dbJdbc" -U "$dbUser" -W "$dbPass" ${arr[@]/#/-m } -Q "$queryString"
+    "$sparqlifyCmd" -j "$dbJdbc" -U "$dbUser" -W "$dbPass" ${mappingFile[@]/#/-m } -Q "$queryString"
 fi
 
 
