@@ -1,133 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.aksw.sparqlify</groupId>
-        <artifactId>sparqlify-parent</artifactId>
-        <version>0.8.3</version>
-    </parent>
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.8.3</version>
+	</parent>
 
-    <artifactId>sparqlify-debian-tomcat-common</artifactId>
-    <packaging>war</packaging>
-
-
-    <name>Sparqlify - Debian Packaging - Tomcat Common</name>
+	<artifactId>sparqlify-debian-tomcat-common</artifactId>
+	<packaging>war</packaging>
 
 
-    <properties>
-        <deb.packageName>sparqlify-tomcat-common</deb.packageName>
-        <tomcat.context.name>sparqlify</tomcat.context.name>
-    </properties>
-
-    <profiles>
-        <profile>
-            <id>tomcat</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <project.description>A web application for working with SPARQL
-                    accessible data.</project.description>
-            </properties>
-        </profile>
-        <profile>
-            <id>tomcat-lod2</id>
-            <properties>
-                <project.description>A web application for working with SPARQL
-                    accessible data.
-                    .
-                    LOD2 is a large-scale integrating project co-funded by the European
-                    Commission within the FP7 Information and Communication
-                    Technologies
-                    Work Programme (Grant Agreement No. 257943). Commencing in September
-                    2010, this 4-year project comprises leading Linked Open Data
-                    technology
-                    researchers, companies, and service providers from across 7 European
-                    countries and is coordinated by the AKSW research group at the
-                    University of Leipzig.</project.description>
-            </properties>
-        </profile>
-    </profiles>
-
-    <description>${project.description}</description>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>jdeb</artifactId>
-                <groupId>org.vafer</groupId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jdeb</goal>
-                        </goals>
-                        <configuration>
-                            <deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
-                            <changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
-
-                            <!-- <timestamped>true</timestamped> -->
-                            <snapshotExpand>true</snapshotExpand>
-                            <snapshotEnv />
-
-                            <signPackage>${jdeb.signPackage}</signPackage>
-                            <signMethod>dpkg-sig</signMethod>
-                            <signRole>builder</signRole>
-                            <keyring>${jdeb.keyring}</keyring>
-                            <key>${jdeb.key}</key>
-                            <passphrase>${jdeb.passphrase}</passphrase>
-
-                            <dataSet>
-
-                                <data>
-                                    <type>directory</type>
-                                    <src>${basedir}/src/deb/resources</src>
-                                </data>
-
-                                <data>
-                                    <type>file</type>
-                                    <src>${project.build.directory}/${project.build.finalName}.war</src>
-                                    <mapper>
-                                        <type>perm</type>
-                                        <prefix>/usr/share/lib/${deb.packageName}</prefix>
-                                        <!-- <user>loader</user> -->
-                                        <!-- <group>loader</group> -->
-                                    </mapper>
-                                </data>
-
-                                <data>
-                                    <type>link</type>
-                                    <symlink>true</symlink>
-                                    <linkName>/usr/share/lib/${deb.packageName}/${deb.packageName}.war</linkName>
-                                    <linkTarget>/usr/share/lib/${deb.packageName}/${project.build.finalName}.war</linkTarget>
-                                </data>
-
-                            </dataSet>
-
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+	<name>Sparqlify - Debian Packaging - Tomcat Common</name>
 
 
-    <dependencies>
-        <dependency>
-            <groupId>org.aksw.sparqlify</groupId>
-            <artifactId>sparqlify-web-admin-server</artifactId>
-            <type>war</type>
-        </dependency>
-    </dependencies>
+	<properties>
+		<deb.packageName>sparqlify-tomcat-common</deb.packageName>
+		<tomcat.context.name>sparqlify</tomcat.context.name>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>tomcat</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<project.description>A web application for working with SPARQL
+					accessible data.</project.description>
+			</properties>
+		</profile>
+		<profile>
+			<id>tomcat-lod2</id>
+			<properties>
+				<project.description>A web application for working with SPARQL
+					accessible data.
+					.
+					LOD2 is a large-scale integrating project co-funded by the European
+					Commission within the FP7 Information and Communication
+					Technologies
+					Work Programme (Grant Agreement No. 257943). Commencing in September
+					2010, this 4-year project comprises leading Linked Open Data
+					technology
+					researchers, companies, and service providers from across 7 European
+					countries and is coordinated by the AKSW research group at the
+					University of Leipzig.</project.description>
+			</properties>
+		</profile>
+	</profiles>
+
+	<description>${project.description}</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>jdeb</artifactId>
+				<groupId>org.vafer</groupId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jdeb</goal>
+						</goals>
+						<configuration>
+							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
+							<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
+
+							<!-- <timestamped>true</timestamped> -->
+							<snapshotExpand>true</snapshotExpand>
+							<snapshotEnv />
+
+							<signPackage>${jdeb.signPackage}</signPackage>
+							<signMethod>dpkg-sig</signMethod>
+							<signRole>builder</signRole>
+							<keyring>${jdeb.keyring}</keyring>
+							<key>${jdeb.key}</key>
+							<passphrase>${jdeb.passphrase}</passphrase>
+
+							<dataSet>
+
+								<data>
+									<type>directory</type>
+									<src>${basedir}/src/deb/resources</src>
+								</data>
+
+								<data>
+									<type>file</type>
+									<src>${project.build.directory}/${project.build.finalName}.war</src>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/lib/${deb.packageName}</prefix>
+										<!-- <user>loader</user> -->
+										<!-- <group>loader</group> -->
+									</mapper>
+								</data>
+
+								<data>
+									<type>link</type>
+									<symlink>true</symlink>
+									<linkName>/usr/share/lib/${deb.packageName}/${deb.packageName}.war</linkName>
+									<linkTarget>/usr/share/lib/${deb.packageName}/${project.build.finalName}.war</linkTarget>
+								</data>
+
+							</dataSet>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-web-admin-server</artifactId>
+			<type>war</type>
+		</dependency>
+	</dependencies>
 </project>
 
