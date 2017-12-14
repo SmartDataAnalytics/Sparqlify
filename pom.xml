@@ -12,6 +12,21 @@
 	<name>Sparqlify SPARQL-&gt;SQL rewriter - Parent</name>
 	<url>http://aksw.org/Projects/Sparqlify</url>
 
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>https://github.com/SmartDataAnalytics/Sparqlify</url>
+		<connection>scm:git:git://github.com/SmartDataAnalytics/Sparqlify.git</connection>
+		<developerConnection>scm:git:git@github.com:SmartDataAnalytics/Sparqlify.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
 	<developers>
 		<developer>
 			<name>Claus Stadler</name>
@@ -80,7 +95,7 @@
 		<spring.batch.version>3.0.3.RELEASE</spring.batch.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 
-		<aksw.commons.version>0.8.1</aksw.commons.version>
+		<aksw.commons.version>0.8.7</aksw.commons.version>
 
 		<jena-sparql-api.version>3.5.0-2</jena-sparql-api.version>
 
