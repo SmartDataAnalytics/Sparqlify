@@ -320,6 +320,9 @@
                                 <goal>shade</goal>
                             </goals>
                             <configuration>
+                            	<!-- TODO Shading is currently needed for the debian packages, which is slow and causes huge deployments -->
+                            	<!-- The deb packaging should be modified to work similar to the dockerfile maven plugin: -->
+                            	<!-- Use the resource plugin to copy deps to a lib folder and adjust the bash scripts -->
                                 <shadedArtifactAttached>true</shadedArtifactAttached>
                                 <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
                                 <filters>
