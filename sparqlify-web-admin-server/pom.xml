@@ -222,10 +222,15 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 
+
+
+<!--
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 		</dependency>
+-->
+
 		<!-- TODO Maybe add the jena-sparql-api web module -->
 <!-- 		<dependency> -->
 <!-- 			<groupId>javax.servlet.jsp</groupId> -->

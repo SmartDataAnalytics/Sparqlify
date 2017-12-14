@@ -59,7 +59,7 @@
 
         <gwt.version>2.0.4</gwt.version>
 
-        <jetty.version>7.1.6.v20100715</jetty.version>
+<!--        <jetty.version>7.1.6.v20100715</jetty.version> -->
 
         <!-- project defaults -->
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -71,16 +71,16 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 
-        <jersey.version>1.8</jersey.version>
+        <!-- <jersey.version>2.26</jersey.version> -->
 
         <!-- prior: 3.1.2.RELEASE -->
-        <spring.version>4.1.4.RELEASE</spring.version>
+        <spring.version>4.3.10.RELEASE</spring.version>
         <spring.batch.version>3.0.3.RELEASE</spring.batch.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
 
         <aksw.commons.version>0.8.1</aksw.commons.version>
 
-        <jena-sparql-api.version>3.1.1-2-SNAPSHOT</jena-sparql-api.version>
+        <jena-sparql-api.version>3.5.0-2-SNAPSHOT</jena-sparql-api.version>
 
         <platform.linkedData.contextPath>/</platform.linkedData.contextPath>
     </properties>
@@ -879,6 +879,11 @@
                         <groupId>org.apache.hive</groupId>
                         <artifactId>hive-shims</artifactId>
                     </exclusion>
+
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.orbit</groupId>
+                        <artifactId>javax.servlet</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1197,12 +1202,13 @@
 
             <!-- TODO Remove dep once part of jena-sparql-api-server again -->
 
+<!--
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jsp</artifactId>
                 <version>8.1.17.v20150415</version>
             </dependency>
-
+-->
 
             <!-- <dependency> -->
             <!-- <groupId>org.hibernate</groupId> -->
