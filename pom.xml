@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.aksw.sparqlify</groupId>
     <artifactId>sparqlify-parent</artifactId>
-    <version>0.8.3-SNAPSHOT</version>
+    <version>0.8.3</version>
     <packaging>pom</packaging>
     <description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -89,7 +88,7 @@
         <connection>scm:git:git@github.com:AKSW/Sparqlify.git</connection>
         <!-- developerConnection></developerConnection -->
         <!-- url>https://my-project.googlecode.com/svn</url -->
-        <tag>sparqlify-parent-0.8.0</tag>
+        <tag>sparqlify-parent-0.8.3</tag>
     </scm>
 
 
@@ -336,8 +335,7 @@
                                     </filter>
                                 </filters>
                                 <transformers>
-                                    <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                                     <!-- add Main-Class to manifest file -->
                                     <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> -->
                                     <!-- <mainClass>com.mkyong.core.utils.App</mainClass> -->
