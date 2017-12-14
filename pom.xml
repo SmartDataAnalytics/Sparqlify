@@ -5,7 +5,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.8.4-SNAPSHOT</version>
+	<version>0.8.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -51,6 +51,8 @@
 		<module>sparqlify-debian-cli</module>
 		<module>sparqlify-debian-tomcat-common</module>
 		<module>sparqlify-debian-tomcat7</module>
+
+		<module>sparqlify-nexus-deploy-workaround</module>
 	</modules>
 
 
