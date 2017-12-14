@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -25,13 +26,21 @@
 	</properties>
 
 
-	<!-- <pluginRepositories> <pluginRepository> <id>typescript-maven-plugin</id>
-		<url>https://github.com/maxlapp/typescript-maven-plugin/tree/master/repo</url>
-		- <url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url>
+	<!-- <pluginRepositories> <pluginRepository> <id>typescript-maven-plugin</id> 
+		<url>https://github.com/maxlapp/typescript-maven-plugin/tree/master/repo</url> 
+		- <url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url> 
 		- </pluginRepository> </pluginRepositories> -->
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -58,9 +67,9 @@
 					<!-- </overlay> -->
 					<!-- </overlays> -->
 				</configuration>
-				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId>
-					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath>
-					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude>
+				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId> 
+					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath> 
+					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
 					</excludes> </overlay> </overlays> </configuration> -->
 			</plugin>
 
@@ -101,8 +110,8 @@
 				</configuration>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId>
-				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor>
+			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId> 
+				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor> 
 				</configuration> </plugin> -->
 
 
@@ -125,7 +134,7 @@
 
 			<!-- Create a symlink to the target folder without version numbers -->
 			<plugin>
-				<!-- This plugin's configuration must come *after* the Maven Resources
+				<!-- This plugin's configuration must come *after* the Maven Resources 
 					Plugin, and *before* the Debian Maven Plugin. -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -138,9 +147,12 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/" /> -->
-								<symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.finalName}" />
-								<!-- <symlink link="${project.build.directory}/${project.artifactId}" resource="${project.build.directory}/${project.build.finalName}" /> -->
+								<!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/" 
+									/> -->
+								<symlink link="${project.build.directory}/${project.artifactId}"
+									resource="${project.build.finalName}" />
+								<!-- <symlink link="${project.build.directory}/${project.artifactId}" 
+									resource="${project.build.directory}/${project.build.finalName}" /> -->
 								<!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
 								<!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
 							</target>
@@ -165,7 +177,7 @@
 		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>sparqlify-core</artifactId>
-			<!-- <exclusions> <exclusion> <groupId>aopalliance</groupId> <artifactId>aopalliance</artifactId>
+			<!-- <exclusions> <exclusion> <groupId>aopalliance</groupId> <artifactId>aopalliance</artifactId> 
 				</exclusion> </exclusions> -->
 		</dependency>
 
@@ -184,12 +196,8 @@
 			<artifactId>sparqlify-jpa</artifactId>
 		</dependency>
 
-<!--
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
--->
+		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>jstl</artifactId> 
+			</dependency> -->
 
 		<!-- <dependency> -->
 		<!-- <groupId>org.aksw.sparqlify</groupId> -->
@@ -224,18 +232,14 @@
 
 
 
-<!--
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jsp</artifactId>
-		</dependency>
--->
+		<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
+			</dependency> -->
 
 		<!-- TODO Maybe add the jena-sparql-api web module -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>javax.servlet.jsp</groupId> -->
-<!-- 			<artifactId>jsp-api</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>javax.servlet.jsp</groupId> -->
+		<!-- <artifactId>jsp-api</artifactId> -->
+		<!-- </dependency> -->
 	</dependencies>
 </project>
 

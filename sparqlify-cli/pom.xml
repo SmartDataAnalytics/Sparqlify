@@ -1,54 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sparqlify-cli</artifactId>
-    <packaging>jar</packaging>
+	<artifactId>sparqlify-cli</artifactId>
+	<packaging>jar</packaging>
 
-    <name>Sparqlify SPARQL-&gt;SQL rewriter - Cli</name>
-    <url>http://aksw.org/Projects/Sparqlify</url>
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Cli</name>
+	<url>http://aksw.org/Projects/Sparqlify</url>
 
-    <parent>
-        <groupId>org.aksw.sparqlify</groupId>
-        <artifactId>sparqlify-parent</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.8.4-SNAPSHOT</version>
+	</parent>
 
-    <!-- <build> -->
-    <!-- <finalName>sparqlify-core</finalName> -->
-    <!-- </build> -->
+	<!-- <build> -->
+	<!-- <finalName>sparqlify-core</finalName> -->
+	<!-- </build> -->
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-            </plugin>
+	<build>
+		<plugins>
 
-        </plugins>
-    </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.aksw.sparqlify</groupId>
-            <artifactId>sparqlify-core</artifactId>
-        </dependency>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+			</plugin>
 
-        <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-server-standalone</artifactId>
-        </dependency>
+		</plugins>
+	</build>
 
-        <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-web</artifactId>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-core</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-server-standalone</artifactId>
+		</dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+	</dependencies>
 
 </project>
