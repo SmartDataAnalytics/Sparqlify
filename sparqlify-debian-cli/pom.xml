@@ -37,15 +37,22 @@
 				<project.description>A middleware featuring SPARQL to SQL rewriting
 					over relational databases.
 					.
-					LOD2 is a large-scale integrating project co-funded by the European
-					Commission within the FP7 Information and Communication
+					LOD2 is a large-scale integrating
+					project co-funded by the European
+					Commission within the FP7
+					Information and Communication
 					Technologies
-					Work Programme (Grant Agreement No. 257943). Commencing in September
-					2010, this 4-year project comprises leading Linked Open Data
+					Work Programme (Grant
+					Agreement No. 257943). Commencing in September
+					2010, this 4-year
+					project comprises leading Linked Open Data
 					technology
-					researchers, companies, and service providers from across 7 European
-					countries and is coordinated by the AKSW research group at the
-					University of Leipzig.</project.description>
+					researchers,
+					companies, and service providers from across 7 European
+					countries
+					and is coordinated by the AKSW research group at the
+					University of
+					Leipzig.</project.description>
 			</properties>
 		</profile>
 	</profiles>
@@ -60,6 +67,14 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<configuration>
+					<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 				</configuration>
 			</plugin>
 
