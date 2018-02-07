@@ -1196,7 +1196,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>4.3.10.RELEASE</version>
+				<version>4.3.14.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1210,7 +1210,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
-				<version>4.3.10.RELEASE</version>
+				<version>4.3.14.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1223,7 +1223,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>4.3.10.RELEASE</version>
+				<version>4.3.14.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
