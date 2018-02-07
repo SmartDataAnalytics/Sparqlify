@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 
 
@@ -56,7 +56,7 @@ public class ResultSetFactory {
 		Iterator<Binding> it;
 		
 		if(sqlQuery == null) {
-			it = Iterators.emptyIterator(); 
+			it = Collections.emptyIterator(); 
 		} else {
 			ResultSet rs = stmt.executeQuery(sqlQuery);
 			// Note: We commit AFTER closing the result set
