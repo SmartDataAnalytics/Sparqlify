@@ -13,8 +13,8 @@
 	</parent>
 
 	<properties>
-		<docker.sparqlify-cli.repository>aksw:sparqlify-cli</docker.sparqlify-cli.repository>
-		<docker.sparqlify-web-admin.repository>aksw:sparqlify-web-admin</docker.sparqlify-web-admin.repository>
+		<docker.sparqlify-cli.repository>sparqlify-cli</docker.sparqlify-cli.repository>
+		<docker.sparqlify-web-admin.repository>sparqlify-web-admin</docker.sparqlify-web-admin.repository>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
