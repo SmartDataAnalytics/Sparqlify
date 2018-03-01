@@ -6,6 +6,7 @@
    <Resource
       name="jdbc/sparqlifyDs"
       auth="Container"
+      factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
       type="javax.sql.DataSource"
       driverClassName="org.postgresql.Driver"
       url="jdbc:postgresql://localhost:5432/sparqlifytomcatcommon"

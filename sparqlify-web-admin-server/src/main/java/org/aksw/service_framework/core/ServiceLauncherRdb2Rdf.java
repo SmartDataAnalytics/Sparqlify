@@ -24,6 +24,7 @@ import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.jena.query.QueryExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,8 +128,9 @@ public class ServiceLauncherRdb2Rdf
             QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds);
 
             // A Test Query
-            qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
-
+            QueryExecution qe = qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
+            qe.execAsk();
+            
             SparqlService sparqlService = new SparqlServiceImpl<Config>(smlConfig, qef);
 
             result = new ServiceProviderRdb2Rdf(serviceName, dataSource, () -> dataSource.close(), sparqlService);

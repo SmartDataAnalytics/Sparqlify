@@ -37,7 +37,6 @@ import org.aksw.sparqlify.jpa.EntityInverseMapper;
 import org.aksw.sparqlify.jpa.EntityInverseMapperImplHibernate;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -191,7 +190,26 @@ public class AppConfig
     public HibernateExceptionTranslator hibernateExceptionTranslator() {
         return new HibernateExceptionTranslator();
     }
-
+    
+//    @Bean
+//    public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
+//    	LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+//    	//sessionFactory.setJpaVendorAdapter(vendorAdapter);
+//    	sessionFactory.setHibernateProperties(getHibernateProperties());
+//    	sessionFactory.setPackagesToScan("org.aksw.service_framework.jpa.model", "org.aksw.sparqlify.admin.model");
+//    	sessionFactory.setDataSource(dataSource);
+//
+//    	return sessionFactory;
+//    }
+//
+//
+//	@Bean
+//	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+//		HibernateTransactionManager txManager = new HibernateTransactionManager();
+//		txManager.setSessionFactory(sessionFactory);
+//		return txManager;
+//	}
+    
     @Bean
     public EntityManagerFactory entityManagerFactory(DataSource dataSource) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -271,7 +289,7 @@ public class AppConfig
 
     @Bean
     public EntityInverseMapper entityInverseMapper(SessionFactory sessionFactory, SparqlSqlInverseMapper inverseMapper) {
-        EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
+    	EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
         return result;
     }
 
@@ -350,7 +368,8 @@ public class AppConfig
     @Bean
     public SessionFactory sessionFactory(JpaTransactionManager txManager) {
         EntityManagerFactory emf = txManager.getEntityManagerFactory();
-        SessionFactory result = ((HibernateEntityManagerFactory)emf).getSessionFactory();
+        //SessionFactory result = ((HibernateEntityManagerFactory)emf).getSessionFactory();
+        SessionFactory result = emf.unwrap(SessionFactory.class);
         return result;
     }
 

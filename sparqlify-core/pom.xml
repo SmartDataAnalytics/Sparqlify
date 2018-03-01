@@ -179,16 +179,17 @@
 			<artifactId>collections-generic</artifactId>
 		</dependency>
 
+<!--
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.postgis</groupId>
+			<groupId>net.postgis</groupId>
 			<artifactId>postgis-jdbc</artifactId>
 		</dependency>
-
+-->
 		<dependency>
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-jdbc</artifactId>

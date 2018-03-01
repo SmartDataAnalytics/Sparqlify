@@ -18,6 +18,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionAndType;
+import org.aksw.jena_sparql_api.stmt.SparqlStmt;
+import org.aksw.jena_sparql_api.stmt.SparqlStmtQuery;
 import org.aksw.jena_sparql_api.stmt.SparqlStmtUpdate;
 import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
 import org.aksw.service_framework.core.SparqlService;
@@ -64,6 +66,12 @@ public class SparqlEndpointDispatcher
         QueryExecutionFactory result = service.getSparqlService();
 
         return result;
+    }
+    
+    // For now always assume query strings - required to handle 'explain'
+    @Override
+    public SparqlStmt classifyStmt(String stmtStr) {
+    	return new SparqlStmtQuery(stmtStr);
     }
 
     @Override
