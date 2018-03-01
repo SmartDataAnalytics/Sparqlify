@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.TypeSystem;
@@ -84,7 +85,14 @@ public class SchemaProviderImpl
 			throw new RuntimeException(e);
 		}
 
-		Map<String, String> rawTypeMap = tableInfo.getRawTypeMap();
+		Map<String, String> tmpTypeMap = tableInfo.getRawTypeMap();
+		
+		Map<String, String> rawTypeMap = tmpTypeMap.entrySet().stream()
+				.collect(Collectors.toMap(
+						Entry::getKey,
+						e -> e.getValue().equalsIgnoreCase("serial") ? "integer" : e.getValue()));
+		
+		
 		Set<String> nullableColumns = tableInfo.getNullableColumns();
 
 		Map<String, TypeToken> typeMap = getTypes(rawTypeMap, datatypeSystem, rawTypeMap);
