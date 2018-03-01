@@ -87,6 +87,7 @@ public class SchemaProviderImpl
 
 		Map<String, String> tmpTypeMap = tableInfo.getRawTypeMap();
 		
+		// TODO Add a preprocessing step to allow configure remapping of datatypes reported by the jdbc driver
 		Map<String, String> rawTypeMap = tmpTypeMap.entrySet().stream()
 				.collect(Collectors.toMap(
 						Entry::getKey,
