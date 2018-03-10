@@ -66,9 +66,10 @@
 		<module>sparqlify-debian-cli</module>
 		<module>sparqlify-debian-tomcat-common</module>
 		<module>sparqlify-debian-tomcat7</module>
-                <module>sparqlify-debian-tomcat8</module>
+        <module>sparqlify-debian-tomcat8</module>
 
 		<module>sparqlify-nexus-deploy-workaround</module>
+		<module>sparqlify-r2rml-exporter</module>
 	</modules>
 
 

@@ -6,7 +6,7 @@ RUN echo "Foobar111"
 ARG JAR_FILE
 ARG MAIN_CLASS
 ARG ARTIFACT_ID
-ARG MAIN_IMAGE
+#ARG MAIN_IMAGE
 
 # Build args cannot be used in entrypoint
 ENV JAR_FILE=${JAR_FILE}
@@ -25,5 +25,6 @@ ADD target/lib lib
 ADD target/${JAR_FILE} ${JAR_FILE}
 
 
-ENTRYPOINT "/usr/bin/java" "-cp" ".:lib/*" "-Dloader.main=${MAIN_CLASS}" "org.springframework.boot.loader.PropertiesLauncher" "${MAIN_IMAGE}"
+#ENTRYPOINT "/usr/bin/java" "-cp" ".:lib/*" "-Dloader.main=${MAIN_CLASS}" "org.springframework.boot.loader.PropertiesLauncher" "${MAIN_IMAGE}"
 
+ENTRYPOINT "/usr/bin/java" "-cp" ".:lib/*" "${MAIN_CLASS}" "org.springframework.boot.loader.PropertiesLauncher" "${MAIN_IMAGE}"
