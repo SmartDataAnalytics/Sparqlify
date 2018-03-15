@@ -224,6 +224,19 @@ public class QueryExecutionSparqlify
         }
 
     }
+    
+    @Override
+    public long getTimeout1() {
+    	long result = timeoutHelper.getExecutionTime();
+    	return result;
+    }
+    
+    
+    @Override
+    public long getTimeout2() {
+    	long result = timeoutHelper.getRetrievalTime();
+    	return result;
+    }
 //
     /*
     protected ResultSet executeSelectImpl(Query query) throws SQLException {

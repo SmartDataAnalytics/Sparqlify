@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sparqlify-tests</artifactId>
-    <packaging>jar</packaging>
-
-
-    <name>Sparqlify SPARQL-&gt;SQL rewriter - Tests</name>
-    <url>http://aksw.org/Projects/Sparqlify</url>
+	<artifactId>sparqlify-tests</artifactId>
+	<packaging>jar</packaging>
 
 
-    <parent>
-        <groupId>org.aksw.sparqlify</groupId>
-        <artifactId>sparqlify-parent</artifactId>
-        <version>0.8.4-SNAPSHOT</version>
-    </parent>
+	<name>Sparqlify SPARQL-&gt;SQL rewriter - Tests</name>
+	<url>http://aksw.org/Projects/Sparqlify</url>
 
 
-    <dependencies>
-        <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-web</artifactId>
-        </dependency>
-    </dependencies>
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.8.4-SNAPSHOT</version>
+	</parent>
+
+
+	<dependencies>
+	
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-web</artifactId>
+		</dependency>
+
+	</dependencies>
 
 </project>
 

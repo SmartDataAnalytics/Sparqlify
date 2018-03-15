@@ -56,6 +56,8 @@
 		<module>sparqlify-platform</module>
 		<module>sparqlify-tests</module>
 
+                <module>sparqlify-benchmark</module>
+
 		<module>sparqlify-jpa</module>
 
 		<module>sparqlify-update</module>
@@ -1134,6 +1136,13 @@
 				<type>war</type>
 				<version>1.0-1</version>
 			</dependency>
+
+                        <dependency>
+                                <groupId>org.aksw.bsbm</groupId>
+                                <artifactId>bsbm-jsa</artifactId>
+                                <version>3.1.2-SNAPSHOT</version>
+                        </dependency>
+
 
 
 			<!-- Gson: Java to Json conversion -->
