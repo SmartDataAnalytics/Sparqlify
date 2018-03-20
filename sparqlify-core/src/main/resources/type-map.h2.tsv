@@ -19,6 +19,7 @@ BIGINT	integer
 integer	integer
 varchar	string
 VARCHAR string
+CHAR	string
 text	string
 bpchar	string
 float4	float
@@ -26,7 +27,9 @@ float8	double
 float	float
 #date	dateTime
 date    date
-timestamp	timestamp
+DATE	date
+TIMESTAMP	timeStamp
+timestamp	timeStamp
 geography	geography
 geometry	geometry
 String	string

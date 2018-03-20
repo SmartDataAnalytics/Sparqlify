@@ -9,6 +9,7 @@ import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.XmlUtils;
+import org.aksw.jena_sparql_api.views.RdfTerm;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Add;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
@@ -23,7 +24,6 @@ import org.aksw.sparqlify.backend.postgres.SqlLiteralMapperPostgres;
 import org.aksw.sparqlify.config.xml.Mapping;
 import org.aksw.sparqlify.config.xml.SimpleFunction;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
-import org.aksw.jena_sparql_api.views.RdfTerm;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.cast.CoercionSystemImpl3;
@@ -254,6 +254,11 @@ public class SparqlifyCoreInit {
         {
             SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
             result.addSerializer("str@int", serializer);
+        }
+
+        {
+            SqlFunctionSerializer serializer = new SqlFunctionSerializerOp1Prefix("::text");
+            result.addSerializer("str@char", serializer);
         }
 
         {
@@ -515,7 +520,8 @@ public class SparqlifyCoreInit {
         sqlModel.registerFunction(name + "@float", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Float, TypeToken.Float));
         sqlModel.registerFunction(name + "@double", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Double, TypeToken.Double));
         sqlModel.registerFunction(name + "@string", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
-        sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.DateTime, TypeToken.DateTime));
+        sqlModel.registerFunction(name + "@dateTimeStamp", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.TimeStamp, TypeToken.TimeStamp));
+        //sqlModel.registerFunction(name + "@dateTime", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.TimeStamp));
         sqlModel.registerFunction(name + "@date", name, MethodSignature.create(false, TypeToken.Boolean, TypeToken.Date, TypeToken.Date));
     }
 
@@ -619,7 +625,8 @@ public class SparqlifyCoreInit {
 
 
             stm.register(XSD.date.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
-            stm.register(XSD.dateTime.getURI(),  new SqlDatatypeDefault(TypeToken.Date, new NodeValueToObjectDefault()));
+            stm.register(XSD.dateTime.getURI(),  new SqlDatatypeDefault(TypeToken.TimeStamp, new NodeValueToObjectDefault()));
+            stm.register(XSD.dateTimeStamp.getURI(),  new SqlDatatypeDefault(TypeToken.TimeStamp, new NodeValueToObjectDefault()));
 
 
             stm.register(SparqlifyConstants.nvTypeError.asNode().getLiteralDatatypeURI(), new SqlDatatypeConstant(SqlValue.TYPE_ERROR));
@@ -723,11 +730,16 @@ public class SparqlifyCoreInit {
             registerSqlOperatorBatchNumeric(sqlModel, "numericMultiply");
             registerSqlOperatorBatchNumeric(sqlModel, "numericDivide");
 
+            //sqlModel.registerFunction("str@char", "str", MethodSignature.create(false, TypeToken., TypeToken.String));
             sqlModel.registerFunction("str@str", "str", MethodSignature.create(false, TypeToken.String, TypeToken.String));
             sqlModel.registerFunction("str@double", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Double));
             sqlModel.registerFunction("str@float", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Float));
             sqlModel.registerFunction("str@int", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Int));
+
             sqlModel.registerFunction("str@date", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Date));
+            sqlModel.registerFunction("str@dateTime", "str", MethodSignature.create(false, TypeToken.String, TypeToken.DateTime));
+            sqlModel.registerFunction("str@dateTimeStamp", "str", MethodSignature.create(false, TypeToken.String, TypeToken.TimeStamp));
+            //sqlModel.registerFunction("str@time", "str", MethodSignature.create(false, TypeToken.String, TypeToken.Date));
 
             sqlModel.registerFunction("double@str", "double", MethodSignature.create(false, TypeToken.Double, TypeToken.String));
 
@@ -751,6 +763,8 @@ public class SparqlifyCoreInit {
             sparqlSqlDecls.put("str", "str@int");
             sparqlSqlDecls.put(XSD.xdouble.getURI(), "double@str");
             sparqlSqlDecls.put("str", "str@date");
+            sparqlSqlDecls.put("str", "str@dateTime");
+            sparqlSqlDecls.put("str", "str@dateTimeStamp");
 
             sparqlSqlDecls.put("bound", "isNotNull@object");
 
@@ -794,6 +808,7 @@ public class SparqlifyCoreInit {
             // register a parse int function
             sqlModel.registerFunction("parseInt@str", "parseInt", MethodSignature.create(false, TypeToken.Int, TypeToken.String));
             sqlModel.registerFunction("parseDate@str", "parseDate", MethodSignature.create(false, TypeToken.Date, TypeToken.String));
+            sqlModel.registerFunction("parseDateTime@str", "parseDateTime", MethodSignature.create(false, TypeToken.DateTime, TypeToken.String));
 
 
             //sparqlSqlDecls.put("concat", "concat@object");
@@ -802,6 +817,7 @@ public class SparqlifyCoreInit {
 
             sqlMetaModel.getInverses().put("str@int", "parseInt@str");
             sqlMetaModel.getInverses().put("str@date", "parseDate@str");
+            sqlMetaModel.getInverses().put("str@dateTime", "parseDateTime@str");
 
 
             sqlMetaModel.getComparators().addAll(sqlModel.getIdsByName("lessThan"));
@@ -816,7 +832,8 @@ public class SparqlifyCoreInit {
 
             //sqlModel.getInverses().put();
             sqlImpls.put("parseInt@str", new SqlExprEvaluator_ParseInt());
-            sqlImpls.put("parseDate@str", new SqlExprEvaluator_ParseDate());
+            sqlImpls.put("parseDate@str", SqlExprEvaluator_ParseDate.DATE);
+            sqlImpls.put("parseDateTime@str", SqlExprEvaluator_ParseDate.DATETIMESTAMP);
 
             //sqlMetaModel.getInverses().put(key, value)
 

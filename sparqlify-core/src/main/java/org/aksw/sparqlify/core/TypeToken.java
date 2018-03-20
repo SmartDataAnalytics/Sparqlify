@@ -47,6 +47,7 @@ public class TypeToken
 
     public static final TypeToken Date = alloc("date");
     public static final TypeToken DateTime = alloc("dateTime");
+    public static final TypeToken TimeStamp = alloc("timeStamp");
 
     public static final TypeToken TypeError = alloc("type_error");
     public static final TypeToken Special = alloc("special");

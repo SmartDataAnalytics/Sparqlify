@@ -9,12 +9,17 @@ import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
 public class SqlLiteralMapperPostgres
     implements SqlLiteralMapper
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SqlLiteralMapperPostgres.class);
+
     // TODO we need to lookup the 'toString' method for the appropriate type.
 
     protected SqlEscaper sqlEscaper;
@@ -48,7 +53,8 @@ public class SqlLiteralMapperPostgres
             applyCast = false;
         } else if(o instanceof Date) {
             Date date = (Date)o;
-            result = SqlExprEvaluator_ParseDate.defaultDateFormat.format(date);
+            logger.debug("HACK used - clean up when revising type system");
+            result = SqlExprEvaluator_ParseDate.DATE.getDateFormat().format(date);
             applyCast = true;
         } else {
             String lex = "" + o;
