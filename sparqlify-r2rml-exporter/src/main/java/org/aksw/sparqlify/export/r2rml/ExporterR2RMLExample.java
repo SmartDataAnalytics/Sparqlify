@@ -1,18 +1,25 @@
 package org.aksw.sparqlify.export.r2rml;
 
+import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.util.MapReader;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.TypeToken;
+import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
+import org.aksw.sparqlify.util.ViewDefinitionFactory;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -29,33 +36,34 @@ public class ExporterR2RMLExample {
 	public static void main(String[] args)
 		throws Exception
 	{
-		
 		//RdfViewSystemOld.initSparqlifyFunctions();
+		SparqlifyCoreInit.initSparqlifyFunctions();
 		
-		// FIXME: commented out because this would cause errors
-		//DatatypeSystem datatypeSystem = SparqlifyUtils.createDefaultDatatypeSystem();
+		TypeSystem datatypeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 
 		
 		DataSource dataSource = SparqlifyUtils.createTestDatabase(); 
 		Connection conn = dataSource.getConnection();
 
 		// typeAliases for the H2 datatype
-		// FIXME: commented out because this would cause errors
-		//Map<String, String> typeAlias = MapReader.readFile(new File("src/main/resources/type-map.h2.tsv"));
+		Map<String, String> typeAlias = MapReader.readFromResource("/type-map.h2.tsv");//.readFile(new File("src/main/resources/type-map.h2.tsv"));
 		
 		// FIXME: commented out because this would cause errors
-		//ViewDefinitionFactory vdf = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
+		ViewDefinitionFactory vdf = SparqlifyUtils.createViewDefinitionFactory(conn, typeAlias);
 		
-		// FIXME: commented out because this would cause errors
-		//ViewDefinition personView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) From person");
-		//ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
-		//ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
+		ViewDefinition personView = vdf.create("Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?ID) ?t = plainLiteral(?NAME) From person");
+		ViewDefinition deptView = vdf.create("Prefix ex:<http://ex.org/> Create View dept As Construct { ?s a ex:Department ; ex:name ?t } With ?s = uri(concat('http://ex.org/dept/', ?ID) ?t = plainLiteral(?NAME) From dept");
+		ViewDefinition personToDeptView = vdf.create("Prefix ex:<http://ex.org/> Create View person_to_dept As Construct { ?p ex:worksIn ?d } With ?p = uri(concat('http://ex.org/person/', ?PERSON_ID) ?d = uri(concat('http://ex.org/dept/', ?DEPT_ID) From person_to_dept");
 
-		// FIXME: commented out because this would cause errors
-		//System.out.println(personView);
+		System.out.println(personView);
 
-		// FIXME: commented out because this would cause errors
-		//Collection<ViewDefinition> viewDefs= Arrays.asList(personView, deptView, personToDeptView);
+		Collection<ViewDefinition> viewDefs= Arrays.asList(personView, deptView, personToDeptView);
+				
+		/*
+		System.out.println("test"
+		System.out.println(personView);
+
+		Collection<ViewDefinition> viewDefs= Arrays.asList(personView, deptView, personToDeptView);
 				
 		/*
 		System.out.println("test");
@@ -64,17 +72,20 @@ public class ExporterR2RMLExample {
 		Model model = ModelFactory.createDefaultModel();
 				
 		// FIXME: commented out because this would cause errors
-		//exportR2RML(viewDefs, model);
+		exportR2RML(viewDefs, model);
 
 		System.out.println("R2R-ML Output:");
 		model.write(System.out, "TURTLE");
 		
+		
 	}
 
 	static void exportR2RML(Collection<ViewDefinition> viewDefs, Model result) {
+		Model r = new R2RMLExporter(viewDefs).export();
+		result.add(r);
 		// TODO This the heart to be implemented
-		Resource foo = result.createResource("http://foo.bar");
-		result.add(foo, RDF.type, OWL.Class);
+//		Resource foo = result.createResource("http://foo.bar");
+//		result.add(foo, RDF.type, OWL.Class);
 	}
 	
 	

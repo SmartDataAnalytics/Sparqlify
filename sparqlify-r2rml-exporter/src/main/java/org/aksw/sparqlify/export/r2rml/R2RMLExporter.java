@@ -3,7 +3,11 @@ package org.aksw.sparqlify.export.r2rml;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
+import org.aksw.jena_sparql_api.algebra.expr.transform.ExprTransformConcatMergeConstants;
+import org.aksw.jena_sparql_api.algebra.expr.transform.ExprTransformFlattenFunction;
+import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpBase;
@@ -22,14 +26,77 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_StrConcat;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprTransformer;
 import org.apache.jena.sparql.expr.FunctionLabel;
 
 
 
 public class R2RMLExporter {
 
+	/**
+	 * Applies escaping according to https://www.w3.org/TR/r2rml/#from-template
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String escapeForTemplate(String str) {
+		String result = str
+				.replaceAll("\\", "\\\\")
+				.replaceAll("{", "\\{")
+				.replaceAll("}", "\\}");
+		return result;
+	}
+	
+	/**
+	 * Apply unnesting of concats
+	 * 
+	 * @param exprs
+	 * @return
+	 */
+	public static String toTemplate(Expr concatExpr) {
+		Expr expr = normalizeConcatExpressions(concatExpr);
+		String result;
+		if(expr.isFunction()) {
+			result = toTemplateCore(expr.getFunction().getArgs());
+		} else {
+			throw new RuntimeException("Concat expr required; instead got " + concatExpr);
+		}
+		
+		return result;
+	}
+	
+	public static Expr normalizeConcatExpressions(Expr expr) {
+		Predicate<Expr> isConcatExpr = e -> e instanceof E_StrConcat || e instanceof E_StrConcatPermissive;
+		
+		Expr tmp = ExprTransformer.transform(new ExprTransformFlattenFunction(isConcatExpr), expr);
+		Expr result = ExprTransformer.transform(new ExprTransformConcatMergeConstants(isConcatExpr), tmp);
+		return result;
+	}
+	
+	public static String toTemplateCore(List<Expr> exprs) {
+		StringBuilder b = new StringBuilder();
+		
+		for(Expr expr : exprs) {
+			if(expr.isVariable()) {
+				String varName = expr.getVarName();
+				String escapedVarName = escapeForTemplate(varName);
+				b.append("{" + escapedVarName + "}");
+			} else if(expr.isConstant()) {
+				String str = expr.getConstant().asUnquotedString();
+				String escapedStr = escapeForTemplate(str);
+				b.append(escapedStr);
+			} else {
+				throw new RuntimeException("Unexpected expression: " + expr);
+			}
+		}
+		
+		String result = b.toString();
+		return result;
+	}
+	
 	Collection<ViewDefinition> viewDefs;
 	int idCounter;
 	final String rrNamespace = "http://www.w3.org/ns/r2rml#";
@@ -88,7 +155,7 @@ public class R2RMLExporter {
 	/**
 	 * The actual export method returning an RDF model
 	 * 
-	 * @return a com.hp.hpl.jena.rdf.model.Model representing the R2RML
+	 * @return a org.apache.jena.rdf.model.Model representing the R2RML
 	 *         structure
 	 */
 	public Model export() {
@@ -108,7 +175,7 @@ public class R2RMLExporter {
 	 *            a Sparqlify-ML view definition
 	 *            (org.aksw.sparqlify.core.domain.input.ViewDefinition)
 	 * @param r2rml
-	 *            a com.hp.hpl.jena.rdf.model.Model representing the R2RML
+	 *            a org.apache.jena.rdf.model.Model representing the R2RML
 	 *            structure that will be built up
 	 */
 	private void exportViewDef(ViewDefinition viewDef, Model r2rml) {
@@ -136,7 +203,7 @@ public class R2RMLExporter {
 	 * line of the table and database at hand.
 	 * 
 	 * @param r2rml
-	 *            the target com.hp.hpl.jena.rdf.model.Model
+	 *            the target org.apache.jena.rdf.model.Model
 	 * @param pattern
 	 *            a quad that may contain variables in the subject, predicate or
 	 *            object position
@@ -311,7 +378,7 @@ public class R2RMLExporter {
 	 * SQL query.
 	 * 
 	 * @param r2rml
-	 *            the target com.hp.hpl.jena.rdf.model.Model
+	 *            the target org.apache.jena.rdf.model.Model
 	 * @param relation
 	 *            the data source (table name or SQL query)
 	 * @return the whole Statement stating where the data comes from, e.g. '[]
@@ -363,7 +430,7 @@ public class R2RMLExporter {
 	 * [] rr:class ex:Department and returns them as a Statement List.
 	 * 
 	 * @param r2rml
-	 *            the target com.hp.hpl.jena.rdf.model.Model
+	 *            the target org.apache.jena.rdf.model.Model
 	 * @param mappingData
 	 *            the target that should be mapped to relational structures
 	 *            (subject, predicate or object)
@@ -785,7 +852,7 @@ public class R2RMLExporter {
 	 * expression and build up the rest based on that.
 	 * 
 	 * @param expr
-	 *            a restriction expression (com.hp.hpl.jena.sparql.expr.Expr)
+	 *            a restriction expression (org.apache.jena.sparql.expr.Expr)
 	 *            like a function (concat( ... ), uri( ... ), ...) or a variable
 	 * @return a String containing the R2RML counterpart of these Sparqlify-ML
 	 *         expressions
