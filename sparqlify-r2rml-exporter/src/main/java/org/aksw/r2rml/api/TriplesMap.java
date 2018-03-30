@@ -8,10 +8,11 @@ public interface TriplesMap
 	extends Resource
 {
 	SubjectMap getSubjectMap();
+	TriplesMap setSubjectMap(SubjectMap subjectMap);
+	
 	
 	Set<PredicateObjectMap> getPredicateObjectMaps();
 
 	LogicalTable getLogicalTable();
-	
 	TriplesMap setLogicalTable(LogicalTable logicalTable);
 }

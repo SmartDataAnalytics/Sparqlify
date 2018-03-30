@@ -35,67 +35,6 @@ import org.apache.jena.sparql.expr.FunctionLabel;
 
 
 public class R2RMLExporter {
-
-	/**
-	 * Applies escaping according to https://www.w3.org/TR/r2rml/#from-template
-	 * 
-	 * @param str
-	 * @return
-	 */
-	public static String escapeForTemplate(String str) {
-		String result = str
-				.replaceAll("\\", "\\\\")
-				.replaceAll("{", "\\{")
-				.replaceAll("}", "\\}");
-		return result;
-	}
-	
-	/**
-	 * Apply unnesting of concats
-	 * 
-	 * @param exprs
-	 * @return
-	 */
-	public static String toTemplate(Expr concatExpr) {
-		Expr expr = normalizeConcatExpressions(concatExpr);
-		String result;
-		if(expr.isFunction()) {
-			result = toTemplateCore(expr.getFunction().getArgs());
-		} else {
-			throw new RuntimeException("Concat expr required; instead got " + concatExpr);
-		}
-		
-		return result;
-	}
-	
-	public static Expr normalizeConcatExpressions(Expr expr) {
-		Predicate<Expr> isConcatExpr = e -> e instanceof E_StrConcat || e instanceof E_StrConcatPermissive;
-		
-		Expr tmp = ExprTransformer.transform(new ExprTransformFlattenFunction(isConcatExpr), expr);
-		Expr result = ExprTransformer.transform(new ExprTransformConcatMergeConstants(isConcatExpr), tmp);
-		return result;
-	}
-	
-	public static String toTemplateCore(List<Expr> exprs) {
-		StringBuilder b = new StringBuilder();
-		
-		for(Expr expr : exprs) {
-			if(expr.isVariable()) {
-				String varName = expr.getVarName();
-				String escapedVarName = escapeForTemplate(varName);
-				b.append("{" + escapedVarName + "}");
-			} else if(expr.isConstant()) {
-				String str = expr.getConstant().asUnquotedString();
-				String escapedStr = escapeForTemplate(str);
-				b.append(escapedStr);
-			} else {
-				throw new RuntimeException("Unexpected expression: " + expr);
-			}
-		}
-		
-		String result = b.toString();
-		return result;
-	}
 	
 	Collection<ViewDefinition> viewDefs;
 	int idCounter;

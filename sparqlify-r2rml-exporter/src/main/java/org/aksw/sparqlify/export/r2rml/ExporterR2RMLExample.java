@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.MapReader;
+import org.aksw.r2rml.impl.jena.R2rmlModuleRegistry;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
@@ -69,10 +70,13 @@ public class ExporterR2RMLExample {
 		System.out.println("test");
 		*/
 		
+		R2rmlModuleRegistry.test();
+		
 		Model model = ModelFactory.createDefaultModel();
 				
 		// FIXME: commented out because this would cause errors
-		exportR2RML(viewDefs, model);
+		//exportR2RML(viewDefs, model);
+		new R2rmlExporter2().export(model, viewDefs);
 
 		System.out.println("R2R-ML Output:");
 		model.write(System.out, "TURTLE");

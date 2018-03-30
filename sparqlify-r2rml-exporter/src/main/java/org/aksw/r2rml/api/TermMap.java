@@ -13,7 +13,7 @@ public interface TermMap
 	TermMap setColumn(String columnName);
 	
 	String getLanguage();
-	TermMap setLanguage(String template);
+	TermMap setLanguage(String language);
 	
 	Resource getDatatype();
 	TermMap setDatatype(Resource datatype);

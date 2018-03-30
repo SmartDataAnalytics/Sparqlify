@@ -28,6 +28,12 @@ public class TriplesMapImpl
 	}
 	
 	@Override
+	public TriplesMap setSubjectMap(SubjectMap subjectMap) {
+		setProperty(this, RR.subjectMap, subjectMap);
+		return this;
+	}
+
+	@Override
 	public Set<PredicateObjectMap> getPredicateObjectMaps() {
 		Set<PredicateObjectMap> result = new SetFromResourceAndProperty<>(this, RR.predicateObjectMap, PredicateObjectMap.class);
 		return result;
