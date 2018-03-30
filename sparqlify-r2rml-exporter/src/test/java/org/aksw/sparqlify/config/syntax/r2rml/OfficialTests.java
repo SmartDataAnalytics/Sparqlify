@@ -11,8 +11,8 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.aksw.r2rml.impl.jena.ImporterR2RML;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
+import org.aksw.sparqlify.trash.R2rmlImporterOld;
 import org.junit.Test;
 
 /**
@@ -34,7 +34,7 @@ public class OfficialTests {
 		for(String name : fileNames) {
 			InputStream inActual = this.getClass().getResourceAsStream("/" + name + ".ttl");
 			
-			ImporterR2RML importer = new ImporterR2RML();
+			R2rmlImporterOld importer = new R2rmlImporterOld();
 			Map<String, ViewDefinition> actuals = importer.load(inActual);
 			
 
