@@ -23,16 +23,16 @@ public class ViewDefinitionFactory {
 	
 
 		Config config;
-		try {
+//		try {
 			config = parser.parse(viewDefStr, null);
-		} catch (RecognitionException e) {
-			throw new RuntimeException(e);
-		}
+//		} catch (Runt e) {
+//			throw new RuntimeException(e);
+//		}
 
 		
-		List<org.aksw.sparqlify.config.syntax.ViewDefinition> syntacticViewDefs = config.getViewDefinitions();
+		List<org.aksw.obda.jena.domain.impl.ViewDefinition> syntacticViewDefs = config.getViewDefinitions();
 	
-		org.aksw.sparqlify.config.syntax.ViewDefinition syntacticViewDef = syntacticViewDefs.get(0);
+		org.aksw.obda.jena.domain.impl.ViewDefinition syntacticViewDef = syntacticViewDefs.get(0);
 		
 		ViewDefinition result = syntaxBridge.create(syntacticViewDef);
 

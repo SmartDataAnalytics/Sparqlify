@@ -12,16 +12,18 @@ import javax.annotation.Nullable;
 
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
-import org.aksw.jena_sparql_api.views.Constraint;
+import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.jena_sparql_api.views.PrefixSet;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.aksw.obda.domain.api.Constraint;
+import org.aksw.obda.domain.api.LogicalTable;
+import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
-import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.aksw.sparqlify.database.PrefixConstraint;
@@ -29,7 +31,6 @@ import org.aksw.sparqlify.validation.Validation;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.E_Str;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
@@ -45,17 +46,17 @@ import com.google.common.collect.Multimap;
 
 class ExprTransformerUtils
 {
-    public static final Function<Expr, Expr> expandRdfTerms = new Function<Expr, Expr>() {
-        @Override
-        public Expr apply(@Nullable Expr expr) {
-            Expr result = SqlTranslationUtils.expandAnyToTerm(expr);
-            if(result == null) {
-                throw new RuntimeException("Could not expand rdf terms in " + expr);
-            }
-
-            return result;
-        }
-    };
+//    public static final Function<Expr, Expr> expandRdfTerms = new Function<Expr, Expr>() {
+//        @Override
+//        public Expr apply(@Nullable Expr expr) {
+//            Expr result = SqlTranslationUtils.expandAnyToTerm(expr);
+//            if(result == null) {
+//                throw new RuntimeException("Could not expand rdf terms in " + expr);
+//            }
+//
+//            return result;
+//        }
+//    };
 
     public static final Function<Expr, Expr> injectStrsIntoConcats = new Function<Expr, Expr>() {
         @Override
@@ -146,25 +147,24 @@ public class SyntaxBridge {
 
         QuadPattern template = new QuadPattern();
 
-        for(Quad quad : viewDefinition.getConstructPattern().getList()) {
+        for(Quad quad : viewDefinition.getConstructTemplate()) {
             //Quad quad = new Quad(Quad.defaultGraphNodeGenerated, triple);
 
             template.add(quad);
         }
 
-        VarExprList varExprList = viewDefinition.getViewTemplateDefinition().getVarExprList();
-        List<Constraint> constraints = viewDefinition.getConstraints();
+        //VarExprList varExprList = viewDefinition.getViewTemplateDefinition().getVarExprList();
+        //List<Constraint> constraints = viewDefinition.getConstraints();
 
         Map<Var, PrefixConstraint> varToPrefixConstraint = new HashMap<Var, PrefixConstraint>();
-        if(constraints != null) {
-            for(Constraint constraint : constraints) {
-                if(constraint instanceof PrefixConstraint) {
-                    PrefixConstraint c = (PrefixConstraint)constraint;
+        //if(constraints != null) {
+        for(Constraint constraint : viewDefinition.getConstraints().values()) {
+            if(constraint instanceof PrefixConstraint) {
+                PrefixConstraint c = (PrefixConstraint)constraint;
 
-                    varToPrefixConstraint.put(c.getVar(), c);
-                } else {
-                    logger.warn("Unknown constraint type: " + constraint.getClass() + " - " + constraint);
-                }
+                varToPrefixConstraint.put(c.getVar(), c);
+            } else {
+                logger.warn("Unknown constraint type: " + constraint.getClass() + " - " + constraint);
             }
         }
 
@@ -172,7 +172,7 @@ public class SyntaxBridge {
 
         Multimap<Var, RestrictedExpr> varDefs = HashMultimap.create();
 
-        for(Entry<Var, Expr> entry : varExprList.getExprs().entrySet()) {
+        for(Entry<Var, Expr> entry : viewDefinition.getVarDefinition().entrySet()) {
             Var var = entry.getKey();
             Expr expr = entry.getValue();
 
@@ -200,36 +200,36 @@ public class SyntaxBridge {
         varDefinition.applyExprTransform(ExprTransformerUtils.injectStrsIntoConcats);
 
         // Expand RdfTerms
-        varDefinition.applyExprTransform(ExprTransformerUtils.expandRdfTerms);
+        varDefinition.applyExprTransform(E_RdfTerm::expand);//ExprTransformerUtils.expandRdfTerms);
 
 
-        SqlOp relation = viewDefinition.getRelation();
+        LogicalTable logicalTable = viewDefinition.getLogicalTable();
 
         // TODO: I think the adapter should be able to resolve the schema at this stage,
         // Rather than leaving the schema on null.
 
         SqlOp sqlOp = null;
-        if(relation == null) {
+        if(logicalTable == null) {
 
             logger.warn("No relation given for view '" + name + "', using Select 1");
             Schema schema = schemaProvider.createSchemaForQueryString("SELECT 1");
             sqlOp = new SqlOpQuery(schema, "SELECT 1"); //;null;
 
-        } else if(relation instanceof SqlOpQuery) {
+        } else if(logicalTable.isQueryString()) {
 
-            String rawQueryString = ((SqlOpQuery)relation).getQueryString();
+            String rawQueryString = logicalTable.getQueryString();
             String queryString = normalizeQueryString(rawQueryString);
             Schema schema = schemaProvider.createSchemaForQueryString(queryString);
             sqlOp = new SqlOpQuery(schema, queryString);
 
-        } else if(relation instanceof SqlOpTable){
+        } else if(logicalTable.isTableName()){
 
-            String relationName = ((SqlOpTable) relation).getTableName();
+            String relationName = logicalTable.getTableName();
             Schema schema = schemaProvider.createSchemaForRelationName(relationName);
             sqlOp = new SqlOpTable(schema, relationName);
 
         } else {
-            throw new RuntimeException("Unsupported relation type: " + relation);
+            throw new RuntimeException("Unsupported relation type: " + logicalTable);
         }
 
         Mapping mapping = new Mapping(varDefinition, sqlOp);

@@ -450,7 +450,12 @@
 
 	<dependencyManagement>
 		<dependencies>		
-		
+		        <dependency>
+                                <groupId>org.aksw.sparqlify</groupId>
+                                <artifactId>obda-api-bundle</artifactId>
+                                <version>${project.version}</version>
+                        </dependency>
+
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
 				<artifactId>sparqlify-core</artifactId>

@@ -119,6 +119,17 @@
 
 		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>obda-api-bundle</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-type-system</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>sparqlify-type-system</artifactId>
 		</dependency>
 
