@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -48,6 +49,8 @@
 
 
 	<modules>
+		<module>obda-api-parent</module>
+
 		<module>sparqlify-type-system</module>
 
 		<module>sparqlify-core</module>
@@ -56,7 +59,7 @@
 		<module>sparqlify-platform</module>
 		<module>sparqlify-tests</module>
 
-                <module>sparqlify-benchmark</module>
+		<module>sparqlify-benchmark</module>
 
 		<module>sparqlify-jpa</module>
 
@@ -68,10 +71,9 @@
 		<module>sparqlify-debian-cli</module>
 		<module>sparqlify-debian-tomcat-common</module>
 		<module>sparqlify-debian-tomcat7</module>
-        <module>sparqlify-debian-tomcat8</module>
+		<module>sparqlify-debian-tomcat8</module>
 
 		<module>sparqlify-nexus-deploy-workaround</module>
-		<module>sparqlify-r2rml-exporter</module>
 	</modules>
 
 
@@ -101,7 +103,8 @@
 
 		<aksw.commons.version>0.8.8</aksw.commons.version>
 
-		<jena-sparql-api.version>3.6.0-3-SNAPSHOT</jena-sparql-api.version>
+		<jena.version>3.6.0</jena.version>
+		<jena-sparql-api.version>${jena.version}-3-SNAPSHOT</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -126,11 +129,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr3-maven-plugin</artifactId>
 			</plugin>
 
 			<plugin>
@@ -221,22 +219,6 @@
 					</configuration>
 				</plugin>
 
-				<plugin>
-					<groupId>org.antlr</groupId>
-					<artifactId>antlr3-maven-plugin</artifactId>
-					<version>3.5.2</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>antlr</goal>
-							</goals>
-							<phase>generate-sources</phase>
-							<configuration>
-								<debug>false</debug>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -382,23 +364,6 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>org.antlr</groupId>
-										<artifactId>
-											antlr3-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.5,)
-										</versionRange>
-										<goals>
-											<goal>antlr</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
 										<groupId>
 											org.codehaus.mojo
 										</groupId>
@@ -484,7 +449,8 @@
 	</repositories>
 
 	<dependencyManagement>
-		<dependencies>
+		<dependencies>		
+		
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
 				<artifactId>sparqlify-core</artifactId>
@@ -612,6 +578,12 @@
 				<artifactId>jena-sparql-api-jgrapht</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
+
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.apache.jena</groupId> -->
+<!-- 				<artifactId>jena-arq</artifactId> -->
+<!-- 				<version>${jena.version}</version> -->
+<!-- 			</dependency> -->
 
 			<dependency>
 				<groupId>com.zaxxer</groupId>
@@ -749,24 +721,11 @@
 				<version>8.4-701.jdbc4</version> < ! - - <version>9.3-1100-jdbc41</version> 
 				- - > <type>jar</type> <scope>compile</scope> </dependency> -->
 
-<!--
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>42.2.1.jre7</version>
-			</dependency>
--->
+			<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
+				<version>42.2.1.jre7</version> </dependency> -->
 
-<!--
-
-			<dependency>
-				<groupId>net.postgis</groupId>
-				<artifactId>postgis-jdbc</artifactId>
-				<version>2.2.1</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
--->
+			<!-- <dependency> <groupId>net.postgis</groupId> <artifactId>postgis-jdbc</artifactId> 
+				<version>2.2.1</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>org.apache.hive</groupId>
 				<artifactId>hive-jdbc</artifactId>
@@ -1048,19 +1007,7 @@
 
 			<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
 				<version>5.1.16</version> <type>jar</type> <scope>compile</scope> </dependency> -->
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr-runtime</artifactId>
-				<version>3.5.2</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
 
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>ST4</artifactId>
-				<version>4.0.8</version>
-			</dependency>
 			<!-- <dependency> -->
 			<!-- <groupId>org.antlr</groupId> -->
 			<!-- <artifactId>stringtemplate</artifactId> -->
@@ -1143,11 +1090,11 @@
 				<version>1.0-1</version>
 			</dependency>
 
-                        <dependency>
-                                <groupId>org.aksw.bsbm</groupId>
-                                <artifactId>bsbm-jsa</artifactId>
-                                <version>3.1.2-SNAPSHOT</version>
-                        </dependency>
+			<dependency>
+				<groupId>org.aksw.bsbm</groupId>
+				<artifactId>bsbm-jsa</artifactId>
+				<version>3.1.2-SNAPSHOT</version>
+			</dependency>
 
 
 
