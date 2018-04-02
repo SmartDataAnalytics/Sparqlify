@@ -449,12 +449,13 @@
 	</repositories>
 
 	<dependencyManagement>
-		<dependencies>		
-		        <dependency>
-                                <groupId>org.aksw.sparqlify</groupId>
-                                <artifactId>obda-api-bundle</artifactId>
-                                <version>${project.version}</version>
-                        </dependency>
+		<dependencies>
+
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>obda-api-bundle</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
@@ -584,11 +585,11 @@
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.apache.jena</groupId> -->
-<!-- 				<artifactId>jena-arq</artifactId> -->
-<!-- 				<version>${jena.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.jena</groupId> -->
+			<!-- <artifactId>jena-arq</artifactId> -->
+			<!-- <version>${jena.version}</version> -->
+			<!-- </dependency> -->
 
 			<dependency>
 				<groupId>com.zaxxer</groupId>

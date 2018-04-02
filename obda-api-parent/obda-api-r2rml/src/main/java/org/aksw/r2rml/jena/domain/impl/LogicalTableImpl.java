@@ -3,6 +3,8 @@
  */
 package org.aksw.r2rml.jena.domain.impl;
 
+import java.util.Optional;
+
 import org.aksw.r2rml.jena.domain.api.LogicalTable;
 import org.aksw.r2rml.jena.vocab.RR;
 import org.apache.jena.enhanced.EnhGraph;
@@ -19,24 +21,22 @@ public class LogicalTableImpl
 	}
 	
 	@Override
-	public String getTableName() {
-		String result = getLiteralValue(this, RR.tableName, Literal::getString).orElse(null);
-		
+	public Optional<String> tryGetTableName() {
+		Optional<String> result = getLiteralValue(this, RR.tableName, Literal::getString);
 		return result;
 	}
 	
+	@Override
+	public Optional<String> tryGetQueryString() {
+		Optional<String> result = getLiteralValue(this, RR.sqlQuery, Literal::getString);
+		return result;
+	}
+
 	@Override
 	public LogicalTableImpl setTableName(String tableName) {
 		removeAll(RR.tableName);
 		addLiteral(RR.tableName, tableName);
 		return this;
-	}
-
-	@Override
-	public String getQueryString() {
-		String result = getLiteralValue(this, RR.sqlQuery, Literal::getString).orElse(null);
-		
-		return result;
 	}
 	
 	@Override
@@ -45,17 +45,4 @@ public class LogicalTableImpl
 		addLiteral(RR.sqlQuery, sqlQuery);
 		return this;
 	}
-
-	@Override
-	public boolean isTableName() {
-		boolean result = getTableName() != null;
-		return result;
-	}
-
-	@Override
-	public boolean isQueryString() {
-		boolean result = getQueryString() != null;
-		return result;
-	}
-
 }

@@ -20,16 +20,12 @@ import org.apache.jena.enhanced.BuiltinPersonalities;
 import org.apache.jena.enhanced.Personality;
 import org.apache.jena.rdf.model.RDFNode;
 
-public class R2rmlModuleRegistry {
+public class JenaExtensionsR2rml {
     
-	static {
-		R2rmlModuleRegistry.init(BuiltinPersonalities.model);
-    }
-	
-	public static void test() {
-		
+	public static void init() {
+		JenaExtensionsR2rml.init(BuiltinPersonalities.model);		
 	}
-    
+	
 	public static void init(Personality<RDFNode> p) {
     	p.add(TriplesMap.class, new SimpleImplementation(TriplesMapImpl::new));
     	p.add(LogicalTable.class, new SimpleImplementation(LogicalTableImpl::new));

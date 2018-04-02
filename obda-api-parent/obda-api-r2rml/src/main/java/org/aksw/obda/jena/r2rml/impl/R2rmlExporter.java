@@ -2,6 +2,7 @@ package org.aksw.obda.jena.r2rml.impl;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -61,13 +62,10 @@ public class R2rmlExporter {
 	 * @return
 	 */
 	public static String toTemplate(Expr concatExpr) {
+		// TODO We implicitly assume that the expression is a concat one - we should validate this
 		Expr expr = normalizeConcatExpressions(concatExpr);
-		String result;
-		if(expr.isFunction()) {
-			result = toTemplateCore(expr.getFunction().getArgs());
-		} else {
-			throw new RuntimeException("Concat expr required; instead got " + concatExpr);
-		}
+		List<Expr> args = expr.isFunction() ? expr.getFunction().getArgs() : Collections.singletonList(expr);
+		String result = toTemplateCore(args);
 		
 		return result;
 	}
@@ -142,6 +140,14 @@ public class R2rmlExporter {
 	}
 
 	
+	public static Optional<String> getIriOrString(Expr expr) {
+		//String result = expr.isConstant() ? expr.getConstant()
+		Optional<String> result = Optional.of(expr)
+				.map(e -> e.isConstant() ? e.getConstant() : null)
+				.map(e -> e.asString());
+		return result;
+	}
+	
 	public static String getColumnName(Expr expr) {
 		String result;
 		if(expr.isVariable()) {
@@ -172,7 +178,8 @@ public class R2rmlExporter {
 			result.setTemplate(templateStr);
 		} else if(normExpr instanceof E_StrLang) {
 			
-			result.setColumn(getColumnName(normExpr.getArg(1)));				
+			String columnName = getColumnName(normExpr.getArg(1));
+			result.setColumn(columnName);				
 			
 			Expr langExpr = normExpr.getArg(2);
 			if(langExpr.isConstant()) {
@@ -182,10 +189,14 @@ public class R2rmlExporter {
 				}
 			}
 		} else if(normExpr instanceof E_StrDatatype) {
-			result.setColumn(getColumnName(normExpr.getArg(1)));				
+			String columnName = getColumnName(normExpr.getArg(1));
+			result.setColumn(columnName);				
 
-			Node dtype = normExpr.getArg(2).getConstant().asNode();
-			result.setDatatype(result.getModel().asRDFNode(dtype).asResource());
+			Expr dtypeExpr = normExpr.getArg(2);
+			String dtype = getIriOrString(dtypeExpr)
+					.orElseThrow(() -> new RuntimeException("IRI or String expected"));
+
+			result.setDatatype(result.getModel().createResource(dtype));
 		} else {
 			throw new RuntimeException("Unknow term constructor: " + expr);
 		}

@@ -1,7 +1,11 @@
 package org.aksw.obda.domain.impl;
 
+import java.util.Optional;
+
+import org.aksw.obda.domain.api.LogicalTable;
+
 public class LogicalTableTableName
-	extends LogicalTableBase
+	implements LogicalTable
 {
 	protected String tableName;
 	
@@ -10,15 +14,10 @@ public class LogicalTableTableName
 		this.tableName = tableName;
 	}
 
-	public String getTableName() {
-		return tableName;
+	@Override
+	public Optional<String> tryGetTableName() {
+		return Optional.of(tableName);
 	}
-
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public <T> Optional<T> tryAs(Class<T> clazz) {
-//		return Optional.ofNullable(this.getClass().isAssignableFrom(clazz) ? (T)this : null);
-//	}
 	
 	@Override
 	public String toString() {

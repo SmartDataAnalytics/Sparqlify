@@ -1,7 +1,11 @@
 package org.aksw.obda.domain.impl;
 
+import java.util.Optional;
+
+import org.aksw.obda.domain.api.LogicalTable;
+
 public class LogicalTableQueryString
-	extends LogicalTableBase
+	implements LogicalTable
 {
 	protected String queryString;
 	
@@ -10,15 +14,16 @@ public class LogicalTableQueryString
 		this.queryString = queryString;
 	}
 
-	public String getQueryString() {
-		return queryString;
+	@Override
+	public Optional<String> tryGetQueryString() {
+		return Optional.of(queryString);
 	}
 
 	@Override
 	public String toString() {
 		return "LogicalTableQueryString [queryString=" + queryString + "]";
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
