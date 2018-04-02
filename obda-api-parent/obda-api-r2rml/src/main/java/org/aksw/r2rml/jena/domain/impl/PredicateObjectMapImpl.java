@@ -5,6 +5,7 @@ package org.aksw.r2rml.jena.domain.impl;
 
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.utils.model.SetFromResourceAndProperty;
 import org.aksw.r2rml.jena.domain.api.GraphMap;
 import org.aksw.r2rml.jena.domain.api.ObjectMap;
 import org.aksw.r2rml.jena.domain.api.PredicateMap;

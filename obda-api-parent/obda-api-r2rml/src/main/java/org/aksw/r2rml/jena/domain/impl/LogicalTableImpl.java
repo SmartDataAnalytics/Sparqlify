@@ -5,6 +5,7 @@ package org.aksw.r2rml.jena.domain.impl;
 
 import java.util.Optional;
 
+import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
 import org.aksw.r2rml.jena.domain.api.LogicalTable;
 import org.aksw.r2rml.jena.vocab.RR;
 import org.apache.jena.enhanced.EnhGraph;
@@ -22,13 +23,13 @@ public class LogicalTableImpl
 	
 	@Override
 	public Optional<String> tryGetTableName() {
-		Optional<String> result = getLiteralValue(this, RR.tableName, Literal::getString);
+		Optional<String> result = ResourceUtils.getLiteralValue(this, RR.tableName, Literal::getString);
 		return result;
 	}
 	
 	@Override
 	public Optional<String> tryGetQueryString() {
-		Optional<String> result = getLiteralValue(this, RR.sqlQuery, Literal::getString);
+		Optional<String> result = ResourceUtils.getLiteralValue(this, RR.sqlQuery, Literal::getString);
 		return result;
 	}
 

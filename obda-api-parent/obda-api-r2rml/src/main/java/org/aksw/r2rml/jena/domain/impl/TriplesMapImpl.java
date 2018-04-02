@@ -5,6 +5,8 @@ package org.aksw.r2rml.jena.domain.impl;
 
 import java.util.Set;
 
+import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
+import org.aksw.jena_sparql_api.utils.model.SetFromResourceAndProperty;
 import org.aksw.r2rml.jena.domain.api.LogicalTable;
 import org.aksw.r2rml.jena.domain.api.PredicateObjectMap;
 import org.aksw.r2rml.jena.domain.api.SubjectMap;
@@ -23,14 +25,14 @@ public class TriplesMapImpl
 	
 	@Override
 	public SubjectMap getSubjectMap() {
-		SubjectMap result = getObjectAs(this, RR.subjectMap, SubjectMap.class).orElse(null);
+		SubjectMap result = ResourceUtils.getObjectAs(this, RR.subjectMap, SubjectMap.class).orElse(null);
 		
 		return result;
 	}
 	
 	@Override
 	public TriplesMap setSubjectMap(SubjectMap subjectMap) {
-		setProperty(this, RR.subjectMap, subjectMap);
+		ResourceUtils.setProperty(this, RR.subjectMap, subjectMap);
 		return this;
 	}
 
@@ -49,7 +51,7 @@ public class TriplesMapImpl
 	}
 	
 	public LogicalTable getLogicalTable() {
-		LogicalTable result = getObjectAs(this, RR.logicalTable, LogicalTable.class).orElse(null);
+		LogicalTable result = ResourceUtils.getObjectAs(this, RR.logicalTable, LogicalTable.class).orElse(null);
 		
 		return result;
 	}
