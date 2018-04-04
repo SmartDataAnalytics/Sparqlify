@@ -1,5 +1,6 @@
 package org.aksw.r2rml.jena.plugin;
 
+import org.aksw.jena_sparql_api.utils.model.SimpleImplementation;
 import org.aksw.r2rml.jena.domain.api.GraphMap;
 import org.aksw.r2rml.jena.domain.api.LogicalTable;
 import org.aksw.r2rml.jena.domain.api.ObjectMap;
@@ -20,10 +21,10 @@ import org.apache.jena.enhanced.BuiltinPersonalities;
 import org.apache.jena.enhanced.Personality;
 import org.apache.jena.rdf.model.RDFNode;
 
-public class JenaExtensionsR2rml {
+public class JenaPluginR2rml {
     
 	public static void init() {
-		JenaExtensionsR2rml.init(BuiltinPersonalities.model);		
+		JenaPluginR2rml.init(BuiltinPersonalities.model);		
 	}
 	
 	public static void init(Personality<RDFNode> p) {

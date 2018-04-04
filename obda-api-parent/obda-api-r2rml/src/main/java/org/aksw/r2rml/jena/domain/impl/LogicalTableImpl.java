@@ -23,13 +23,13 @@ public class LogicalTableImpl
 	
 	@Override
 	public Optional<String> tryGetTableName() {
-		Optional<String> result = ResourceUtils.getLiteralValue(this, RR.tableName, Literal::getString);
+		Optional<String> result = ResourceUtils.getLiteralPropertyValue(this, RR.tableName, String.class);
 		return result;
 	}
 	
 	@Override
 	public Optional<String> tryGetQueryString() {
-		Optional<String> result = ResourceUtils.getLiteralValue(this, RR.sqlQuery, Literal::getString);
+		Optional<String> result = ResourceUtils.getLiteralPropertyValue(this, RR.sqlQuery, String.class);
 		return result;
 	}
 

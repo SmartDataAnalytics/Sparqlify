@@ -19,7 +19,7 @@ public class TermMapImpl
 	}
 
 	public Resource getTermType() {
-		Resource result = ResourceUtils.getObjectAs(this, RR.termType, Resource.class).orElse(null);
+		Resource result = ResourceUtils.getPropertyValue(this, RR.termType, Resource.class).orElse(null);
 		return result;
 	}
 	
@@ -29,28 +29,28 @@ public class TermMapImpl
 	}
 
 	public String getColumn() {
-		String result = ResourceUtils.getLiteralValue(this, RR.column, Literal::getString).orElse(null);
+		String result = ResourceUtils.getLiteralPropertyValue(this, RR.column, String.class).orElse(null);
 		return result;
 	}
 	
 	public TermMap setColumn(String columnName) {
-		ResourceUtils.setLiteralValue(this, RR.column, columnName);
+		ResourceUtils.setLiteralProperty(this, RR.column, columnName);
 		return this;
 	}
 
 	
 	public String getLanguage() {
-		String result = ResourceUtils.getLiteralValue(this, RR.language, Literal::getString).orElse(null);
+		String result = ResourceUtils.getLiteralPropertyValue(this, RR.language, String.class).orElse(null);
 		return result;
 	}
 	
 	public TermMap setLanguage(String template) {
-		ResourceUtils.setLiteralValue(this, RR.language, template);
+		ResourceUtils.setLiteralProperty(this, RR.language, template);
 		return this;
 	}
 
 	public Resource getDatatype() {
-		Resource result = ResourceUtils.getObjectAs(this, RR.datatype, Resource.class).orElse(null);
+		Resource result = ResourceUtils.getPropertyValue(this, RR.datatype, Resource.class).orElse(null);
 		return result;
 	}
 	
@@ -60,7 +60,7 @@ public class TermMapImpl
 	}
 
 	public RDFNode getConstant() {
-		RDFNode result = ResourceUtils.getObjectAs(this, RR.constant, RDFNode.class).orElse(null);
+		RDFNode result = ResourceUtils.getPropertyValue(this, RR.constant, RDFNode.class).orElse(null);
 		return result;
 	}
 	
@@ -71,12 +71,12 @@ public class TermMapImpl
 	
 	
 	public String getTemplate() {
-		String result = ResourceUtils.getLiteralValue(this, RR.template, Literal::getString).orElse(null);
+		String result = ResourceUtils.getLiteralPropertyValue(this, RR.template, String.class).orElse(null);
 		return result;
 	}
 	
 	public TermMap setTemplate(String template) {
-		ResourceUtils.setLiteralValue(this, RR.template, template);
+		ResourceUtils.setLiteralProperty(this, RR.template, template);
 		return this;
 	}
 
