@@ -6,7 +6,7 @@ package org.aksw.r2rml.jena.domain.impl;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
-import org.aksw.jena_sparql_api.utils.model.SetFromResourceAndProperty;
+import org.aksw.jena_sparql_api.utils.model.SetFromPropertyValues;
 import org.aksw.r2rml.jena.domain.api.LogicalTable;
 import org.aksw.r2rml.jena.domain.api.PredicateObjectMap;
 import org.aksw.r2rml.jena.domain.api.SubjectMap;
@@ -38,7 +38,7 @@ public class TriplesMapImpl
 
 	@Override
 	public Set<PredicateObjectMap> getPredicateObjectMaps() {
-		Set<PredicateObjectMap> result = new SetFromResourceAndProperty<>(this, RR.predicateObjectMap, PredicateObjectMap.class);
+		Set<PredicateObjectMap> result = new SetFromPropertyValues<>(this, RR.predicateObjectMap, PredicateObjectMap.class);
 		return result;
 	}
 	

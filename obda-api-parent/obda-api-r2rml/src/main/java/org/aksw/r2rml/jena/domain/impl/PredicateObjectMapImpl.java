@@ -5,7 +5,7 @@ package org.aksw.r2rml.jena.domain.impl;
 
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.model.SetFromResourceAndProperty;
+import org.aksw.jena_sparql_api.utils.model.SetFromPropertyValues;
 import org.aksw.r2rml.jena.domain.api.GraphMap;
 import org.aksw.r2rml.jena.domain.api.ObjectMap;
 import org.aksw.r2rml.jena.domain.api.PredicateMap;
@@ -29,25 +29,25 @@ public class PredicateObjectMapImpl
 
 	@Override
 	public Set<Resource> getPredicates() {
-		Set<Resource> result = new SetFromResourceAndProperty<>(this, RR.predicate, Resource.class);
+		Set<Resource> result = new SetFromPropertyValues<>(this, RR.predicate, Resource.class);
 		return result;
 	}
 
 	@Override
 	public Set<PredicateMap> getPredicateMaps() {
-		Set<PredicateMap> result = new SetFromResourceAndProperty<>(this, RR.predicateMap, PredicateMap.class);
+		Set<PredicateMap> result = new SetFromPropertyValues<>(this, RR.predicateMap, PredicateMap.class);
 		return result;
 	}
 
 	@Override
 	public Set<ObjectMap> getObjectMaps() {
-		Set<ObjectMap> result = new SetFromResourceAndProperty<>(this, RR.objectMap, ObjectMap.class);
+		Set<ObjectMap> result = new SetFromPropertyValues<>(this, RR.objectMap, ObjectMap.class);
 		return result;
 	}
 	
 	@Override
 	public Set<GraphMap> getGraphMaps() {
-		Set<GraphMap> result = new SetFromResourceAndProperty<>(this, RR.graphMap, GraphMap.class);
+		Set<GraphMap> result = new SetFromPropertyValues<>(this, RR.graphMap, GraphMap.class);
 		return result;
 	}
 

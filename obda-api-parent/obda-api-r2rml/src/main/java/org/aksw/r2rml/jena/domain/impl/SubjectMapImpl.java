@@ -5,7 +5,7 @@ package org.aksw.r2rml.jena.domain.impl;
 
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.model.SetFromResourceAndProperty;
+import org.aksw.jena_sparql_api.utils.model.SetFromPropertyValues;
 import org.aksw.r2rml.jena.domain.api.GraphMap;
 import org.aksw.r2rml.jena.domain.api.SubjectMap;
 import org.aksw.r2rml.jena.vocab.RR;
@@ -23,13 +23,13 @@ public class SubjectMapImpl
 
 	@Override
 	public Set<Resource> getTypes() {
-		Set<Resource> result = new SetFromResourceAndProperty<>(this, RR.rrClass, Resource.class);
+		Set<Resource> result = new SetFromPropertyValues<>(this, RR.rrClass, Resource.class);
 		return result;
 	}
 
 	@Override
 	public Set<GraphMap> getGraphMaps() {
-		Set<GraphMap> result = new SetFromResourceAndProperty<>(this, RR.graphMap, GraphMap.class);
+		Set<GraphMap> result = new SetFromPropertyValues<>(this, RR.graphMap, GraphMap.class);
 		return result;
 	}
 	

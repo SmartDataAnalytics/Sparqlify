@@ -24,6 +24,7 @@ import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
+import org.aksw.sparqlify.config.syntax.ConstraintPrefix;
 import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.aksw.sparqlify.database.PrefixConstraint;
@@ -159,10 +160,11 @@ public class SyntaxBridge {
         Map<Var, PrefixConstraint> varToPrefixConstraint = new HashMap<Var, PrefixConstraint>();
         //if(constraints != null) {
         for(Constraint constraint : viewDefinition.getConstraints().values()) {
-            if(constraint instanceof PrefixConstraint) {
-                PrefixConstraint c = (PrefixConstraint)constraint;
+            if(constraint instanceof ConstraintPrefix) {
+            	ConstraintPrefix c = (ConstraintPrefix)constraint;
 
-                varToPrefixConstraint.put(c.getVar(), c);
+            	PrefixConstraint dbConstraint = new PrefixConstraint(c.getVar(), "value", c.getPrefixes());
+                varToPrefixConstraint.put(c.getVar(), dbConstraint);
             } else {
                 logger.warn("Unknown constraint type: " + constraint.getClass() + " - " + constraint);
             }
