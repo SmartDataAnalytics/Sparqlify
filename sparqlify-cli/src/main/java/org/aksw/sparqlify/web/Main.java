@@ -42,6 +42,7 @@ import org.aksw.sparqlify.validation.LoggerCount;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Triple;
@@ -102,7 +103,9 @@ public class Main {
         cliOptions.addOption("Q", "query", true, "");
         cliOptions.addOption("D", "dump", false, "");
 
-        cliOptions.addOption("m", "mapping", true, "Sparqlify mapping file (can be specified multiple times)");
+        Option mappingSourceOption = new Option("m", "mapping", true, "Sparqlify mapping file (can be specified multiple times)");
+        mappingSourceOption.setArgs(Option.UNLIMITED_VALUES);
+        cliOptions.addOption(mappingSourceOption);
 
         cliOptions.addOption("t", "timeout", true, "Maximum query execution timeout in seconds");
         cliOptions.addOption("n", "resultsetsize", true, "Maximum result set size");
