@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 import org.aksw.jena_sparql_api.core.ConstructIterator;
 import org.aksw.jena_sparql_api.core.ResultSetCloseable;
@@ -55,7 +58,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.io.InputSupplier;
 
 import au.com.bytecode.opencsv.CSVReader;
 import jxl.Sheet;
@@ -295,10 +297,10 @@ public class CsvMapperCliMain {
 //			System.exit(1);
 //		}
 
-        Reader fileReader = new FileReader(dataFile);
+        //Reader fileReader = new FileReader(dataFile);
         //convertCsvToRdf(fileReader, view);
 
-        InputSupplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(dataFile, csvConfig);
+        Supplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(dataFile, Charset.defaultCharset(), csvConfig);
 
         ResultSet resultSet = createResultSetFromCsv(csvReaderSupplier, useFirstRowAsHeaderNames, 100);
 
@@ -370,12 +372,12 @@ public class CsvMapperCliMain {
      * @return
      * @throws IOException
      */
-    public static ResultSet createResultSetFromCsv(InputSupplier<? extends CSVReader> csvReaderSupplier, boolean useHeaders, Integer sampleSize)
+    public static ResultSet createResultSetFromCsv(Supplier<? extends CSVReader> csvReaderSupplier, boolean useHeaders, Integer sampleSize)
             throws IOException
     {
         sampleSize = (sampleSize == null) ? 100 : sampleSize;
 
-        CSVReader headerReader = csvReaderSupplier.getInput();
+        CSVReader headerReader = csvReaderSupplier.get();
         List<String> columnNames = new ArrayList<String>();
         try {
             String row[];
@@ -396,7 +398,7 @@ public class CsvMapperCliMain {
             headerReader.close();
         }
 
-        CSVReader dataReader = csvReaderSupplier.getInput();
+        CSVReader dataReader = csvReaderSupplier.get();
         if(useHeaders) {
             // Skip header row
             dataReader.readNext();

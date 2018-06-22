@@ -3,8 +3,8 @@ package org.aksw.sparqlify.config.v0_2.bridge;
 import java.util.List;
 
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.core.cast.EffectiveViewGenerator;
 import org.aksw.sparqlify.validation.Validation;
 import org.slf4j.Logger;

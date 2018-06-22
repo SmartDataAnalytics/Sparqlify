@@ -7,8 +7,6 @@ import java.util.List;
 import org.aksw.sparqlify.core.test.TestBundle;
 import org.aksw.sparqlify.core.test.TestBundleReader;
 import org.apache.jena.atlas.iterator.Iter;
-import org.apache.jena.atlas.iterator.Transform;
-import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.binding.BindingUtils;
@@ -28,22 +26,9 @@ public class R2rmlTest {
      *
      * TODO Make public in Jena ResultSetCompare
      */
-    public static Transform<QuerySolution, Binding> qs2b = new Transform<QuerySolution, Binding> () {
-
-        @Override
-        public Binding apply(QuerySolution item)
-        {
-            return BindingUtils.asBinding(item) ;
-        }
-    } ;
-
-    /**
-     *
-     * TODO Make public in Jena ResultSetCompare
-     */
     public static List<Binding> convert(ResultSet rs)
     {
-        return Iter.iter(rs).map(qs2b).toList() ;
+        return Iter.iter(rs).map(BindingUtils::asBinding).toList() ;
     }
 
 

@@ -6,19 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.Objects;
+
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMap;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
 import org.aksw.sparqlify.util.SqlOpUtils;
+import org.apache.jena.sparql.core.Quad;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.jena.sparql.core.Quad;
 
 
 public class EntityInverseMapperImplHibernate
@@ -185,11 +190,20 @@ public class EntityInverseMapperImplHibernate
      * @param sessionFactory
      * @return A collection of AbstractEntityPersister objects indexed by their table name
      */
-    public static Map<String, AbstractEntityPersister> createTablePersisterMap(SessionFactory sessionFactory) {
+    public static Map<String, AbstractEntityPersister> createTablePersisterMap(SessionFactory sessionFactory) {//SessionFactory sessionFactory) {
 
         Map<String, AbstractEntityPersister> result = new HashMap<String, AbstractEntityPersister>();
 
-        Collection<ClassMetadata>classMetadatas = sessionFactory.getAllClassMetadata().values();
+        Metamodel metamodel = sessionFactory.getMetamodel();
+
+        Collection<ClassMetadata> classMetadatas = metamodel.getEntities().stream()
+        	.map(EntityType::getJavaType)
+        	.filter(Objects::nonNull)
+        	.map(sessionFactory::getClassMetadata)
+        	.collect(Collectors.toList());
+        
+        //Collection<ClassMetadata>classMetadatas = sessionFactory.getAllClassMetadata().values();
+
         for(ClassMetadata classMetadata : classMetadatas) {
 
             if (!(classMetadata instanceof AbstractEntityPersister)) {

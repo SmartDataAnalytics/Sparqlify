@@ -63,6 +63,8 @@ public class MainSparqlifyWebManager {
     // http://eclipsesource.com/blogs/2009/10/02/executable-wars-with-jetty/
     public static void main(String[] args) throws Exception {
 
+//    	System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
+    	
         LoggerCount loggerCount = new LoggerCount(logger);
 
         Class.forName("org.postgresql.Driver");

@@ -4,20 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.config.v0_2.bridge.SchemaProvider;
-import org.aksw.sparqlify.config.v0_2.bridge.SchemaProviderImpl;
-import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
-import org.aksw.sparqlify.core.cast.TypeSystem;
-import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.antlr.runtime.RecognitionException;
@@ -26,17 +18,19 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
-import com.jolbox.bonecp.BoneCPConfig;
-import com.jolbox.bonecp.BoneCPDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class SparqlifyCliHelper {
 
-    public static final ApplicationContext appContext = new AnnotationConfigApplicationContext();
-
+	public static final ResourceLoader resourceLoader = new AnnotationConfigApplicationContext();
+    //public static final ApplicationContext appContext = new AnnotationConfigApplicationContext();
+	//public static final ResourceLoader resourceLoader = new FileSystemResourceLoader(); //new DefaultResourceLoader(SparqlifyCliHelper.class.getClassLoader()); //new PathMatchingResourcePatternResolver();
+	
     public static void addDatabaseOptions(Options cliOptions) {
         cliOptions.addOption("t", "type", true,
                 "Database type (posgres, mysql,...)");
@@ -89,10 +83,11 @@ public class SparqlifyCliHelper {
             }
         }
 
-        BoneCPConfig cpConfig = new BoneCPConfig();
+        
+        HikariConfig cpConfig = new HikariConfig();
 
         if(jdbcUrl.isEmpty()) {
-            cpConfig.setDatasourceBean(dataSourceBean);
+            cpConfig.setDataSource(dataSourceBean);
         } else {
             cpConfig.setJdbcUrl(jdbcUrl);
             cpConfig.setUsername(userName);
@@ -105,16 +100,16 @@ public class SparqlifyCliHelper {
         cpConfig.setPassword(dbconf.getPassword());
         */
 
-        cpConfig.setMinConnectionsPerPartition(2);
-        cpConfig.setMaxConnectionsPerPartition(8);
-        cpConfig.setConnectionTimeoutInMs(5000);
+//        cpConfig.parsetMinConnectionsPerPartition(2);
+//        cpConfig.setMaxConnectionsPerPartition(8);
+//        cpConfig.setConnectionTimeoutInMs(5000);
 //		cpConfig.setMinConnectionsPerPartition(1);
 //		cpConfig.setMaxConnectionsPerPartition(1);
 
-        cpConfig.setPartitionCount(1);
+//        cpConfig.setPartitionCount(1);
         //BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool
 
-        BoneCPDataSource dataSource = new BoneCPDataSource(cpConfig);
+        HikariDataSource dataSource = new HikariDataSource(cpConfig);
 
         return dataSource;
     }
@@ -160,7 +155,7 @@ public class SparqlifyCliHelper {
         return result;
     }
 
-    public static List<Resource> parseFiles(CommandLine commandLine, String optName, boolean mustExist, Logger logger) {
+    public static List<Resource> parseFiles(CommandLine commandLine, String optName, boolean mustExist, Logger logger) throws IOException {
         String[] locations = commandLine.getOptionValues(optName);
 
         if (locations == null || locations.length == 0) {
@@ -168,11 +163,18 @@ public class SparqlifyCliHelper {
             return null;
         }
 
+        //System.out.println("Workdir: " + System.getProperty("user.dir"));
         List<Resource> result = new ArrayList<Resource>();
         for(String location : locations) {
-            Resource resource = appContext.getResource(location);
+            Resource resource = resourceLoader.getResource(location);
+//            File file = resource.getFile();
+//            if(file != null) {
+//            	file = file.getAbsoluteFile();
+//            	System.out.println(file);
+//            }
+            
             if(!resource.exists()) {
-                Resource fallback = appContext.getResource("file://" + location);
+                Resource fallback = resourceLoader.getResource("file:" + location);
                 if(fallback.exists()) {
                     resource = fallback;
                 }

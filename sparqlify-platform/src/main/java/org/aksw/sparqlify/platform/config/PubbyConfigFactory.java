@@ -4,14 +4,15 @@ import java.io.File;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
-import org.aksw.jena_sparql_api.views.Constraint;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.obda.domain.api.Constraint;
+import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.config.syntax.ViewDefinition;
 import org.aksw.sparqlify.database.PrefixConstraint;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.AnonId;
@@ -21,7 +22,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.E_StrConcat;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
@@ -154,7 +154,7 @@ public class PubbyConfigFactory {
 
         if(viewDef.getConstraints() != null) {
 
-            for(Constraint constraint : viewDef.getConstraints()) {
+            for(Constraint constraint : viewDef.getConstraints().values()) {
                 if(constraint instanceof PrefixConstraint) {
                     PrefixConstraint c = (PrefixConstraint)constraint;
 
@@ -166,8 +166,8 @@ public class PubbyConfigFactory {
             }
         }
 
-        VarExprList vel = viewDef.getViewTemplateDefinition().getVarExprList();
-        Expr expr = vel.getExpr(var);
+        Map<Var, Expr> vel = viewDef.getVarDefinition();
+        Expr expr = vel.get(var);
 
         // We expect the expression to be a term constructor
         if(expr.isFunction()) {
@@ -201,7 +201,7 @@ public class PubbyConfigFactory {
         Set<String> result = new HashSet<String>();
 
         Set<Node> nodes = new HashSet<Node>();
-        for(Quad quad : viewDef.getConstructPattern()) {
+        for(Quad quad : viewDef.getConstructTemplate()) {
             nodes.add(quad.getSubject());
         }
 

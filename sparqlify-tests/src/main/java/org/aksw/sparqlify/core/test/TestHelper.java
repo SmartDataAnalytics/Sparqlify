@@ -24,11 +24,11 @@ public class TestHelper {
 
 		if(!excessive.isEmpty() || !missing.isEmpty()) {
 		
-			System.out.println("Expected : " + expected);
-			System.out.println("Actual   : " + alignedActual);
+			System.err.println("Expected : " + expected);
+			System.err.println("Actual   : " + alignedActual);
 	
-			System.out.println("Excessive: " + excessive);
-			System.out.println("Missing  : " + missing);
+			System.err.println("Excessive: " + excessive);
+			System.err.println("Missing  : " + missing);
 		}		
 
 		return expected.equals(alignedActual);

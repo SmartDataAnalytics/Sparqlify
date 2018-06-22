@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>obda-api-sml</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>obda-api-parent</artifactId>
+		<version>0.8.4</version>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr3-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>ST4</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>obda-api-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-algebra</artifactId>
+		</dependency>
+
+		<!-- TODO Try to get rid of this dependency ; its used for the constraint 
+			types -->
+		<dependency>
+			<groupId>org.aksw.jena-sparql-api</groupId>
+			<artifactId>jena-sparql-api-views</artifactId>
+		</dependency>
+
+
+		<!-- TODO Try to get rid of this dependency; it is used for constraints, however, probably ony a separate processor should deal with such regex constraints -->
+		<dependency>
+			<groupId>jrexx</groupId>
+			<artifactId>jrexx</artifactId>
+		</dependency>
+
+	</dependencies>
+</project>

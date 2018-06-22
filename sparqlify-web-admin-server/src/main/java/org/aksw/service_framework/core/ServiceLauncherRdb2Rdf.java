@@ -24,12 +24,13 @@ import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.jena.query.QueryExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.jolbox.bonecp.BoneCPConfig;
-import com.jolbox.bonecp.BoneCPDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class ServiceLauncherRdb2Rdf
     implements ServiceLauncher<Rdb2RdfConfig, Rdb2RdfExecution, SparqlService>
@@ -87,12 +88,12 @@ public class ServiceLauncherRdb2Rdf
             //LoggerFactory.getLogger(this.getClass()).
 
 
-            BoneCPConfig c = new BoneCPConfig();
+            HikariConfig c = new HikariConfig();
             c.setUsername(dsConfig.getUsername());
             c.setPassword(dsConfig.getPassword());
             c.setJdbcUrl(dsConfig.getJdbcUrl());
 
-            BoneCPDataSource dataSource = new BoneCPDataSource(c);
+            HikariDataSource dataSource = new HikariDataSource(c);
 
 
             LoggerMem loggerMem = new LoggerMem(logger);
@@ -127,11 +128,12 @@ public class ServiceLauncherRdb2Rdf
             QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds);
 
             // A Test Query
-            qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
-
+            QueryExecution qe = qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
+            qe.execAsk();
+            
             SparqlService sparqlService = new SparqlServiceImpl<Config>(smlConfig, qef);
 
-            result = new ServiceProviderRdb2Rdf(serviceName, dataSource, sparqlService);
+            result = new ServiceProviderRdb2Rdf(serviceName, dataSource, () -> dataSource.close(), sparqlService);
 
             result = new ServiceProviderJpaRdbRdf<SparqlService>(result, emf, context);
 

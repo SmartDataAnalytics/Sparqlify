@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
@@ -30,13 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import com.google.common.io.InputSupplier;
-
 import au.com.bytecode.opencsv.CSVReader;
 
 
 class InputSupplierResourceStream
-    implements InputSupplier<InputStream>
+    implements Supplier<InputStream>
 {
     private Resource resource;
 
@@ -45,13 +44,17 @@ class InputSupplierResourceStream
     }
 
     @Override
-    public InputStream getInput() throws IOException {
-        return resource.getInputStream();
+    public InputStream get() {
+        try {
+			return resource.getInputStream();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
     }
 }
 
 class InputSupplierResourceReader
-    implements InputSupplier<Reader>
+    implements Supplier<Reader>
 {
     private Resource resource;
 
@@ -60,8 +63,13 @@ class InputSupplierResourceReader
     }
 
     @Override
-    public Reader getInput() throws IOException {
-        InputStream in = resource.getInputStream();
+    public Reader get() { //throws IOException {
+        InputStream in;
+		try {
+			in = resource.getInputStream();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
         Reader result = new InputStreamReader(in);
         return result;
     }
@@ -166,8 +174,8 @@ public class TestCsv {
             firstRowAsColumnHeaders = tryParseBoolean(config.getProperty("headers"), false);
         }
 
-        InputSupplier<Reader> readerSupplier = new InputSupplierResourceReader(testBundle.getCsv());
-        InputSupplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(readerSupplier, csvConfig);
+        Supplier<Reader> readerSupplier = new InputSupplierResourceReader(testBundle.getCsv());
+        Supplier<CSVReader> csvReaderSupplier = new InputSupplierCSVReader(readerSupplier, csvConfig);
         ResultSet rs = CsvMapperCliMain.createResultSetFromCsv(csvReaderSupplier, firstRowAsColumnHeaders, 100);
 
         /*

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>obda-api-parent</artifactId>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-parent</artifactId>
+		<version>0.8.4</version>
+	</parent>
+
+	<modules>
+		<module>obda-api-core</module>
+		<module>obda-api-r2rml</module>
+		<module>obda-api-sml</module>
+		<module>obda-api-bundle</module>
+		<module>obda-api-examples</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>obda-api-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>obda-api-r2rml</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>obda-api-sml</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>obda-api-bundle</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- The algebra package is used for normalizing expressions during creating 
+				rr:template strings -->
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-algebra</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
+
+			<!-- TODO Get rid of this dependency ; currently only used for E_RdfTerm -->
+			<!-- E_RdfTerm could go to the algebra package -->
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-views</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
+
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.jena</groupId> -->
+			<!-- <artifactId>jena-arq</artifactId> -->
+			<!-- <version>${}</version> -->
+			<!-- </dependency> -->
+
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr-runtime</artifactId>
+				<version>3.5.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>ST4</artifactId>
+				<version>4.0.8</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jrexx</groupId>
+				<artifactId>jrexx</artifactId>
+				<version>1.1.1</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.antlr</groupId>
+					<artifactId>antlr3-maven-plugin</artifactId>
+					<version>3.5.2</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>antlr</goal>
+							</goals>
+							<phase>generate-sources</phase>
+							<configuration>
+								<debug>false</debug>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.antlr</groupId>
+										<artifactId>
+											antlr3-maven-plugin
+										</artifactId>
+										<versionRange>
+											[3.5,)
+										</versionRange>
+										<goals>
+											<goal>antlr</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.8.3</version>
+	<version>0.8.4</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -48,6 +49,8 @@
 
 
 	<modules>
+		<module>obda-api-parent</module>
+
 		<module>sparqlify-type-system</module>
 
 		<module>sparqlify-core</module>
@@ -55,6 +58,8 @@
 		<!-- module>sparqlify-server</module -->
 		<module>sparqlify-platform</module>
 		<module>sparqlify-tests</module>
+
+		<module>sparqlify-benchmark</module>
 
 		<module>sparqlify-jpa</module>
 
@@ -66,6 +71,7 @@
 		<module>sparqlify-debian-cli</module>
 		<module>sparqlify-debian-tomcat-common</module>
 		<module>sparqlify-debian-tomcat7</module>
+		<module>sparqlify-debian-tomcat8</module>
 
 		<module>sparqlify-nexus-deploy-workaround</module>
 	</modules>
@@ -91,13 +97,14 @@
 		<!-- <jersey.version>2.26</jersey.version> -->
 
 		<!-- prior: 3.1.2.RELEASE -->
-		<spring.version>4.3.10.RELEASE</spring.version>
-		<spring.batch.version>3.0.3.RELEASE</spring.batch.version>
-		<spring.security.version>3.2.5.RELEASE</spring.security.version>
+		<!-- <spring.version>4.3.10.RELEASE</spring.version> -->
+		<!-- <spring.batch.version>3.0.3.RELEASE</spring.batch.version> -->
+		<!-- <spring.security.version>3.2.5.RELEASE</spring.security.version> -->
 
-		<aksw.commons.version>0.8.7</aksw.commons.version>
+		<aksw.commons.version>0.8.8</aksw.commons.version>
 
-		<jena-sparql-api.version>3.5.0-2</jena-sparql-api.version>
+		<jena.version>3.7.0</jena.version>
+		<jena-sparql-api.version>${jena.version}-2</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -122,11 +129,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr3-maven-plugin</artifactId>
 			</plugin>
 
 			<plugin>
@@ -163,7 +165,7 @@
 				<plugin>
 					<groupId>com.amashchenko.maven.plugin</groupId>
 					<artifactId>gitflow-maven-plugin</artifactId>
-					<version>1.8.0</version>
+					<version>1.9.0</version>
 					<configuration>
 						<gitFlowConfig>
 							<versionTagPrefix>v</versionTagPrefix>
@@ -217,22 +219,6 @@
 					</configuration>
 				</plugin>
 
-				<plugin>
-					<groupId>org.antlr</groupId>
-					<artifactId>antlr3-maven-plugin</artifactId>
-					<version>3.5.2</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>antlr</goal>
-							</goals>
-							<phase>generate-sources</phase>
-							<configuration>
-								<debug>false</debug>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -368,7 +354,7 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.8.2</version>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -376,23 +362,6 @@
 					<configuration>
 						<lifecycleMappingMetadata>
 							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.antlr</groupId>
-										<artifactId>
-											antlr3-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.5,)
-										</versionRange>
-										<goals>
-											<goal>antlr</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>
@@ -481,6 +450,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+
+			<dependency>
+				<groupId>org.aksw.sparqlify</groupId>
+				<artifactId>obda-api-bundle</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
 				<artifactId>sparqlify-core</artifactId>
@@ -575,6 +551,12 @@
 
 			<dependency>
 				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-algebra</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
 				<artifactId>jena-sparql-api-views</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
@@ -603,6 +585,17 @@
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.jena</groupId> -->
+			<!-- <artifactId>jena-arq</artifactId> -->
+			<!-- <version>${jena.version}</version> -->
+			<!-- </dependency> -->
+
+			<dependency>
+				<groupId>com.zaxxer</groupId>
+				<artifactId>HikariCP</artifactId>
+				<version>2.7.6</version>
+			</dependency>
 
 
 			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>commons</artifactId> 
@@ -613,11 +606,11 @@
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
 			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId> 
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
-			<dependency>
-				<groupId>com.jolbox</groupId>
-				<artifactId>bonecp</artifactId>
-				<version>0.8.0.RELEASE</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>com.jolbox</groupId> -->
+			<!-- <artifactId>bonecp</artifactId> -->
+			<!-- <version>0.8.0.RELEASE</version> -->
+			<!-- </dependency> -->
 			<!-- <dependency> -->
 			<!-- <groupId>com.jamonapi</groupId> -->
 			<!-- <artifactId>jamon</artifactId> -->
@@ -649,37 +642,35 @@
 			<!-- <scope>compile</scope> -->
 			<!-- </dependency> -->
 			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
-				<version>2.4</version>
-				<type>jar</type>
-				<scope>compile</scope>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.7</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>1.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>2.0.1.Final</version>
+			</dependency>
+
 			<dependency>
 				<groupId>commons-cli</groupId>
 				<artifactId>commons-cli</artifactId>
-				<version>1.2</version>
-				<type>jar</type>
-				<scope>compile</scope>
+				<version>20040117.000000</version>
 			</dependency>
-			<dependency>
-				<groupId>commons-validator</groupId>
-				<artifactId>commons-validator</artifactId>
-				<version>1.4.0</version>
-				<type>jar</type>
-				<scope>compile</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-beanutils</groupId>
-						<artifactId>commons-beanutils</artifactId>
-					</exclusion>
-					<exclusion>
-						<!-- Using org.slf4j:jcl-over-slf4j instead -->
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+
+			<!-- <dependency> <groupId>commons-validator</groupId> <artifactId>commons-validator</artifactId> 
+				<version>1.6</version> <type>jar</type> <scope>compile</scope> <exclusions> 
+				<exclusion> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId> 
+				</exclusion> <exclusion> <! - - Using org.slf4j:jcl-over-slf4j instead - 
+				- > <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> 
+				</exclusion> </exclusions> </dependency> -->
 
 			<!-- commons-validator depends on commons-beanutils, which in turn depend 
 				on commons-beanutils-bean-collections. The latter conflicts with commons-collections, 
@@ -736,25 +727,15 @@
 				<version>8.4-701.jdbc4</version> < ! - - <version>9.3-1100-jdbc41</version> 
 				- - > <type>jar</type> <scope>compile</scope> </dependency> -->
 
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>9.4.1209.jre7</version>
-			</dependency>
+			<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
+				<version>42.2.1.jre7</version> </dependency> -->
 
-
-			<dependency>
-				<groupId>org.postgis</groupId>
-				<artifactId>postgis-jdbc</artifactId>
-				<version>1.3.3</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-
+			<!-- <dependency> <groupId>net.postgis</groupId> <artifactId>postgis-jdbc</artifactId> 
+				<version>2.2.1</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>org.apache.hive</groupId>
 				<artifactId>hive-jdbc</artifactId>
-				<version>2.3.0</version>
+				<version>2.3.2</version>
 				<exclusions>
 					<exclusion>
 						<groupId>jdk.tools</groupId>
@@ -891,12 +872,12 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.21</version>
+				<version>1.8.0-beta1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.7.21</version>
+				<version>1.8.0-beta1</version>
 				<scope>runtime</scope>
 			</dependency>
 			<!-- <dependency> -->
@@ -907,7 +888,7 @@
 			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
-				<version>3.2.1</version>
+				<version>20040616</version>
 			</dependency>
 
 			<!-- <dependency> -->
@@ -941,7 +922,7 @@
 			<dependency>
 				<groupId>xerces</groupId>
 				<artifactId>xercesImpl</artifactId>
-				<version>2.10.0</version>
+				<version>2.11.0</version>
 				<scope>runtime</scope>
 			</dependency>
 			<!-- <exclusions> -->
@@ -1017,7 +998,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>11.0</version>
+				<version>24.0-jre</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
@@ -1032,19 +1013,7 @@
 
 			<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
 				<version>5.1.16</version> <type>jar</type> <scope>compile</scope> </dependency> -->
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr-runtime</artifactId>
-				<version>3.4</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
 
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>ST4</artifactId>
-				<version>4.0.7</version>
-			</dependency>
 			<!-- <dependency> -->
 			<!-- <groupId>org.antlr</groupId> -->
 			<!-- <artifactId>stringtemplate</artifactId> -->
@@ -1082,44 +1051,8 @@
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
-				<version>1.4.192</version>
+				<version>1.4.196</version>
 			</dependency>
-
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-core</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-
-			<!-- <exclusions> -->
-			<!-- <exclusion> -->
-			<!-- Using org.slf4j:jcl-over-slf4j instead -->
-			<!-- <groupId>commons-logging</groupId> -->
-			<!-- <artifactId>commons-logging</artifactId> -->
-			<!-- </exclusion> -->
-			<!-- </exclusions> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-context</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-web</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-beans</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- </dependency> -->
-
-			<!-- <dependency> <groupId>com.sun.jersey.contribs</groupId> <artifactId>jersey-spring</artifactId> 
-				<version>${jersey.version}</version> </dependency> -->
 
 			<dependency>
 				<groupId>org.tuckey</groupId>
@@ -1163,19 +1096,26 @@
 				<version>1.0-1</version>
 			</dependency>
 
+			<dependency>
+				<groupId>org.aksw.bsbm</groupId>
+				<artifactId>bsbm-jsa</artifactId>
+				<version>3.1.2</version>
+			</dependency>
+
+
 
 			<!-- Gson: Java to Json conversion -->
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
-				<version>2.2.4</version>
+				<version>2.8.2</version>
 				<scope>compile</scope>
 			</dependency>
 
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.11</version>
+				<version>4.12</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -1202,12 +1142,16 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
 				<!-- <version>4.3.0.Beta4</version> -->
-				<version>4.2.3.Final</version>
+				<version>5.2.13.Final</version>
 
 				<exclusions>
 					<exclusion>
 						<groupId>org.jboss.logging</groupId>
 						<artifactId>jboss-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.fasterxml</groupId>
+						<artifactId>classmate</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -1219,27 +1163,13 @@
 			<dependency>
 				<groupId>net.sf.jsqlparser</groupId>
 				<artifactId>jsqlparser</artifactId>
-				<version>0.8.0</version>
+				<version>1</version>
 			</dependency>
-
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-web</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- <exclusions> -->
-			<!-- <exclusion> -->
-			<!-- Using org.slf4j:jcl-over-slf4j instead -->
-			<!-- <groupId>commons-logging</groupId> -->
-			<!-- <artifactId>commons-logging</artifactId> -->
-			<!-- </exclusion> -->
-			<!-- </exclusions> -->
-			<!-- </dependency> -->
-
 
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-orm</artifactId>
-				<version>${spring.version}</version>
+				<artifactId>spring-context</artifactId>
+				<version>4.3.14.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1250,22 +1180,23 @@
 			</dependency>
 
 
-			<!-- <dependency> -->
-			<!-- <groupId>org.activiti</groupId> -->
-			<!-- <artifactId>activiti-engine</artifactId> -->
-			<!-- <version>5.13</version> -->
-			<!-- <exclusions> -->
-			<!-- <exclusion> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-context</artifactId> -->
-			<!-- </exclusion> -->
-			<!-- </exclusions> -->
-			<!-- </dependency> -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>4.3.14.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<!-- Using org.slf4j:jcl-over-slf4j instead -->
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>${spring.version}</version>
+				<version>4.3.14.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -1278,47 +1209,22 @@
 			<dependency>
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-core</artifactId>
-				<version>${spring.batch.version}</version>
+				<version>4.0.0.RELEASE</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-infrastructure</artifactId>
-				<version>${spring.batch.version}</version>
+				<version>4.0.0.RELEASE</version>
 			</dependency>
 
 			<!-- Spring Security dependencies -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-web</artifactId>
-				<version>${spring.security.version}</version>
+				<version>5.0.1.RELEASE</version>
 			</dependency>
 
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-context</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-jdbc</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.springframework</groupId> -->
-			<!-- <artifactId>spring-tx</artifactId> -->
-			<!-- <version>${spring.version}</version> -->
-			<!-- </dependency> -->
-
-
-
-
-			<!-- <dependency> -->
-			<!-- <groupId>c3p0</groupId> -->
-			<!-- <artifactId>c3p0</artifactId> -->
-			<!-- <version>0.9.1.2</version> -->
-			<!-- <type>jar</type> -->
-			<!-- <scope>compile</scope> -->
-			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 

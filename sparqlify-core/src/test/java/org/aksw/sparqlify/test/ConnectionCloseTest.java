@@ -16,7 +16,7 @@ import org.apache.jena.rdf.model.Model;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.jolbox.bonecp.BoneCPDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class ConnectionCloseTest {
 
@@ -26,12 +26,13 @@ public class ConnectionCloseTest {
 		throws Exception
 	{
 		DataSource tmp = SparqlifyUtils.createTestDatabase();
-		BoneCPDataSource ds = new BoneCPDataSource();
-		ds.setDatasourceBean(tmp);
-		ds.setCloseConnectionWatch(true);
-		ds.setPartitionCount(1);
-		ds.setMinConnectionsPerPartition(1);
-		ds.setMaxConnectionsPerPartition(2);
+		HikariDataSource ds = new HikariDataSource();
+		ds.setDataSource(tmp);
+
+//		ds.setCloseConnectionWatch(true);
+//		ds.setPartitionCount(1);
+//		ds.setMinConnectionsPerPartition(1);
+//		ds.setMaxConnectionsPerPartition(2);
 		
 		String str = "Prefix ex:<http://ex.org/> Create View person As Construct { ?s a ex:Person ; ex:name ?t } With ?s = uri(concat('http://ex.org/person/', ?id)) ?t = plainLiteral(?name) From person";
 			
