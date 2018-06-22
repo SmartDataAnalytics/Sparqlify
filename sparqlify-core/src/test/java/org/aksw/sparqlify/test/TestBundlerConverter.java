@@ -105,19 +105,20 @@ public class TestBundlerConverter {
             String name = baseName + "dump";
 
             TestCase testCase = new TestCaseImpl(name, () -> {
-                try {
+            	boolean isEqual;
+            	try {
                     Set<Quad> expected = NQuadUtils.readNQuads(bundle.getExpected().getInputStream());
 
                     try(QueryExecutionFactory qef = createQef(name, testBundle, bundle)) {
                         //Callable<Set<Quad>> task = new TaskDump(qef);
                         //TestCaseDump verify = new TestCaseDump(task, expected);
                         Set<Quad> actual = QueryExecutionUtils.createDumpNQuads(qef);
-                        boolean isEqual = TestHelper.isEqual(actual, expected);
-                        Assert.assertTrue(isEqual);
+                        isEqual = TestHelper.isEqual(actual, expected);
                     }
                 } catch(Exception e){
                     throw new RuntimeException(e);
                 }
+                Assert.assertTrue(isEqual);
             });
 
             result.add(testCase);
