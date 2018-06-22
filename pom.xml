@@ -103,8 +103,8 @@
 
 		<aksw.commons.version>0.8.8</aksw.commons.version>
 
-		<jena.version>3.6.0</jena.version>
-		<jena-sparql-api.version>${jena.version}-3-SNAPSHOT</jena-sparql-api.version>
+		<jena.version>3.7.0</jena.version>
+		<jena-sparql-api.version>${jena.version}-1</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
