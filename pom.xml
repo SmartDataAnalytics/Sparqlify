@@ -579,11 +579,13 @@
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
+<!--
 			<dependency>
 				<groupId>org.aksw.jena-sparql-api</groupId>
 				<artifactId>jena-sparql-api-jgrapht</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
+-->
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->
