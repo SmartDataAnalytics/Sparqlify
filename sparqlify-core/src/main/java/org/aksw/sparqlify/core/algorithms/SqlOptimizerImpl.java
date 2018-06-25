@@ -26,7 +26,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpSelectBlock;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlSortCondition;
 import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
 import org.apache.jena.sdb.core.JoinType;
-import org.jgrapht.UndirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -342,7 +342,7 @@ public class SqlOptimizerImpl
 
 		
 		//UndirectedGraph<String, EdgeJoin> joinGraph = new Multigraph<String, EdgeJoin>(EdgeJoin.class);
-		UndirectedGraph<String, EdgeSelfJoin> selfJoinGraph = new SimpleGraph<String, EdgeSelfJoin>(EdgeSelfJoin.class);
+		Graph<String, EdgeSelfJoin> selfJoinGraph = new SimpleGraph<String, EdgeSelfJoin>(EdgeSelfJoin.class);
 		//joinGraph.edgesOf("a").
 		
 		// Const to tables to cols to aliases

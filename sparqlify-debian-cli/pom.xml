@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.4</version>
+		<version>0.8.5</version>
 	</parent>
 
 	<artifactId>sparqlify-debian-cli</artifactId>
