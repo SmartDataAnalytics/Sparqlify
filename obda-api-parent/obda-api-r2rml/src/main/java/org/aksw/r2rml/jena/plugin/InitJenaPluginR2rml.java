@@ -1,7 +1,7 @@
 package org.aksw.r2rml.jena.plugin;
 
 import org.aksw.jena_sparql_api.sparql.ext.init.InitJenaSparqlApiSparqlExtensions;
-import org.apache.jena.system.JenaSubsystemLifecycle;
+import org.apache.jena.sys.JenaSubsystemLifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

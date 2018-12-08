@@ -25,7 +25,7 @@ public class TriplesMapImpl
 	
 	@Override
 	public SubjectMap getSubjectMap() {
-		SubjectMap result = ResourceUtils.getPropertyValue(this, RR.subjectMap, SubjectMap.class).orElse(null);
+		SubjectMap result = ResourceUtils.getPropertyValue(this, RR.subjectMap, SubjectMap.class);
 		
 		return result;
 	}
@@ -51,7 +51,7 @@ public class TriplesMapImpl
 	}
 	
 	public LogicalTable getLogicalTable() {
-		LogicalTable result = ResourceUtils.getPropertyValue(this, RR.logicalTable, LogicalTable.class).orElse(null);
+		LogicalTable result = ResourceUtils.getPropertyValue(this, RR.logicalTable, LogicalTable.class);
 		
 		return result;
 	}

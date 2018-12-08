@@ -19,7 +19,7 @@ public class TermMapImpl
 	}
 
 	public Resource getTermType() {
-		Resource result = ResourceUtils.getPropertyValue(this, RR.termType, Resource.class).orElse(null);
+		Resource result = ResourceUtils.getPropertyValue(this, RR.termType, Resource.class);
 		return result;
 	}
 	
@@ -29,7 +29,7 @@ public class TermMapImpl
 	}
 
 	public String getColumn() {
-		String result = ResourceUtils.getLiteralPropertyValue(this, RR.column, String.class).orElse(null);
+		String result = ResourceUtils.getLiteralPropertyValue(this, RR.column, String.class);
 		return result;
 	}
 	
@@ -40,7 +40,7 @@ public class TermMapImpl
 
 	
 	public String getLanguage() {
-		String result = ResourceUtils.getLiteralPropertyValue(this, RR.language, String.class).orElse(null);
+		String result = ResourceUtils.getLiteralPropertyValue(this, RR.language, String.class);
 		return result;
 	}
 	
@@ -50,7 +50,7 @@ public class TermMapImpl
 	}
 
 	public Resource getDatatype() {
-		Resource result = ResourceUtils.getPropertyValue(this, RR.datatype, Resource.class).orElse(null);
+		Resource result = ResourceUtils.getPropertyValue(this, RR.datatype, Resource.class);
 		return result;
 	}
 	
@@ -60,7 +60,7 @@ public class TermMapImpl
 	}
 
 	public RDFNode getConstant() {
-		RDFNode result = ResourceUtils.getPropertyValue(this, RR.constant, RDFNode.class).orElse(null);
+		RDFNode result = ResourceUtils.getPropertyValue(this, RR.constant, RDFNode.class);
 		return result;
 	}
 	
@@ -71,7 +71,7 @@ public class TermMapImpl
 	
 	
 	public String getTemplate() {
-		String result = ResourceUtils.getLiteralPropertyValue(this, RR.template, String.class).orElse(null);
+		String result = ResourceUtils.getLiteralPropertyValue(this, RR.template, String.class);
 		return result;
 	}
 	
