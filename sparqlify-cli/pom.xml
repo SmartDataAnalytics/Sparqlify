@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.6-SNAPSHOT</version>
+		<version>0.8.6</version>
 	</parent>
 
 	<!-- <build> -->
