@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.FilterUtils;
 import org.aksw.jena_sparql_api.utils.QuadUtils;
-import org.aksw.jena_sparql_api.utils.ValueSet;
+import org.aksw.jena_sparql_api.utils.ValueSetOld;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
@@ -32,7 +32,7 @@ public class QuadFilter
 	private Set<Set<Expr>> filterDnf;
 	private Quad pattern;
 
-	private Map<Var, ValueSet<NodeValue>> varToValueSet; 
+	private Map<Var, ValueSetOld<NodeValue>> varToValueSet; 
 
 	public Set<Var> getVarsMentioned()
 	{
