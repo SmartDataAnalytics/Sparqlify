@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.aksw.r2rml.jena.vocab;
+package org.aksw.obda.jena.r2rml.vocab;
 
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;

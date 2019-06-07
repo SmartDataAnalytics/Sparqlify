@@ -1,14 +1,14 @@
 /**
  * 
  */
-package org.aksw.r2rml.jena.domain.impl;
+package org.aksw.obda.jena.r2rml.domain.impl;
 
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.utils.model.SetFromPropertyValues;
-import org.aksw.r2rml.jena.domain.api.GraphMap;
-import org.aksw.r2rml.jena.domain.api.SubjectMap;
-import org.aksw.r2rml.jena.vocab.RR;
+import org.aksw.obda.jena.r2rml.domain.api.GraphMap;
+import org.aksw.obda.jena.r2rml.domain.api.SubjectMap;
+import org.aksw.obda.jena.r2rml.vocab.RR;
 import org.apache.jena.enhanced.EnhGraph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Resource;
