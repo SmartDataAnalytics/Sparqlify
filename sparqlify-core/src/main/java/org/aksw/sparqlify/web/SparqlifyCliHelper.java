@@ -5,10 +5,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.sql.DataSource;
 
+import org.aksw.jena_sparql_api.core.utils.RDFDataMgrEx;
+import org.aksw.obda.jena.domain.impl.ViewDefinition;
+import org.aksw.obda.jena.r2rml.impl.R2rmlImporter;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
@@ -16,6 +21,9 @@ import org.antlr.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -223,17 +231,36 @@ public class SparqlifyCliHelper {
         if(configFiles == null) {
             return null;
         }
+        
 
-        Config result = null;
+    	R2rmlImporter r2rmlImporter = new R2rmlImporter();
+        Config result = new Config();
         for(Resource configFile : configFiles) {
-            try(InputStream in = configFile.getInputStream()) {
-                Config tmp = SparqlifyUtils.parseSmlConfig(in, logger);
-                if(result == null) {
-                    result = tmp;
-                } else {
-                    result.merge(tmp);
+        	
+        	Config contrib = null;
+        	String uri = Objects.toString(configFile.getURI(), null);
+        	if(uri != null) {
+                Lang lang = RDFDataMgr.determineLang(uri, null, null);
+                if(lang != null) {
+                	logger.info("Loading as R2RML: " + configFile);
+                	Model model = RDFDataMgr.loadModel(uri);
+                	RDFDataMgrEx.execSparql(model, "r2rml-inferences.sparql");
+                    Collection<ViewDefinition> views = r2rmlImporter.read(model);
+                    contrib = new Config();
+                    contrib.setViewDefinitions(new ArrayList<>(views));
                 }
-            }
+        	}
+
+        	if(contrib == null) {
+            	logger.info("Loading as SMS: " + configFile);
+                try(InputStream in = configFile.getInputStream()) {
+                    contrib = SparqlifyUtils.parseSmlConfig(in, logger);
+                }
+        	}
+
+        	if(contrib != null) {
+        		result.merge(contrib);
+        	}
         }
 
         return result;

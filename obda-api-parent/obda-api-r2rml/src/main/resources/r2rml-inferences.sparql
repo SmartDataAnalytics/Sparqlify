@@ -1,0 +1,9 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+INSERT {
+  ?s rr:predicateMap [
+    rr:constant ?o
+  ]
+}
+WHERE {
+  ?s rr:predicate ?o
+}
