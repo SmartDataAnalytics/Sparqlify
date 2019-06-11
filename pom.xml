@@ -314,6 +314,7 @@
 							<exclude>commons-beanutils-core-</exclude>
 							<exclude>postgresql-</exclude>
 							<exclude>asm-</exclude>
+                                                        <exclude>bean-validator-</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
