@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.aksw.jena_sparql_api.utils.Generator;
+import org.aksw.commons.collections.generator.Generator;
 import org.aksw.jena_sparql_api.utils.VarGeneratorImpl2;
 import org.aksw.obda.domain.api.Constraint;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;

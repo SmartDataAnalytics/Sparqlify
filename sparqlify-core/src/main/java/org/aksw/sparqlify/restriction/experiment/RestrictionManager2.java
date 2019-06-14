@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.commons.util.Pair;
+import org.aksw.commons.collections.cluster.IndirectEquiMap;
 import org.aksw.jena_sparql_api.exprs_ext.E_StrConcatPermissive;
 import org.aksw.jena_sparql_api.normal_form.Clause;
 import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
@@ -21,7 +21,6 @@ import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
 import org.aksw.jena_sparql_api.utils.CnfUtils;
 import org.aksw.jena_sparql_api.views.RdfTermType;
-import org.aksw.sparqlify.database.IndirectEquiMap;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -467,7 +466,7 @@ public class RestrictionManager2 {
             }
         }
 
-        Pair<RestrictionSetImpl, RestrictionSetImpl> conflict = restrictions.stateEqual(a, b);
+        Entry<RestrictionSetImpl, RestrictionSetImpl> conflict = restrictions.tryStateEqual(a, b);
         //Restriction r;
         if(conflict != null) {
 
