@@ -1,4 +1,4 @@
-package org.aksw.r2rml.jena.domain.api;
+package org.aksw.obda.jena.r2rml.domain.api;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;

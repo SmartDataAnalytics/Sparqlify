@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.aksw.r2rml.jena.domain.impl;
+package org.aksw.obda.jena.r2rml.domain.impl;
 
 import java.util.EnumSet;
 import java.util.HashSet;

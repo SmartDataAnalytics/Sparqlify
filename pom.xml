@@ -6,7 +6,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.8.6</version>
+	<version>0.8.7</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -101,9 +101,9 @@
 		<!-- <spring.batch.version>3.0.3.RELEASE</spring.batch.version> -->
 		<!-- <spring.security.version>3.2.5.RELEASE</spring.security.version> -->
 
-		<aksw.commons.version>0.8.8</aksw.commons.version>
+		<aksw.commons.version>0.8.11</aksw.commons.version>
 
-		<jena.version>3.9.0</jena.version>
+		<jena.version>3.11.0</jena.version>
 		<jena-sparql-api.version>${jena.version}-1</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
@@ -314,6 +314,7 @@
 							<exclude>commons-beanutils-core-</exclude>
 							<exclude>postgresql-</exclude>
 							<exclude>asm-</exclude>
+                                                        <exclude>bean-validator-</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
@@ -1107,13 +1108,14 @@
 
 
 			<!-- Gson: Java to Json conversion -->
+<!--
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
 				<artifactId>gson</artifactId>
 				<version>2.8.2</version>
 				<scope>compile</scope>
 			</dependency>
-
+-->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -1171,7 +1173,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>4.3.14.RELEASE</version>
+				<version>4.3.23.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1185,7 +1187,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
-				<version>4.3.14.RELEASE</version>
+				<version>4.3.23.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1198,7 +1200,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>4.3.14.RELEASE</version>
+				<version>4.3.23.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>

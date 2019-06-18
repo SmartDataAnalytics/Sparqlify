@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.8.6</version>
+        <version>0.8.7</version>
     </parent>
 
 
@@ -112,11 +112,12 @@
             <artifactId>urlrewritefilter</artifactId>
         </dependency>
 
+<!--
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-
+-->
 
     </dependencies>
 </project>

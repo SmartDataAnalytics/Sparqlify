@@ -265,7 +265,7 @@ public class QueryExecutionSparqlifyExplain
 			binding.add(timeOutVar, NodeValue.makeBoolean(timeOut).asNode());
 			binding.add(resultSetSizeVar, resultSetSizeNode);
 			binding.add(isErrorVar, NodeValue.makeBoolean(isError).asNode());
-			binding.add(errorMsgVar, errorMsgNode);
+			if(errorMsgNode != null) { binding.add(errorMsgVar, errorMsgNode); }
 			binding.add(queryStringVar, NodeValue.makeString(sqlQueryString).asNode());
 			
 			resultBindings.add(binding);					

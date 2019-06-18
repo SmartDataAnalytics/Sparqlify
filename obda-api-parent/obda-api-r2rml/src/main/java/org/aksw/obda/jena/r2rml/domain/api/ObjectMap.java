@@ -1,4 +1,4 @@
-package org.aksw.r2rml.jena.domain.api;
+package org.aksw.obda.jena.r2rml.domain.api;
 
 public interface ObjectMap
 	extends TermMap
