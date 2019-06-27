@@ -14,7 +14,8 @@ rs:TriplesMapShape
   sh:targetClass rr:TriplesMap ;
   sh:property [
     sh:path rr:logicalTable ;
-    sh:minCount 1 ;
+# A constant triple does not demand a logical table specification
+#    sh:minCount 1 ;
     sh:maxCount 1
   ] ;
 #  sh:property [
