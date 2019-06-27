@@ -47,6 +47,19 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<!-- R2RML Validation -->
+			<dependency>
+				<groupId>org.topbraid</groupId>
+				<artifactId>shacl</artifactId>
+				<version>1.1.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.jena</groupId>
+						<artifactId>jena-arq</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
 			<!-- The algebra package is used for normalizing expressions during creating 
 				rr:template strings -->
 			<dependency>

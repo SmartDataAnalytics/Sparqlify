@@ -29,6 +29,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_StrConcat;
@@ -41,6 +43,8 @@ import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
+import org.topbraid.shacl.validation.ValidationUtil;
+import org.topbraid.shacl.vocabulary.SH;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -61,7 +65,28 @@ public class R2rmlImporter {
 //		
 //		return result;
 //	}
+
+	public static void validateR2rml(Model dataModel) {
+		Model shaclModel = RDFDataMgr.loadModel("r2rml.core.shacl.ttl");
+
+		// Perform the validation of everything, using the data model
+		// also as the shapes model - you may have them separated
+		Resource result = ValidationUtil.validateModel(dataModel, shaclModel, true);		
+
+		boolean conforms = result.getProperty(SH.conforms).getBoolean();
+		
+		if(!conforms) {
+			// Print violations
+			RDFDataMgr.write(System.err, result.getModel(), RDFFormat.TURTLE_PRETTY);
+			throw new RuntimeException("Shacl validation failed; see report above");
+		}
+	}
 	
+	// It makes sense to have the validation method part of the object - instead of just using a static method
+	public void validate(Model dataModel) {
+		validateR2rml(dataModel);
+	}
+
 	public Collection<ViewDefinition> read(Model model) {
 		List<TriplesMap> triplesMaps = model.listSubjectsWithProperty(RR.logicalTable).mapWith(r -> r.as(TriplesMap.class)).toList();
 

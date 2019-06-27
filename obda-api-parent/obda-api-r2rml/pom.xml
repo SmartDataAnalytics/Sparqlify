@@ -20,6 +20,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.topbraid</groupId>
+			<artifactId>shacl</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
 			<artifactId>jena-sparql-api-algebra</artifactId>
 		</dependency>

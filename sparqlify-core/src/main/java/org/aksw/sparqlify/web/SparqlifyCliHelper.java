@@ -245,6 +245,8 @@ public class SparqlifyCliHelper {
                 	logger.info("Loading as R2RML: " + configFile);
                 	Model model = RDFDataMgr.loadModel(uri);
                 	RDFDataMgrEx.execSparql(model, "r2rml-inferences.sparql");
+                	
+                	r2rmlImporter.validate(model);
                     Collection<ViewDefinition> views = r2rmlImporter.read(model);
                     contrib = new Config();
                     contrib.setViewDefinitions(new ArrayList<>(views));
