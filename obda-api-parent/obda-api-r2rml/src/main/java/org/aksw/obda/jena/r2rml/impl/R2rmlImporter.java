@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.aksw.commons.collections.generator.Generator;
 import org.aksw.jena_sparql_api.utils.VarGeneratorImpl2;
 import org.aksw.obda.domain.api.Constraint;
+import org.aksw.obda.domain.api.LogicalTable;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.domain.api.GraphMap;
 import org.aksw.obda.jena.r2rml.domain.api.ObjectMap;
@@ -63,13 +64,18 @@ public class R2rmlImporter {
 	
 	public Collection<ViewDefinition> read(Model model) {
 		List<TriplesMap> triplesMaps = model.listSubjectsWithProperty(RR.logicalTable).mapWith(r -> r.as(TriplesMap.class)).toList();
-	
+
+//		for(TriplesMap tm : triplesMaps) {
+			// TODO Integrate validation with shacl, as this gives us free reports of violations
+//		}
+		
 		List<ViewDefinition> result = triplesMaps.stream()
 				.map(tm -> read(tm))
 				.collect(Collectors.toList());
 	
 		return result;
 	}
+	
 
 	public Node allocateVar(TermMap tm, BiMap<Node, Expr> nodeToExpr, Generator<Var> varGen) {
 		Node result;
@@ -97,6 +103,11 @@ public class R2rmlImporter {
 	// Note on graphs: the spec states: "If sgm and pogm are empty: rr:defaultGraph; otherwise: union of subject_graphs and predicate-object_graphs"
 	public ViewDefinition read(TriplesMap tm) {
 		// Construct triples by creating the cartesian product between g, s, p, and o term maps
+		
+		LogicalTable logicalTable = tm.getLogicalTable();
+//		System.out.println("Processing " + tm.getURI());
+//		System.out.println("  with table " + logicalTable);
+				
 		SubjectMap sm = tm.getSubjectMap();
 		Set<GraphMap> sgms = sm.getGraphMaps();
 		
@@ -170,9 +181,9 @@ public class R2rmlImporter {
 		// Derive name
 		String name = Optional.ofNullable(tm.getProperty(RDFS.label))
 				.map(Statement::getString)
-				.orElseGet(() -> tm.isURIResource() ? tm.getLocalName() : "" + tm);
-		
-		ViewDefinition result = new ViewDefinition(name, template, varDefs, varConstraints, tm.getLogicalTable());
+				.orElseGet(() -> tm.isURIResource() ? tm.getURI() : "" + tm);
+
+		ViewDefinition result = new ViewDefinition(name, template, varDefs, varConstraints, logicalTable);
 		
 		return result;
 	}
@@ -225,7 +236,8 @@ public class R2rmlImporter {
 	
 				case '}':
 					if(isInVarName) {
-						result.add(new ExprVar(builder.toString()));
+						String varName = builder.toString();
+						result.add(new ExprVar(varName));
 						builder  = new StringBuilder();
 						isInVarName = false;
 					} else {
