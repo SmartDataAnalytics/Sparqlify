@@ -1,11 +1,10 @@
 package org.aksw.obda.jena.r2rml.domain.impl;
 
-import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
+import org.aksw.jena_sparql_api.rdf.collections.ResourceUtils;
 import org.aksw.obda.jena.r2rml.domain.api.TermMap;
 import org.aksw.obda.jena.r2rml.vocab.RR;
 import org.apache.jena.enhanced.EnhGraph;
 import org.apache.jena.graph.Node;
-import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 

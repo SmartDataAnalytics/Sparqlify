@@ -5,7 +5,7 @@ package org.aksw.obda.jena.r2rml.domain.impl;
 
 import java.util.Optional;
 
-import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
+import org.aksw.jena_sparql_api.rdf.collections.ResourceUtils;
 import org.aksw.obda.jena.r2rml.domain.api.LogicalTable;
 import org.aksw.obda.jena.r2rml.vocab.RR;
 import org.apache.jena.enhanced.EnhGraph;
