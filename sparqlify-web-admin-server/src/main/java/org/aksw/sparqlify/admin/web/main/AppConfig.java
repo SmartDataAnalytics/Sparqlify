@@ -35,6 +35,7 @@ import org.aksw.sparqlify.inverse.SparqlSqlInverseMapper;
 import org.aksw.sparqlify.inverse.SparqlSqlInverseMapperImpl;
 import org.aksw.sparqlify.jpa.EntityInverseMapper;
 import org.aksw.sparqlify.jpa.EntityInverseMapperImplHibernate;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -271,7 +272,8 @@ public class AppConfig
 
         DatatypeToString typeSerializer = new DatatypeToStringPostgres();
 
-        QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, 1000l, 60);
+        QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(
+        		dataSource, config, typeSerializer, sqlEscaper, 1000l, 60, SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));
         return result;
     }
 

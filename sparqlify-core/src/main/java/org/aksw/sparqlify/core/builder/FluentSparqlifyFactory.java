@@ -10,15 +10,15 @@ import java.util.Objects;
 
 import javax.sql.DataSource;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
+import org.aksw.sparqlify.config.xml.SparqlifyConfig;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
-import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactorySparqlifyDs;
+import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.antlr.runtime.RecognitionException;
@@ -33,7 +33,11 @@ public class FluentSparqlifyFactory {
 	protected SqlEscaper sqlEscaper;
 	protected DatatypeToString datatypeToString;
 	protected Config config;
+	protected SparqlifyConfig sqlFunctionMapping;
 	
+	
+	protected Long maxResultSetSize;
+	protected Integer maxQueryExecutionTime;
 	//protected TypeSerializer typeSerializer;
 	//protected MappingOps mappingOps;
 	//protected ViewDefinitionNormalizer<?> viewDefinitionNormalizer;
@@ -77,8 +81,9 @@ public class FluentSparqlifyFactory {
 		return config;
 	}
 
-	public void setConfig(Config config) {
+	public FluentSparqlifyFactory setConfig(Config config) {
 		this.config = config;
+		return this;
 	}
 	
 	public FluentSparqlifyFactory addResource(String url) throws IOException, RecognitionException {
@@ -113,7 +118,40 @@ public class FluentSparqlifyFactory {
 		return this;
 	}
 	
-	public QueryExecutionFactory create() throws SQLException, IOException {
+	public FluentSparqlifyFactory setSqlFunctionMapping(String resourceName) {
+		SparqlifyConfig tmp = SparqlifyCoreInit.loadSqlFunctionDefinitions(resourceName);
+		setSqlFunctionMapping(tmp);
+		return this;
+	}
+
+	public FluentSparqlifyFactory setSqlFunctionMapping(SparqlifyConfig sqlFunctionMapping) {
+		this.sqlFunctionMapping = sqlFunctionMapping;
+		return this;
+	}
+
+	public Long getMaxResultSetSize() {
+		return maxResultSetSize;
+	}
+
+	public FluentSparqlifyFactory setMaxResultSetSize(Long maxResultSetSize) {
+		this.maxResultSetSize = maxResultSetSize;
+		return this;
+	}
+
+	public Integer getMaxQueryExecutionTime() {
+		return maxQueryExecutionTime;
+	}
+
+	public FluentSparqlifyFactory setMaxQueryExecutionTime(Integer maxQueryExecutionTime) {
+		this.maxQueryExecutionTime = maxQueryExecutionTime;
+		return this;
+	}
+
+	public SparqlifyConfig getSqlFunctionMapping() {
+		return sqlFunctionMapping;
+	}
+
+	public QueryExecutionFactoryEx create() throws SQLException, IOException {
 		
 //	    val config = new Config()
 //	    	    val loggerCount = new LoggerCount(logger.underlying)
@@ -130,10 +168,32 @@ public class FluentSparqlifyFactory {
 //
 //	    	    val candidateViewSelector = new CandidateViewSelectorSparqlify(mappingOps, new ViewDefinitionNormalizerImpl());
 //
-
-		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createDefaultSparqlSqlStringRewriter(dataSource, config, datatypeToString, sqlEscaper);
-
-		QueryExecutionFactory result = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+		SparqlifyConfig effectiveSqlFunctionMapping = sqlFunctionMapping != null
+				? sqlFunctionMapping
+				: SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml");
+		
+//		SparqlSqlStringRewriter rewriter = SparqlifyUtils.createDefaultSparqlSqlStringRewriter(
+//				dataSource,
+//				config,
+//				datatypeToString,
+//				sqlEscaper,
+//				effectiveSqlFunctionMapping);
+//
+//		QueryExecutionFactory result = new QueryExecutionFactorySparqlifyDs(rewriter, dataSource);
+//		return result;
+		
+		QueryExecutionFactoryEx result = SparqlifyUtils.createDefaultSparqlifyEngine(
+				dataSource,
+				config,
+				datatypeToString,
+				sqlEscaper,				
+				maxResultSetSize,
+				maxQueryExecutionTime,
+				effectiveSqlFunctionMapping);
 		return result;
+	}
+	
+	public static FluentSparqlifyFactory newEngine() {
+		return new FluentSparqlifyFactory();
 	}
 }

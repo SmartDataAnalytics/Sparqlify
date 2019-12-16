@@ -15,6 +15,7 @@ import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.BasicTableInfoProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.BasicTableProviderJdbc;
@@ -25,6 +26,7 @@ import org.aksw.sparqlify.config.v0_2.bridge.SyntaxBridge;
 import org.aksw.sparqlify.core.algorithms.CandidateViewSelectorSparqlify;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.algorithms.ViewDefinitionNormalizerImpl;
+import org.aksw.sparqlify.core.builder.FluentSparqlifyFactory;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.aksw.sparqlify.core.interfaces.MappingOps;
@@ -33,6 +35,7 @@ import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
+import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
@@ -283,8 +286,15 @@ public class Main {
 
 
         //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
-        QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
-
+        //QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
+        QueryExecutionFactoryEx qef = FluentSparqlifyFactory.newEngine()
+				.setDataSource(dataSource)
+				.setConfig(config)
+				.setDatatypeToString(new DatatypeToStringPostgres())
+				.setSqlEscaper(new SqlEscaperDoubleQuote())
+				.setMaxQueryExecutionTime(maxQueryExecutionTime)
+				.setMaxResultSetSize(mrs)
+				.create();
 
         if(useSparql11Wrapper) {
             Graph graph = new GraphQueryExecutionFactory(qef);
