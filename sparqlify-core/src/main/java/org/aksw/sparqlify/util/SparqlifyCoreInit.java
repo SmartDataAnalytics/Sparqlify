@@ -367,16 +367,16 @@ public class SparqlifyCoreInit {
 
 
 
-        {
-            //SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");
-            result.addSerializer(sqlModel.getIdsByName("regex"), new SqlFunctionSerializer() {
-                @Override
-                public String serialize(List<String> args) {
-                    return "(" + args.get(0) + " ~ " + args.get(1) + ")";
-                }
-            });
-            //result.addSerializer(sqlModel.getIdsByName("regex"), serializer);
-        }
+//        {
+//            //SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");
+//            result.addSerializer(sqlModel.getIdsByName("regex"), new SqlFunctionSerializer() {
+//                @Override
+//                public String serialize(List<String> args) {
+//                    return "(" + args.get(0) + " ~ " + args.get(1) + ")";
+//                }
+//            });
+//            //result.addSerializer(sqlModel.getIdsByName("regex"), serializer);
+//        }
 
 
 
@@ -456,7 +456,7 @@ public class SparqlifyCoreInit {
             transMap.put("bound", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
             transMap.put("cast", new ExprTransformerCast());
             transMap.put("str", new ExprTransformerStr());
-            transMap.put("regex", new ExprTransformerFunction(XSD.xboolean));
+            //transMap.put("regex", new ExprTransformerFunction(XSD.xboolean));
 
             transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerRdfTermCtor());
             transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerRdfTermCtor());
@@ -886,11 +886,11 @@ public class SparqlifyCoreInit {
             // However, we could also create a virtual SQL function, and process the regex flags in the SQL impl, or even the serializer
             // Put differently: Where is the best place to handle this?
             // - The SQL model should actually model what's there, so a fake SQL model doesn't really make sense.
-            sqlModel.registerFunction("boolean regex(string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
-            sqlModel.registerFunction("boolean regex(string, string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String, TypeToken.String));
-            sparqlSqlDecls.putAll("regex", sqlModel.getIdsByName("regex"));
-            sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
-            sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
+            //sqlModel.registerFunction("boolean regex(string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
+            //sqlModel.registerFunction("boolean regex(string, string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String, TypeToken.String));
+            //sparqlSqlDecls.putAll("regex", sqlModel.getIdsByName("regex"));
+            //sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
+            //sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
 
 
 

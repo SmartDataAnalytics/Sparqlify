@@ -44,6 +44,25 @@
 			</mappings>
 		</simpleFunction>
 
+		<simpleFunction>
+			<name>regex</name>
+			<mappings>
+				<mapping>
+					<signature>boolean regex(string, string)</signature>
+					<pattern>($1$ rlike $2$)</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+
+		<simpleFunction>
+			<name>regex</name>
+			<mappings>
+				<mapping>
+					<signature>boolean regex(string, string, string)</signature>
+					<pattern>(lower($1$) rlike lower($2$))</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
 	
 		<simpleFunction>
 			<name>http://www.openlinksw.com/schemas/bif#st_geomFromPoint</name>
