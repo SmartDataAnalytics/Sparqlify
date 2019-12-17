@@ -59,7 +59,7 @@
 			<mappings>
 				<mapping>
 					<signature>boolean regex(string, string, string)</signature>
-					<pattern>(lower($1$) ~ lower($2$))</pattern>
+					<pattern>($1$ ~* $2$)</pattern>
 				</mapping>
 			</mappings>
 		</simpleFunction>

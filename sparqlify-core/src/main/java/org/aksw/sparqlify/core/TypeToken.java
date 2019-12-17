@@ -41,6 +41,7 @@ public class TypeToken
     public static final TypeToken Boolean = alloc("boolean");
     public static final TypeToken Int = alloc("integer");
     public static final TypeToken Long = alloc("long");
+    public static final TypeToken Decimal = alloc("decimal");
     public static final TypeToken Float = alloc("float");
     public static final TypeToken Double = alloc("double");
     public static final TypeToken String = alloc("string");
