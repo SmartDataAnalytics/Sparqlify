@@ -5,8 +5,8 @@ package org.aksw.obda.jena.r2rml.domain.impl;
 
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
-import org.aksw.jena_sparql_api.utils.model.SetFromPropertyValues;
+import org.aksw.jena_sparql_api.rdf.collections.ResourceUtils;
+import org.aksw.jena_sparql_api.rdf.collections.SetFromPropertyValues;
 import org.aksw.obda.jena.r2rml.domain.api.LogicalTable;
 import org.aksw.obda.jena.r2rml.domain.api.PredicateObjectMap;
 import org.aksw.obda.jena.r2rml.domain.api.SubjectMap;

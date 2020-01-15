@@ -5,7 +5,7 @@ package org.aksw.obda.jena.r2rml.domain.impl;
 
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.model.SetFromPropertyValues;
+import org.aksw.jena_sparql_api.rdf.collections.SetFromPropertyValues;
 import org.aksw.obda.jena.r2rml.domain.api.GraphMap;
 import org.aksw.obda.jena.r2rml.domain.api.ObjectMap;
 import org.aksw.obda.jena.r2rml.domain.api.PredicateMap;

@@ -1,9 +1,12 @@
 package org.aksw.sparqlify.util;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.JAXBException;
 
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
@@ -364,16 +367,16 @@ public class SparqlifyCoreInit {
 
 
 
-        {
-            //SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");
-            result.addSerializer(sqlModel.getIdsByName("regex"), new SqlFunctionSerializer() {
-                @Override
-                public String serialize(List<String> args) {
-                    return "(" + args.get(0) + " ~ " + args.get(1) + ")";
-                }
-            });
-            //result.addSerializer(sqlModel.getIdsByName("regex"), serializer);
-        }
+//        {
+//            //SqlFunctionSerializer serializer = new SqlFunctionSerializerOp2("~*");
+//            result.addSerializer(sqlModel.getIdsByName("regex"), new SqlFunctionSerializer() {
+//                @Override
+//                public String serialize(List<String> args) {
+//                    return "(" + args.get(0) + " ~ " + args.get(1) + ")";
+//                }
+//            });
+//            //result.addSerializer(sqlModel.getIdsByName("regex"), serializer);
+//        }
 
 
 
@@ -453,7 +456,7 @@ public class SparqlifyCoreInit {
             transMap.put("bound", new ExprTransformerPassAsTypedLiteral(XSD.xboolean));
             transMap.put("cast", new ExprTransformerCast());
             transMap.put("str", new ExprTransformerStr());
-            transMap.put("regex", new ExprTransformerFunction(XSD.xboolean));
+            //transMap.put("regex", new ExprTransformerFunction(XSD.xboolean));
 
             transMap.put(SparqlifyConstants.blankNodeLabel, new ExprTransformerRdfTermCtor());
             transMap.put(SparqlifyConstants.uriLabel, new ExprTransformerRdfTermCtor());
@@ -883,11 +886,11 @@ public class SparqlifyCoreInit {
             // However, we could also create a virtual SQL function, and process the regex flags in the SQL impl, or even the serializer
             // Put differently: Where is the best place to handle this?
             // - The SQL model should actually model what's there, so a fake SQL model doesn't really make sense.
-            sqlModel.registerFunction("boolean regex(string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
-            sqlModel.registerFunction("boolean regex(string, string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String, TypeToken.String));
-            sparqlSqlDecls.putAll("regex", sqlModel.getIdsByName("regex"));
-            sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
-            sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
+            //sqlModel.registerFunction("boolean regex(string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String));
+            //sqlModel.registerFunction("boolean regex(string, string, string)", "regex", MethodSignature.create(false, TypeToken.Boolean, TypeToken.String, TypeToken.String, TypeToken.String));
+            //sparqlSqlDecls.putAll("regex", sqlModel.getIdsByName("regex"));
+            //sqlImpls.put("boolean regex(string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
+            //sqlImpls.put("boolean regex(string, string, string)", new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "regex"));
 
 
 
@@ -1190,7 +1193,18 @@ public class SparqlifyCoreInit {
 
         }
 
-    public static void loadExtensionFunctions(TypeSystem typeSystem, RdfTermEliminatorWriteable exprTransformer, SqlExprSerializerSystem serializerSystem) {
+        public static SparqlifyConfig loadSqlFunctionDefinitions(String resourceName) {
+            InputStream in = SparqlifyCoreInit.class.getClassLoader().getResourceAsStream(resourceName);
+            SparqlifyConfig result;
+			try {
+				result = XmlUtils.unmarshallXml(SparqlifyConfig.class, in);
+			} catch (UnsupportedEncodingException | JAXBException e) {
+				throw new RuntimeException(e);
+			}
+            return result;
+        }
+
+    public static void loadExtensionFunctions(TypeSystem typeSystem, RdfTermEliminatorWriteable exprTransformer, SqlExprSerializerSystem serializerSystem, SparqlifyConfig sqlFunctionMapping) {
 
 
 
@@ -1206,9 +1220,6 @@ public class SparqlifyCoreInit {
 
                 Function<String, String> fnTypeToUri = Functions.forMap(typeNameToUri);
 
-                InputStream in = SparqlifyCoreInit.class.getClassLoader().getResourceAsStream("functions.xml");
-                SparqlifyConfig config = XmlUtils.unmarshallXml(SparqlifyConfig.class, in);
-
 
                 FunctionModelAliased<String> sparqlModel = typeSystem.getSparqlFunctionModel();
 
@@ -1221,7 +1232,7 @@ public class SparqlifyCoreInit {
                 //System.out.println(config);
 
 
-                for(SimpleFunction simpleFunction : config.getSimpleFunctions().getSimpleFunction()) {
+                for(SimpleFunction simpleFunction : sqlFunctionMapping.getSimpleFunctions().getSimpleFunction()) {
                     String sparqlName = simpleFunction.getName();
 
                     for(Mapping mapping : simpleFunction.getMappings().getMapping()) {

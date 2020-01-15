@@ -5,12 +5,11 @@ package org.aksw.obda.jena.r2rml.domain.impl;
 
 import java.util.Optional;
 
-import org.aksw.jena_sparql_api.utils.model.ResourceUtils;
+import org.aksw.jena_sparql_api.rdf.collections.ResourceUtils;
 import org.aksw.obda.jena.r2rml.domain.api.LogicalTable;
 import org.aksw.obda.jena.r2rml.vocab.RR;
 import org.apache.jena.enhanced.EnhGraph;
 import org.apache.jena.graph.Node;
-import org.apache.jena.rdf.model.Literal;
 
 
 public class LogicalTableImpl
@@ -45,5 +44,11 @@ public class LogicalTableImpl
 		removeAll(RR.sqlQuery);
 		addLiteral(RR.sqlQuery, sqlQuery);
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "LogicalTableImpl [tableName=" + tryGetTableName().orElse(null) + ", queryString="
+				+ tryGetQueryString().orElse(null) + "]";
 	}
 }

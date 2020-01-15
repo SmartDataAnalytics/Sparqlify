@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.connection.SparqlQueryConnectionJsa;
 import org.aksw.sparqlify.core.builder.FluentSparqlifyFactory;
 import org.antlr.runtime.RecognitionException;
 import org.apache.jena.ext.com.google.common.io.Files;
@@ -63,7 +64,7 @@ public class MainSparqlifyBsbm {
         TestDriver testDriver = new TestDriver();
         testDriver.processProgramParameters(new String[]{"http://example.org/foobar/sparql", "-w", "0", "-runs", "1"});
         testDriver.setParameterPool(new LocalSPARQLParameterPool(testDriverParams, testDriver.getSeed()));
-        testDriver.setServer(new SPARQLConnection2(qef));
+        testDriver.setServer(new SPARQLConnection2(new SparqlQueryConnectionJsa(qef)));
 
         testDriver.init();
         

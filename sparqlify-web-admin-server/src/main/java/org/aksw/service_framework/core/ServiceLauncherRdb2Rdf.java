@@ -22,6 +22,7 @@ import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
+import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.jena.query.QueryExecution;
@@ -125,7 +126,8 @@ public class ServiceLauncherRdb2Rdf
 
             SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
             DatatypeToString typeSerializer = new DatatypeToStringPostgres();
-            QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds);
+            QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds,
+            		SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));
 
             // A Test Query
             QueryExecution qe = qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");

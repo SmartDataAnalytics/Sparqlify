@@ -1,0 +1,52 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+@prefix rs: <http://www.w3.org/ns/r2rml#> .
+
+
+rs:TriplesMapShape
+  rdf:type sh:NodeShape ;
+  rdfs:label "TriplesMap Shape" ;
+  sh:targetClass rr:TriplesMap ;
+  sh:property [
+    sh:path rr:logicalTable ;
+# A constant triple does not demand a logical table specification
+#    sh:minCount 1 ;
+    sh:maxCount 1
+  ] ;
+#  sh:property [
+#    sh:path rr:predicateObjectMap ;
+#    sh:minCount 1 ;
+#    sh:maxCount 1
+#  ] ;
+  .
+
+rs:LogicalTableShape
+  rdf:type sh:NodeShape ;
+  rdfs:label "LogicalTable Shape" ;
+  sh:targetObjectsOf rr:logicalTable ;
+  sh:xone(
+    [
+	  sh:property [
+	    sh:path rr:sqlQuery ;
+        rr:datatype xsd:string ;
+	    sh:minCount 1 ;
+	    sh:maxCount 1
+	  ]
+    ]
+    [
+      sh:property [
+        sh:path rr:tableName ;
+        rr:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+      ]
+    ]
+  ) ;
+  .
+
+ 

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.aksw.commons.collections.generator.Generator;
 import org.aksw.jena_sparql_api.utils.VarGeneratorImpl2;
 import org.aksw.obda.domain.api.Constraint;
+import org.aksw.obda.domain.api.LogicalTable;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.domain.api.GraphMap;
 import org.aksw.obda.jena.r2rml.domain.api.ObjectMap;
@@ -28,6 +29,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_StrConcat;
@@ -40,6 +43,8 @@ import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
+import org.topbraid.shacl.validation.ValidationUtil;
+import org.topbraid.shacl.vocabulary.SH;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -60,16 +65,42 @@ public class R2rmlImporter {
 //		
 //		return result;
 //	}
+
+	public static void validateR2rml(Model dataModel) {
+		Model shaclModel = RDFDataMgr.loadModel("r2rml.core.shacl.ttl");
+
+		// Perform the validation of everything, using the data model
+		// also as the shapes model - you may have them separated
+		Resource result = ValidationUtil.validateModel(dataModel, shaclModel, true);		
+
+		boolean conforms = result.getProperty(SH.conforms).getBoolean();
+		
+		if(!conforms) {
+			// Print violations
+			RDFDataMgr.write(System.err, result.getModel(), RDFFormat.TURTLE_PRETTY);
+			throw new RuntimeException("Shacl validation failed; see report above");
+		}
+	}
 	
+	// It makes sense to have the validation method part of the object - instead of just using a static method
+	public void validate(Model dataModel) {
+		validateR2rml(dataModel);
+	}
+
 	public Collection<ViewDefinition> read(Model model) {
 		List<TriplesMap> triplesMaps = model.listSubjectsWithProperty(RR.logicalTable).mapWith(r -> r.as(TriplesMap.class)).toList();
-	
+
+//		for(TriplesMap tm : triplesMaps) {
+			// TODO Integrate validation with shacl, as this gives us free reports of violations
+//		}
+		
 		List<ViewDefinition> result = triplesMaps.stream()
 				.map(tm -> read(tm))
 				.collect(Collectors.toList());
 	
 		return result;
 	}
+	
 
 	public Node allocateVar(TermMap tm, BiMap<Node, Expr> nodeToExpr, Generator<Var> varGen) {
 		Node result;
@@ -97,6 +128,11 @@ public class R2rmlImporter {
 	// Note on graphs: the spec states: "If sgm and pogm are empty: rr:defaultGraph; otherwise: union of subject_graphs and predicate-object_graphs"
 	public ViewDefinition read(TriplesMap tm) {
 		// Construct triples by creating the cartesian product between g, s, p, and o term maps
+		
+		LogicalTable logicalTable = tm.getLogicalTable();
+//		System.out.println("Processing " + tm.getURI());
+//		System.out.println("  with table " + logicalTable);
+				
 		SubjectMap sm = tm.getSubjectMap();
 		Set<GraphMap> sgms = sm.getGraphMaps();
 		
@@ -170,9 +206,9 @@ public class R2rmlImporter {
 		// Derive name
 		String name = Optional.ofNullable(tm.getProperty(RDFS.label))
 				.map(Statement::getString)
-				.orElseGet(() -> tm.isURIResource() ? tm.getLocalName() : "" + tm);
-		
-		ViewDefinition result = new ViewDefinition(name, template, varDefs, varConstraints, tm.getLogicalTable());
+				.orElseGet(() -> tm.isURIResource() ? tm.getURI() : "" + tm);
+
+		ViewDefinition result = new ViewDefinition(name, template, varDefs, varConstraints, logicalTable);
 		
 		return result;
 	}
@@ -225,7 +261,8 @@ public class R2rmlImporter {
 	
 				case '}':
 					if(isInVarName) {
-						result.add(new ExprVar(builder.toString()));
+						String varName = builder.toString();
+						result.add(new ExprVar(varName));
 						builder  = new StringBuilder();
 						isInVarName = false;
 					} else {

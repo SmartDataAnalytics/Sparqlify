@@ -19,7 +19,7 @@
 			<mappings>
 				<mapping>
 					<signature>boolean strstarts(string, string)</signature>
-					<pattern>(strpos($1$, $2$) = 1)</pattern>
+					<pattern>(locate($2$, $1$) = 1)</pattern>
 				</mapping>
 			</mappings>
 		</simpleFunction>
@@ -28,7 +28,7 @@
 			<name>strends</name>
 			<mappings>
 				<mapping>
-					<signature>boolean strsends(string, string)</signature>
+					<signature>boolean strends(string, string)</signature>
 					<pattern>(right($1$, length($2$)) = $2$)</pattern>
 				</mapping>
 			</mappings>
@@ -38,8 +38,8 @@
 			<name>strafter</name>
 			<mappings>
 				<mapping>
-					<signature>boolean strafter(string, string)</signature>
-					<pattern>(case when strpos($1$, $2$) != 0 then substr($1$, strpos($1$, $2$) + length($2$) else '' end)</pattern>
+					<signature>string strafter(string, string)</signature>
+					<pattern>(if(locate($2$, $1$) != 0, substr($1$, locate($2$, $1$) + length($2$)), ''))</pattern>
 				</mapping>
 			</mappings>
 		</simpleFunction>
@@ -49,17 +49,17 @@
 			<mappings>
 				<mapping>
 					<signature>boolean regex(string, string)</signature>
-					<pattern>($1$ ~ $2$)</pattern>
+					<pattern>($1$ rlike $2$)</pattern>
 				</mapping>
 			</mappings>
 		</simpleFunction>
-	
-			<simpleFunction>
+
+		<simpleFunction>
 			<name>regex</name>
 			<mappings>
 				<mapping>
 					<signature>boolean regex(string, string, string)</signature>
-					<pattern>($1$ ~* $2$)</pattern>
+					<pattern>(lower($1$) rlike lower($2$))</pattern>
 				</mapping>
 			</mappings>
 		</simpleFunction>

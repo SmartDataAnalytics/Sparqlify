@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.7</version>
+		<version>0.8.8</version>
 	</parent>
 
 	<modules>
@@ -45,6 +45,19 @@
 				<groupId>org.aksw.sparqlify</groupId>
 				<artifactId>obda-api-bundle</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+			<!-- R2RML Validation -->
+			<dependency>
+				<groupId>org.topbraid</groupId>
+				<artifactId>shacl</artifactId>
+				<version>1.1.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.jena</groupId>
+						<artifactId>jena-arq</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- The algebra package is used for normalizing expressions during creating 

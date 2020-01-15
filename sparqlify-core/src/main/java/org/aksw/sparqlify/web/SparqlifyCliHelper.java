@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import javax.sql.DataSource;
 
-import org.aksw.jena_sparql_api.core.utils.RDFDataMgrEx;
+import org.aksw.jena_sparql_api.rx.RDFDataMgrEx;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.impl.R2rmlImporter;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -245,6 +245,8 @@ public class SparqlifyCliHelper {
                 	logger.info("Loading as R2RML: " + configFile);
                 	Model model = RDFDataMgr.loadModel(uri);
                 	RDFDataMgrEx.execSparql(model, "r2rml-inferences.sparql");
+                	
+                	r2rmlImporter.validate(model);
                     Collection<ViewDefinition> views = r2rmlImporter.read(model);
                     contrib = new Config();
                     contrib.setViewDefinitions(new ArrayList<>(views));

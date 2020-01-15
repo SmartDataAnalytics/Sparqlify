@@ -83,7 +83,7 @@ public class DatatypeToStringCast
 		final String result = tmp;
 		//return result;
 
-	      System.out.println("CAST TO " + result);
+	        // System.out.println("CAST TO " + result);
 
 		return (a) -> "CAST(" + a + " AS " + result + ")";
 
