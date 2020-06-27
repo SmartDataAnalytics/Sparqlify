@@ -103,8 +103,8 @@
 
 		<aksw.commons.version>0.8.11</aksw.commons.version>
 
-		<jena.version>3.13.1</jena.version>
-		<jsa.subversion>1</jsa.subversion>
+		<jena.version>3.15.0</jena.version>
+		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
 		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
@@ -315,7 +315,8 @@
 							<exclude>commons-beanutils-core-</exclude>
 							<exclude>postgresql-</exclude>
 							<exclude>asm-</exclude>
-                                                        <exclude>bean-validator-</exclude>
+							<exclude>bean-validator-</exclude>
+							<exclude>xpp3_</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
@@ -559,6 +560,12 @@
 
 			<dependency>
 				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-rx</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
 				<artifactId>jena-sparql-api-views</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
@@ -581,13 +588,14 @@
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
-<!--
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-jgrapht</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-sdb</artifactId>
+				<version>${jena.version}</version>
 			</dependency>
--->
+
+			<!-- <dependency> <groupId>org.aksw.jena-sparql-api</groupId> <artifactId>jena-sparql-api-jgrapht</artifactId> 
+				<version>${jena-sparql-api.version}</version> </dependency> -->
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->
@@ -1109,14 +1117,8 @@
 
 
 			<!-- Gson: Java to Json conversion -->
-<!--
-			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>2.8.2</version>
-				<scope>compile</scope>
-			</dependency>
--->
+			<!-- <dependency> <groupId>com.google.code.gson</groupId> <artifactId>gson</artifactId> 
+				<version>2.8.2</version> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>

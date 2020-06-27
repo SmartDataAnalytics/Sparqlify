@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import javax.sql.DataSource;
 
-import org.aksw.jena_sparql_api.rx.RDFDataMgrEx;
+import org.aksw.jena_sparql_api.rx.SparqlStmtMgr;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.impl.R2rmlImporter;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -35,10 +35,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class SparqlifyCliHelper {
 
-	public static final ResourceLoader resourceLoader = new AnnotationConfigApplicationContext();
+    public static final ResourceLoader resourceLoader = new AnnotationConfigApplicationContext();
     //public static final ApplicationContext appContext = new AnnotationConfigApplicationContext();
-	//public static final ResourceLoader resourceLoader = new FileSystemResourceLoader(); //new DefaultResourceLoader(SparqlifyCliHelper.class.getClassLoader()); //new PathMatchingResourcePatternResolver();
-	
+    //public static final ResourceLoader resourceLoader = new FileSystemResourceLoader(); //new DefaultResourceLoader(SparqlifyCliHelper.class.getClassLoader()); //new PathMatchingResourcePatternResolver();
+
     public static void addDatabaseOptions(Options cliOptions) {
         cliOptions.addOption("t", "type", true,
                 "Database type (posgres, mysql,...)");
@@ -91,7 +91,7 @@ public class SparqlifyCliHelper {
             }
         }
 
-        
+
         HikariConfig cpConfig = new HikariConfig();
 
         if(jdbcUrl.isEmpty()) {
@@ -180,7 +180,7 @@ public class SparqlifyCliHelper {
 //            	file = file.getAbsoluteFile();
 //            	System.out.println(file);
 //            }
-            
+
             if(!resource.exists()) {
                 Resource fallback = resourceLoader.getResource("file:" + location);
                 if(fallback.exists()) {
@@ -231,38 +231,38 @@ public class SparqlifyCliHelper {
         if(configFiles == null) {
             return null;
         }
-        
 
-    	R2rmlImporter r2rmlImporter = new R2rmlImporter();
+
+        R2rmlImporter r2rmlImporter = new R2rmlImporter();
         Config result = new Config();
         for(Resource configFile : configFiles) {
-        	
-        	Config contrib = null;
-        	String uri = Objects.toString(configFile.getURI(), null);
-        	if(uri != null) {
+
+            Config contrib = null;
+            String uri = Objects.toString(configFile.getURI(), null);
+            if(uri != null) {
                 Lang lang = RDFDataMgr.determineLang(uri, null, null);
                 if(lang != null) {
-                	logger.info("Loading as R2RML: " + configFile);
-                	Model model = RDFDataMgr.loadModel(uri);
-                	RDFDataMgrEx.execSparql(model, "r2rml-inferences.sparql");
-                	
-                	r2rmlImporter.validate(model);
+                    logger.info("Loading as R2RML: " + configFile);
+                    Model model = RDFDataMgr.loadModel(uri);
+                    SparqlStmtMgr.execSparql(model, "r2rml-inferences.sparql");
+
+                    r2rmlImporter.validate(model);
                     Collection<ViewDefinition> views = r2rmlImporter.read(model);
                     contrib = new Config();
                     contrib.setViewDefinitions(new ArrayList<>(views));
                 }
-        	}
+            }
 
-        	if(contrib == null) {
-            	logger.info("Loading as SMS: " + configFile);
+            if(contrib == null) {
+                logger.info("Loading as SMS: " + configFile);
                 try(InputStream in = configFile.getInputStream()) {
                     contrib = SparqlifyUtils.parseSmlConfig(in, logger);
                 }
-        	}
+            }
 
-        	if(contrib != null) {
-        		result.merge(contrib);
-        	}
+            if(contrib != null) {
+                result.merge(contrib);
+            }
         }
 
         return result;
