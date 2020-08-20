@@ -3,12 +3,14 @@ package org.aksw.sparqlify.backend.postgres;
 import java.util.Date;
 import java.util.function.UnaryOperator;
 
+import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
+import org.apache.jena.sparql.expr.NodeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +19,8 @@ import org.slf4j.LoggerFactory;
 public class SqlLiteralMapperPostgres
     implements SqlLiteralMapper
 {
-	
-	private static final Logger logger = LoggerFactory.getLogger(SqlLiteralMapperPostgres.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(SqlLiteralMapperPostgres.class);
 
     // TODO we need to lookup the 'toString' method for the appropriate type.
 
@@ -42,10 +44,10 @@ public class SqlLiteralMapperPostgres
         }
 
         TypeToken typeToken = value.getTypeToken();
-        
+
         //String lex = o == null ? "NULL" : "" + o;
 
-        
+
         String result;
         boolean applyCast;
         if(o instanceof Number) {
@@ -56,6 +58,9 @@ public class SqlLiteralMapperPostgres
             logger.debug("HACK used - clean up when revising type system");
             result = SqlExprEvaluator_ParseDate.DATE.getDateFormat().format(date);
             applyCast = true;
+        } else if(TypeToken.TypeError.equals(value.getTypeToken())) {
+            result = "false";
+            applyCast = false;
         } else {
             String lex = "" + o;
             result = sqlEscaper.escapeStringLiteral(lex);
@@ -66,17 +71,17 @@ public class SqlLiteralMapperPostgres
             UnaryOperator<String> castApplier = typeSerializer.asString(typeToken);
             result = castApplier.apply(result);
         }
-        
+
 
         //String typeUri = node.getLiteralDatatypeURI();
         //String lex = node.getLiteralLexicalForm();
 
-        
+
         //UnaryOperator<String> valueSerializer = typeSerializer.asString(typeToken);
-        
-        
-//        
-//        
+
+
+//
+//
 //        String result;
 //        if(typeToken.equals(TypeToken.String)) {
 //            //result = "'" + lex + "'";

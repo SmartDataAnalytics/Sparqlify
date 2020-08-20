@@ -411,13 +411,25 @@ public class MappingOpsImpl
      * @param sqlTranslator
      * @return
      */
-    public static List<SqlExprContext> createExprSqlRewrites(Expr condition, VarDefinition varDef, Map<String, TypeToken> typeMap, SqlTranslator sqlTranslator) {
+    public static List<SqlExprContext> createExprSqlRewrites(Expr condition, VarDefinition varDef, Map<String, TypeToken> rawTypeMap, SqlTranslator sqlTranslator) {
         List<SqlExprContext> result = new ArrayList<SqlExprContext>();
 
         Set<Var> conditionVars = condition.getVarsMentioned();
 
+        // Map condition variables not mentioned in varDef to type error
+        // This can happen if the rhs of a left join yields no candidates, however there is a
+        // subsequent filter condition referring to now undefined variables of the rhs.
+        Map<String, TypeToken> typeMap = new HashMap<String, TypeToken>(rawTypeMap);
+
+        for(Var v : conditionVars) {
+            String vn = v.getName();
+            if(!typeMap.containsKey(vn)) {
+                typeMap.put(vn, TypeToken.TypeError);
+            }
+        }
+
         // Common variables of the condition and the varDef
-        Set<Var> cVars = conditionVars;
+        Set<Var> cVars = new HashSet<Var>(conditionVars);
         cVars.retainAll(varDef.getMap().keySet());
         List<Var> commonVars = new ArrayList<Var>(cVars);
 

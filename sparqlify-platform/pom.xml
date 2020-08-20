@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.9</version>
     </parent>
 
 
