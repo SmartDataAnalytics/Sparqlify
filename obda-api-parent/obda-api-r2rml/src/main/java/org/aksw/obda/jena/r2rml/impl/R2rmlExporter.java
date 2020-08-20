@@ -235,7 +235,7 @@ public class R2rmlExporter {
 		SubjectMap sm = processTermMap(result.createResource().as(SubjectMap.class), s, viewDef);
 		tm.setSubjectMap(sm);
 		
-		if(!g.equals(Quad.defaultGraphNodeGenerated)) {
+		if(!Quad.isDefaultGraph(g)) {
 			GraphMap gm = processTermMap(result.createResource().as(GraphMap.class), g, viewDef);
 
 			

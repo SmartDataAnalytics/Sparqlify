@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import javax.sql.DataSource;
 
-import org.aksw.jena_sparql_api.rx.SparqlStmtMgr;
+import org.aksw.jena_sparql_api.stmt.SparqlStmtMgr;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.impl.R2rmlImporter;
 import org.aksw.sparqlify.config.syntax.Config;

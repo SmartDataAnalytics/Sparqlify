@@ -279,8 +279,8 @@ public class TypedExprTransformerImpl
             throw new RuntimeException("Should not happen: " + expr);
         }
 
-        if(result.equals(TypeToken.TypeError)) {
-            System.err.println("Got type error for " + expr);
+        if(result.getSqlExpr().getDatatype().equals(TypeToken.TypeError)) {
+            logger.debug("Got type error for " + expr);
         }
 
         return result;
