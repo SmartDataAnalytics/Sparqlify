@@ -4,9 +4,12 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sys.JenaSystem;
 import org.junit.Test;
 
 public class CornerCases {
+	static { JenaSystem.init(); }
+
 	@Test
 	public void testLangTag() {
 		Model model = ModelFactory.createDefaultModel();

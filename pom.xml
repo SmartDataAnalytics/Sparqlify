@@ -97,14 +97,14 @@
 		<!-- <jersey.version>2.26</jersey.version> -->
 
 		<!-- prior: 3.1.2.RELEASE -->
-		<!-- <spring.version>4.3.10.RELEASE</spring.version> -->
-		<!-- <spring.batch.version>3.0.3.RELEASE</spring.batch.version> -->
-		<!-- <spring.security.version>3.2.5.RELEASE</spring.security.version> -->
+		<spring.version>5.3.2</spring.version>
+		<spring.batch.version>4.3.1</spring.batch.version>
+		<spring.security.version>5.4.2</spring.security.version>
 
 		<aksw.commons.version>0.8.14</aksw.commons.version>
 
-		<jena.version>3.15.0</jena.version>
-		<jsa.subversion>1</jsa.subversion>
+		<jena.version>3.17.0</jena.version>
+		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
 		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
@@ -317,6 +317,11 @@
 							<exclude>asm-</exclude>
 							<exclude>bean-validator-</exclude>
 							<exclude>xpp3_</exclude>
+
+							<!-- This exclude is a hack: jakarta is the implementation and conflicts with api jars such as
+							the javax servlet api. Actually the apis should be set to provided -->
+							<exclude>jakarta.</exclude>
+							<exclude>spring-jcl-</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
@@ -453,6 +458,28 @@
 
 	<dependencyManagement>
 		<dependencies>
+
+<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.0-b170201.1204</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+<dependency>
+    <groupId>javax.activation</groupId>
+    <artifactId>activation</artifactId>
+    <version>1.1</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+<dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>2.3.0-b170127.1453</version>
+</dependency>
+
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
@@ -1176,7 +1203,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>4.3.23.RELEASE</version>
+				<version>${spring.version}</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1190,7 +1217,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
-				<version>4.3.23.RELEASE</version>
+				<version>${spring.version}</version>
 				<exclusions>
 					<exclusion>
 						<!-- Using org.slf4j:jcl-over-slf4j instead -->
@@ -1203,7 +1230,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>4.3.23.RELEASE</version>
+				<version>${spring.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -1216,20 +1243,20 @@
 			<dependency>
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-core</artifactId>
-				<version>4.0.0.RELEASE</version>
+				<version>${spring.batch.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-infrastructure</artifactId>
-				<version>4.0.0.RELEASE</version>
+				<version>${spring.batch.version}</version>
 			</dependency>
 
 			<!-- Spring Security dependencies -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-web</artifactId>
-				<version>5.0.1.RELEASE</version>
+				<version>${spring.security.version}</version>
 			</dependency>
 
 		</dependencies>

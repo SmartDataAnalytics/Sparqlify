@@ -14,12 +14,15 @@ import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sys.JenaSystem;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariDataSource;
 
 public class ConnectionCloseTest {
+
+	static { JenaSystem.init(); }
 
 	
 	@Test
