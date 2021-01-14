@@ -12,18 +12,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.aksw.commons.collections.generator.Generator;
+import org.aksw.jena_sparql_api.stmt.SparqlStmtMgr;
 import org.aksw.jena_sparql_api.utils.VarGeneratorImpl2;
 import org.aksw.obda.domain.api.Constraint;
 import org.aksw.obda.domain.api.LogicalTable;
+import org.aksw.obda.domain.impl.LogicalTableQueryString;
+import org.aksw.obda.domain.impl.LogicalTableTableName;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
-import org.aksw.obda.jena.r2rml.domain.api.GraphMap;
-import org.aksw.obda.jena.r2rml.domain.api.ObjectMap;
-import org.aksw.obda.jena.r2rml.domain.api.PredicateMap;
-import org.aksw.obda.jena.r2rml.domain.api.PredicateObjectMap;
-import org.aksw.obda.jena.r2rml.domain.api.SubjectMap;
-import org.aksw.obda.jena.r2rml.domain.api.TermMap;
-import org.aksw.obda.jena.r2rml.domain.api.TriplesMap;
-import org.aksw.obda.jena.r2rml.vocab.RR;
+import org.aksw.r2rml.jena.domain.api.GraphMap;
+import org.aksw.r2rml.jena.domain.api.ObjectMap;
+import org.aksw.r2rml.jena.domain.api.ObjectMapType;
+import org.aksw.r2rml.jena.domain.api.PredicateMap;
+import org.aksw.r2rml.jena.domain.api.PredicateObjectMap;
+import org.aksw.r2rml.jena.domain.api.SubjectMap;
+import org.aksw.r2rml.jena.domain.api.TermMap;
+import org.aksw.r2rml.jena.domain.api.TriplesMap;
+import org.aksw.r2rml.jena.vocab.RR;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -90,6 +94,8 @@ public class R2rmlImporter {
 	public Collection<ViewDefinition> read(Model model) {
 		List<TriplesMap> triplesMaps = model.listSubjectsWithProperty(RR.logicalTable).mapWith(r -> r.as(TriplesMap.class)).toList();
 
+		SparqlStmtMgr.execSparql(model, "r2rml-inferences.sparql");
+
 //		for(TriplesMap tm : triplesMaps) {
 			// TODO Integrate validation with shacl, as this gives us free reports of violations
 //		}
@@ -129,7 +135,7 @@ public class R2rmlImporter {
 	public ViewDefinition read(TriplesMap tm) {
 		// Construct triples by creating the cartesian product between g, s, p, and o term maps
 		
-		LogicalTable logicalTable = tm.getLogicalTable();
+		org.aksw.r2rml.jena.domain.api.LogicalTable logicalTable = tm.getLogicalTable();
 //		System.out.println("Processing " + tm.getURI());
 //		System.out.println("  with table " + logicalTable);
 				
@@ -155,11 +161,14 @@ public class R2rmlImporter {
 			}
 
 			Set<PredicateMap> pms = pom.getPredicateMaps();
-			Set<ObjectMap> oms = pom.getObjectMaps();
+			Set<ObjectMapType> omts = pom.getObjectMaps();
 
 			for(GraphMap gm : egms) {			
 				for(PredicateMap pm : pms) {
-					for(ObjectMap om : oms) {
+					for(ObjectMapType omt : omts) {
+						// TODO Add support for RefObjectMaps
+						ObjectMap om = omt.asTermMap();
+						
 						Node g = gm == null ? Quad.defaultGraphNodeGenerated : allocateVar(gm, nodeToExpr, varGen);
 						Node s = allocateVar(sm, nodeToExpr, varGen);
 						Node p = allocateVar(pm, nodeToExpr, varGen);
@@ -208,7 +217,18 @@ public class R2rmlImporter {
 				.map(Statement::getString)
 				.orElseGet(() -> tm.isURIResource() ? tm.getURI() : "" + tm);
 
-		ViewDefinition result = new ViewDefinition(name, template, varDefs, varConstraints, logicalTable);
+		
+		LogicalTable lt;
+		
+		if (logicalTable.qualifiesAsBaseTableOrView()) {
+			lt = new LogicalTableTableName(logicalTable.asBaseTableOrView().getTableName());
+		} else if (logicalTable.qualifiesAsR2rmlView()) {
+			lt = new LogicalTableQueryString(logicalTable.asBaseTableOrView().getTableName());
+		} else {
+			throw new RuntimeException("Unknown logical table type: " + logicalTable);
+		}
+
+		ViewDefinition result = new ViewDefinition(name, template, varDefs, varConstraints, lt);
 		
 		return result;
 	}

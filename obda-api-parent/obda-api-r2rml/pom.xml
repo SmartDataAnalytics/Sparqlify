@@ -15,6 +15,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.aksw.r2rml</groupId>
+			<artifactId>r2rml-jena-plugin</artifactId>
+		</dependency>
+	
+		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>obda-api-core</artifactId>
 		</dependency>

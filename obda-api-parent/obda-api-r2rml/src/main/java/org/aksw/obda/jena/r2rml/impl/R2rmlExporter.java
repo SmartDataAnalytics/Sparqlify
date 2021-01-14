@@ -13,15 +13,14 @@ import org.aksw.jena_sparql_api.algebra.expr.transform.ExprTransformFlattenFunct
 import org.aksw.jena_sparql_api.algebra.expr.transform.ExprTransformSubstituteWithArgument;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
-import org.aksw.obda.jena.r2rml.domain.api.GraphMap;
-import org.aksw.obda.jena.r2rml.domain.api.LogicalTable;
-import org.aksw.obda.jena.r2rml.domain.api.ObjectMap;
-import org.aksw.obda.jena.r2rml.domain.api.PredicateMap;
-import org.aksw.obda.jena.r2rml.domain.api.PredicateObjectMap;
-import org.aksw.obda.jena.r2rml.domain.api.SubjectMap;
-import org.aksw.obda.jena.r2rml.domain.api.TermMap;
-import org.aksw.obda.jena.r2rml.domain.api.TriplesMap;
-import org.aksw.obda.jena.r2rml.vocab.RR;
+import org.aksw.r2rml.jena.domain.api.GraphMap;
+import org.aksw.r2rml.jena.domain.api.ObjectMap;
+import org.aksw.r2rml.jena.domain.api.PredicateMap;
+import org.aksw.r2rml.jena.domain.api.PredicateObjectMap;
+import org.aksw.r2rml.jena.domain.api.SubjectMap;
+import org.aksw.r2rml.jena.domain.api.TermMap;
+import org.aksw.r2rml.jena.domain.api.TriplesMap;
+import org.aksw.r2rml.jena.vocab.RR;
 import org.apache.jena.ext.com.google.common.collect.Multimap;
 import org.apache.jena.ext.com.google.common.collect.Multimaps;
 import org.apache.jena.graph.Node;
@@ -264,14 +263,14 @@ public class R2rmlExporter {
 			}
 		}
 		
-		LogicalTable lt = result.createResource().as(LogicalTable.class);
+		org.aksw.r2rml.jena.domain.api.LogicalTable lt = result.createResource().as(org.aksw.r2rml.jena.domain.api.LogicalTable.class);
 		tm.setLogicalTable(lt);
 
 		org.aksw.obda.domain.api.LogicalTable srcLt = viewDef.getLogicalTable();
 		if(srcLt.isTableName()) {
-			lt.setTableName(srcLt.getTableName());
+			lt.asBaseTableOrView().setTableName(srcLt.getTableName());
 		} else if(srcLt.isQueryString()) {
-			lt.setQueryString(srcLt.getQueryString());
+			lt.asR2rmlView().setSqlQuery(srcLt.getQueryString());
 		} else {
 			throw new RuntimeException("Unknown logical table: " + srcLt);
 		}
