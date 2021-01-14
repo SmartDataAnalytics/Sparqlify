@@ -28,7 +28,7 @@
 			<name>strends</name>
 			<mappings>
 				<mapping>
-					<signature>boolean strsends(string, string)</signature>
+					<signature>boolean strends(string, string)</signature>
 					<pattern>(right($1$, length($2$)) = $2$)</pattern>
 				</mapping>
 			</mappings>
