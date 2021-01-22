@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.aksw.commons.collections.generator.Generator;
 import org.aksw.jena_sparql_api.stmt.SparqlStmtMgr;
+import org.aksw.jena_sparql_api.utils.NodeUtils;
 import org.aksw.jena_sparql_api.utils.VarGeneratorImpl2;
 import org.aksw.obda.domain.api.Constraint;
 import org.aksw.obda.domain.api.LogicalTable;
@@ -37,6 +38,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_IsBlank;
 import org.apache.jena.sparql.expr.E_StrConcat;
 import org.apache.jena.sparql.expr.E_StrDatatype;
 import org.apache.jena.sparql.expr.E_StrLang;
@@ -330,7 +332,18 @@ public class R2rmlImporter {
 				ExprVar column = new ExprVar(colName);
 				Resource dtype = tm.getDatatype();
 				if(dtype != null || XSD.xstring.equals(dtype)) {
-					result = new E_StrDatatype(column, NodeValue.makeNode(dtype.asNode()));
+					Node dn = dtype.asNode();
+					if (!dn.isURI()) {
+						throw new RuntimeException("Datatype " + dtype + " is not an IRI");
+					}
+					String du = dn.getURI();
+					
+					result = du.equals(NodeUtils.R2RML_IRI)
+								? new E_URI(column)
+								: du.equals(NodeUtils.R2RML_BlankNode)
+									? new E_IsBlank(column)
+									: new E_StrDatatype(column, NodeValue.makeNode(dn));
+
 				} else {
 					String language = Optional.ofNullable(tm.getLanguage()).orElse("");
 					result = new E_StrLang(column, NodeValue.makeString(language));
