@@ -81,6 +81,12 @@
 				<artifactId>jena-sparql-api-views</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
+			
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.apache.commons</groupId> -->
+<!-- 				<artifactId>commons-lang3</artifactId> -->
+<!-- 				<version>3.7</version> -->
+<!-- 			</dependency> -->
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->

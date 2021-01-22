@@ -2,11 +2,11 @@ package org.aksw.sparqlify.update;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
-import org.aksw.commons.util.Files;
-
+import org.apache.jena.ext.com.google.common.io.Files;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.sparql.engine.binding.Binding;
@@ -47,7 +47,7 @@ public class UpdateMain {
 		// Attach the update manager to the cleaner
 		cleaner.getGraphListeners().add(queryUpdates);
 		
-		String inserts = Files.readContent(new File("src/test/resources/data/inserts.nt"));
+		String inserts = Files.toString(new File("src/test/resources/data/inserts.nt"), StandardCharsets.UTF_8);
 
 	
 		String stmt = "Insert Data {\n" + inserts + "\n}";

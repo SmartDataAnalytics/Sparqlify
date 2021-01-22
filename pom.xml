@@ -107,6 +107,8 @@
 		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
 		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
 
+		<aksw-commons.version>0.8.16-SNAPSHOT</aksw-commons.version>
+
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
 
@@ -232,7 +234,7 @@
 						<!-- <forkCount>1</forkCount> <reuseForks>false</reuseForks> -->
 						<argLine>-Xms256m -Xmx512m</argLine>
 						<testFailureIgnore>false</testFailureIgnore>
-<!--						<skipTests>false</skipTests> -->
+						<!-- <skipTests>false</skipTests> -->
 					</configuration>
 				</plugin>
 
@@ -318,8 +320,9 @@
 							<exclude>bean-validator-</exclude>
 							<exclude>xpp3_</exclude>
 
-							<!-- This exclude is a hack: jakarta is the implementation and conflicts with api jars such as
-							the javax servlet api. Actually the apis should be set to provided -->
+							<!-- This exclude is a hack: jakarta is the implementation and conflicts 
+								with api jars such as the javax servlet api. Actually the apis should be 
+								set to provided -->
 							<exclude>jakarta.</exclude>
 							<exclude>spring-jcl-</exclude>
 						</excludes>
@@ -459,26 +462,26 @@
 	<dependencyManagement>
 		<dependencies>
 
-<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
-<dependency>
-    <groupId>javax.xml.bind</groupId>
-    <artifactId>jaxb-api</artifactId>
-    <version>2.3.0-b170201.1204</version>
-</dependency>
+			<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>2.3.0-b170201.1204</version>
+			</dependency>
 
-<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
-<dependency>
-    <groupId>javax.activation</groupId>
-    <artifactId>activation</artifactId>
-    <version>1.1</version>
-</dependency>
+			<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+			<dependency>
+				<groupId>javax.activation</groupId>
+				<artifactId>activation</artifactId>
+				<version>1.1</version>
+			</dependency>
 
-<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
-<dependency>
-    <groupId>org.glassfish.jaxb</groupId>
-    <artifactId>jaxb-runtime</artifactId>
-    <version>2.3.0-b170127.1453</version>
-</dependency>
+			<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+			<dependency>
+				<groupId>org.glassfish.jaxb</groupId>
+				<artifactId>jaxb-runtime</artifactId>
+				<version>2.3.0-b170127.1453</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
@@ -612,6 +615,12 @@
 				<groupId>org.aksw.jena-sparql-api</groupId>
 				<artifactId>jena-sparql-api-server-standalone</artifactId>
 				<version>${jena-sparql-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.commons</groupId>
+				<artifactId>aksw-commons-util-xml</artifactId>
+				<version>${aksw-commons.version}</version>
 			</dependency>
 
 			<dependency>

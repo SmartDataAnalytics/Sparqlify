@@ -39,6 +39,11 @@
 			<artifactId>obda-api-core</artifactId>
 		</dependency>
 
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.commons</groupId> -->
+<!-- 			<artifactId>commons-lang3</artifactId> -->
+<!-- 		</dependency> -->
+
 		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
 			<artifactId>jena-sparql-api-algebra</artifactId>
