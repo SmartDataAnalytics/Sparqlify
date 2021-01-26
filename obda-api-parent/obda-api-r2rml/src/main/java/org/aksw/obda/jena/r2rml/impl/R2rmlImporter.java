@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +21,8 @@ import org.aksw.obda.domain.api.LogicalTable;
 import org.aksw.obda.domain.impl.LogicalTableQueryString;
 import org.aksw.obda.domain.impl.LogicalTableTableName;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
+import org.aksw.r2rml.common.vocab.R2RMLStrings;
+import org.aksw.r2rml.jena.arq.impl.R2rmlTemplateParser;
 import org.aksw.r2rml.jena.domain.api.GraphMap;
 import org.aksw.r2rml.jena.domain.api.ObjectMap;
 import org.aksw.r2rml.jena.domain.api.ObjectMapType;
@@ -29,6 +32,7 @@ import org.aksw.r2rml.jena.domain.api.SubjectMap;
 import org.aksw.r2rml.jena.domain.api.TermMap;
 import org.aksw.r2rml.jena.domain.api.TriplesMap;
 import org.aksw.r2rml.jena.vocab.RR;
+import org.apache.jena.ext.com.google.common.base.Strings;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -38,7 +42,10 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.expr.E_BNode;
+import org.apache.jena.sparql.expr.E_Function;
 import org.apache.jena.sparql.expr.E_IsBlank;
+import org.apache.jena.sparql.expr.E_Str;
 import org.apache.jena.sparql.expr.E_StrConcat;
 import org.apache.jena.sparql.expr.E_StrDatatype;
 import org.apache.jena.sparql.expr.E_StrLang;
@@ -312,7 +319,137 @@ public class R2rmlImporter {
 		return result;
 	}
 	
+	
+	
+	
+	/**
+	 * Convert a term map to a corresponing SPARQL expression
+	 * 
+	 * @param tm
+	 * @return
+	 */
 	public static Expr termMapToExpr(TermMap tm) {
+		Expr result;
+		
+		String template;
+		
+		RDFNode constant;
+		
+		// If a datatype has been specified then get its node
+		// and validate that its an IRI
+		Node datatypeNode = getIriNodeOrNull(tm.getDatatype());
+		Node termTypeNode = getIriNodeOrNull(tm.getTermType());
+
+		if((template = tm.getTemplate()) != null) {
+			Expr arg = R2rmlTemplateParser.parseTemplate(template);
+
+			Node effectiveTermType = termTypeNode == null ? RR.IRI.asNode() : termTypeNode;
+			result = applyTermType(arg, effectiveTermType, XSD.xstring.asNode());
+
+		} else if((constant = tm.getConstant()) != null) {
+			 result = NodeValue.makeNode(constant.asNode());
+			 //	result = constantToExpr(constant.asNode());
+			
+		} else {
+			String colName;
+			if((colName = tm.getColumn()) != null) {
+			
+				ExprVar column = new ExprVar(colName);
+				String langValue = Optional.ofNullable(tm.getLanguage()).map(String::trim).orElse(null);
+				
+				if (termTypeNode == null) {
+					termTypeNode = RR.Literal.asNode();
+				}
+				
+				if(langValue == null) { // && !termTypeNode.equals(RR.Literal.asNode()) ) { //|| XSD.xstring.asNode().equals(datatypeNode)) {
+					
+					result = applyTermType(column, termTypeNode, datatypeNode);
+
+				} else {
+					String language = langValue == null ? "" : langValue;
+					// If there is no indication about the datatype just use the column directly
+					// This will later directly allow evaluation w.r.t. a column's natural RDF datatype
+					
+					// FIXME Sparqlify relies on StrLang with empty language tag as a 
+					// synonym for plain literal - but actually E_StrLang would raise an exception with empty lang
+//					result = language.isEmpty()
+//							? column // new E_StrDatatype(column, NodeValue.makeNode(XSD.xstring.asNode()))
+//							: new E_StrLang(column, NodeValue.makeString(language));
+					result = new E_StrLang(column, NodeValue.makeString(language));
+				}
+
+			} else {
+				throw new RuntimeException("TermMap does neither define rr:template, rr:constant nor rr:column " + tm);
+			}
+
+		}
+		
+		return result;
+	}
+	
+	
+	public static Expr constantToExpr(Node node) {
+		Expr result = node.isURI()
+			? new E_URI(NodeValue.makeString(node.getURI()))
+			: node.isBlank()
+				? new E_BNode(NodeValue.makeString(node.getBlankNodeLabel()))
+				: node.isLiteral()
+					? XSD.xstring.getURI().equals(node.getLiteralDatatypeURI())
+						? new E_StrLang(NodeValue.makeString(node.getLiteralLexicalForm()), NodeValue.makeString(""))
+						: Strings.isNullOrEmpty(node.getLiteralLanguage())
+							? new E_StrDatatype(NodeValue.makeString(node.getLiteralLexicalForm()), NodeValue.makeString(node.getLiteralDatatypeURI()))
+							: new E_StrLang(NodeValue.makeString(node.getLiteralLexicalForm()), NodeValue.makeString(node.getLiteralLanguage()))
+				: null; // <- unknown node type
+		
+		Objects.requireNonNull(result, "Unknown node type encountered: " + node);
+		return result;
+	}
+	
+	public static Node getIriNodeOrNull(RDFNode rdfNode) {
+		Node result = null;
+		if (rdfNode != null) {
+			result = rdfNode.asNode();
+			if (!result.isURI()) {
+				throw new RuntimeException(result + " is not an IRI");
+			}
+		}
+
+		return result;
+	}
+
+	public static Expr applyTermType(Expr column, Node termType, Node knownDatatype) {
+		String termTypeIri = termType.getURI();
+
+		Expr result;
+		result = termTypeIri.equals(R2RMLStrings.IRI)
+			? new E_URI(column)
+			: termTypeIri.equals(R2RMLStrings.BlankNode)
+				? new E_BNode(column)
+				: termTypeIri.equals(R2RMLStrings.Literal)
+					? (knownDatatype == null || XSD.xstring.asNode().equals(knownDatatype)
+						? new E_StrLang(column, NodeValue.makeString("")) // FIXME StrLang with empty lang tag wouldn't evaluate
+						: new E_StrDatatype(column, NodeValue.makeNode(knownDatatype)))
+					: null;
+
+		Objects.requireNonNull("Unknown term type: " + column + " - " + termType + " - " + knownDatatype);
+		return result;
+	}
+	
+	public static Expr applyDatatype(Expr column, Node expectedDatatype, Node knownDatatype) {
+		Objects.requireNonNull(expectedDatatype, "Need an expected datatype");
+		
+		Expr result = expectedDatatype.equals(knownDatatype)
+				? column
+				: expectedDatatype.equals(XSD.xstring.asNode())
+					? new E_Str(column)
+					: new E_Function(knownDatatype.getURI(), new ExprList(column));
+		
+		return result;
+	}
+
+	
+	
+	public static Expr termMapToExprBugged(TermMap tm) {
 		Expr result;
 		
 		String template;
