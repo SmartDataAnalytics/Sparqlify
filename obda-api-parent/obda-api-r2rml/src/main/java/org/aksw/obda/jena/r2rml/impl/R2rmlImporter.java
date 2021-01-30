@@ -21,8 +21,8 @@ import org.aksw.obda.domain.api.LogicalTable;
 import org.aksw.obda.domain.impl.LogicalTableQueryString;
 import org.aksw.obda.domain.impl.LogicalTableTableName;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
-import org.aksw.r2rml.common.vocab.R2RMLStrings;
-import org.aksw.r2rml.jena.arq.impl.R2rmlTemplateParser;
+import org.aksw.r2rml.common.vocab.R2rmlTerms;
+import org.aksw.r2rml.jena.arq.impl.R2rmlTemplateLib;
 import org.aksw.r2rml.jena.domain.api.GraphMap;
 import org.aksw.r2rml.jena.domain.api.ObjectMap;
 import org.aksw.r2rml.jena.domain.api.ObjectMapType;
@@ -341,7 +341,7 @@ public class R2rmlImporter {
 		Node termTypeNode = getIriNodeOrNull(tm.getTermType());
 
 		if((template = tm.getTemplate()) != null) {
-			Expr arg = R2rmlTemplateParser.parseTemplate(template);
+			Expr arg = R2rmlTemplateLib.parse(template);
 
 			Node effectiveTermType = termTypeNode == null ? RR.IRI.asNode() : termTypeNode;
 			result = applyTermType(arg, effectiveTermType, XSD.xstring.asNode());
@@ -421,11 +421,11 @@ public class R2rmlImporter {
 		String termTypeIri = termType.getURI();
 
 		Expr result;
-		result = termTypeIri.equals(R2RMLStrings.IRI)
+		result = termTypeIri.equals(R2rmlTerms.IRI)
 			? new E_URI(column)
-			: termTypeIri.equals(R2RMLStrings.BlankNode)
+			: termTypeIri.equals(R2rmlTerms.BlankNode)
 				? new E_BNode(column)
-				: termTypeIri.equals(R2RMLStrings.Literal)
+				: termTypeIri.equals(R2rmlTerms.Literal)
 					? (knownDatatype == null || XSD.xstring.asNode().equals(knownDatatype)
 						? new E_StrLang(column, NodeValue.makeString("")) // FIXME StrLang with empty lang tag wouldn't evaluate
 						: new E_StrDatatype(column, NodeValue.makeNode(knownDatatype)))
