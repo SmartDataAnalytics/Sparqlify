@@ -10,14 +10,14 @@ import java.util.Objects;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.xml.SparqlifyConfig;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
@@ -30,7 +30,7 @@ public class FluentSparqlifyFactory {
 	private static final Logger logger = LoggerFactory.getLogger(FluentSparqlifyFactory.class);
 
 	protected DataSource dataSource;
-	protected SqlEscaper sqlEscaper;
+	protected SqlCodec sqlEscaper;
 	protected DatatypeToString datatypeToString;
 	protected Config config;
 	protected SparqlifyConfig sqlFunctionMapping;
@@ -45,7 +45,7 @@ public class FluentSparqlifyFactory {
 
 	public FluentSparqlifyFactory() {
 		// Init defaults
-		this.sqlEscaper = new SqlEscaperDoubleQuote();
+		this.sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
 		this.datatypeToString = new DatatypeToStringPostgres();
 		this.config = new Config();
 	}
@@ -59,11 +59,11 @@ public class FluentSparqlifyFactory {
 		return this;
 	}
 
-	public SqlEscaper getSqlEscaper() {
+	public SqlCodec getSqlEscaper() {
 		return sqlEscaper;
 	}
 
-	public FluentSparqlifyFactory setSqlEscaper(SqlEscaper sqlEscaper) {
+	public FluentSparqlifyFactory setSqlEscaper(SqlCodec sqlEscaper) {
 		this.sqlEscaper = sqlEscaper;
 		return this;
 	}

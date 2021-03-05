@@ -1,11 +1,11 @@
 package org.aksw.sparqlify.util;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 
 public class SqlBackendConfig {
     protected DatatypeToString typeSerializer;
-    protected SqlEscaper sqlEscaper;
+    protected SqlCodec sqlEscaper;
 
     // E.g. functions.xml under src/main/resources
     // protected List<String> functionDefinitions;
@@ -16,7 +16,7 @@ public class SqlBackendConfig {
 //    }
 
     public SqlBackendConfig(DatatypeToString typeSerializer,
-            SqlEscaper sqlEscaper /*, List<String> functionDefinitions */) {
+    		SqlCodec sqlEscaper /*, List<String> functionDefinitions */) {
         super();
         this.typeSerializer = typeSerializer;
         this.sqlEscaper = sqlEscaper;
@@ -27,7 +27,7 @@ public class SqlBackendConfig {
         return typeSerializer;
     }
     
-    public SqlEscaper getSqlEscaper() {
+    public SqlCodec getSqlEscaper() {
         return sqlEscaper;
     }
 

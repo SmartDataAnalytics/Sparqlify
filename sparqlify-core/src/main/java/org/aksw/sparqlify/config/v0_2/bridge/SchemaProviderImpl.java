@@ -8,9 +8,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.r2rml.jena.sql.transform.SqlParseException;
+import org.aksw.r2rml.sql.transform.SqlUtils;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.TypeSystem;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 import org.slf4j.Logger;
@@ -33,11 +35,11 @@ public class SchemaProviderImpl
 	protected BasicTableInfoProvider basicTableInfoProvider;
 	protected TypeSystem datatypeSystem;
 	protected Map<String, String> aliasMap; // TODO Maybe this has to be a function to capture int([0-9]*) -> int
-	protected SqlEscaper sqlEscaper;
+	protected SqlCodec sqlEscaper;
 
 
 
-	public SchemaProviderImpl(BasicTableInfoProvider basicTableInfoProvider, TypeSystem datatypeSystem, Map<String, String> aliasMap, SqlEscaper sqlEscaper) {
+	public SchemaProviderImpl(BasicTableInfoProvider basicTableInfoProvider, TypeSystem datatypeSystem, Map<String, String> aliasMap, SqlCodec sqlEscaper) {
 		//this.conn = conn;
 		this.basicTableInfoProvider = basicTableInfoProvider;
 		this.datatypeSystem = datatypeSystem;
@@ -53,7 +55,13 @@ public class SchemaProviderImpl
 
 
 		// TODD We might have to escape table names...
-		String escTableName = sqlEscaper.escapeTableName(tableName); //"\"" + tableName + "\"";
+		// String escTableName = sqlEscaper.escapeTableName(tableName); //"\"" + tableName + "\"";
+		String escTableName;
+		try {
+			escTableName = SqlUtils.harmonizeTableName(tableName, sqlEscaper);
+		} catch (SqlParseException e) {
+			throw new RuntimeException(e);
+		}
 
 		// FIXME Use database metadata for fetching schemas of tables
 		Schema result = createSchemaForQueryString("SELECT * FROM " + escTableName);

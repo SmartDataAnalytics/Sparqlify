@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.service_framework.jpa.core.ServiceProvider;
@@ -20,8 +22,6 @@ import org.aksw.sparqlify.admin.web.common.ServiceProviderRdb2Rdf;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -124,7 +124,8 @@ public class ServiceLauncherRdb2Rdf
                 maxExecutionTimeInSeconds = 30;
             }
 
-            SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+            // SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+            SqlCodec sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
             DatatypeToString typeSerializer = new DatatypeToStringPostgres();
             QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds,
             		SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));

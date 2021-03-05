@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -48,7 +49,7 @@ public class ConnectionCloseTest {
 		final QueryExecutionFactory qef = FluentSparqlifyFactory.newEngine()
 				.setDataSource(ds)
 				.setConfig(config)
-				.setSqlEscaper(new SqlEscaperDoubleQuote())
+				.setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
 				.setDatatypeToString(new DatatypeToStringPostgres())
 				.create();
 

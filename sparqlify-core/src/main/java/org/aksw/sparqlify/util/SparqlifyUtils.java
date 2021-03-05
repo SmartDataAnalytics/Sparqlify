@@ -14,6 +14,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.StreamUtils;
 import org.aksw.commons.util.jdbc.Schema;
@@ -187,7 +189,8 @@ public class SparqlifyUtils {
 
 	@Deprecated
     public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias) throws IOException {
-        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+        // SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+		SqlCodec sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
         TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 
         ViewDefinitionFactory result = createViewDefinitionFactory(conn, typeSystem, typeAlias, sqlEscaper);
@@ -205,7 +208,7 @@ public class SparqlifyUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias, SqlEscaper sqlEscaper) throws IOException {
+	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, Map<String, String> typeAlias, SqlCodec sqlEscaper) throws IOException {
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 
 
@@ -215,7 +218,7 @@ public class SparqlifyUtils {
 	}
 
 
-	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, TypeSystem datatypeSystem, Map<String, String> typeAlias, SqlEscaper sqlEscaper) throws IOException {
+	public static ViewDefinitionFactory createViewDefinitionFactory(Connection conn, TypeSystem datatypeSystem, Map<String, String> typeAlias, SqlCodec sqlEscaper) throws IOException {
 
 		ConfigParser parser = new ConfigParser();
 
@@ -371,7 +374,8 @@ public class SparqlifyUtils {
     		Long maxResultSetSize,
     		Integer maxQueryExecutionTimeInSeconds) throws SQLException, IOException {
         DatatypeToString typeSerializer = new DatatypeToStringPostgres();
-        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+        // SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+        SqlCodec sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
         SparqlifyConfig sqlFunctionMapping = SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml");
 
         //final QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(ds, config, typeSerializer, sqlEscaper, null, null);
@@ -398,7 +402,7 @@ public class SparqlifyUtils {
 			DataSource dataSource,
 			Config config,
 			DatatypeToString typeSerializer,
-			SqlEscaper sqlEscaper,
+			SqlCodec sqlEscaper,
 			Long maxResultSetSize,
 			Integer maxQueryExecutionTimeInSeconds,
 			SparqlifyConfig sqlFunctionMapping) throws SQLException, IOException {
@@ -444,7 +448,7 @@ public class SparqlifyUtils {
 			DataSource dataSource,
 			Config config,
 			DatatypeToString typeSerializer,
-			SqlEscaper sqlEscaper,
+			SqlCodec sqlEscaper,
 			SparqlifyConfig sqlFunctionMapping) throws SQLException, IOException {
 		SparqlSqlStringRewriterImpl result;
 		try(Connection conn = dataSource.getConnection()) {
@@ -462,7 +466,7 @@ public class SparqlifyUtils {
 			Schema databaseSchema,
 			Config config,
 			DatatypeToString typeSerializer,
-			SqlEscaper sqlEscaper,
+			SqlCodec sqlEscaper,
 			SparqlifyConfig sqlFunctionMapping) throws SQLException, IOException {
 		SparqlifyCoreInit.initSparqlifyFunctions();
 
@@ -720,14 +724,15 @@ public class SparqlifyUtils {
 
 
 	public static ExprRewriteSystem createDefaultExprRewriteSystem() {
-	    SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+	    // SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+		SqlCodec sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
 	    DatatypeToString typeSerializer = new DatatypeToStringPostgres();
 	    SparqlifyConfig sqlFunctionDefinitions = SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml");
 	    ExprRewriteSystem result = createExprRewriteSystem(typeSerializer, sqlEscaper, sqlFunctionDefinitions);
 	    return result;
 	}
 
-	public static ExprRewriteSystem createExprRewriteSystem(DatatypeToString typeSerializer, SqlEscaper sqlEscaper, SparqlifyConfig sqlFunctionMapping) {
+	public static ExprRewriteSystem createExprRewriteSystem(DatatypeToString typeSerializer, SqlCodec sqlEscaper, SparqlifyConfig sqlFunctionMapping) {
 
 	    SparqlifyCoreInit.initSparqlifyFunctions();
 

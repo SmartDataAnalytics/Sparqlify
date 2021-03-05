@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.service_framework.core.ServiceLauncherRdb2Rdf;
@@ -259,7 +260,7 @@ public class AppConfig
      */
     @Bean
     @DependsOn("entityManagerFactory")
-    public QueryExecutionFactory managerApiQef(DataSource dataSource, SqlEscaper sqlEscaper)
+    public QueryExecutionFactory managerApiQef(DataSource dataSource, SqlCodec sqlEscaper)
         throws Exception
     {
         LoggerCount loggerCount = new LoggerCount(logger);

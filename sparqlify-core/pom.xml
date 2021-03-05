@@ -118,6 +118,15 @@
 			<artifactId>jaxb-runtime</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.aksw.r2rml</groupId>
+			<artifactId>r2rml-jena-plugin</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.r2rml</groupId>
+			<artifactId>r2rml-jena-sql-transforms</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
