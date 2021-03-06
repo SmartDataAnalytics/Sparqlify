@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.commons.collections.generator.Generator;
+import org.aksw.commons.collections.generator.GeneratorBlacklist;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.VarDefinition;
@@ -27,8 +29,6 @@ import org.aksw.sparqlify.core.domain.input.Mapping;
 import org.aksw.sparqlify.core.domain.input.MappingUnion;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
 import org.aksw.sparqlify.trash.ExprCommonFactor;
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.Expr;
@@ -289,7 +289,7 @@ public class MappingRefactor {
 		
 		if(groupVars.isEmpty()) {
 			
-			Generator generator = Gensym.create("X");
+			Generator generator = Generator.create("X");
 			Mapping mapping = applyAggregators(m, aggregators, generator, typeSystem, sqlTranslator);
 			result = new MappingUnion();
 			result.add(mapping);
@@ -334,7 +334,7 @@ public class MappingRefactor {
 		CartesianProduct<SqlExprContext> cart = CartesianProduct.create(contextsLists);
 		for(List<SqlExprContext> c : cart) {
 			
-			// The cartesion product is just a view - but we want copies!
+			// The cartesian product is just a view - but we want copies!
 			// TODO This is dangerous, make the view behaviour require a specific flag
 			c = new ArrayList<SqlExprContext>(c);
 			
@@ -344,7 +344,7 @@ public class MappingRefactor {
 		
 
 		Set<String> columnNameBlacklist = new HashSet<String>(m.getSqlOp().getSchema().getColumnNames()); //MappingOpsImpl.getReferencedColumnNames(mappings);
-		Generator aliasGenUnion = GeneratorBlacklist.create("X", columnNameBlacklist);
+		Generator<String> aliasGenUnion = GeneratorBlacklist.create("X", columnNameBlacklist);
 		ExprCommonFactor factorizer = new ExprCommonFactor(aliasGenUnion);
 
 

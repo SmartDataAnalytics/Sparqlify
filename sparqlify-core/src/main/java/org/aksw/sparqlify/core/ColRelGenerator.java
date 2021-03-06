@@ -1,20 +1,18 @@
 package org.aksw.sparqlify.core;
 
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
-
+import org.aksw.commons.collections.generator.Generator;
 
 public class ColRelGenerator {
-	private Generator columnNameGenerator;
-	private Generator relationNameGenerator;
+	private Generator<String> columnNameGenerator;
+	private Generator<String> relationNameGenerator;
 	
 	
 	public ColRelGenerator()
 	{
-		this(Gensym.create("c"), Gensym.create("r"));
+		this(Generator.create("c"), Generator.create("r"));
 	}
 	
-	public ColRelGenerator(Generator columnNameGenerator, Generator relationNameGenerator) {
+	public ColRelGenerator(Generator<String> columnNameGenerator, Generator<String> relationNameGenerator) {
 		this.columnNameGenerator = columnNameGenerator;
 		this.relationNameGenerator = relationNameGenerator;
 	}

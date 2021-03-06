@@ -13,6 +13,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.commons.collections.CartesianProduct;
+import org.aksw.commons.collections.generator.Generator;
+import org.aksw.commons.collections.generator.GeneratorBlacklist;
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
 import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
@@ -65,8 +69,7 @@ import org.aksw.sparqlify.type_system.TypeSystemUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.SortCondition;
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
+// import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sdb.core.JoinType;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.core.VarExprList;
@@ -283,11 +286,15 @@ public class MappingOpsImpl
     //private DatatypeSystem datatypeSystem;
     private ExprDatatypeNorm exprNormalizer;
 
+    
+    // protected static SqlCodec sqlCodec = SqlCodecUtils.createSqlCodecDefault();
 
     public MappingOpsImpl(SqlTranslator sqlTranslator, ExprDatatypeNorm exprNormalizer) {//DatatypeAssigner datatypeAssigner) {
         //this.exprTransformer = exprTransformer;
         this.sqlTranslator = sqlTranslator;
         this.exprNormalizer = exprNormalizer;
+        
+        // this.sqlCodec = SqlCodecUtils.createSqlCodecDefault();
         //this.exprNormalizer = new ExprDatatypeNorm(datatypeSystem)
     }
 
@@ -951,7 +958,7 @@ public class MappingOpsImpl
      * @param b
      * @return
      */
-    public Mapping doJoinRename(Mapping a, Mapping b, Generator gen) {
+    public Mapping doJoinRename(Mapping a, Mapping b, Generator<String> gen) {
         List<String> namesA = a.getSqlOp().getSchema().getColumnNames();
         List<String> namesB = b.getSqlOp().getSchema().getColumnNames();
 
@@ -1001,7 +1008,7 @@ public class MappingOpsImpl
     }
 
 
-    static Generator genSymJoin = Gensym.create("h");
+    static Generator<String> genSymJoin = Generator.create("h");
 
     /**
      *
@@ -1364,7 +1371,9 @@ public class MappingOpsImpl
 
 
         Set<String> columnNameBlacklist = new HashSet<String>(mapping.getSqlOp().getSchema().getColumnNames());
-        Generator aliasGen = GeneratorBlacklist.create("C", columnNameBlacklist);
+        Generator<String> aliasGen = GeneratorBlacklist.create("C", columnNameBlacklist);
+//        Generator<String> aliasGen = GeneratorBlacklist.create(
+//        		Generator.create("C").map(sqlCodec.forAlias()::encode), columnNameBlacklist);
 
         Projection projection = new Projection();
 
@@ -1538,7 +1547,10 @@ public class MappingOpsImpl
          *     H2 fails with them
          */
         //Generator aliasGen = Gensym.create("C");
-        Generator aliasGenUnion = GeneratorBlacklist.create("C", columnNameBlacklist);
+        Generator<String> aliasGenUnion = GeneratorBlacklist.create("C", columnNameBlacklist);
+//        Generator<String> aliasGenUnion = GeneratorBlacklist.create(
+//        		Generator.create("C").map(sqlCodec.forAlias()::encode), columnNameBlacklist);
+
 
 
         if(members.size() == 1) {
@@ -2146,7 +2158,7 @@ public class MappingOpsImpl
      * @param generator
      * @return
      */
-    public static ExprSqlRewrite rewrite(Mapping mapping, Aggregator agg, Generator generator, TypeSystem typeSystem, SqlTranslator sqlTranslator) {
+    public static ExprSqlRewrite rewrite(Mapping mapping, Aggregator agg, Generator<String> generator, TypeSystem typeSystem, SqlTranslator sqlTranslator) {
 
 
         // Unwrapping of transMap
@@ -2411,7 +2423,7 @@ public class MappingOpsImpl
      *
      * @param agg
      */
-    public ExprSqlRewrite rewriteOld(Gensym gensym, Aggregator agg) {
+    public ExprSqlRewrite rewriteOld(Generator<String> gensym, Aggregator agg) {
         ExprSqlRewrite result;
         if(agg instanceof AggCount) {
             result = rewrite(gensym, (AggCount)agg);
@@ -2423,7 +2435,7 @@ public class MappingOpsImpl
         return result;
     }
 
-    public ExprSqlRewrite rewrite(Gensym gensym, AggCount agg) {
+    public ExprSqlRewrite rewrite(Generator<String> gensym, AggCount agg) {
 
         String columnAlias = gensym.next();
         S_AggCount count = new S_AggCount();
@@ -2604,7 +2616,7 @@ public class MappingOpsImpl
 
 
 
-        Generator generator = Gensym.create("o");
+        Generator<String> generator = Generator.create("o");
 
         List<Expr> resultVars = new ArrayList<Expr>(4);
         Projection resultProjection = new Projection();

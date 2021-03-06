@@ -222,7 +222,11 @@ public class Main {
 
         try {
             BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
-            SchemaProvider schemaProvider = new SchemaProviderImpl(basicTableInfoProvider, typeSystem, typeAlias, sqlEscaper);
+            SchemaProvider schemaProvider = new SchemaProviderImpl(
+            		basicTableInfoProvider,
+            		typeSystem,
+            		typeAlias,
+            		sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);

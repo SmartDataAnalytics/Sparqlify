@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.commons.collections.generator.Generator;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
 import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
@@ -30,8 +31,6 @@ import org.aksw.sparqlify.type_system.FunctionModelMeta;
 import org.aksw.sparqlify.type_system.MethodEntry;
 import org.aksw.sparqlify.type_system.MethodSignature;
 import org.aksw.sparqlify.type_system.TypeSystemUtils;
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
@@ -81,11 +80,11 @@ class ExprHolder {
 
 
 class RewriteState {
-    private Generator genSym;
+    private Generator<String> genSym;
     private Projection projection = new Projection();
 
     public RewriteState() {
-        this(Gensym.create("s"));
+        this(Generator.create("s"));
     }
 
     public RewriteState(Generator genSym) {
@@ -94,7 +93,7 @@ class RewriteState {
         this.projection = projection;
     }
 
-    public Generator getGenSym() {
+    public Generator<String> getGenSym() {
         return genSym;
     }
     public Projection getProjection() {

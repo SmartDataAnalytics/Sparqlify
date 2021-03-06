@@ -142,12 +142,13 @@ public class SqlOpSerializerImpl
     		//String asSeparator = " AS ";
     		String asSeparator = " ";
 
-    		String escColumnName;
-			try {
-				escColumnName = SqlUtils.harmonizeColumnName(columnName, sqlEscaper);
-			} catch (SqlParseException e) {
-				throw new RuntimeException(e);
-			}
+    		String escColumnName = sqlEscaper.forColumnName().encode(columnName);
+//			try {
+//				String tmpColumnName = "\"" + columnName + "\"";
+//				escColumnName = SqlUtils.reencodeColumnNameDefault(tmpColumnName, sqlEscaper);
+//			} catch (SqlParseException e) {
+//				throw new RuntimeException(e);
+//			}
     		
     		strs.add(exprStr + asSeparator + escColumnName);
     		// strs.add(exprStr + asSeparator + sqlEscaper.escapeColumnName(columnName));

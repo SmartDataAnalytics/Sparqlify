@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.aksw.commons.collections.generator.Generator;
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.stmt.SparqlStmtMgr;
 import org.aksw.jena_sparql_api.utils.NodeUtils;
 import org.aksw.jena_sparql_api.utils.VarGeneratorImpl2;
@@ -354,6 +356,11 @@ public class R2rmlImporter {
 			String colName;
 			if((colName = tm.getColumn()) != null) {
 			
+				// TODO Hack: We remove quotes because qualified column names are not yet supported
+				//   This goes wrong for an argument such as '"tableAlias"."columnName"'
+				SqlCodec sqlCodec = SqlCodecUtils.createSqlCodecDoubleQuotes();
+				colName = sqlCodec.forColumnName().decodeOrGetAsGiven(colName);
+				
 				ExprVar column = new ExprVar(colName);
 				String langValue = Optional.ofNullable(tm.getLanguage()).map(String::trim).orElse(null);
 				

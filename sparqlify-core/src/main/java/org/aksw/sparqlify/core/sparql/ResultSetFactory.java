@@ -29,7 +29,12 @@ public class ResultSetFactory {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static ResultSetSparqlify create(Connection conn, Statement stmt, String sqlQuery, Multimap<Var, RestrictedExpr> sparqlVarMap, List<Var> projectionVars)
+	public static ResultSetSparqlify create(
+			Connection conn,
+			Statement stmt,
+			String sqlQuery,
+			Multimap<Var, RestrictedExpr> sparqlVarMap,
+			List<Var> projectionVars)
 		throws SQLException
 	{
 		List<String> resultVars = new ArrayList<String>();

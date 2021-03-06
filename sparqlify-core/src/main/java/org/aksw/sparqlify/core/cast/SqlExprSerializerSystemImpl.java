@@ -101,11 +101,11 @@ public class SqlExprSerializerSystemImpl
 			S_ColumnRef ref = (S_ColumnRef)v;
 
 			// result = sqlEscaper.escapeColumnName(ref.getColumnName());
-			try {
-				result = SqlUtils.harmonizeColumnName(ref.getColumnName(), sqlEscaper);
-			} catch (SqlParseException e) {
-				throw new RuntimeException(e);
-			}
+			// try {
+				result = sqlEscaper.forColumnName().encode(ref.getColumnName());
+//			} catch (SqlParseException e) {
+//				throw new RuntimeException(e);
+//			}
 			//result = "\"" + ref.getColumnName() + "\"";
 			
 			if(ref.getRelationAlias() != null) {
