@@ -6,7 +6,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.8.10-SNAPSHOT</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -104,10 +104,10 @@
 		<aksw.commons.version>0.8.14</aksw.commons.version>
 
 		<jena.version>3.17.0</jena.version>
-		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
+		<jsa.subversion>1</jsa.subversion>
 		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
 
-		<aksw-commons.version>0.8.16-SNAPSHOT</aksw-commons.version>
+		<aksw-commons.version>0.9.0</aksw-commons.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
