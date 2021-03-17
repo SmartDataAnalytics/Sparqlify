@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.9</version>
+		<version>0.9.0</version>
 	</parent>
 
 	<!-- <build> -->
@@ -102,6 +102,32 @@
 	</build>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.r2rml</groupId>
+			<artifactId>r2rml-jena-plugin</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.r2rml</groupId>
+			<artifactId>r2rml-jena-sql-transforms</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.aksw.jena-sparql-api</groupId>
 			<artifactId>jena-sparql-api-core</artifactId>
@@ -153,6 +179,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aksw.commons</groupId>
+			<artifactId>aksw-commons-util-xml</artifactId>
 		</dependency>
 
 		<dependency>
@@ -239,12 +270,8 @@
 
 		<!-- <dependency> <groupId>org.jgrapht</groupId> <artifactId>jgrapht-core</artifactId> 
 			</dependency> -->
-<!--
-		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-jgrapht</artifactId>
-		</dependency>
--->
+		<!-- <dependency> <groupId>org.aksw.jena-sparql-api</groupId> <artifactId>jena-sparql-api-jgrapht</artifactId> 
+			</dependency> -->
 
 		<dependency>
 			<groupId>junit</groupId>

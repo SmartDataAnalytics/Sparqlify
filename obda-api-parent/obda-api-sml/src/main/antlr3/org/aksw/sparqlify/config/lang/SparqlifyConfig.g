@@ -343,8 +343,8 @@ name
 logicalTable
     : a=SQL_QUERY -> ^(SQL_RELATION SQL_QUERY[$a])
     | a=STRING_LITERAL_LONG1 -> ^(SQL_RELATION SQL_QUERY[$a])
-    | a=NAME -> ^(SQL_RELATION SQL_TABLE[$a])
-    | a=STRING_LITERAL2 -> ^(SQL_RELATION SQL_TABLE[$a])
+    | a=NAME -> ^(SQL_RELATION SQL_TABLE["\"" + $a.getText() + "\""])
+    | a=STRING_LITERAL2 -> ^(SQL_RELATION SQL_TABLE["\"" + $a.getText() + "\""])
     ;
 
 

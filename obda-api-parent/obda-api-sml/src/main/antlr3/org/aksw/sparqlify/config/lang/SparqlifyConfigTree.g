@@ -31,8 +31,8 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 @header {
     package org.aksw.sparqlify.config.lang;
 
+    import java.lang.UnsupportedOperationException.*;
     import org.apache.jena.sparql.expr.*;
-    import org.apache.commons.lang.NotImplementedException;
     import org.apache.jena.graph.*;
     import org.apache.jena.vocabulary.*;
     import org.apache.jena.sparql.syntax.*;
@@ -770,7 +770,7 @@ objectList[Collection<Triple> triples]
 verb returns [ Node value ]
     : a=varOrIRIref { $value = $a.value; }
     | A           { $value = RDF.type.asNode(); }
-    | path		  { if(true) { throw new NotImplementedException(); } }
+    | path		  { if(true) { throw new UnsupportedOperationException("not implemented"); } }
     ;
 
 triplesSameSubjectPath [BasicPattern value]
@@ -859,8 +859,8 @@ expression returns [ Expr value ]
     | ^(GREATER a=expression b=expression)       { $value = new E_GreaterThan       ($a.value, $b.value); }
     | ^(LESS_EQUAL a=expression b=expression)    { $value = new E_LessThanOrEqual   ($a.value, $b.value); }
     | ^(GREATER_EQUAL a=expression b=expression) { $value = new E_GreaterThanOrEqual($a.value, $b.value); }
-    | ^(IN a=expression b=expression)            { if(true) { throw new NotImplementedException(); } }
-    | ^(NOT IN a=expression b=expression)        { if(true) { throw new NotImplementedException(); } }
+    | ^(IN a=expression b=expression)            { if(true) { throw new UnsupportedOperationException("not implemented"); } }
+    | ^(NOT IN a=expression b=expression)        { if(true) { throw new UnsupportedOperationException("not implemented"); } }
     | ^(PLUS a=expression b=expression)          { $value = new E_Add               ($a.value, $b.value); }
     | ^(MINUS a=expression b=expression)         { $value = new E_Subtract          ($a.value, $b.value); }
     | ^(ASTERISK a=expression b=expression)      { $value = new E_Multiply          ($a.value, $b.value); }

@@ -10,8 +10,9 @@ import javax.xml.bind.JAXBException;
 
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
+import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.util.MapReader;
-import org.aksw.commons.util.XmlUtils;
+import org.aksw.commons.util.xml.XmlUtils;
 import org.aksw.jena_sparql_api.views.RdfTerm;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Add;
@@ -72,7 +73,6 @@ import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerSparqlFunct
 import org.aksw.sparqlify.core.rewrite.expr.transform.ExprTransformerStr;
 import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminatorImpl;
 import org.aksw.sparqlify.core.rewrite.expr.transform.RdfTermEliminatorWriteable;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_Arithmetic;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_Compare;
@@ -81,7 +81,6 @@ import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_LogicalNot;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_LogicalOr;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseInt;
-import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_PassThrough;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_UrlDecode;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_UrlEncode;
 import org.aksw.sparqlify.core.sql.expr.serialization.SqlFunctionSerializer;
@@ -131,7 +130,7 @@ public class SparqlifyCoreInit {
         FunctionRegistry.get().put(SparqlifyConstants.rightPadLabel, RightPad.class);
     }
 
-    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, DatatypeToString typeSerializer, SqlEscaper sqlEscaper) {
+    public static SqlExprSerializerSystem createSerializerSystem(TypeSystem typeSystem, DatatypeToString typeSerializer, SqlCodec sqlEscaper) {
 
         //DatatypeToString typeSerializer = new DatatypeToStringCast();//new DatatypeToStringPostgres();
         //DatatypeToString typeSerializer = new DatatypeToStringPostgres();

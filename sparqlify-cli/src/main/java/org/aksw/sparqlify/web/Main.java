@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.MapReader;
 import org.aksw.jena_sparql_api.core.GraphQueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
@@ -34,8 +36,6 @@ import org.aksw.sparqlify.core.sparql.QueryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.ExprRewriteSystem;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
@@ -217,12 +217,16 @@ public class Main {
         }
 
 
-        SqlEscaper sqlEscaper = backendConfig.getSqlEscaper();
+        SqlCodec sqlEscaper = backendConfig.getSqlEscaper();
         DatatypeToString typeSerializer = backendConfig.getTypeSerializer();
 
         try {
             BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
-            SchemaProvider schemaProvider = new SchemaProviderImpl(basicTableInfoProvider, typeSystem, typeAlias, sqlEscaper);
+            SchemaProvider schemaProvider = new SchemaProviderImpl(
+            		basicTableInfoProvider,
+            		typeSystem,
+            		typeAlias,
+            		sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
@@ -291,7 +295,7 @@ public class Main {
 				.setDataSource(dataSource)
 				.setConfig(config)
 				.setDatatypeToString(new DatatypeToStringPostgres())
-				.setSqlEscaper(new SqlEscaperDoubleQuote())
+				.setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
 				.setMaxQueryExecutionTime(maxQueryExecutionTime)
 				.setMaxResultSetSize(mrs)
 				.create();

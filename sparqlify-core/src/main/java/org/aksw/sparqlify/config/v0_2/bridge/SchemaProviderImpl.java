@@ -1,16 +1,20 @@
 package org.aksw.sparqlify.config.v0_2.bridge;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
+import org.aksw.r2rml.jena.sql.transform.SqlParseException;
+import org.aksw.r2rml.sql.transform.SqlUtils;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.TypeSystem;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.aksw.sparqlify.core.sql.schema.SchemaImpl;
 import org.slf4j.Logger;
@@ -33,18 +37,41 @@ public class SchemaProviderImpl
 	protected BasicTableInfoProvider basicTableInfoProvider;
 	protected TypeSystem datatypeSystem;
 	protected Map<String, String> aliasMap; // TODO Maybe this has to be a function to capture int([0-9]*) -> int
-	protected SqlEscaper sqlEscaper;
+	// Encoding for generation of SQL queries
+	protected SqlCodec downstreamSqlEncoder;
+	
+	// Encoder for encoding the obtained column/table names
+	// Upstream encoding is not (yet?) needed: we don't use
+	// any qualified table names and columns obtained from jdbc metadata
+	// protected SqlCodec upstreamSqlEncoder;
 
+	public SchemaProviderImpl(
+			BasicTableInfoProvider basicTableInfoProvider,
+			TypeSystem datatypeSystem,
+			Map<String, String> aliasMap,
+			SqlCodec downstreamSqlEncoder) {
+		// this(basicTableInfoProvider, datatypeSystem, aliasMap, downstreamSqlEncoder, SqlCodecUtils.createSqlCodecDefault());
+		this.basicTableInfoProvider = basicTableInfoProvider;
+		this.datatypeSystem = datatypeSystem;
+		this.aliasMap = aliasMap;
+		this.downstreamSqlEncoder = downstreamSqlEncoder;
+	}
 
-
-	public SchemaProviderImpl(BasicTableInfoProvider basicTableInfoProvider, TypeSystem datatypeSystem, Map<String, String> aliasMap, SqlEscaper sqlEscaper) {
+/*
+	public SchemaProviderImpl(
+			BasicTableInfoProvider basicTableInfoProvider,
+			TypeSystem datatypeSystem,
+			Map<String, String> aliasMap,
+			SqlCodec downstreamSqlEncoder,
+			SqlCodec upstreamSqlEncoder) {
 		//this.conn = conn;
 		this.basicTableInfoProvider = basicTableInfoProvider;
 		this.datatypeSystem = datatypeSystem;
 		this.aliasMap = aliasMap;
-		this.sqlEscaper = sqlEscaper;
+		this.downstreamSqlEncoder = downstreamSqlEncoder;
+		// this.upstreamSqlEncoder = upstreamSqlEncoder;
 	}
-
+*/
 
 
 	public Schema createSchemaForRelationName(String tableName) {
@@ -53,7 +80,14 @@ public class SchemaProviderImpl
 
 
 		// TODD We might have to escape table names...
-		String escTableName = sqlEscaper.escapeTableName(tableName); //"\"" + tableName + "\"";
+		// String escTableName = sqlEscaper.escapeTableName(tableName); //"\"" + tableName + "\"";
+		String escTableName;
+		try {
+			escTableName = SqlUtils.reencodeTableNameDefault(tableName, downstreamSqlEncoder);
+			// escTableName = SqlUtils.harmonizeTableName(tableName, downstreamSqlEncoder);
+		} catch (SqlParseException e) {
+			throw new RuntimeException(e);
+		}
 
 		// FIXME Use database metadata for fetching schemas of tables
 		Schema result = createSchemaForQueryString("SELECT * FROM " + escTableName);
@@ -91,10 +125,13 @@ public class SchemaProviderImpl
 		Map<String, String> rawTypeMap = tmpTypeMap.entrySet().stream()
 				.collect(Collectors.toMap(
 						Entry::getKey,
+						// e -> upstreamSqlEncoder.forColumnName().encode(e.getKey()),
 						e -> e.getValue().equalsIgnoreCase("serial") ? "integer" : e.getValue()));
 		
 		
-		Set<String> nullableColumns = tableInfo.getNullableColumns();
+		Set<String> nullableColumns = tableInfo.getNullableColumns().stream()
+				//.map(upstreamSqlEncoder.forColumnName()::encode)
+				.collect(Collectors.toCollection(LinkedHashSet::new));
 
 		Map<String, TypeToken> typeMap = getTypes(rawTypeMap, datatypeSystem, rawTypeMap);
 
@@ -179,7 +216,7 @@ public class SchemaProviderImpl
 //		return result;
 //	}
 	public static Map<String, TypeToken> transformRawMap(Map<String, String> map, TypeSystem datatypeSystem, Map<String, String> aliasMap) {
-		Map<String, TypeToken> result = new HashMap<String, TypeToken>();
+		Map<String, TypeToken> result = new LinkedHashMap<String, TypeToken>();
 
 		for(Map.Entry<String, String> entry : map.entrySet()) {
 			// TODO Get a datatype object that can convert SQL Values between NodeValues and vice versa.

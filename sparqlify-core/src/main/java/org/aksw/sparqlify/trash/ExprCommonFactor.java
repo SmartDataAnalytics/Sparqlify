@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.collections.generator.Generator;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.jena_sparql_api.views.ExprCopy;
-import org.apache.jena.sdb.core.Generator;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
@@ -25,9 +25,9 @@ import org.apache.jena.sparql.expr.NodeValue;
  */
 public class ExprCommonFactor {
 	
-	private Generator generator;
+	private Generator<String> generator;
 	
-	public ExprCommonFactor(Generator generator)
+	public ExprCommonFactor(Generator<String> generator)
 	{
 		this.generator = generator;
 	}

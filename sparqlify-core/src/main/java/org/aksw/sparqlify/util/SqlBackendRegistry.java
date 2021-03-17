@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringCast;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperBacktick;
@@ -30,8 +31,8 @@ public class SqlBackendRegistry
     public static final String POSTGRES = "postgresql";
 
     public static void init(Map<String, SqlBackendConfig> map) {
-        map.put(HIVE, new SqlBackendConfig(new DatatypeToStringCast(), new SqlEscaperBacktick()));
-        map.put(POSTGRES, new SqlBackendConfig(new DatatypeToStringPostgres(), new SqlEscaperDoubleQuote()));
+        map.put(HIVE, new SqlBackendConfig(new DatatypeToStringCast(), SqlCodecUtils.createSqlCodecForApacheSpark()));
+        map.put(POSTGRES, new SqlBackendConfig(new DatatypeToStringPostgres(), SqlCodecUtils.createSqlCodecDefault()));
     }
 
     public Map<String, SqlBackendConfig> getMap() {

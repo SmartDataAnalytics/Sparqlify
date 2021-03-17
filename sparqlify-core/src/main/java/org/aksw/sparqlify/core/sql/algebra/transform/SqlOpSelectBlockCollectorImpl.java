@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.aksw.commons.collections.generator.Generator;
 import org.aksw.commons.util.reflect.MultiMethod;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
@@ -32,8 +33,6 @@ import org.aksw.sparqlify.core.algorithms.SqlExprSubstitutor;
 import org.aksw.sparqlify.core.algorithms.SqlOps;
 import org.aksw.sparqlify.core.sparql.algebra.transform.SqlExprUtils;
 import org.aksw.sparqlify.core.sql.schema.Schema;
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sdb.core.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,10 +180,10 @@ public class SqlOpSelectBlockCollectorImpl
 
 	private static final Logger logger = LoggerFactory.getLogger(SqlOpSelectBlockCollectorImpl.class);
 
-	private static Generator aliasGenerator = Gensym.create("a");
+	private static Generator<String> aliasGenerator = Generator.create("a");
 	
 	// Used for sort conditions
-	private static Generator projectionGenerator = Gensym.create("o");
+	private static Generator<String> projectionGenerator = Generator.create("o");
 	
 	/**
 	 * Turn an SqlOp into an OpSqlSelectBlock.

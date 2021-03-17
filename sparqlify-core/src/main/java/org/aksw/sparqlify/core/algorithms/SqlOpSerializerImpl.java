@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.util.reflect.MultiMethod;
+import org.aksw.r2rml.jena.sql.transform.SqlParseException;
+import org.aksw.r2rml.sql.transform.SqlUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.nodes.Projection;
@@ -23,7 +26,6 @@ import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.cast.SqlValue;
 import org.aksw.sparqlify.core.interfaces.SqlExprSerializer;
 import org.aksw.sparqlify.core.sql.algebra.serialization.SqlOpSerializer;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.atlas.io.IndentedWriter;
@@ -45,9 +47,9 @@ public class SqlOpSerializerImpl
 	//private static SqlExprSerializer sqlExprSerializer = new SqlExprSerializerPostgres();
 
 	
-	protected SqlEscaper sqlEscaper;
+	protected SqlCodec sqlEscaper;
 
-	public SqlOpSerializerImpl(SqlEscaper sqlEscaper, SqlExprSerializer exprSerializer) {
+	public SqlOpSerializerImpl(SqlCodec sqlEscaper, SqlExprSerializer exprSerializer) {
 	    this.sqlEscaper = sqlEscaper;
 		this.exprSerializer = exprSerializer;
 	}
@@ -140,7 +142,16 @@ public class SqlOpSerializerImpl
     		//String asSeparator = " AS ";
     		String asSeparator = " ";
 
-    		strs.add(exprStr + asSeparator + sqlEscaper.escapeColumnName(columnName));
+    		String escColumnName = sqlEscaper.forColumnName().encode(columnName);
+//			try {
+//				String tmpColumnName = "\"" + columnName + "\"";
+//				escColumnName = SqlUtils.reencodeColumnNameDefault(tmpColumnName, sqlEscaper);
+//			} catch (SqlParseException e) {
+//				throw new RuntimeException(e);
+//			}
+    		
+    		strs.add(exprStr + asSeparator + escColumnName);
+    		// strs.add(exprStr + asSeparator + sqlEscaper.escapeColumnName(columnName));
     	}
 
     	result = Joiner.on(", ").join(strs);
@@ -261,7 +272,8 @@ public class SqlOpSerializerImpl
 		if(aliasName == null || aliasName.isEmpty()) {
 			return "";
 		} else {
-			return " " + sqlEscaper.escapeAliasName(aliasName);
+			// return " " + sqlEscaper.escapeAliasName(aliasName);
+			return " " + sqlEscaper.forAlias().encode(aliasName);
 		}
 	}
 
@@ -639,7 +651,13 @@ public class SqlOpSerializerImpl
 
     public void _serialize(SqlOpTable op, IndentedWriter writer)
     {
-    	String encTableName = sqlEscaper.escapeTableName(op.getTableName());
+    	// String encTableName = sqlEscaper.escapeTableName(op.getTableName());
+    	String encTableName;
+		try {
+			encTableName = SqlUtils.harmonizeTableName(op.getTableName(), sqlEscaper);
+		} catch (SqlParseException e) {
+			throw new RuntimeException(e);
+		}
     	writer.print(encTableName);
     	writer.print(getAliasNameNotNull(op));
     }

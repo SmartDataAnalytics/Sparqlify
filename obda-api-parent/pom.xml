@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.8.9</version>
+		<version>0.9.0</version>
 	</parent>
 
 	<modules>
@@ -27,6 +27,12 @@
 				<groupId>org.aksw.sparqlify</groupId>
 				<artifactId>obda-api-core</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aksw.r2rml</groupId>
+				<artifactId>r2rml-jena-plugin</artifactId>
+				<version>0.9.0</version>
 			</dependency>
 
 			<dependency>
@@ -75,6 +81,12 @@
 				<artifactId>jena-sparql-api-views</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
+			
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.apache.commons</groupId> -->
+<!-- 				<artifactId>commons-lang3</artifactId> -->
+<!-- 				<version>3.7</version> -->
+<!-- 			</dependency> -->
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->

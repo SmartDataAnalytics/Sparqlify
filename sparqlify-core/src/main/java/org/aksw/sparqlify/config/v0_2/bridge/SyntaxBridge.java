@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import org.aksw.commons.codec.entity.util.EntityCodecUtils;
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
@@ -35,6 +38,8 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_Str;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
+import org.apache.jena.sparql.expr.ExprTransformCopy;
+import org.apache.jena.sparql.expr.ExprTransformer;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,6 +202,20 @@ public class SyntaxBridge {
         VarDefinition varDefinition = new VarDefinition(varDefs);
 
 
+        /*
+        SqlCodec sqlCodec = SqlCodecUtils.createSqlCodecDefault();
+        varDefinition.applyExprTransform(e ->
+        	ExprTransformer.transform(new ExprTransformCopy(false) {
+        	    @Override
+        	    public Expr transform(ExprVar exprVar)       
+        	    {
+            		String varName = exprVar.getVarName();
+            		String harmonizedName = EntityCodecUtils.harmonize(varName, sqlCodec::forColumnName);
+            		ExprVar r = new ExprVar(Var.alloc(harmonizedName));
+            		return r;
+        	    }
+        	}, e));
+        */
 
         // Add str to concat expressions in order to play safe with Sparqlify's type model
         varDefinition.applyExprTransform(ExprTransformerUtils.injectStrsIntoConcats);

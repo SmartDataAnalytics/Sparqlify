@@ -3,14 +3,12 @@ package org.aksw.sparqlify.backend.postgres;
 import java.util.Date;
 import java.util.function.UnaryOperator;
 
-import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.sparqlify.core.TypeToken;
 import org.aksw.sparqlify.core.algorithms.DatatypeToString;
 import org.aksw.sparqlify.core.cast.SqlLiteralMapper;
 import org.aksw.sparqlify.core.cast.SqlValue;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
 import org.aksw.sparqlify.core.sql.expr.evaluation.SqlExprEvaluator_ParseDate;
-import org.apache.jena.sparql.expr.NodeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +22,11 @@ public class SqlLiteralMapperPostgres
 
     // TODO we need to lookup the 'toString' method for the appropriate type.
 
-    protected SqlEscaper sqlEscaper;
+    protected SqlCodec sqlEscaper;
     protected DatatypeToString typeSerializer;
 
     //SqlExprSerializerPostgres
-    public SqlLiteralMapperPostgres(DatatypeToString typeSerializer, SqlEscaper sqlEscaper) {
+    public SqlLiteralMapperPostgres(DatatypeToString typeSerializer, SqlCodec sqlEscaper) {
         this.typeSerializer = typeSerializer;
         this.sqlEscaper = sqlEscaper;
     }
@@ -63,7 +61,7 @@ public class SqlLiteralMapperPostgres
             applyCast = false;
         } else {
             String lex = "" + o;
-            result = sqlEscaper.escapeStringLiteral(lex);
+            result = sqlEscaper.forStringLiteral().encode(lex);
             applyCast = true;
         }
 

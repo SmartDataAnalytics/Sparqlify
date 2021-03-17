@@ -3,6 +3,8 @@ package org.aksw.sparqlify.test;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
@@ -12,8 +14,6 @@ import org.aksw.sparqlify.core.algorithms.ExprSqlRewrite;
 import org.aksw.sparqlify.core.cast.SqlExprSerializerSystem;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.interfaces.SqlTranslator;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaper;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyCoreInit;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
@@ -42,7 +42,8 @@ public class ExprTests {
 		TypeSystem typeSystem = SparqlifyCoreInit.createDefaultDatatypeSystem();
 
 		DatatypeToString typeSerializer = new DatatypeToStringPostgres();
-        SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+        // SqlEscaper sqlEscaper = new SqlEscaperDoubleQuote();
+		SqlCodec sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
 
 		serializerSystem = SparqlifyCoreInit.createSerializerSystem(typeSystem, typeSerializer, sqlEscaper);
 	}

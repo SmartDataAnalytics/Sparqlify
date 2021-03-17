@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -14,12 +15,15 @@ import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sys.JenaSystem;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.zaxxer.hikari.HikariDataSource;
 
 public class ConnectionCloseTest {
+
+	static { JenaSystem.init(); }
 
 	
 	@Test
@@ -45,7 +49,7 @@ public class ConnectionCloseTest {
 		final QueryExecutionFactory qef = FluentSparqlifyFactory.newEngine()
 				.setDataSource(ds)
 				.setConfig(config)
-				.setSqlEscaper(new SqlEscaperDoubleQuote())
+				.setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
 				.setDatatypeToString(new DatatypeToStringPostgres())
 				.create();
 

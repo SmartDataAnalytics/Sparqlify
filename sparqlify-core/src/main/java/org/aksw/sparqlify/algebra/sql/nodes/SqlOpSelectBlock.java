@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.commons.collections.generator.Generator;
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprFunction;
 import org.aksw.sparqlify.core.sql.schema.Schema;
 import org.apache.jena.atlas.io.IndentedWriter;
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sdb.core.ScopeBase;
 import org.apache.jena.sdb.shared.SDBInternalError;
 
@@ -237,7 +238,7 @@ public class SqlOpSelectBlock
 
     //public static final Long NOT_SET = SqlBlock.NOT_SET;
 
-    static public SqlOp distinct(Generator generator, SqlOp sqlOp)
+    static public SqlOp distinct(Generator<String> generator, SqlOp sqlOp)
     { 
         SqlOpSelectBlock block = blockWithView(generator, sqlOp) ;
         block.setDistinct(true) ;
@@ -292,7 +293,7 @@ public class SqlOpSelectBlock
     }
   
         
-    private static SqlOpSelectBlock _create(SqlOp sqlOp, Generator generator)
+    private static SqlOpSelectBlock _create(SqlOp sqlOp, Generator<String> generator)
     {
         String alias = getAliasName(sqlOp);
         //if ( ! sqlOp.isTable() )
@@ -419,7 +420,9 @@ public class SqlOpSelectBlock
         SqlOp sqlOp = block.getSubOp() ;
         ScopeBase idScopeRename = new ScopeBase() ;
         ScopeBase nodeScopeRename = new ScopeBase() ;
-        Generator gen = Gensym.create("X") ;    // Column names.  Not global.
+       
+        SqlCodec sqlCodec = SqlCodecUtils.createSqlCodecDefault();
+        Generator<String> gen = Generator.create("X").map(sqlCodec.forColumnName()::encode);    // Column names.  Not global.
     
         /*
         block.merge(sqlOp.getIdScope(), idScopeRename, gen) ;

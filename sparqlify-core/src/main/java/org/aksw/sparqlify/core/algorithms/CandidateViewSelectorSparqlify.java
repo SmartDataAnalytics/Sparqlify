@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.commons.collections.generator.Generator;
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
 import org.aksw.jena_sparql_api.restriction.UnsatisfiabilityException;
 import org.aksw.jena_sparql_api.views.CandidateViewSelectorBase;
@@ -22,8 +23,6 @@ import org.aksw.sparqlify.core.interfaces.MappingOps;
 import org.aksw.sparqlify.core.sparql.algebra.transform.FilterPlacementOptimizer2Sparqlify;
 import org.aksw.sparqlify.database.GetVarsMentioned;
 import org.aksw.sparqlify.sparqlview.ViewInstanceJoin;
-import org.apache.jena.sdb.core.Generator;
-import org.apache.jena.sdb.core.Gensym;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;
 import org.apache.jena.sparql.algebra.op.OpQuadBlock;
@@ -182,7 +181,7 @@ public class CandidateViewSelectorSparqlify
         return result;
     }
 
-    public static Generator emptyViewNameGenerator = Gensym.create("emptyView");
+    public static Generator<String> emptyViewNameGenerator = Generator.create("emptyView");
 
     public static Op createEmptyViewInstance(OpQuadBlock opQuadBlock) {
         Set<Var> vars = GetVarsMentioned.getVarsMentioned(opQuadBlock);
