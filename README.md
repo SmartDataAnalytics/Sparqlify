@@ -16,6 +16,27 @@ This system's features/traits are:
 * CSV support
 * R2RML will be supported soon
 
+## Functions
+SPARQL-to-SQL function mappings are specified in the file [functions.xml](sparqlify-core/src/main/resources/functions.xml).
+
+
+### Spatial functions
+<details>
+  <summary>Spatial aggregate functions define aggregate functions which can be applied to geometry and coverage literals.</summary>
+
+
+| SPARQL function | SQL Definition  |
+|-----------------| ----------------|
+| boolean strstarts(string, string) | strpos($1$, $2$) = 1|
+| TODO | |
+
+
+</details>
+
+
+
+
+
 ## Supported SPARQL language features
 * Join, LeftJoin (i.e. Optional), Union, Sub queries
 * Filter predicates: comparison: (<=, <, =, >, >=) logical: (!, &&; ||) arithmetic: (+, -) spatial: st\_intersects, geomFromText; other: regex, lang, langMatches  
