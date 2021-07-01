@@ -19,15 +19,22 @@ This system's features/traits are:
 ## Functions
 SPARQL-to-SQL function mappings are specified in the file [functions.xml](sparqlify-core/src/main/resources/functions.xml).
 
-
-### Spatial functions
 <details>
-  <summary>Spatial aggregate functions define aggregate functions which can be applied to geometry and coverage literals.</summary>
-
+  <summary>Standard SPARQL functions</summary>
 
 | SPARQL function | SQL Definition  |
 |-----------------| ----------------|
 | boolean strstarts(string, string) | strpos($1$, $2$) = 1|
+| TODO | |
+
+</details>
+
+<details>
+  <summary>Spatial Function Extensions </summary>
+
+
+| SPARQL function | SQL Definition  |
+|-----------------| ----------------|
 | TODO | |
 
 

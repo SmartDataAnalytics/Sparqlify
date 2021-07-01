@@ -57,10 +57,12 @@
 		</dependency>
 
 
+<!--
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-sdb</artifactId>
 		</dependency>
+-->
 
 		<!-- TODO Try to get rid of this dependency; it is used for constraints, 
 			however, probably ony a separate processor should deal with such regex constraints -->

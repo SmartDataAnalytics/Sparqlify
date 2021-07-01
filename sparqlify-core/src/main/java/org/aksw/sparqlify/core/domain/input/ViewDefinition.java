@@ -17,10 +17,11 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
 import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.apache.jena.atlas.io.IndentedWriter;
-import org.apache.jena.riot.out.SinkQuadBracedOutput;
-import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.modify.request.QuadAcc;
+import org.apache.jena.sparql.serializer.FmtTemplate;
+import org.apache.jena.sparql.syntax.Template;
 
 
 /**
@@ -196,21 +197,24 @@ public class ViewDefinition
         writer.println("Construct");
         //writer.incIndent();
 
-        SinkQuadBracedOutput sink = new SinkQuadBracedOutput(writer, null);
-        sink.open();
+        // SinkQuadBracedOutput sink = new SinkQuadBracedOutput(writer, null);
+        // sink.open();
 
         //sink.send(template);
 
 
         //Map<Node, Set<Quad>> nodeToQuads = QuadUtils.partitionByGraph(template);
 
+        Template t = new Template(new QuadAcc(template.getList()));
+
+        FmtTemplate.format(writer, null, t);
 
         // Template
-        for(Quad quad : template) {
-            sink.send(quad);
-            //writer.println("" + quad);
-        }
-        sink.close();
+//        for(Quad quad : template) {
+//            sink.send(quad);
+//            //writer.println("" + quad);
+//        }
+//        sink.close();
         writer.println(" ");
         //writer.decIndent();
 //		writer.println("}");

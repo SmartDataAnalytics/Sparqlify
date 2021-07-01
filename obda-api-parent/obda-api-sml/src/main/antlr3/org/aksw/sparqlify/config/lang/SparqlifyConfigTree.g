@@ -56,7 +56,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 
     import org.aksw.obda.jena.domain.impl.*;
 
-    import org.apache.jena.sdb.core.JoinType;
+    // import org.apache.jena.sdb.core.JoinType;
 
     import java.util.Collection;
     import java.util.List;
@@ -366,7 +366,7 @@ sqlRelation returns [SqlOp value]
 
 joinClause returns [SqlOp value]
     : a=joinClauseMember {$value=$a.value;}
-    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, JoinType.INNER, $a.value, $b.value);}
+    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, SqlOpJoin.JoinType.INNER, $a.value, $b.value);}
     ;
 
 joinClauseMember returns [SqlOp value]
