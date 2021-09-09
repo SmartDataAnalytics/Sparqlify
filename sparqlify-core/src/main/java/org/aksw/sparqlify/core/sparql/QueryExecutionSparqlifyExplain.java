@@ -271,7 +271,7 @@ public class QueryExecutionSparqlifyExplain
             resultBindings.add(binding);
         }
 
-        QueryIterator queryIterator = new QueryIterPlainWrapper(resultBindings.iterator());
+        QueryIterator queryIterator = QueryIterPlainWrapper.create(resultBindings.iterator());
         ResultSet result = ResultSetFactory.create(queryIterator, resultVars);
         return result;
     }

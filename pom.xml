@@ -106,7 +106,7 @@
 
 		<aksw.commons.version>0.8.14</aksw.commons.version>
 
-		<jena.version>4.0.0</jena.version>
+		<jena.version>4.1.0</jena.version>
 		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
 		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
 

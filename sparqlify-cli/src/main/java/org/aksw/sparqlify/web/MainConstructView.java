@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Iterator;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionDecorator;
+import org.aksw.jena_sparql_api.arq.core.query.QueryExecutionDecoratorBase;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.views.Dialect;
@@ -21,18 +21,17 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.jena.graph.Triple;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.StmtIterator;
 
 
 class TripleIterator
@@ -67,7 +66,7 @@ class TripleIterator
 
 
 class QueryExecutionStreamingWrapper
-    extends QueryExecutionDecorator
+    extends QueryExecutionDecoratorBase<QueryExecution>
     implements QueryExecution
 {
 

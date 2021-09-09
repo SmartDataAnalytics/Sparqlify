@@ -212,7 +212,7 @@ public class QueryExecutionSparqlify
 
     @Override
     public void close() {
-        super.close();
+        // super.close();
 
         if(this.closeConnWhenDone) {
             try {
@@ -224,18 +224,18 @@ public class QueryExecutionSparqlify
         }
 
     }
-    
+
     @Override
     public long getTimeout1() {
-    	long result = timeoutHelper.getExecutionTime();
-    	return result;
+        long result = timeoutHelper.getExecutionTime();
+        return result;
     }
-    
-    
+
+
     @Override
     public long getTimeout2() {
-    	long result = timeoutHelper.getRetrievalTime();
-    	return result;
+        long result = timeoutHelper.getRetrievalTime();
+        return result;
     }
 //
     /*
