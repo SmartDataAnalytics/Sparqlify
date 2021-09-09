@@ -99,6 +99,8 @@
 
 		<!-- <jersey.version>2.26</jersey.version> -->
 
+		<r2rml-jena-api.version>0.9.1-SNAPSHOT</r2rml-jena-api.version>
+
 		<!-- prior: 3.1.2.RELEASE -->
 		<spring.version>5.3.2</spring.version>
 		<spring.batch.version>4.3.1</spring.batch.version>
@@ -492,16 +494,30 @@
 				<version>2.3.4</version>
 			</dependency>
 
+			<!-- Nail down jena version -->
+                        <dependency>
+                                <groupId>org.apache.jena</groupId>
+                                <artifactId>jena-arq</artifactId>
+                                <version>${jena.version}</version>
+                        </dependency>
+                        <dependency>
+                                <groupId>org.apache.jena</groupId>
+                                <artifactId>jena-shacl</artifactId>
+                                <version>${jena.version}</version>
+                        </dependency>
+
+
+
 			<dependency>
 				<groupId>org.aksw.r2rml</groupId>
 				<artifactId>r2rml-jena-plugin</artifactId>
-				<version>0.9.0</version>
+				<version>${r2rml-jena-api.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.aksw.r2rml</groupId>
 				<artifactId>r2rml-jena-sql-transforms</artifactId>
-				<version>0.9.0</version>
+				<version>${r2rml-jena-api.version}</version>
 			</dependency>
 
 
@@ -602,6 +618,20 @@
 				<artifactId>jena-sparql-api-core</artifactId>
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
+
+                        <dependency>
+                                <groupId>org.aksw.jena-sparql-api</groupId>
+                                <artifactId>jena-sparql-api-mapper-annotations</artifactId>
+                                <version>${jena-sparql-api.version}</version>
+                        </dependency>
+
+                        <dependency>
+                                <groupId>org.aksw.jena-sparql-api</groupId>
+                                <artifactId>jena-sparql-api-collections</artifactId>
+                                <version>${jena-sparql-api.version}</version>
+                        </dependency>
+
+
 
 			<dependency>
 				<groupId>org.aksw.jena-sparql-api</groupId>
