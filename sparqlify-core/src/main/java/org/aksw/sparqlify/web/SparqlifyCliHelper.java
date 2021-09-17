@@ -232,7 +232,12 @@ public class SparqlifyCliHelper {
             return null;
         }
 
+        Config result = parseSmlConfigs(configFiles, logger);
 
+        return result;
+    }
+
+    public static Config parseSmlConfigs(List<Resource> configFiles, Logger logger) throws IOException, RecognitionException {
         R2rmlImporter r2rmlImporter = new R2rmlImporter();
         Config result = new Config();
         for(Resource configFile : configFiles) {
@@ -264,7 +269,6 @@ public class SparqlifyCliHelper {
                 result.merge(contrib);
             }
         }
-
         return result;
     }
     public static Config parseSmlConfig(CommandLine commandLine, Logger logger) throws IOException, RecognitionException {
