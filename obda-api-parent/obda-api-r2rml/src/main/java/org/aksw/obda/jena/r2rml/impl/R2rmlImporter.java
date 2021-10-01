@@ -27,8 +27,13 @@ import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_Function;
 import org.apache.jena.sparql.expr.E_StrDatatype;
+import org.apache.jena.sparql.expr.E_StrEncodeForURI;
 import org.apache.jena.sparql.expr.E_StrLang;
 import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprFunction1;
+import org.apache.jena.sparql.expr.ExprTransform;
+import org.apache.jena.sparql.expr.ExprTransformCopy;
+import org.apache.jena.sparql.expr.ExprTransformer;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.ExprVars;
 import org.apache.jena.sparql.expr.NodeValue;
@@ -60,9 +65,6 @@ public class R2rmlImporter {
 
         // Unescape the column names (we might eventually have to pass encoded names to sparqlify)
 
-//        if (rawVarDef.values().contains(null)) {
-//            throw new NullPointerException("Null expression encountered in " + tm);
-//        }
 
         Set<Var> usedVars = new HashSet<>();
         mapping.getVarToExpr().getExprs().values().stream().forEach(e -> ExprVars.varsMentioned(usedVars, e));
@@ -72,13 +74,24 @@ public class R2rmlImporter {
                         v -> sqlCodec.forColumnName().decodeOrGetAsGiven(v.getName())
                 ));
 
+
         NodeTransform xform = n -> Optional.ofNullable(usedVarToColumnName.get(n)).map(x -> (Node)Var.alloc(x)).orElse(n);
         Map<Var, Expr> varDef = VarExprListUtils.applyNodeTransform(rawVarDef, xform);
 
+        ExprTransform removeEncodeXform = new ExprTransformCopy() {
+            public Expr transform(ExprFunction1 func, Expr expr1) {
+                Expr r = func instanceof E_StrEncodeForURI
+                    ? expr1
+                    : super.transform(func, expr1);
+                return r;
+            }
+        };
+
         for (Entry<Var, Expr> e : varDef.entrySet()) {
-            Expr before = e.getValue();
-            Expr after = convert(before);
-            e.setValue(after);
+            Expr e1 = e.getValue();
+            Expr e2 = convert(e1);
+            Expr e3 = ExprTransformer.transform(removeEncodeXform, e2);
+            e.setValue(e3);
         }
 
         ViewDefinition result = new ViewDefinition(name, quads, varDef, constraints, logicalTable);
