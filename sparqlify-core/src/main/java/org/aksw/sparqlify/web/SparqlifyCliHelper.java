@@ -5,12 +5,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.stmt.SparqlStmtMgr;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.impl.R2rmlImporter;
@@ -30,6 +33,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import com.google.common.base.Strings;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -122,6 +126,84 @@ public class SparqlifyCliHelper {
         return dataSource;
     }
 
+
+
+    public static DataSource configDataSource(DataSourceSpec spec, Logger logger) {
+
+        String hostName = spec.getHostname();
+        String dbName = spec.getName();
+        String userName = spec.getUsername();
+        String passWord = spec.getPassword();
+        Integer port = spec.getPort();
+
+        Integer backlog = spec.getBacklog();
+
+        String jdbcUrl = spec.getJdbcUrl();
+
+        if(!Strings.isNullOrEmpty(jdbcUrl) &&
+            (!Strings.isNullOrEmpty(hostName) || !Strings.isNullOrEmpty(dbName) || (port != null && port >= 0))) {
+            logger.error("Option 'j' is mutually exclusive with 'h' and 'd' and 'p'");
+            return null;
+        }
+
+        if(Strings.isNullOrEmpty(jdbcUrl) && Strings.isNullOrEmpty(hostName)) {
+            hostName = "localhost";
+        }
+
+        /*
+         * Connection Pool
+         */
+
+        PGSimpleDataSource dataSourceBean = null;
+
+        if (Strings.isNullOrEmpty(jdbcUrl)) {
+            dataSourceBean = new PGSimpleDataSource();
+
+            dataSourceBean.setDatabaseName(dbName);
+            dataSourceBean.setServerName(hostName);
+            dataSourceBean.setUser(userName);
+            dataSourceBean.setPassword(passWord);
+
+            if(port != null) {
+                dataSourceBean.setPortNumber(port);
+            }
+        }
+
+
+        HikariConfig cpConfig = new HikariConfig();
+
+        if(Strings.isNullOrEmpty(jdbcUrl)) {
+            cpConfig.setDataSource(dataSourceBean);
+        } else {
+            cpConfig.setJdbcUrl(jdbcUrl);
+            cpConfig.setUsername(userName);
+            cpConfig.setPassword(passWord);
+        }
+
+
+        if (backlog != null) {
+            cpConfig.setMaximumPoolSize(backlog);
+        }
+
+        /*
+        cpConfig.setJdbcUrl(dbconf.getDbConnString()); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
+        cpConfig.setUsername(dbconf.getUsername());
+        cpConfig.setPassword(dbconf.getPassword());
+        */
+
+//        cpConfig.parsetMinConnectionsPerPartition(2);
+//        cpConfig.setMaxConnectionsPerPartition(8);
+//        cpConfig.setConnectionTimeoutInMs(5000);
+//		cpConfig.setMinConnectionsPerPartition(1);
+//		cpConfig.setMaxConnectionsPerPartition(1);
+
+//        cpConfig.setPartitionCount(1);
+        //BoneCP connectionPool = new BoneCP(cpConfig); // setup the connection pool
+
+        HikariDataSource dataSource = new HikariDataSource(cpConfig);
+
+        return dataSource;
+    }
 //
 //    public static List<ViewDefinition> extractViewDefinitions(List<org.aksw.sparqlify.config.syntax.ViewDefinition> viewDefinitions, DataSource dataSource, TypeSystem typeSystem, Map<String, String> typeAlias, Logger logger) throws SQLException {
 ////		Connection conn;
@@ -170,6 +252,11 @@ public class SparqlifyCliHelper {
             logger.error("File or folder name required for option '" + optName + "'"); //"No mapping file given");
             return null;
         }
+
+        return resolveFiles(Arrays.asList(locations), mustExist, logger);
+    }
+
+    public static List<Resource> resolveFiles(List<String> locations, boolean mustExist, Logger logger) throws IOException {
 
         //System.out.println("Workdir: " + System.getProperty("user.dir"));
         List<Resource> result = new ArrayList<Resource>();
@@ -237,7 +324,10 @@ public class SparqlifyCliHelper {
         return result;
     }
 
+
     public static Config parseSmlConfigs(List<Resource> configFiles, Logger logger) throws IOException, RecognitionException {
+        SqlCodec sqlCodec = SqlCodecUtils.createSqlCodecDoubleQuotes();
+
         R2rmlImporter r2rmlImporter = new R2rmlImporter();
         Config result = new Config();
         for(Resource configFile : configFiles) {
@@ -252,7 +342,7 @@ public class SparqlifyCliHelper {
                     SparqlStmtMgr.execSparql(model, "r2rml-inferences.sparql");
 
                     r2rmlImporter.validate(model);
-                    Collection<ViewDefinition> views = r2rmlImporter.read(model);
+                    Collection<ViewDefinition> views = r2rmlImporter.read(model, sqlCodec);
                     contrib = new Config();
                     contrib.setViewDefinitions(new ArrayList<>(views));
                 }

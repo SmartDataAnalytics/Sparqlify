@@ -85,10 +85,7 @@
 		<!-- <jetty.version>7.1.6.v20100715</jetty.version> -->
 
 		<!-- project defaults -->
-		<!--
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		-->
+		<!-- <maven.compiler.source>1.8</maven.compiler.source> <maven.compiler.target>1.8</maven.compiler.target> -->
 		<maven.compiler.release>11</maven.compiler.release>
 		<java.version>1.8</java.version>
 		<java.version.javadoc>http://java.sun.com/javase/8/docs/api/</java.version.javadoc>
@@ -101,18 +98,20 @@
 
 		<r2rml-jena-api.version>0.9.1-SNAPSHOT</r2rml-jena-api.version>
 
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+
+
 		<!-- prior: 3.1.2.RELEASE -->
 		<spring.version>5.3.2</spring.version>
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<aksw.commons.version>0.8.14</aksw.commons.version>
-
-		<jena.version>4.1.0</jena.version>
+		<jena.version>4.2.0</jena.version>
 		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
 		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
 
-		<aksw-commons.version>0.9.0</aksw-commons.version>
+		<aksw-commons.version>0.9.1-SNAPSHOT</aksw-commons.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -187,10 +186,7 @@
 					<version>3.8.1</version>
 					<configuration>
 						<release>${maven.compiler.release}</release>
-<!--
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
--->
+						<!-- <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target> -->
 						<encoding>${project.build.sourceEncoding}</encoding>
 					</configuration>
 				</plugin>
@@ -440,14 +436,9 @@
 		</repository>
 
 
-<!--
-		<repository>
-			<id>maven2-repository.java.net</id>
-			<name>Java.net Repository for Maven</name>
-			<url>https://download.java.net/maven/2/</url>
-			<layout>default</layout>
-		</repository>
--->
+		<!-- <repository> <id>maven2-repository.java.net</id> <name>Java.net Repository 
+			for Maven</name> <url>https://download.java.net/maven/2/</url> <layout>default</layout> 
+			</repository> -->
 
 		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate 
 			classes in war files -->
@@ -472,11 +463,18 @@
 
 	<dependencyManagement>
 		<dependencies>
-                        <dependency>
-                                <groupId>info.picocli</groupId>
-                                <artifactId>picocli</artifactId>
-                                <version>4.6.1</version>
-                        </dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>info.picocli</groupId> -->
+			<!-- <artifactId>picocli</artifactId> -->
+			<!-- <version>4.6.1</version> -->
+			<!-- </dependency> -->
+
+			<dependency>
+				<groupId>org.aksw.commons</groupId>
+				<artifactId>aksw-commons-picocli</artifactId>
+				<version>${aksw-commons.version}</version>
+			</dependency>
+
 
 			<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
 			<dependency>
@@ -500,16 +498,16 @@
 			</dependency>
 
 			<!-- Nail down jena version -->
-                        <dependency>
-                                <groupId>org.apache.jena</groupId>
-                                <artifactId>jena-arq</artifactId>
-                                <version>${jena.version}</version>
-                        </dependency>
-                        <dependency>
-                                <groupId>org.apache.jena</groupId>
-                                <artifactId>jena-shacl</artifactId>
-                                <version>${jena.version}</version>
-                        </dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-arq</artifactId>
+				<version>${jena.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-shacl</artifactId>
+				<version>${jena.version}</version>
+			</dependency>
 
 
 
@@ -624,17 +622,17 @@
 				<version>${jena-sparql-api.version}</version>
 			</dependency>
 
-                        <dependency>
-                                <groupId>org.aksw.jena-sparql-api</groupId>
-                                <artifactId>jena-sparql-api-mapper-annotations</artifactId>
-                                <version>${jena-sparql-api.version}</version>
-                        </dependency>
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-mapper-annotations</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
 
-                        <dependency>
-                                <groupId>org.aksw.jena-sparql-api</groupId>
-                                <artifactId>jena-sparql-api-collections</artifactId>
-                                <version>${jena-sparql-api.version}</version>
-                        </dependency>
+			<dependency>
+				<groupId>org.aksw.jena-sparql-api</groupId>
+				<artifactId>jena-sparql-api-collections</artifactId>
+				<version>${jena-sparql-api.version}</version>
+			</dependency>
 
 
 
@@ -680,13 +678,8 @@
 				<version>${aksw-commons.version}</version>
 			</dependency>
 
-<!--
-			<dependency>
-				<groupId>org.apache.jena</groupId>
-				<artifactId>jena-sdb</artifactId>
-				<version>${jena.version}</version>
-			</dependency>
--->
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-sdb</artifactId> 
+				<version>${jena.version}</version> </dependency> -->
 
 			<!-- <dependency> <groupId>org.aksw.jena-sparql-api</groupId> <artifactId>jena-sparql-api-jgrapht</artifactId> 
 				<version>${jena-sparql-api.version}</version> </dependency> -->

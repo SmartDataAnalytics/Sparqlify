@@ -223,10 +223,10 @@ public class Main {
         try {
             BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
             SchemaProvider schemaProvider = new SchemaProviderImpl(
-            		basicTableInfoProvider,
-            		typeSystem,
-            		typeAlias,
-            		sqlEscaper);
+                    basicTableInfoProvider,
+                    typeSystem,
+                    typeAlias,
+                    sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
@@ -292,13 +292,13 @@ public class Main {
         //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
         //QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
         QueryExecutionFactoryEx qef = FluentSparqlifyFactory.newEngine()
-				.setDataSource(dataSource)
-				.setConfig(config)
-				.setDatatypeToString(new DatatypeToStringPostgres())
-				.setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
-				.setMaxQueryExecutionTime(maxQueryExecutionTime)
-				.setMaxResultSetSize(mrs)
-				.create();
+                .setDataSource(dataSource)
+                .setConfig(config)
+                .setDatatypeToString(new DatatypeToStringPostgres())
+                .setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
+                .setMaxQueryExecutionTime(maxQueryExecutionTime)
+                .setMaxResultSetSize(mrs)
+                .create();
 
         if(useSparql11Wrapper) {
             Graph graph = new GraphQueryExecutionFactory(qef);
