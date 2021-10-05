@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
+import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.utils.VarExprListUtils;
 import org.aksw.obda.domain.api.Constraint;
 import org.aksw.obda.domain.impl.LogicalTableQueryString;
@@ -42,6 +43,10 @@ import org.apache.jena.sparql.graph.NodeTransform;
 public class R2rmlImporter {
     public void validate(Model r2rmlModel) {
         R2rmlImporterLib.validateR2rml(r2rmlModel);
+    }
+
+    public Collection<ViewDefinition> read(Model r2rmlModel) {
+        return read(r2rmlModel, SqlCodecUtils.createSqlCodecDoubleQuotes());
     }
 
     public Collection<ViewDefinition> read(Model r2rmlModel, SqlCodec sqlCodec) {
