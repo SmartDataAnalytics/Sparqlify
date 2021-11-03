@@ -3,9 +3,9 @@ package org.aksw.sparqlify.core.rewrite.expr.transform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.aksw.sparqlify.type_system.CandidateMethod;
 import org.aksw.sparqlify.type_system.FunctionModel;
 import org.aksw.sparqlify.type_system.MethodDeclaration;

@@ -9,7 +9,7 @@ import org.aksw.sparqlify.core.test.TestBundleReader;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingUtils;
+import org.apache.jena.sparql.exec.RowSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,7 +28,7 @@ public class R2rmlTest {
      */
     public static List<Binding> convert(ResultSet rs)
     {
-        return Iter.iter(rs).map(BindingUtils::asBinding).toList() ;
+        return Iter.iter(RowSet.adapt(rs)).toList() ;
     }
 
 

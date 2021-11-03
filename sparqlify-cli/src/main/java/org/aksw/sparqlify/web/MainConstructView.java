@@ -7,10 +7,10 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Iterator;
 
-import org.aksw.jena_sparql_api.arq.core.query.QueryExecutionDecoratorBase;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.views.Dialect;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.connection.query.QueryExecutionDecoratorBase;
 import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
 import org.aksw.sparqlify.config.lang.ConstructConfigParser;
 import org.aksw.sparqlify.config.syntax.ConstructConfig;

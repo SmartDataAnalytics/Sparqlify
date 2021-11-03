@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
-import org.aksw.jena_sparql_api.utils.VarExprListUtils;
+import org.aksw.jenax.arq.util.syntax.VarExprListUtils;
 import org.aksw.obda.domain.api.Constraint;
 import org.aksw.obda.domain.impl.LogicalTableQueryString;
 import org.aksw.obda.domain.impl.LogicalTableTableName;

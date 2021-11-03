@@ -8,34 +8,34 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 
 public class QueryExecutionFactorySparqlify
-	extends QueryExecutionFactoryBackQuery
+    extends QueryExecutionFactoryBackQuery
 {
-	private SparqlSqlStringRewriter system;
-	private Connection conn;
+    private SparqlSqlStringRewriter system;
+    private Connection conn;
 
-	public QueryExecutionFactorySparqlify(SparqlSqlStringRewriter system, Connection conn)
-	{
-		this.system = system;
-		this.conn = conn;
-	}
-	
-	@Override
-	public QueryExecution createQueryExecution(Query query) {
-		//System.out.println(query);
-		
-		return new QueryExecutionSparqlify(system, conn, false, query, this);
-	}
+    public QueryExecutionFactorySparqlify(SparqlSqlStringRewriter system, Connection conn)
+    {
+        this.system = system;
+        this.conn = conn;
+    }
 
-	@Override
-	public String getId() {
-		// TODO Implement
-		throw new RuntimeException("Implement properly");
-	}
+    @Override
+    public QueryExecution createQueryExecution(Query query) {
+        //System.out.println(query);
 
-	@Override
-	public String getState() {
-		// TODO Implement
-		throw new RuntimeException("Implement properly");
-	}
-	
+        return new QueryExecutionSparqlify(system, conn, false, query, this);
+    }
+
+    @Override
+    public String getId() {
+        // TODO Implement
+        throw new RuntimeException("Implement properly");
+    }
+
+    @Override
+    public String getState() {
+        // TODO Implement
+        throw new RuntimeException("Implement properly");
+    }
+
 }

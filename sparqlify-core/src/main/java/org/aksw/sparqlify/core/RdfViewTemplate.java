@@ -3,21 +3,21 @@ package org.aksw.sparqlify.core;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
-import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.commons.collections.MapUtils;
 import org.aksw.jena_sparql_api.views.SparqlSubstitute;
+import org.aksw.jenax.arq.util.node.NodeTransformRenameMap;
+import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.BindingHashMap;
-import org.apache.jena.sparql.engine.binding.BindingMap;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.graph.NodeTransform;
+import org.apache.jena.sparql.graph.NodeTransformLib;
 
 /**
  * A view template consists of the construct pattern
@@ -84,16 +84,23 @@ public class RdfViewTemplate {
 
     public RdfViewTemplate copySubstitute(Map<Node, Node> map)
     {
-        BindingMap tmp = new BindingHashMap();
-        for(Entry<Node, Node> entry : map.entrySet()) {
-            tmp.add((Var)entry.getKey(), entry.getValue());
-        }
-
+        NodeTransform xform = NodeTransformRenameMap.create(map);
         RdfViewTemplate result = new RdfViewTemplate(
-                QuadUtils.copySubstitute(quadPattern, map),
-                QuadUtils.copySubstitute(binding, map));
+                NodeTransformLib.transform(xform, quadPattern),
+                MapUtils.transformKeys(binding, map::get));
 
         return result;
+
+//        BindingMap tmp = new BindingHashMap();
+//        for(Entry<Node, Node> entry : map.entrySet()) {
+//            tmp.add((Var)entry.getKey(), entry.getValue());
+//        }
+//
+//        RdfViewTemplate result = new RdfViewTemplate(
+//                QuadUtils.copySubstitute(quadPattern, map),
+//                QuadUtils.copySubstitute(binding, map));
+//
+//        return result;
     }
 
 

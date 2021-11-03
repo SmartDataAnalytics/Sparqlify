@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.aksw.jena_sparql_api.utils.query_execution.QueryExecutionAdapter;
+import org.aksw.jenax.arq.util.execution.QueryExecutionAdapter;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
@@ -26,7 +26,8 @@ import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingHashMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
 import org.apache.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.slf4j.Logger;
@@ -259,7 +260,7 @@ public class QueryExecutionSparqlifyExplain
                 }
             }
 
-            BindingHashMap binding = new BindingHashMap();
+            BindingBuilder binding = BindingFactory.builder();
             binding.add(idVar, NodeValue.makeInteger(id).asNode());
             binding.add(executionTimeVar, NodeValue.makeInteger(elapsedTimeInMillis).asNode());
             binding.add(timeOutVar, NodeValue.makeBoolean(timeOut).asNode());
@@ -268,7 +269,7 @@ public class QueryExecutionSparqlifyExplain
             if(errorMsgNode != null) { binding.add(errorMsgVar, errorMsgNode); }
             binding.add(queryStringVar, NodeValue.makeString(sqlQueryString).asNode());
 
-            resultBindings.add(binding);
+            resultBindings.add(binding.build());
         }
 
         QueryIterator queryIterator = QueryIterPlainWrapper.create(resultBindings.iterator());

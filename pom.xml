@@ -107,9 +107,8 @@
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<jena.version>4.2.0</jena.version>
-		<jsa.subversion>1-SNAPSHOT</jsa.subversion>
-		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
+		<jena.version>4.3.0-SNAPSHOT</jena.version>
+		<jenax.version>4.3.0-1-SNAPSHOT</jenax.version>
 
 		<aksw-commons.version>0.9.1-SNAPSHOT</aksw-commons.version>
 
@@ -617,59 +616,54 @@
 
 			<!-- Jena SPARQL API -->
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-core</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-core</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-mapper-annotations</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-annotations-reprogen</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-collections</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-rx-dataaccess</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-algebra</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-algebra</artifactId>
+				<version>${jenax.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-views</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-rx</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-server-core</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-views</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-server-frontends</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-web</artifactId>
-				<version>${jena-sparql-api.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-server-utils</artifactId>
-				<version>${jena-sparql-api.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-server-standalone</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-server-standalone</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
@@ -681,8 +675,8 @@
 			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-sdb</artifactId> 
 				<version>${jena.version}</version> </dependency> -->
 
-			<!-- <dependency> <groupId>org.aksw.jena-sparql-api</groupId> <artifactId>jena-sparql-api-jgrapht</artifactId> 
-				<version>${jena-sparql-api.version}</version> </dependency> -->
+			<!-- <dependency> <groupId>org.aksw.jenax</groupId> <artifactId>jenax-jgrapht</artifactId> 
+				<version>${jenax.version}</version> </dependency> -->
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->
@@ -1222,7 +1216,7 @@
 			<!-- <version>2.1</version> -->
 			<!-- </dependency> -->
 
-			<!-- TODO Remove dep once part of jena-sparql-api-server again -->
+			<!-- TODO Remove dep once part of jenax-server again -->
 
 			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
 				<version>8.1.17.v20150415</version> </dependency> -->

@@ -140,24 +140,24 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-core</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-rx-dataaccess</artifactId>
 		</dependency>
 
 		<!-- For SparqlStmtMgr -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aksw.jenax</groupId> -->
+<!-- 			<artifactId>jenax-rx</artifactId> -->
+<!-- 		</dependency> -->
+
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-rx</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-arq-algebra</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-algebra</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-views</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-arq-views</artifactId>
 		</dependency>
 
 		<dependency>
@@ -281,7 +281,7 @@
 
 		<!-- <dependency> <groupId>org.jgrapht</groupId> <artifactId>jgrapht-core</artifactId> 
 			</dependency> -->
-		<!-- <dependency> <groupId>org.aksw.jena-sparql-api</groupId> <artifactId>jena-sparql-api-jgrapht</artifactId> 
+		<!-- <dependency> <groupId>org.aksw.jenax</groupId> <artifactId>jenax-jgrapht</artifactId> 
 			</dependency> -->
 
 		<dependency>

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.jena_sparql_api.utils.ClauseUtils;
-import org.aksw.jena_sparql_api.utils.CnfUtils;
-import org.aksw.jena_sparql_api.utils.ExprUtils;
+import org.aksw.jenax.arq.util.expr.ClauseUtils;
+import org.aksw.jenax.arq.util.expr.CnfUtils;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.aksw.sparqlify.database.GetVarsMentioned;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpDisjunction;

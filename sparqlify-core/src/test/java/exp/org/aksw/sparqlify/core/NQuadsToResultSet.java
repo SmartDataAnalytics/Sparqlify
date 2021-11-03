@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.QuadUtils;
+import org.aksw.jenax.arq.util.quad.QuadUtils;
 import org.aksw.sparqlify.util.NQuadUtils;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.core.Quad;

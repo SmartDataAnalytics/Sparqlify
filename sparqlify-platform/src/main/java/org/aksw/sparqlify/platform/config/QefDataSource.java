@@ -3,8 +3,7 @@ package org.aksw.sparqlify.platform.config;
 import java.util.Collections;
 import java.util.List;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;

@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
-import org.aksw.jena_sparql_api.stmt.SparqlStmtMgr;
+import org.aksw.jenax.stmt.core.SparqlStmtMgr;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.obda.jena.r2rml.impl.R2rmlImporter;
 import org.aksw.sparqlify.config.syntax.Config;

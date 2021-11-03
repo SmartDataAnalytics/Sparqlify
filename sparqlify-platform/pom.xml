@@ -68,8 +68,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-web</artifactId>
+            <groupId>org.aksw.jenax</groupId>
+            <artifactId>jenax-server-core</artifactId>
         </dependency>
 
 

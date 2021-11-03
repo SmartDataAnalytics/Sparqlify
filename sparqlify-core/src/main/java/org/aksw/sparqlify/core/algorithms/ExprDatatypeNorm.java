@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
 import org.aksw.jena_sparql_api.views.ExprCopy;
+import org.aksw.jenax.arq.util.expr.NodeValueUtils;
 import org.aksw.sparqlify.core.TypeToken;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.expr.Expr;

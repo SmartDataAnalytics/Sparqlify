@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Concat;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
-import org.aksw.sparqlify.core.TypeToken;
 
 /**
  * 

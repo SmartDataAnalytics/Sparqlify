@@ -19,14 +19,14 @@ import org.aksw.jena_sparql_api.normal_form.Clause;
 import org.aksw.jena_sparql_api.normal_form.NestedNormalForm;
 import org.aksw.jena_sparql_api.restriction.RestrictionImpl;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
-import org.aksw.jena_sparql_api.utils.CnfUtils;
 import org.aksw.jena_sparql_api.views.RdfTermType;
+import org.aksw.jenax.arq.util.expr.CnfUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.BindingHashMap;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_LogicalNot;
 import org.apache.jena.sparql.expr.E_StrConcat;
@@ -136,7 +136,7 @@ public class RestrictionManager2 {
 
     // Mapping of variables to constants - derived from the restrictions
     private Map<Var, Node> binding = new HashMap<Var, Node>();
-    private BindingMap bindingMap = new BindingHashMap();
+    private Binding bindingMap = BindingFactory.binding();
 
 
     // Without any constraints, we assume a tautology
@@ -538,7 +538,10 @@ public class RestrictionManager2 {
             if(!(satisfiability == Boolean.FALSE)) {
                 for(Var v : restrictions.getEquivalences(a)) {
                     binding.put(v, b);
-                    bindingMap.add(v, b);
+                    bindingMap = BindingFactory.builder(bindingMap)
+                            .add(v, b)
+                            .build();
+                    // bindingMap.add(v, b);
                 }
             }
 
@@ -581,7 +584,7 @@ public class RestrictionManager2 {
 
     public static NestedNormalForm toCnf(Expr expr) {
         Set<Set<Expr>> ss = CnfUtils.toSetCnf(expr);
-        
+
         Set<Clause> clauses = new HashSet<Clause>();
         for(Set<Expr> s : ss) {
             clauses.add(new Clause(s));

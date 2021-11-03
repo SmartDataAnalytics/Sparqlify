@@ -3,8 +3,6 @@ package org.aksw.sparqlify.config.loader;
 import javax.sql.DataSource;
 
 import org.aksw.sparqlify.config.syntax.Config;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
-import org.aksw.sparqlify.util.SparqlifyUtils;
 
 
 public class SparqlifyQefFactory {

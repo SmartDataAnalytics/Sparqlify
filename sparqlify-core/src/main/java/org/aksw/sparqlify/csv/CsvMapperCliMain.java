@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,10 +22,9 @@ import java.util.function.Supplier;
 
 import org.aksw.jena_sparql_api.core.ConstructIterator;
 import org.aksw.jena_sparql_api.core.ResultSetCloseable;
-import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
-import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.SparqlSubstitute;
+import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
 import org.aksw.sparqlify.config.lang.TemplateConfigParser;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
@@ -314,7 +311,7 @@ public class CsvMapperCliMain {
 
 
         //writeTriples(System.out, trackingIt);
-        SparqlFormatterUtils.writeText(System.out, trackingIt);
+        // SparqlFormatterUtils.writeText(System.out, trackingIt);
         writeSummary(System.err, trackingIt.getState());
 
 

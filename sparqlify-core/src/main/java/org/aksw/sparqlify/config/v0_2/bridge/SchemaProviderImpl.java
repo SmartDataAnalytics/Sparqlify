@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
-import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.r2rml.jena.sql.transform.SqlParseException;
 import org.aksw.r2rml.sql.transform.SqlUtils;
 import org.aksw.sparqlify.core.TypeToken;

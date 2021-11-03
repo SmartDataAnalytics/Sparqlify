@@ -1,6 +1,6 @@
 package org.aksw.sparqlify.core.jena.functions;
 
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
+import org.aksw.jenax.arq.util.expr.NodeValueUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.function.FunctionBase2;

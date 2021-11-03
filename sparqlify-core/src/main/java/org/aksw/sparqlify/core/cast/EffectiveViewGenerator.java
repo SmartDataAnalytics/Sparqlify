@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
-import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
+import org.aksw.jenax.arq.util.quad.QuadUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_IsNotNull;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;

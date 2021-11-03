@@ -1,7 +1,7 @@
 package org.aksw.sparqlify.core.rewrite.expr.transform;
 
-import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.apache.jena.sparql.expr.E_Function;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;

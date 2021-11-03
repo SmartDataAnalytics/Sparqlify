@@ -3,8 +3,8 @@ package org.aksw.sparqlify.core.rewrite.expr.transform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.aksw.sparqlify.core.cast.TypeSystem;
 import org.aksw.sparqlify.core.cast.TypeSystemImpl;
 import org.aksw.sparqlify.core.datatypes.SparqlFunction;

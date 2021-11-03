@@ -2,7 +2,7 @@ package org.aksw.sparqlify.core.rewrite.expr.transform;
 
 import java.util.List;
 
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
+import org.aksw.jenax.arq.util.expr.NodeValueUtils;
 import org.apache.jena.sparql.expr.E_LogicalAnd;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;

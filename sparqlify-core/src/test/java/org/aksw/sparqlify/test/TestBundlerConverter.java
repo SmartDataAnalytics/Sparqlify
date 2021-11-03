@@ -11,8 +11,8 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.StreamUtils;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.test.MappingBundle;
 import org.aksw.sparqlify.core.test.QueryBundle;

@@ -45,15 +45,15 @@
 <!-- 		</dependency> -->
 
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-algebra</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-arq-algebra</artifactId>
 		</dependency>
 
 		<!-- TODO Try to get rid of this dependency ; its used for the constraint 
 			types -->
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-views</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-arq-views</artifactId>
 		</dependency>
 
 

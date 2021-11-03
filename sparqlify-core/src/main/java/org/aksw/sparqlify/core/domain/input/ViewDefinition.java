@@ -7,11 +7,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.jena_sparql_api.restriction.RestrictionManagerImpl;
-import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
-import org.aksw.jena_sparql_api.utils.QuadUtils;
 import org.aksw.jena_sparql_api.views.IViewDef;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.VarDefinition;
+import org.aksw.jenax.arq.util.node.NodeTransformRenameMap;
+import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpQuery;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpTable;
@@ -19,6 +19,7 @@ import org.aksw.sparqlify.core.algorithms.MappingOpsImpl;
 import org.apache.jena.atlas.io.IndentedWriter;
 import org.apache.jena.sparql.core.QuadPattern;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.graph.NodeTransformLib;
 import org.apache.jena.sparql.modify.request.QuadAcc;
 import org.apache.jena.sparql.serializer.FmtTemplate;
 import org.apache.jena.sparql.syntax.Template;
@@ -175,7 +176,7 @@ public class ViewDefinition
 
 
     public ViewDefinition copyRenameVars(Map<Var, Var> oldToNew) {
-        QuadPattern newTemplate = QuadUtils.copySubstitute(this.template, oldToNew);
+        QuadPattern newTemplate = NodeTransformLib.transform(NodeTransformRenameMap.create(oldToNew), this.template);
 
         VarDefinition varDef = mapping.getVarDefinition().copyRenameVars(oldToNew);
 

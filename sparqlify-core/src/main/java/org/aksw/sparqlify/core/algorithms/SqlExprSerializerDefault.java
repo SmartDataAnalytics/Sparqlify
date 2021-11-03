@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.commons.util.reflect.MultiMethod;
-import org.aksw.jena_sparql_api.utils.expr.NodeValueUtils;
+import org.aksw.jenax.arq.util.expr.NodeValueUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;

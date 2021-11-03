@@ -3,7 +3,7 @@ package org.aksw.sparqlify.validation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
+import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
 import org.aksw.sparqlify.core.domain.input.ViewDefinition;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
