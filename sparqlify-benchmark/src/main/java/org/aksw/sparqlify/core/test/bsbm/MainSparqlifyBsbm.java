@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.jena_sparql_api.core.connection.SparqlQueryConnectionJsa;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.arq.connection.core.SparqlQueryConnectionJsa;
 import org.aksw.sparqlify.core.builder.FluentSparqlifyFactory;
 import org.antlr.runtime.RecognitionException;
 import org.apache.jena.ext.com.google.common.io.Files;
@@ -24,14 +24,14 @@ import benchmark.testdriver.TestDriver;
 import benchmark.testdriver.TestDriverUtils;
 
 public class MainSparqlifyBsbm {
-	protected Connection conn;
-	
-	public static void createTestSetup() throws SQLException, IOException, RecognitionException {            
+    protected Connection conn;
+
+    public static void createTestSetup() throws SQLException, IOException, RecognitionException {
         //SerializerModel serializer = new SerializerModel();
         File dataDir = Files.createTempDir();
         System.out.println("BSBM SQL output directory: " + dataDir);
         //dataDir.deleteOnExit();
-            
+
         Generator.init(new String[] {});
         Generator.setSerializer(new SQLSerializer(dataDir, true, false, "benchmark"));
         Generator.run();
@@ -44,34 +44,34 @@ public class MainSparqlifyBsbm {
 
         // Add the generated script files
         for(File file : dataDir.listFiles(v -> v.getName().toLowerCase().endsWith(".sql"))) {
-        	System.out.println("File: " + file.getAbsolutePath());
-        	edb.addScript("file://" + file.getAbsolutePath());
+            System.out.println("File: " + file.getAbsolutePath());
+            edb.addScript("file://" + file.getAbsolutePath());
         }
-        
-        
+
+
         EmbeddedDatabase ed = edb.build();
 
-        
-        
+
+
         TestDriverParams testDriverParams = Generator.getTestDriverParams();
 
         QueryExecutionFactory qef = new FluentSparqlifyFactory()
-        	.setDataSource(ed)
-        	.addResource("org/aksw/bsbm/bsbm.sml")
-        	.create();
-                
-        
+            .setDataSource(ed)
+            .addResource("org/aksw/bsbm/bsbm.sml")
+            .create();
+
+
         TestDriver testDriver = new TestDriver();
         testDriver.processProgramParameters(new String[]{"http://example.org/foobar/sparql", "-w", "0", "-runs", "1"});
         testDriver.setParameterPool(new LocalSPARQLParameterPool(testDriverParams, testDriver.getSeed()));
         testDriver.setServer(new SPARQLConnection2(new SparqlQueryConnectionJsa(qef)));
 
         testDriver.init();
-        
+
         Model chartModel = TestDriverUtils.runWithCharts(testDriver, "http://example.org/my-bsbm-experiment/");
-        
+
 //    	List<Entry<StatisticalBarChart, Model>> chartSpecs = ChartTransform.transform(chartModel);
-//    	
+//
 //    	for(Entry<StatisticalBarChart, Model> chartSpec : chartSpecs) {
 ////            CategoryChart xChart = ChartModelConfigurerXChart.toChart(chartSpec.getValue(), chartSpec.getKey());
 //
@@ -79,17 +79,17 @@ public class MainSparqlifyBsbm {
 ////            System.in.read();
 //    	}
 
-        
-        
+
+
 //        Model model = serializer.getModel();
 //        QueryExecutionFactory qef = FluentQueryExecutionFactory.from(model).create();
 
-        
+
         ed.shutdown();
-	}
-	
-	public static void main(String[] args) throws Exception {
-		createTestSetup();
-		
-	}
+    }
+
+    public static void main(String[] args) throws Exception {
+        createTestSetup();
+
+    }
 }

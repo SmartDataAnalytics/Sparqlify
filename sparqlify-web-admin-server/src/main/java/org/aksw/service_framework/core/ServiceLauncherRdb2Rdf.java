@@ -8,7 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.slf4j.LoggerCount;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.service_framework.jpa.core.ServiceProvider;
 import org.aksw.service_framework.jpa.core.ServiceProviderJpaRdbRdf;
 import org.aksw.service_framework.utils.LogUtils;
@@ -128,12 +128,12 @@ public class ServiceLauncherRdb2Rdf
             SqlCodec sqlEscaper = SqlCodecUtils.createSqlCodecDefault();
             DatatypeToString typeSerializer = new DatatypeToStringPostgres();
             QueryExecutionFactory qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, smlConfig, typeSerializer, sqlEscaper, maxResultSetRows.longValue(), maxExecutionTimeInSeconds,
-            		SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));
+                    SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));
 
             // A Test Query
             QueryExecution qe = qef.createQueryExecution("Prefix ex: <http://example.org/> Ask { ?s ex:b ex:c }");
             qe.execAsk();
-            
+
             SparqlService sparqlService = new SparqlServiceImpl<Config>(smlConfig, qef);
 
             result = new ServiceProviderRdb2Rdf(serviceName, dataSource, () -> dataSource.close(), sparqlService);

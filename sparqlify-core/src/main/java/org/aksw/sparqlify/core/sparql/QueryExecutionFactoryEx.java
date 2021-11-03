@@ -4,7 +4,7 @@ import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.apache.jena.query.QueryExecution;
 
 public interface QueryExecutionFactoryEx
-	extends QueryExecutionFactory
+    extends QueryExecutionFactory
 {
-	QueryExecution createQueryExecution(QueryEx query);	
+    QueryExecution createQueryExecution(QueryEx query);
 }

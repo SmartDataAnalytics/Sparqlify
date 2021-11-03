@@ -20,7 +20,6 @@ import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.server.utils.FactoryBeanSparqlServer;
-import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
@@ -58,6 +57,9 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.exec.QueryExec;
+import org.apache.jena.sparql.resultset.ResultsFormat;
+import org.apache.jena.sparql.util.QueryExecUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,7 +233,8 @@ public class CmdSparqlifyEndpoint
             else if(queryEx.isConstructType()) {
                 QueryExecution qe = qef.createQueryExecution(queryString);
                 Iterator<Triple> it = qe.execConstructTriples();
-                SparqlFormatterUtils.writeText(System.out, it);
+                QueryExecUtils.exec(null, QueryExec.adapt(qe), ResultsFormat.FMT_RDF_NT, System.out);
+                // SparqlFormatterUtils.writeText(System.out, it);
                 //model.write(System.out, "N-TRIPLES");
             }
             else {

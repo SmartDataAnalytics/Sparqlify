@@ -16,19 +16,13 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.jena_sparql_api.core.utils.QueryExecutionAndType;
-import org.aksw.jena_sparql_api.stmt.SparqlStmt;
-import org.aksw.jena_sparql_api.stmt.SparqlStmtQuery;
-import org.aksw.jena_sparql_api.stmt.SparqlStmtUpdate;
-import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
+import org.aksw.jenax.arq.connection.RDFConnectionModular;
+import org.aksw.jenax.arq.connection.SparqlQueryConnectionJsaBase;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.stmt.core.SparqlStmtUpdate;
+import org.aksw.jenax.web.servlet.SparqlEndpointBase;
 import org.aksw.service_framework.core.SparqlService;
-import org.aksw.sparqlify.core.sparql.QueryEx;
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
-import org.aksw.sparqlify.core.sparql.QueryFactoryEx;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryFactory;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.update.UpdateProcessor;
 import org.springframework.stereotype.Service;
 
@@ -67,13 +61,14 @@ public class SparqlEndpointDispatcher
 
         return result;
     }
-    
-    // For now always assume query strings - required to handle 'explain'
-    @Override
-    public SparqlStmt classifyStmt(String stmtStr) {
-    	return new SparqlStmtQuery(stmtStr);
-    }
 
+    // For now always assume query strings - required to handle 'explain'
+//    @Override
+//    public SparqlStmt classifyStmt(String stmtStr) {
+//        return new SparqlStmtQuery(stmtStr);
+//    }
+
+    /*
     @Override
     public QueryExecutionAndType createQueryExecutionAndType(String queryString) {
 
@@ -99,7 +94,7 @@ public class SparqlEndpointDispatcher
 
         return result;
     }
-
+*/
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -117,6 +112,11 @@ public class SparqlEndpointDispatcher
     public UpdateProcessor createUpdateProcessor(SparqlStmtUpdate stmt) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    protected RDFConnection getConnection() {
+        return new RDFConnectionModular(new SparqlQueryConnectionJsaBase<>(requireService()), null, null);
     }
 }
 

@@ -5,7 +5,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.aksw.jena_sparql_api.web.filters.CorsFilter;
+import org.aksw.jenax.web.filter.CorsFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;

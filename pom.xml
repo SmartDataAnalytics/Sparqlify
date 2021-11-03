@@ -63,7 +63,7 @@
 
 		<module>sparqlify-jpa</module>
 
-		<module>sparqlify-update</module>
+		<!-- <module>sparqlify-update</module> -->
 
 		<!-- <module>sparqlify-web-admin-client</module> -->
 		<module>sparqlify-web-admin-server</module>
@@ -322,6 +322,7 @@
 							<exclude>asm-</exclude>
 							<exclude>bean-validator-</exclude>
 							<exclude>xpp3_</exclude>
+							<exclude>checker-</exclude>
 
 							<!-- This exclude is a hack: jakarta is the implementation and conflicts 
 								with api jars such as the javax servlet api. Actually the apis should be 

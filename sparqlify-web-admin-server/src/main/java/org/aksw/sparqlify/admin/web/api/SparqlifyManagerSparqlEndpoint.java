@@ -1,22 +1,19 @@
 package org.aksw.sparqlify.admin.web.api;
 
-import java.io.InputStream;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.jena_sparql_api.stmt.SparqlStmtUpdate;
-import org.aksw.jena_sparql_api.web.servlets.SparqlEndpointBase;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
+import org.aksw.jenax.arq.connection.RDFConnectionModular;
+import org.aksw.jenax.arq.connection.SparqlQueryConnectionJsaBase;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.stmt.core.SparqlStmtUpdate;
+import org.aksw.jenax.web.servlet.SparqlEndpointBase;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.update.UpdateProcessor;
 import org.springframework.stereotype.Service;
 
@@ -34,25 +31,30 @@ public class SparqlifyManagerSparqlEndpoint
     private ServletContext servletContext;
 
 
-    @Override
-    public QueryExecution createQueryExecution(Query query) {
-        QueryExecution result = qef.createQueryExecution(query);
-        return result;
-    }
-
+//    @Override
+//    public QueryExecution createQueryExecution(Query query) {
+//        QueryExecution result = qef.createQueryExecution(query);
+//        return result;
+//    }
+//
     @Override
     public UpdateProcessor createUpdateProcessor(SparqlStmtUpdate stmt) {
         return null;
     }
 
     @GET
-	@Produces({ MediaType.APPLICATION_JSON, "application/sparql-results+json" })
+    @Produces({ MediaType.APPLICATION_JSON, "application/sparql-results+json" })
     @Path("namespaces.js")
     public String namespaces() {
-    	String jsonMap = "{}";
-    	String result = "var D2R_namespacePrefixes = " + jsonMap;
+        String jsonMap = "{}";
+        String result = "var D2R_namespacePrefixes = " + jsonMap;
 
-    	return result;
+        return result;
+    }
+
+    @Override
+    protected RDFConnection getConnection() {
+        return new RDFConnectionModular(new SparqlQueryConnectionJsaBase<>(qef), null, null);
     }
 
 //    @GET
