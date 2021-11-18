@@ -87,7 +87,7 @@
 		<!-- project defaults -->
 		<!-- <maven.compiler.source>1.8</maven.compiler.source> <maven.compiler.target>1.8</maven.compiler.target> -->
 		<maven.compiler.release>11</maven.compiler.release>
-		<java.version>1.8</java.version>
+<!-- 		<java.version>1.8</java.version> -->
 		<java.version.javadoc>http://java.sun.com/javase/8/docs/api/</java.version.javadoc>
 		<file.encoding>UTF-8</file.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -6,11 +6,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionBaseSelect;
 import org.aksw.jena_sparql_api.core.QueryExecutionTimeoutHelper;
-import org.aksw.jena_sparql_api.core.ResultSetCloseable;
 import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSetCloseable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

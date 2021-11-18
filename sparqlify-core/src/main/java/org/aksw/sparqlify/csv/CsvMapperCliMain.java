@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import org.aksw.jena_sparql_api.core.ConstructIterator;
-import org.aksw.jena_sparql_api.core.ResultSetCloseable;
 import org.aksw.jena_sparql_api.views.RestrictedExpr;
 import org.aksw.jena_sparql_api.views.SparqlSubstitute;
 import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
@@ -459,7 +458,7 @@ public class CsvMapperCliMain {
         }
 
         Iterator<Binding> itBinding = new IteratorResultSetSparqlifyBinding(null, rs, sparqlVarMap, 1, "rowId");
-        ResultSetSparqlify rss = new ResultSetSparqlify(itBinding, vars, 0);
+        ResultSetSparqlify closableRs = new ResultSetSparqlify(itBinding, vars, 0);
 
 
         // insertPrefixesInto(result) ;
@@ -473,7 +472,7 @@ public class CsvMapperCliMain {
 
         //System.out.println(template.getTriples());
 
-        ResultSetCloseable closableRs = new ResultSetCloseable(rss);
+        // ResultSetCloseable closableRs = new ResultSetCloseable(rss);
         Iterator<Triple> it = new ConstructIterator(template, closableRs);
 
         TripleIteratorTracking result = new TripleIteratorTracking(it);
