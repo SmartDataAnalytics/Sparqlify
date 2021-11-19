@@ -330,7 +330,7 @@ public class SparqlifyCliHelper {
 
         R2rmlImporter r2rmlImporter = new R2rmlImporter();
         Config result = new Config();
-        for(Resource configFile : configFiles) {
+        for (Resource configFile : configFiles) {
 
             Config contrib = null;
             String uri = Objects.toString(configFile.getURI(), null);
@@ -339,7 +339,7 @@ public class SparqlifyCliHelper {
                 if(lang != null) {
                     logger.info("Loading as R2RML: " + configFile);
                     Model model = RDFDataMgr.loadModel(uri);
-                    SparqlStmtMgr.execSparql(model, "r2rml-inferences.sparql");
+                    // SparqlStmtMgr.execSparql(model, "r2rml-inferences.sparql");
 
                     r2rmlImporter.validate(model);
                     Collection<ViewDefinition> views = r2rmlImporter.read(model, sqlCodec);
@@ -354,6 +354,8 @@ public class SparqlifyCliHelper {
                     contrib = SparqlifyUtils.parseSmlConfig(in, logger);
                 }
             }
+
+            logger.info("Loaded " + contrib.getViewDefinitions().size() + " views from " + configFile);
 
             if(contrib != null) {
                 result.merge(contrib);
