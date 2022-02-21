@@ -107,8 +107,8 @@
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<jena.version>4.3.0-SNAPSHOT</jena.version>
-		<jenax.version>4.3.0-1-SNAPSHOT</jenax.version>
+		<jena.version>4.3.2</jena.version>
+		<jenax.version>4.3.2-1-SNAPSHOT</jenax.version>
 
 		<aksw-commons.version>0.9.1-SNAPSHOT</aksw-commons.version>
 
