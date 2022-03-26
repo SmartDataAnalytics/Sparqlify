@@ -68,7 +68,7 @@
 		<!-- <module>sparqlify-web-admin-client</module> -->
 		<module>sparqlify-web-admin-server</module>
 
-		<module>sparqlify-debian-cli</module>
+		<module>sparqlify-pkg-deb-parent</module>
 		<module>sparqlify-debian-tomcat-common</module>
 		<module>sparqlify-debian-tomcat7</module>
 		<module>sparqlify-debian-tomcat8</module>
@@ -107,8 +107,8 @@
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<jena.version>4.3.2</jena.version>
-		<jenax.version>4.3.2-1-SNAPSHOT</jenax.version>
+		<jena.version>4.4.0</jena.version>
+		<jenax.version>4.4.0-1-SNAPSHOT</jenax.version>
 
 		<aksw-commons.version>0.9.1-SNAPSHOT</aksw-commons.version>
 
@@ -247,6 +247,12 @@
 					<version>1.5</version>
 				</plugin>
 
+                        <plugin>
+                                <groupId>com.google.cloud.tools</groupId>
+                                <artifactId>jib-maven-plugin</artifactId>
+                                <version>3.2.0</version>
+
+			</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
@@ -369,6 +375,28 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.8.2</version>
 				</plugin>
+
+                                <plugin>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <version>3.0.2</version>
+                                        <executions>
+                                                <execution>
+                                                        <phase>prepare-package</phase>
+                                                        <!-- <phase>package</phase> -->
+                                                        <goals>
+                                                                <goal>copy-dependencies</goal>
+                                                        </goals>
+                                                </execution>
+                                        </executions>
+                                        <configuration>
+                                                <!-- <useBaseVersion>false</useBaseVersion> -->
+                                                <overWriteReleases>false</overWriteReleases>
+                                                <overWriteSnapshots>true</overWriteSnapshots>
+                                                <includeScope>runtime</includeScope>
+                                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                        </configuration>
+                                </plugin>
 
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
