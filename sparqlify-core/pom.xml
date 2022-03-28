@@ -194,7 +194,7 @@
 
 		<dependency>
 			<groupId>org.aksw.commons</groupId>
-			<artifactId>aksw-commons-util-xml</artifactId>
+			<artifactId>aksw-commons-utils-xml</artifactId>
 		</dependency>
 
 		<dependency>
