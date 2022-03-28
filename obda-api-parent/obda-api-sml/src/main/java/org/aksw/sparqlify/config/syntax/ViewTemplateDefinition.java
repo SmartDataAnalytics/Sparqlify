@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.jena_sparql_api.utils.QuadPatternUtils;
+import org.aksw.jenax.arq.util.quad.QuadPatternUtils;
 import org.aksw.obda.domain.api.Constraint;
 import org.aksw.obda.domain.api.LogicalTable;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;

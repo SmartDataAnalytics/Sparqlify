@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.0</version>
+		<version>0.9.1</version>
 	</parent>
 
 	<modules>
@@ -29,11 +29,10 @@
 				<version>${project.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.aksw.r2rml</groupId>
-				<artifactId>r2rml-jena-plugin</artifactId>
-				<version>0.9.0</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.aksw.r2rml</groupId> -->
+<!-- 				<artifactId>r2rml-jena-plugin</artifactId> -->
+<!-- 			</dependency> -->
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
@@ -58,28 +57,30 @@
 				<groupId>org.topbraid</groupId>
 				<artifactId>shacl</artifactId>
 				<version>1.1.0</version>
+<!--
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.jena</groupId>
 						<artifactId>jena-arq</artifactId>
 					</exclusion>
 				</exclusions>
+-->
 			</dependency>
 
 			<!-- The algebra package is used for normalizing expressions during creating 
 				rr:template strings -->
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-algebra</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-algebra</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<!-- TODO Get rid of this dependency ; currently only used for E_RdfTerm -->
 			<!-- E_RdfTerm could go to the algebra package -->
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-views</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-views</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 			
 <!-- 			<dependency> -->

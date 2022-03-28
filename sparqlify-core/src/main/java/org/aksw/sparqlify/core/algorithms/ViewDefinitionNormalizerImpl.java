@@ -49,7 +49,7 @@ public class ViewDefinitionNormalizerImpl
         }
 
         String prefix = derivePrefix(expr);
-        if(RdfTermType.URI.equals(type) && prefix != null) {
+        if(RdfTermType.IRI.equals(type) && prefix != null) {
             PrefixSet ps = new PrefixSet(prefix);
             rs.stateUriPrefixes(ps);
         }
@@ -205,7 +205,7 @@ public class ViewDefinitionNormalizerImpl
 
     public static RdfTermType deriveType(Node node) {
         if(node.isURI()) {
-            return RdfTermType.URI;
+            return RdfTermType.IRI;
         } else if(node.isLiteral()) {
             return RdfTermType.LITERAL;
         } else if(node.isBlank()) {
@@ -225,7 +225,7 @@ public class ViewDefinitionNormalizerImpl
             Number number = (Number)o;
             switch(number.intValue()) {
             case 1:
-                return RdfTermType.URI;
+                return RdfTermType.IRI;
             case 2:
             case 3:
                 return RdfTermType.LITERAL;

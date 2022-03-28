@@ -15,10 +15,7 @@ import java.util.Set;
 import org.aksw.commons.collections.CartesianProduct;
 import org.aksw.commons.collections.generator.Generator;
 import org.aksw.commons.collections.generator.GeneratorBlacklist;
-import org.aksw.commons.sql.codec.api.SqlCodec;
-import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.jena_sparql_api.restriction.RestrictionSetImpl;
-import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.jena_sparql_api.views.NodeExprSubstitutor;
@@ -27,6 +24,7 @@ import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
 import org.aksw.jena_sparql_api.views.VarDefinition;
 import org.aksw.jena_sparql_api.views.ViewInstance;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Case;
@@ -43,6 +41,7 @@ import org.aksw.sparqlify.algebra.sql.nodes.SqlOpEmpty;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpExtend;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpFilter;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin;
+import org.aksw.sparqlify.algebra.sql.nodes.SqlOpJoin.JoinType;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpOrder;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpProject;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOpRename;
@@ -69,8 +68,6 @@ import org.aksw.sparqlify.type_system.TypeSystemUtils;
 import org.aksw.sparqlify.util.SqlTranslatorImpl2;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.SortCondition;
-// import org.apache.jena.sdb.core.Gensym;
-import org.apache.jena.sdb.core.JoinType;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.E_Function;
@@ -286,14 +283,14 @@ public class MappingOpsImpl
     //private DatatypeSystem datatypeSystem;
     private ExprDatatypeNorm exprNormalizer;
 
-    
+
     // protected static SqlCodec sqlCodec = SqlCodecUtils.createSqlCodecDefault();
 
     public MappingOpsImpl(SqlTranslator sqlTranslator, ExprDatatypeNorm exprNormalizer) {//DatatypeAssigner datatypeAssigner) {
         //this.exprTransformer = exprTransformer;
         this.sqlTranslator = sqlTranslator;
         this.exprNormalizer = exprNormalizer;
-        
+
         // this.sqlCodec = SqlCodecUtils.createSqlCodecDefault();
         //this.exprNormalizer = new ExprDatatypeNorm(datatypeSystem)
     }

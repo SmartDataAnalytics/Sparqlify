@@ -3,12 +3,12 @@ package org.aksw.sparqlify.core.algorithms;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
-import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.jena_sparql_api.views.ExprFactoryUtils;
 import org.aksw.jena_sparql_api.views.SparqlifyConstants;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.apache.jena.sparql.expr.E_Conditional;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_LogicalAnd;

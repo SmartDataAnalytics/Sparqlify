@@ -1,18 +1,15 @@
 package org.aksw.sparqlify.web;
 
 import org.aksw.jena_sparql_api.compare.QueryExecutionFactoryCompare;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.web.server.boot.FactoryBeanSparqlServer;
 import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryExWrapper;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +19,12 @@ public class CompareMain {
      */
     public static void printHelpAndExit(int exitCode) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(HttpSparqlEndpoint.class.getName(), cliOptions);
+        formatter.printHelp(CompareMain.class.getName(), cliOptions);
         System.exit(exitCode);
     }
 
     private static final Logger logger = LoggerFactory
-            .getLogger(HttpSparqlEndpoint.class);
+            .getLogger(CompareMain.class);
     private static final Options cliOptions = new Options();
 
     /**
@@ -78,24 +75,25 @@ public class CompareMain {
 
         QueryExecutionFactory qef = new QueryExecutionFactoryCompare(qefA, qefB, true);
 
+        QueryExecutionFactory effectiveQef = QueryExecutionFactoryExWrapper.wrap(qef);
 
+        FactoryBeanSparqlServer.newInstance()
+            .setSparqlServiceFactory(effectiveQef)
+            .create();
 
-        HttpSparqlEndpoint.sparqler = QueryExecutionFactoryExWrapper.wrap(qef);
-
-
-        ServletHolder sh = new ServletHolder(ServletContainer.class);
-
-        sh.setInitParameter(
-                "com.sun.jersey.config.property.resourceConfigClass",
-                "com.sun.jersey.api.core.PackagesResourceConfig");
-        sh.setInitParameter("com.sun.jersey.config.property.packages",
-                "org.aksw.sparqlify.web");
-
-        Server server = new Server(port);
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
-        context.addServlet(sh, "/*");
-
-        server.start();
+//        ServletHolder sh = new ServletHolder(ServletContainer.class);
+//
+//        sh.setInitParameter(
+//                "com.sun.jersey.config.property.resourceConfigClass",
+//                "com.sun.jersey.api.core.PackagesResourceConfig");
+//        sh.setInitParameter("com.sun.jersey.config.property.packages",
+//                "org.aksw.sparqlify.web");
+//
+//        Server server = new Server(port);
+//        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+//        context.addServlet(sh, "/*");
+//
+//        server.start();
     }
 
 }

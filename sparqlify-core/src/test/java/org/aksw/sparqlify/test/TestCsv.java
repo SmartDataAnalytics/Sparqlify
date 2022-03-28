@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 
-import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.sparqlify.config.syntax.NamedViewTemplateDefinition;
 import org.aksw.sparqlify.config.syntax.TemplateConfig;
 import org.aksw.sparqlify.config.syntax.ViewTemplateDefinition;
@@ -47,10 +46,10 @@ class InputSupplierResourceStream
     @Override
     public InputStream get() {
         try {
-			return resource.getInputStream();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+            return resource.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
@@ -66,11 +65,11 @@ class InputSupplierResourceReader
     @Override
     public Reader get() { //throws IOException {
         InputStream in;
-		try {
-			in = resource.getInputStream();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            in = resource.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Reader result = new InputStreamReader(in);
         return result;
     }
@@ -225,7 +224,8 @@ public class TestCsv {
 
 
         TripleIteratorTracking it = CsvMapperCliMain.createTripleIterator(rs, view);
-        SparqlFormatterUtils.writeText(System.out, it);
+
+        // SparqlFormatterUtils.writeText(System.out, it);
 
         //System.err.println("-------------------");
         //CsvMapperCliMain. convertCsvToRdf(rs, view);

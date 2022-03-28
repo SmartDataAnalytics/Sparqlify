@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionBaseSelect;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.QueryExecutionTimeoutHelper;
-import org.aksw.jena_sparql_api.core.ResultSetCloseable;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSetCloseable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,7 +212,7 @@ public class QueryExecutionSparqlify
 
     @Override
     public void close() {
-        super.close();
+        // super.close();
 
         if(this.closeConnWhenDone) {
             try {
@@ -224,18 +224,18 @@ public class QueryExecutionSparqlify
         }
 
     }
-    
+
     @Override
     public long getTimeout1() {
-    	long result = timeoutHelper.getExecutionTime();
-    	return result;
+        long result = timeoutHelper.getExecutionTime();
+        return result;
     }
-    
-    
+
+
     @Override
     public long getTimeout2() {
-    	long result = timeoutHelper.getRetrievalTime();
-    	return result;
+        long result = timeoutHelper.getRetrievalTime();
+        return result;
     }
 //
     /*

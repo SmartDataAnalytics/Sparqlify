@@ -1,21 +1,21 @@
 package org.aksw.sparqlify.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
 import org.aksw.commons.util.StreamUtils;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.test.MappingBundle;
 import org.aksw.sparqlify.core.test.QueryBundle;
-import org.aksw.sparqlify.core.test.TaskDump;
 import org.aksw.sparqlify.core.test.TestBundle;
 import org.aksw.sparqlify.core.test.TestHelper;
 import org.aksw.sparqlify.util.NQuadUtils;
@@ -25,8 +25,9 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.riot.ResultSetMgr;
+import org.apache.jena.riot.resultset.ResultSetLang;
 import org.apache.jena.sparql.core.Quad;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -105,8 +106,8 @@ public class TestBundlerConverter {
             String name = baseName + "dump";
 
             TestCase testCase = new TestCaseImpl(name, () -> {
-            	boolean isEqual;
-            	try {
+                boolean isEqual;
+                try {
                     Set<Quad> expected = NQuadUtils.readNQuads(bundle.getExpected().getInputStream());
 
                     try(QueryExecutionFactory qef = createQef(name, testBundle, bundle)) {
@@ -141,7 +142,8 @@ public class TestBundlerConverter {
                     if(queryResultRes.exists()) {
                         String queryResult = StreamUtils.toString(queryResultRes.getInputStream());
                         //System.out.println(queryResult);
-                        expected = ResultSetFactory.fromXML(queryResult);
+                        // expected = ResultSetFactory.fromXML(queryResult);
+                        expected = ResultSetMgr.read(new ByteArrayInputStream(queryResult.getBytes(StandardCharsets.UTF_8)), ResultSetLang.RS_XML);
                     }
 
                     //Query query = new Query();

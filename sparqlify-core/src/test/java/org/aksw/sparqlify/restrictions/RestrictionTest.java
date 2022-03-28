@@ -44,7 +44,7 @@ public class RestrictionTest {
         Assert.assertTrue(r.isConsistent());
 
         r.stateNode(NodeFactory.createURI("http://example.org"));
-        Assert.assertEquals(RdfTermType.URI, r.getType());
+        Assert.assertEquals(RdfTermType.IRI, r.getType());
 
         r.stateNode(NodeFactory.createURI("http://example.org"));
         Assert.assertTrue(r.isConsistent());

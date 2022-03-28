@@ -12,54 +12,54 @@ import org.aksw.sparqlify.core.MakeNodeValue;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingHashMap;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 
 public class RowMapperSparqlifyBinding
-	implements RowMapper<Binding>
+    implements RowMapper<Binding>
 {
-	private static final Logger logger = LoggerFactory.getLogger(RowMapperSparqlifyBinding.class);
+    private static final Logger logger = LoggerFactory.getLogger(RowMapperSparqlifyBinding.class);
 
-	//private long nextRowId;
-	private Var rowIdVar;
+    //private long nextRowId;
+    private Var rowIdVar;
 
-	public RowMapperSparqlifyBinding()
-	{
-		this("rowId");
-	}
-
-
-	public RowMapperSparqlifyBinding(String rowIdName)
-	{
-		this.rowIdVar = rowIdName == null ? null : Var.alloc(rowIdName);
- 	}
+    public RowMapperSparqlifyBinding()
+    {
+        this("rowId");
+    }
 
 
-	@Override
-	public Binding mapRow(ResultSet rs, int rowId) {
-		Binding result = _map(rs, rowId, rowIdVar);
-		return result;
-	}
+    public RowMapperSparqlifyBinding(String rowIdName)
+    {
+        this.rowIdVar = rowIdName == null ? null : Var.alloc(rowIdName);
+     }
 
-	public static Binding _map(ResultSet rs, long rowId, Var rowIdVar) {
-		Binding result;
-		try {
-			result = map(rs, rowId, rowIdVar);
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
 
-		return result;
-	}
+    @Override
+    public Binding mapRow(ResultSet rs, int rowId) {
+        Binding result = _map(rs, rowId, rowIdVar);
+        return result;
+    }
 
-	public static boolean addAttr(BindingHashMap binding, int i, String colName, Object colValue) {
-		NodeValue nodeValue;
+    public static Binding _map(ResultSet rs, long rowId, Var rowIdVar) {
+        Binding result;
+        try {
+            result = map(rs, rowId, rowIdVar);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
 
-		// NOTE Char right padding is handled as a special expression (similar to urlEncode)
+        return result;
+    }
+
+    public static boolean addAttr(BindingBuilder binding, int i, String colName, Object colValue) {
+        NodeValue nodeValue;
+
+        // NOTE Char right padding is handled as a special expression (similar to urlEncode)
 //		String colType = meta.getColumnTypeName(i);
 //
 //		//System.out.println(colValue == null ? "null" : colValue.getClass());
@@ -77,33 +77,33 @@ public class RowMapperSparqlifyBinding
 //			}
 //		}
 //		else
-		if(colValue instanceof Date) {
-			String tmp = colValue.toString();
-			nodeValue = NodeValue.makeDate(tmp);
-		}
-		else if(colValue instanceof Timestamp) {
-			String tmp = colValue.toString();
-			String val = tmp.replace(' ', 'T');
-			nodeValue = NodeValue.makeDateTime(val);
-		} else if(colValue instanceof UUID) {
-		    nodeValue = NodeValue.makeString(colValue.toString());
-		} else {
-			try {
-				nodeValue = MakeNodeValue.makeNodeValue(colValue);
-			} catch (Exception e) {
-				logger.error("TODO: Handle unknown column type for " + colValue + " type: " + colValue.getClass());
-				nodeValue = null;
-				//throw new RuntimeException(e);
-			}
-		}
+        if(colValue instanceof Date) {
+            String tmp = colValue.toString();
+            nodeValue = NodeValue.makeDate(tmp);
+        }
+        else if(colValue instanceof Timestamp) {
+            String tmp = colValue.toString();
+            String val = tmp.replace(' ', 'T');
+            nodeValue = NodeValue.makeDateTime(val);
+        } else if(colValue instanceof UUID) {
+            nodeValue = NodeValue.makeString(colValue.toString());
+        } else {
+            try {
+                nodeValue = MakeNodeValue.makeNodeValue(colValue);
+            } catch (Exception e) {
+                logger.error("TODO: Handle unknown column type for " + colValue + " type: " + colValue.getClass());
+                nodeValue = null;
+                //throw new RuntimeException(e);
+            }
+        }
 
-		if(nodeValue == null) {
-			return true;
-			//continue;
-		}
+        if(nodeValue == null) {
+            return true;
+            //continue;
+        }
 
-		if(nodeValue.equals(E_RdfTerm.TYPE_ERROR)) {
-			return true;
+        if(nodeValue.equals(E_RdfTerm.TYPE_ERROR)) {
+            return true;
             //continue;
         }
 
@@ -115,58 +115,58 @@ public class RowMapperSparqlifyBinding
 //			System.out.println("foo");
 //		}
 
-		Node node = nodeValue.asNode();
+        Node node = nodeValue.asNode();
 
 
-		// FIXME We also add bindings that enable us to reference the columns by their index
-		// However, indexes and column-names are in the same namespace here, so there might be clashes
-		Var indexVar = Var.alloc("" + i);
-		binding.add(indexVar, node);
+        // FIXME We also add bindings that enable us to reference the columns by their index
+        // However, indexes and column-names are in the same namespace here, so there might be clashes
+        Var indexVar = Var.alloc("" + i);
+        binding.add(indexVar, node);
 
-		Var colVar = Var.alloc(colName);
-		if(!binding.contains(colVar)) {
-			binding.add(colVar, node);
-		}
+        Var colVar = Var.alloc(colName);
+        if(!binding.contains(colVar)) {
+            binding.add(colVar, node);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static Binding map(ResultSet rs, long rowId, Var rowIdVar) throws SQLException {
+    public static Binding map(ResultSet rs, long rowId, Var rowIdVar) throws SQLException {
 
-		// OPTIMIZE refactor these to attributes
-		//NodeExprSubstitutor substitutor = new NodeExprSubstitutor(sparqlVarMap);
-		BindingHashMap binding = new BindingHashMap();
-
-
-		ResultSetMetaData meta = rs.getMetaData();
-
-		/*
-		for(int i = 1; i <= meta.getColumnCount(); ++i) {
-			binding.add(Var.alloc("" + i), node)
-		}*/
+        // OPTIMIZE refactor these to attributes
+        //NodeExprSubstitutor substitutor = new NodeExprSubstitutor(sparqlVarMap);
+        BindingBuilder binding = BindingFactory.builder();
 
 
-		// Substitute the variables in the expressions
-		for(int i = 1; i <= meta.getColumnCount(); ++i) {
-			String colName = meta.getColumnLabel(i);
-			Object colValue = rs.getObject(i);
+        ResultSetMetaData meta = rs.getMetaData();
 
-			boolean skip = addAttr(binding, i, colName, colValue);
-			if(skip) {
-				continue;
-			}
-		}
+        /*
+        for(int i = 1; i <= meta.getColumnCount(); ++i) {
+            binding.add(Var.alloc("" + i), node)
+        }*/
 
 
+        // Substitute the variables in the expressions
+        for(int i = 1; i <= meta.getColumnCount(); ++i) {
+            String colName = meta.getColumnLabel(i);
+            Object colValue = rs.getObject(i);
 
-		// Additional "virtual" columns
-		// FIXME Ideally this should be part of a class "ResultSetExtend" that extends a result set with additional columns
-		if(rowIdVar != null) {
-			Node node = NodeValue.makeInteger(rowId).asNode();
+            boolean skip = addAttr(binding, i, colName, colValue);
+            if(skip) {
+                continue;
+            }
+        }
 
-			binding.add(rowIdVar, node);
-		}
 
-		return binding;
-	}
+
+        // Additional "virtual" columns
+        // FIXME Ideally this should be part of a class "ResultSetExtend" that extends a result set with additional columns
+        if(rowIdVar != null) {
+            Node node = NodeValue.makeInteger(rowId).asNode();
+
+            binding.add(rowIdVar, node);
+        }
+
+        return binding.build();
+    }
 }

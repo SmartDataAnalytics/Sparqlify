@@ -6,7 +6,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.9.0</version>
+	<version>0.9.1</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -63,12 +63,12 @@
 
 		<module>sparqlify-jpa</module>
 
-		<module>sparqlify-update</module>
+		<!-- <module>sparqlify-update</module> -->
 
 		<!-- <module>sparqlify-web-admin-client</module> -->
 		<module>sparqlify-web-admin-server</module>
 
-		<module>sparqlify-debian-cli</module>
+		<module>sparqlify-pkg-parent</module>
 		<module>sparqlify-debian-tomcat-common</module>
 		<module>sparqlify-debian-tomcat7</module>
 		<module>sparqlify-debian-tomcat8</module>
@@ -85,9 +85,9 @@
 		<!-- <jetty.version>7.1.6.v20100715</jetty.version> -->
 
 		<!-- project defaults -->
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<java.version>1.8</java.version>
+		<!-- <maven.compiler.source>1.8</maven.compiler.source> <maven.compiler.target>1.8</maven.compiler.target> -->
+		<maven.compiler.release>11</maven.compiler.release>
+<!-- 		<java.version>1.8</java.version> -->
 		<java.version.javadoc>http://java.sun.com/javase/8/docs/api/</java.version.javadoc>
 		<file.encoding>UTF-8</file.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -96,18 +96,21 @@
 
 		<!-- <jersey.version>2.26</jersey.version> -->
 
+		<r2rml-jena-api.version>0.9.2</r2rml-jena-api.version>
+
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+
+
 		<!-- prior: 3.1.2.RELEASE -->
 		<spring.version>5.3.2</spring.version>
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<aksw.commons.version>0.8.14</aksw.commons.version>
+		<jena.version>4.4.0</jena.version>
+		<jenax.version>4.4.0-2</jenax.version>
 
-		<jena.version>3.17.0</jena.version>
-		<jsa.subversion>1</jsa.subversion>
-		<jena-sparql-api.version>${jena.version}-${jsa.subversion}</jena-sparql-api.version>
-
-		<aksw-commons.version>0.9.0</aksw-commons.version>
+		<aksw-commons.version>0.9.3</aksw-commons.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -179,10 +182,10 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.8.1</version>
 					<configuration>
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
+						<release>${maven.compiler.release}</release>
+						<!-- <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target> -->
 						<encoding>${project.build.sourceEncoding}</encoding>
 					</configuration>
 				</plugin>
@@ -244,6 +247,12 @@
 					<version>1.5</version>
 				</plugin>
 
+                        <plugin>
+                                <groupId>com.google.cloud.tools</groupId>
+                                <artifactId>jib-maven-plugin</artifactId>
+                                <version>3.2.0</version>
+
+			</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
@@ -319,6 +328,7 @@
 							<exclude>asm-</exclude>
 							<exclude>bean-validator-</exclude>
 							<exclude>xpp3_</exclude>
+							<exclude>checker-</exclude>
 
 							<!-- This exclude is a hack: jakarta is the implementation and conflicts 
 								with api jars such as the javax servlet api. Actually the apis should be 
@@ -365,6 +375,28 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.8.2</version>
 				</plugin>
+
+                                <plugin>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <version>3.0.2</version>
+                                        <executions>
+                                                <execution>
+                                                        <phase>prepare-package</phase>
+                                                        <!-- <phase>package</phase> -->
+                                                        <goals>
+                                                                <goal>copy-dependencies</goal>
+                                                        </goals>
+                                                </execution>
+                                        </executions>
+                                        <configuration>
+                                                <!-- <useBaseVersion>false</useBaseVersion> -->
+                                                <overWriteReleases>false</overWriteReleases>
+                                                <overWriteSnapshots>true</overWriteSnapshots>
+                                                <includeScope>runtime</includeScope>
+                                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                        </configuration>
+                                </plugin>
 
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -422,21 +454,19 @@
 		<repository>
 			<id>maven.aksw.internal</id>
 			<name>University Leipzig, AKSW Maven2 Internal Repository</name>
-			<url>http://maven.aksw.org/repository/internal/</url>
+			<url>https://maven.aksw.org/repository/internal/</url>
 		</repository>
 
 		<repository>
 			<id>maven.aksw.snapshots</id>
 			<name>University Leipzig, AKSW Maven2 Snapshot Repository</name>
-			<url>http://maven.aksw.org/repository/snapshots/</url>
+			<url>https://maven.aksw.org/repository/snapshots/</url>
 		</repository>
 
-		<repository>
-			<id>maven2-repository.java.net</id>
-			<name>Java.net Repository for Maven</name>
-			<url>http://download.java.net/maven/2/</url>
-			<layout>default</layout>
-		</repository>
+
+		<!-- <repository> <id>maven2-repository.java.net</id> <name>Java.net Repository 
+			for Maven</name> <url>https://download.java.net/maven/2/</url> <layout>default</layout> 
+			</repository> -->
 
 		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate 
 			classes in war files -->
@@ -461,38 +491,64 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- <dependency> -->
+			<!-- <groupId>info.picocli</groupId> -->
+			<!-- <artifactId>picocli</artifactId> -->
+			<!-- <version>4.6.1</version> -->
+			<!-- </dependency> -->
+
+			<dependency>
+				<groupId>org.aksw.commons</groupId>
+				<artifactId>aksw-commons-picocli</artifactId>
+				<version>${aksw-commons.version}</version>
+			</dependency>
+
 
 			<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
 			<dependency>
 				<groupId>javax.xml.bind</groupId>
 				<artifactId>jaxb-api</artifactId>
-				<version>2.3.0-b170201.1204</version>
+				<version>2.3.1</version>
 			</dependency>
 
 			<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
 			<dependency>
 				<groupId>javax.activation</groupId>
-				<artifactId>activation</artifactId>
-				<version>1.1</version>
+				<artifactId>javax.activation-api</artifactId>
+				<version>1.2.0</version>
 			</dependency>
 
 			<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
 			<dependency>
 				<groupId>org.glassfish.jaxb</groupId>
 				<artifactId>jaxb-runtime</artifactId>
-				<version>2.3.0-b170127.1453</version>
+				<version>2.3.4</version>
 			</dependency>
+
+			<!-- Nail down jena version -->
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-arq</artifactId>
+				<version>${jena.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-shacl</artifactId>
+				<version>${jena.version}</version>
+			</dependency>
+
+
 
 			<dependency>
 				<groupId>org.aksw.r2rml</groupId>
 				<artifactId>r2rml-jena-plugin</artifactId>
-				<version>0.9.0</version>
+				<version>${r2rml-jena-api.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.aksw.r2rml</groupId>
 				<artifactId>r2rml-jena-sql-transforms</artifactId>
-				<version>0.9.0</version>
+				<version>${r2rml-jena-api.version}</version>
 			</dependency>
 
 
@@ -589,61 +645,67 @@
 
 			<!-- Jena SPARQL API -->
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-core</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-core</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-algebra</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-annotations-reprogen</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-rx</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-rx-dataaccess</artifactId>
+				<version>${jenax.version}</version>
+			</dependency>
+
+
+
+			<dependency>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-algebra</artifactId>
+				<version>${jenax.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-arq-views</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-views</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-server-core</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-web</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-server-frontends</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-server-utils</artifactId>
-				<version>${jena-sparql-api.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jena-sparql-api</groupId>
-				<artifactId>jena-sparql-api-server-standalone</artifactId>
-				<version>${jena-sparql-api.version}</version>
+				<groupId>org.aksw.jenax</groupId>
+				<artifactId>jenax-server-standalone</artifactId>
+				<version>${jenax.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.aksw.commons</groupId>
-				<artifactId>aksw-commons-util-xml</artifactId>
+				<artifactId>aksw-commons-utils-xml</artifactId>
 				<version>${aksw-commons.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.apache.jena</groupId>
-				<artifactId>jena-sdb</artifactId>
-				<version>${jena.version}</version>
-			</dependency>
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-sdb</artifactId> 
+				<version>${jena.version}</version> </dependency> -->
 
-			<!-- <dependency> <groupId>org.aksw.jena-sparql-api</groupId> <artifactId>jena-sparql-api-jgrapht</artifactId> 
-				<version>${jena-sparql-api.version}</version> </dependency> -->
+			<!-- <dependency> <groupId>org.aksw.jenax</groupId> <artifactId>jenax-jgrapht</artifactId> 
+				<version>${jenax.version}</version> </dependency> -->
 
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->
@@ -1183,7 +1245,7 @@
 			<!-- <version>2.1</version> -->
 			<!-- </dependency> -->
 
-			<!-- TODO Remove dep once part of jena-sparql-api-server again -->
+			<!-- TODO Remove dep once part of jenax-server again -->
 
 			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
 				<version>8.1.17.v20150415</version> </dependency> -->
@@ -1326,7 +1388,7 @@
 		<snapshotRepository>
 			<id>maven.aksw.snapshots</id>
 			<name>AKSW Snapshot Repository</name>
-			<url>http://maven.aksw.org/repository/snapshots</url>
+			<url>https://maven.aksw.org/repository/snapshots</url>
 		</snapshotRepository>
 
 	</distributionManagement>

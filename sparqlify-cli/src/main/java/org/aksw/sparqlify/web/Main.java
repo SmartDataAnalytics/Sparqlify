@@ -1,5 +1,6 @@
 package org.aksw.sparqlify.web;
 
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.Iterator;
@@ -7,16 +8,17 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.io.util.StdIo;
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.MapReader;
 import org.aksw.jena_sparql_api.core.GraphQueryExecutionFactory;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
-import org.aksw.jena_sparql_api.utils.SparqlFormatterUtils;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.web.server.boot.FactoryBeanSparqlServer;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.BasicTableInfoProvider;
@@ -57,10 +59,9 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
 import org.apache.jena.sparql.core.Quad;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
+import org.apache.jena.sparql.exec.QueryExec;
+import org.apache.jena.sparql.resultset.ResultsFormat;
+import org.apache.jena.sparql.util.QueryExecUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,10 +224,10 @@ public class Main {
         try {
             BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
             SchemaProvider schemaProvider = new SchemaProviderImpl(
-            		basicTableInfoProvider,
-            		typeSystem,
-            		typeAlias,
-            		sqlEscaper);
+                    basicTableInfoProvider,
+                    typeSystem,
+                    typeAlias,
+                    sqlEscaper);
             SyntaxBridge syntaxBridge = new SyntaxBridge(schemaProvider);
 
             //OpMappingRewriter opMappingRewriter = SparqlifyUtils.createDefaultOpMappingRewriter(typeSystem);
@@ -292,13 +293,13 @@ public class Main {
         //DatatypeToString typeSerializer = new DatatypeToStringPostgres();
         //QueryExecutionFactoryEx qef = SparqlifyUtils.createDefaultSparqlifyEngine(dataSource, config, typeSerializer, sqlEscaper, mrs, maxQueryExecutionTime);
         QueryExecutionFactoryEx qef = FluentSparqlifyFactory.newEngine()
-				.setDataSource(dataSource)
-				.setConfig(config)
-				.setDatatypeToString(new DatatypeToStringPostgres())
-				.setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
-				.setMaxQueryExecutionTime(maxQueryExecutionTime)
-				.setMaxResultSetSize(mrs)
-				.create();
+                .setDataSource(dataSource)
+                .setConfig(config)
+                .setDatatypeToString(new DatatypeToStringPostgres())
+                .setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
+                .setMaxQueryExecutionTime(maxQueryExecutionTime)
+                .setMaxResultSetSize(mrs)
+                .create();
 
         if(useSparql11Wrapper) {
             Graph graph = new GraphQueryExecutionFactory(qef);
@@ -334,8 +335,10 @@ public class Main {
             }
             else if(queryEx.isConstructType()) {
                 QueryExecution qe = qef.createQueryExecution(queryString);
-                Iterator<Triple> it = qe.execConstructTriples();
-                SparqlFormatterUtils.writeText(System.out, it);
+                QueryExecUtils.exec(null, QueryExec.adapt(qe), ResultsFormat.FMT_RDF_NT, new PrintStream(StdIo.openStdOutWithCloseShield()));
+
+                // Iterator<Triple> it = qe.execConstructTriples();
+                // SparqlFormatterUtils.writeText(System.out, it);
                 //model.write(System.out, "N-TRIPLES");
             }
             else {
@@ -347,8 +350,10 @@ public class Main {
         }
 
 
-        Server server = createSparqlEndpoint(qef, port);
-        server.start();
+        FactoryBeanSparqlServer.newInstance()
+            .setSparqlServiceFactory(qef)
+            .create();
+
 
         //sparqler = qef; //new QueryExecutionFactorySparqlify(system, conn);
 
@@ -358,35 +363,36 @@ public class Main {
         // server.stop();
     }
 
-    public static Server createSparqlEndpoint(QueryExecutionFactoryEx qef, int port) throws Exception {
-        HttpSparqlEndpoint.sparqler = qef;
 
-
-        ServletHolder sh = new ServletHolder(ServletContainer.class);
-
-
-        /*
-         * For 0.8 and later the "com.sun.ws.rest" namespace has been renamed to
-         * "com.sun.jersey". For 0.7 or early use the commented out code instead
-         */
-        // sh.setInitParameter("com.sun.ws.rest.config.property.resourceConfigClass",
-        // "com.sun.ws.rest.api.core.PackagesResourceConfig");
-        // sh.setInitParameter("com.sun.ws.rest.config.property.packages",
-        // "jetty");
-        //        jassaServlet.setInitParameter("jersey.config.server.provider.classnames", "org.aksw.jena_sparql_api.web.servlets.PathFindingApi org.aksw.facete2.web.api.ServletDataStore org.aksw.facete2.web.api.ServletExportSparql org.aksw.facete2.web.api.ServletSparqlSpringBatchStatus");
-        //
-//        sh.setInitParameter(
-//                "com.sun.jersey.config.property.resourceConfigClass",
-//                "com.sun.jersey.api.core.PackagesResourceConfig");
-        sh.setInitParameter("jersey.config.server.provider.packages",
-                "org.aksw.sparqlify.web");
-
-        Server server = new Server(port);
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
-
-        context.getServletContext().setAttribute("queryExecutionFactory", qef);
-        context.addServlet(sh, "/*");
-
-        return server;
-    }
+//    public static Server createSparqlEndpoint(QueryExecutionFactoryEx qef, int port) throws Exception {
+//        HttpSparqlEndpoint.sparqler = qef;
+//
+//
+//        ServletHolder sh = new ServletHolder(ServletContainer.class);
+//
+//
+//        /*
+//         * For 0.8 and later the "com.sun.ws.rest" namespace has been renamed to
+//         * "com.sun.jersey". For 0.7 or early use the commented out code instead
+//         */
+//        // sh.setInitParameter("com.sun.ws.rest.config.property.resourceConfigClass",
+//        // "com.sun.ws.rest.api.core.PackagesResourceConfig");
+//        // sh.setInitParameter("com.sun.ws.rest.config.property.packages",
+//        // "jetty");
+//        //        jassaServlet.setInitParameter("jersey.config.server.provider.classnames", "org.aksw.jena_sparql_api.web.servlets.PathFindingApi org.aksw.facete2.web.api.ServletDataStore org.aksw.facete2.web.api.ServletExportSparql org.aksw.facete2.web.api.ServletSparqlSpringBatchStatus");
+//        //
+////        sh.setInitParameter(
+////                "com.sun.jersey.config.property.resourceConfigClass",
+////                "com.sun.jersey.api.core.PackagesResourceConfig");
+//        sh.setInitParameter("jersey.config.server.provider.packages",
+//                "org.aksw.sparqlify.web");
+//
+//        Server server = new Server(port);
+//        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+//
+//        context.getServletContext().setAttribute("queryExecutionFactory", qef);
+//        context.addServlet(sh, "/*");
+//
+//        return server;
+//    }
 }

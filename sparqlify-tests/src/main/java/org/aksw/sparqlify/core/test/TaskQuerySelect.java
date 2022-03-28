@@ -2,8 +2,7 @@ package org.aksw.sparqlify.core.test;
 
 import java.util.concurrent.Callable;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;

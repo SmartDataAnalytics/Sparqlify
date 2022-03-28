@@ -7,7 +7,7 @@ import java.security.ProtectionDomain;
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
-import org.aksw.jena_sparql_api.web.server.ServerUtils;
+import org.aksw.jenax.web.frontend.ServerUtils;
 import org.aksw.sparqlify.validation.LoggerCount;
 import org.aksw.sparqlify.web.SparqlifyCliHelper;
 import org.apache.commons.cli.CommandLine;
@@ -64,7 +64,7 @@ public class MainSparqlifyWebManager {
     public static void main(String[] args) throws Exception {
 
 //    	System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
-    	
+
         LoggerCount loggerCount = new LoggerCount(logger);
 
         Class.forName("org.postgresql.Driver");

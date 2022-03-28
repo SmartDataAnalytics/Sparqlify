@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.aksw.jena_sparql_api.utils.query_execution.QueryExecutionAdapter;
+import org.aksw.jenax.arq.util.execution.QueryExecutionAdapter;
 import org.aksw.sparqlify.core.domain.input.SparqlSqlStringRewrite;
 import org.aksw.sparqlify.core.interfaces.SparqlSqlStringRewriter;
 import org.apache.jena.query.Query;

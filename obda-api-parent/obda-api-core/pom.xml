@@ -10,14 +10,14 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>obda-api-parent</artifactId>
-		<version>0.9.0</version>
+		<version>0.9.1</version>
 	</parent>
 
 	<dependencies>
 
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-algebra</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-arq-algebra</artifactId>
 		</dependency>
 
 	</dependencies>

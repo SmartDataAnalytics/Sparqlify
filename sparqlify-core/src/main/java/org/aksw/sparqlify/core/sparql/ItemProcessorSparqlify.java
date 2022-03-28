@@ -17,8 +17,8 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.riot.process.normalize.CanonicalizeLiteral;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
-import org.apache.jena.sparql.engine.binding.BindingHashMap;
-import org.apache.jena.sparql.engine.binding.BindingMap;
+import org.apache.jena.sparql.engine.binding.BindingBuilder;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.util.ExprUtils;
@@ -66,7 +66,7 @@ public class ItemProcessorSparqlify
     public static Binding process(Multimap<Var, RestrictedExpr> sparqlVarMap, Binding binding) {
         boolean debugMode = true;
 
-        BindingMap result = new BindingHashMap();
+        BindingBuilder result = BindingFactory.builder();
 
         for(Entry<Var, Collection<RestrictedExpr>> entry : sparqlVarMap.asMap().entrySet()) {
 
@@ -171,7 +171,7 @@ public class ItemProcessorSparqlify
             }
         }
 
-        return result;
+        return result.build();
     }
 
 

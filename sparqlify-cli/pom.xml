@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +13,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.0</version>
+		<version>0.9.1</version>
 	</parent>
 
 	<!-- <build> -->
@@ -48,19 +49,25 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.aksw.commons</groupId>
+			<artifactId>aksw-commons-picocli</artifactId>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>sparqlify-core</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-server-standalone</artifactId>
+			<groupId>org.aksw.jenax</groupId>
+			<artifactId>jenax-server-standalone</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.aksw.jena-sparql-api</groupId>
-			<artifactId>jena-sparql-api-web</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.aksw.jenax</groupId> -->
+<!-- 			<artifactId>jenax-server-frontends</artifactId> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.slf4j</groupId>

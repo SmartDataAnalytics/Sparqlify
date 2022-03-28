@@ -9,8 +9,6 @@ import java.util.function.UnaryOperator;
 
 import org.aksw.commons.collections.MapUtils;
 import org.aksw.commons.sql.codec.api.SqlCodec;
-import org.aksw.r2rml.jena.sql.transform.SqlParseException;
-import org.aksw.r2rml.sql.transform.SqlUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExpr;
 import org.aksw.sparqlify.algebra.sql.exprs2.SqlExprConstant;

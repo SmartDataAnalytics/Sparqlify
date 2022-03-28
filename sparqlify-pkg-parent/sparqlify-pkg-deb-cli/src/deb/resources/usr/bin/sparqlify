@@ -1,6 +1,6 @@
 #!/bin/sh
 
-java -cp "/usr/share/lib/sparqlify-cli/sparqlify-cli.jar" org.aksw.sparqlify.web.Main "$@"
+java -cp "/usr/share/lib/sparqlify-cli/sparqlify-cli.jar" org.aksw.sparqlify.cli.main.MainCliSparqlify "$@"
 
 #artifactBase="/usr/share/lib/sparqlify-cli/sparqlify-core"
 

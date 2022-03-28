@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.jena_sparql_api.utils.ExprUtils;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprFunction;
 import org.slf4j.Logger;

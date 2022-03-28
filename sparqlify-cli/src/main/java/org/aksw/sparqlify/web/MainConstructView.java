@@ -7,10 +7,11 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Iterator;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionDecorator;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.views.Dialect;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.connection.query.QueryExecutionDecoratorBase;
+import org.aksw.jenax.web.server.boot.FactoryBeanSparqlServer;
 import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
 import org.aksw.sparqlify.config.lang.ConstructConfigParser;
 import org.aksw.sparqlify.config.syntax.ConstructConfig;
@@ -21,18 +22,13 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 class TripleIterator
@@ -67,7 +63,7 @@ class TripleIterator
 
 
 class QueryExecutionStreamingWrapper
-    extends QueryExecutionDecorator
+    extends QueryExecutionDecoratorBase<QueryExecution>
     implements QueryExecution
 {
 
@@ -143,12 +139,12 @@ public class MainConstructView {
      */
     public static void printHelpAndExit(int exitCode) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(HttpSparqlEndpoint.class.getName(), cliOptions);
+        formatter.printHelp(MainConstructView.class.getName(), cliOptions);
         System.exit(exitCode);
     }
 
     private static final Logger logger = LoggerFactory
-            .getLogger(HttpSparqlEndpoint.class);
+            .getLogger(MainConstructView.class);
     private static final Options cliOptions = new Options();
 
     /**
@@ -283,32 +279,36 @@ public class MainConstructView {
 
         //QueryExecutionFactoryStreamingProvider provider = new QueryExecutionFactoryStreamingProvider(qef);
         //QueryExecutionFactoryStreamingProvider.qeFactory = qef;
-        HttpSparqlEndpoint.sparqler = QueryExecutionFactoryExWrapper.wrap(qef);
+        QueryExecutionFactory effectiveQef = QueryExecutionFactoryExWrapper.wrap(qef);
 
+        FactoryBeanSparqlServer.newInstance()
+            .setSparqlServiceFactory(effectiveQef)
+            .create();
 
-        ServletHolder sh = new ServletHolder(ServletContainer.class);
-
-
-        /*
-         * For 0.8 and later the "com.sun.ws.rest" namespace has been renamed to
-         * "com.sun.jersey". For 0.7 or early use the commented out code instead
-         */
-        // sh.setInitParameter("com.sun.ws.rest.config.property.resourceConfigClass",
-        // "com.sun.ws.rest.api.core.PackagesResourceConfig");
-        // sh.setInitParameter("com.sun.ws.rest.config.property.packages",
-        // "jetty");
-        sh.setInitParameter(
-                "com.sun.jersey.config.property.resourceConfigClass",
-                "com.sun.jersey.api.core.PackagesResourceConfig");
-        sh.setInitParameter("com.sun.jersey.config.property.packages",
-                "org.aksw.sparqlify.rest");
-
-        Server server = new Server(9999);
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
-        context.addServlet(sh, "/*");
-
-
-        server.start();
+//
+//        ServletHolder sh = new ServletHolder(ServletContainer.class);
+//
+//
+//        /*
+//         * For 0.8 and later the "com.sun.ws.rest" namespace has been renamed to
+//         * "com.sun.jersey". For 0.7 or early use the commented out code instead
+//         */
+//        // sh.setInitParameter("com.sun.ws.rest.config.property.resourceConfigClass",
+//        // "com.sun.ws.rest.api.core.PackagesResourceConfig");
+//        // sh.setInitParameter("com.sun.ws.rest.config.property.packages",
+//        // "jetty");
+//        sh.setInitParameter(
+//                "com.sun.jersey.config.property.resourceConfigClass",
+//                "com.sun.jersey.api.core.PackagesResourceConfig");
+//        sh.setInitParameter("com.sun.jersey.config.property.packages",
+//                "org.aksw.sparqlify.rest");
+//
+//        Server server = new Server(9999);
+//        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+//        context.addServlet(sh, "/*");
+//
+//
+//        server.start();
 
         // String qs =
         // URLEncoder.encode("Prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#> Prefix owl:<http://www.w3.org/2002/07/owl#> Construct {?s ?p ?o } {?s ?p ?o . Filter(?p = rdfs:label && langMatches(lang(?o), 'de') && ?o = 'Buslinie') .}",

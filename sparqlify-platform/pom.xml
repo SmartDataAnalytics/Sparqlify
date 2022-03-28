@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.9.0</version>
+        <version>0.9.1</version>
     </parent>
 
 
@@ -68,8 +68,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.aksw.jena-sparql-api</groupId>
-            <artifactId>jena-sparql-api-web</artifactId>
+            <groupId>org.aksw.jenax</groupId>
+            <artifactId>jenax-server-core</artifactId>
         </dependency>
 
 

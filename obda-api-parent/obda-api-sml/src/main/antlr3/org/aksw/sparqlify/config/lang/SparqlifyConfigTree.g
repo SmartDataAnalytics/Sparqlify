@@ -43,7 +43,8 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
     import org.apache.jena.datatypes.*;
     import org.apache.jena.rdf.model.AnonId;
     //import org.aksw.sparqlify.util.*;
-    import org.aksw.jena_sparql_api.utils.*;
+    import org.aksw.jenax.arq.util.node.*;
+    import org.aksw.jenax.arq.util.quad.*;
     import org.aksw.jena_sparql_api.exprs_ext.*;
 
     //import org.aksw.sparqlify.algebra.sql.nodes.*;
@@ -56,7 +57,7 @@ ASTLabelType=CommonTree; // $label will have type CommonTree
 
     import org.aksw.obda.jena.domain.impl.*;
 
-    import org.apache.jena.sdb.core.JoinType;
+    // import org.apache.jena.sdb.core.JoinType;
 
     import java.util.Collection;
     import java.util.List;
@@ -366,7 +367,7 @@ sqlRelation returns [SqlOp value]
 
 joinClause returns [SqlOp value]
     : a=joinClauseMember {$value=$a.value;}
-    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, JoinType.INNER, $a.value, $b.value);}
+    | ^(FULL_JOIN a=joinClauseMember b=joinClauseMember) {$value=new SqlOpJoin(null, SqlOpJoin.JoinType.INNER, $a.value, $b.value);}
     ;
 
 joinClauseMember returns [SqlOp value]

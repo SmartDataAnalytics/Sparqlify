@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.aksw.sparqlify</groupId>
+		<artifactId>sparqlify-pkg-parent</artifactId>
+		<version>0.9.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>sparqlify-pkg-docker-cli</artifactId>
+	<packaging>jar</packaging>
+
+	<properties>
+	</properties>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<configuration>
+					<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<configuration>
+					<to>
+						<image>docker.io/aklakan/sparqlify</image>
+					</to>
+					<from>
+						<image>eclipse-temurin:11-jre</image>
+					</from>
+					<container>
+						<mainClass>org.aksw.sparqlify.cli.main.MainCliSparqlify</mainClass>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+					</container>
+					<containerizingMode>packaged</containerizingMode>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.aksw.sparqlify</groupId>
+			<artifactId>sparqlify-cli</artifactId>
+		</dependency>
+	</dependencies>
+</project>
+

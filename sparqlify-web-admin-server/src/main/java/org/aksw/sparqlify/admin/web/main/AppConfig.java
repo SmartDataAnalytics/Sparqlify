@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.util.slf4j.LoggerCount;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 import org.aksw.service_framework.core.ServiceLauncherRdb2Rdf;
 import org.aksw.service_framework.core.SparqlService;
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;
@@ -192,7 +192,7 @@ public class AppConfig
     public HibernateExceptionTranslator hibernateExceptionTranslator() {
         return new HibernateExceptionTranslator();
     }
-    
+
 //    @Bean
 //    public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
 //    	LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
@@ -211,7 +211,7 @@ public class AppConfig
 //		txManager.setSessionFactory(sessionFactory);
 //		return txManager;
 //	}
-    
+
     @Bean
     public EntityManagerFactory entityManagerFactory(DataSource dataSource) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -274,7 +274,7 @@ public class AppConfig
         DatatypeToString typeSerializer = new DatatypeToStringPostgres();
 
         QueryExecutionFactory result = SparqlifyUtils.createDefaultSparqlifyEngine(
-        		dataSource, config, typeSerializer, sqlEscaper, 1000l, 60, SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));
+                dataSource, config, typeSerializer, sqlEscaper, 1000l, 60, SparqlifyCoreInit.loadSqlFunctionDefinitions("functions.xml"));
         return result;
     }
 
@@ -292,7 +292,7 @@ public class AppConfig
 
     @Bean
     public EntityInverseMapper entityInverseMapper(SessionFactory sessionFactory, SparqlSqlInverseMapper inverseMapper) {
-    	EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
+        EntityInverseMapperImplHibernate result = EntityInverseMapperImplHibernate.create(inverseMapper, sessionFactory);
         return result;
     }
 

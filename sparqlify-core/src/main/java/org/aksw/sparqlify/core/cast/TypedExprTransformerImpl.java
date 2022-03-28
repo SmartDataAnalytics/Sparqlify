@@ -10,10 +10,10 @@ import java.util.Set;
 
 import org.aksw.commons.collections.generator.Generator;
 import org.aksw.commons.collections.multimaps.IBiSetMultimap;
-import org.aksw.jena_sparql_api.utils.ExprUtils;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.jena_sparql_api.views.ExprCopy;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
+import org.aksw.jenax.arq.util.expr.ExprUtils;
 import org.aksw.sparqlify.algebra.sql.exprs2.ExprSqlBridge;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_ColumnRef;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Constant;

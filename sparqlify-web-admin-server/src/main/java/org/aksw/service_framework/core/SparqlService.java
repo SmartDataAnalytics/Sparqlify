@@ -1,6 +1,6 @@
 package org.aksw.service_framework.core;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
 
 public interface SparqlService {
     Object getConfig();

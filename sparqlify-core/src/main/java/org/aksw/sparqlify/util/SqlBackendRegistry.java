@@ -7,8 +7,6 @@ import java.util.function.Function;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringCast;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperBacktick;
-import org.aksw.sparqlify.core.sql.common.serialization.SqlEscaperDoubleQuote;
 
 public class SqlBackendRegistry
     implements Function<String, SqlBackendConfig>

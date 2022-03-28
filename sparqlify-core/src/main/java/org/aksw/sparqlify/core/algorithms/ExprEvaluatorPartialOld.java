@@ -144,7 +144,7 @@ public class ExprEvaluatorPartialOld
         // If not, don't try to evaluate the corresponding expression
         Set<String> builtInOps = new HashSet<String>(Arrays.asList("<=", "<", "=", "!=", ">", ">=", "if", "&&", "||", "!", "+", "-", "*", "/"));
 
-        String fnIri = org.aksw.jena_sparql_api.utils.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();
+        String fnIri = org.aksw.jenax.arq.util.expr.ExprUtils.getFunctionId(fn); //fn.getFunctionIRI();
         if(fnIri != null && !fnIri.isEmpty()) {
             if(!builtInOps.contains(fnIri) && registry.get(fnIri) == null) {
                 return tmp;

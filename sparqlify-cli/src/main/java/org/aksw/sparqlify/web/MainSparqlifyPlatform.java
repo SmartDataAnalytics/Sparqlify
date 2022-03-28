@@ -3,12 +3,8 @@ package org.aksw.sparqlify.web;
 import java.net.URL;
 import java.security.ProtectionDomain;
 
-import org.aksw.sparqlify.core.sparql.QueryExecutionFactoryEx;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,39 +130,4 @@ public class MainSparqlifyPlatform {
     // //return server;
     //
     // }
-
-    public static Server createSparqlEndpoint(QueryExecutionFactoryEx qef,
-            int port) throws Exception {
-        HttpSparqlEndpoint.sparqler = qef;
-
-        ServletHolder sh = new ServletHolder(ServletContainer.class);
-
-        // http://stackoverflow.com/questions/805280/loading-up-a-web-xml-for-integration-tests-with-jetty
-        // WebAppContext webAppContext = new WebAppContext();
-        // webAppContext.setContextPath("/");
-        // webAppContext.setWar();
-
-        /*
-         * For 0.8 and later the "com.sun.ws.rest" namespace has been renamed to
-         * "com.sun.jersey". For 0.7 or early use the commented out code instead
-         */
-        // sh.setInitParameter("com.sun.ws.rest.config.property.resourceConfigClass",
-        // "com.sun.ws.rest.api.core.PackagesResourceConfig");
-        // sh.setInitParameter("com.sun.ws.rest.config.property.packages",
-        // "jetty");
-        sh.setInitParameter(
-                "com.sun.jersey.config.property.resourceConfigClass",
-                "com.sun.jersey.api.core.PackagesResourceConfig");
-        sh.setInitParameter("com.sun.jersey.config.property.packages",
-                "org.aksw.sparqlify.web");
-
-        Server server = new Server(port);
-        ServletContextHandler context = new ServletContextHandler(server, "/",
-                ServletContextHandler.SESSIONS);
-
-        context.getServletContext().setAttribute("queryExecutionFactory", qef);
-        context.addServlet(sh, "/*");
-
-        return server;
-    }
 }

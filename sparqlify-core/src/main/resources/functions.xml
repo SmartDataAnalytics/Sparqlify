@@ -45,6 +45,37 @@
 		</simpleFunction>
 
 		<simpleFunction>
+			<name>ucase</name>
+			<mappings>
+				<mapping>
+					<signature>string ucase(string)</signature>
+					<pattern>(upper($1$))</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+
+		<simpleFunction>
+			<name>lcase</name>
+			<mappings>
+				<mapping>
+					<signature>string lcase(string)</signature>
+					<pattern>(lower($1$))</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+
+		<simpleFunction>
+			<name>contains</name>
+			<mappings>
+				<mapping>
+					<signature>boolean contains(string, string)</signature>
+					<pattern>(strpos($1$, $2$) != 0)</pattern>
+				</mapping>
+			</mappings>
+		</simpleFunction>
+
+
+		<simpleFunction>
 			<name>regex</name>
 			<mappings>
 				<mapping>
