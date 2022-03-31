@@ -16,6 +16,7 @@
 	<modules>
 		<!-- <module>sparqlify-pkg-uberjar-cli</module> -->
 		<module>sparqlify-pkg-deb-cli</module>
+		<module>sparqlify-pkg-docker-cli</module>
 	</modules>
 
 </project>
