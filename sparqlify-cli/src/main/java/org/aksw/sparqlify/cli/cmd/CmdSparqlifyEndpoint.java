@@ -68,6 +68,7 @@ import org.springframework.core.io.Resource;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @Command(name="endpoint", versionProvider = VersionProviderSparqlify.class, description = "Sparqlify Endpoint Subcommands")
 public class CmdSparqlifyEndpoint
@@ -84,8 +85,8 @@ public class CmdSparqlifyEndpoint
     @Option(names = { "-C", "--context" }, description = "Context e.g. /sparqlify" )
     public String context;
 
-    @Option(names = { "-m", "--mapping" }, arity = "0..*", description = "Sparqlify mapping file (can be specified multiple times)")
-    public List<String> mappingSources = new ArrayList<>();
+    @Option(names = { "-m", "--mapping" }, arity = "0..*", description = "(legacy; avaid use) Sparqlify mapping file(s)")
+    public List<String> mappingSourcesLegacy = new ArrayList<>();
 
     @Option(names = { "-Q", "--query" }, description = "Execute a single query")
     public String queryString;
@@ -105,13 +106,19 @@ public class CmdSparqlifyEndpoint
     @Option(names = { "-1", "--sparql11" }, description = "Use jena for sparql 11 (supports property paths but may be slow)")
     public boolean useSparql11Wrapper;
 
+    @Parameters(arity = "0..*", description = "Sparqlify mapping file(s). Auto-detects r2rml and sml.")
+    public List<String> mappingSources = new ArrayList<>();
 
     @Override
     public Integer call() throws Exception {
 
         LoggerCount loggerCount = new LoggerCount(logger);
 
-        List<Resource> sources = SparqlifyCliHelper.resolveFiles(mappingSources, true, loggerCount);
+        List<String> allMappingSources = new ArrayList<>();
+        allMappingSources.addAll(mappingSourcesLegacy);
+        allMappingSources.addAll(mappingSources);
+
+        List<Resource> sources = SparqlifyCliHelper.resolveFiles(allMappingSources, true, loggerCount);
 
         Config config = SparqlifyCliHelper.parseSmlConfigs(sources, loggerCount);
         if(loggerCount.getErrorCount() != 0) {
