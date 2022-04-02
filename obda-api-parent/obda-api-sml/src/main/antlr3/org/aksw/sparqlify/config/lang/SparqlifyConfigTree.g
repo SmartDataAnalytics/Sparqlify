@@ -906,7 +906,7 @@ builtInCall returns [Expr value]
     | ^(STRLEN expression)
     | ^(UCASE expression)
     | ^(LCASE expression)
-    | ^(ENCODE_FOR_URI expression)
+    | ^(ENCODE_FOR_URI a=expression)    {$value = new E_StrEncodeForURI($a.value);}
     | ^(CONTAINS expression)
     | ^(STRSTARTS expression)
     | ^(STRENDS expression)

@@ -106,6 +106,7 @@ import org.apache.jena.sparql.expr.aggregate.AggCount;
 import org.apache.jena.sparql.expr.aggregate.AggGroupConcat;
 import org.apache.jena.sparql.expr.aggregate.AggSum;
 import org.apache.jena.sparql.function.FunctionRegistry;
+import org.apache.jena.sparql.sse.Tags;
 import org.apache.jena.vocabulary.XSD;
 
 import com.google.common.base.Function;
@@ -903,6 +904,10 @@ public class SparqlifyCoreInit {
             sparqlSqlDecls.put(SparqlifyConstants.urlEncode, urlEncodeDecl.toString());
             sqlImpls.put(urlEncodeDecl.toString(), new SqlExprEvaluator_UrlEncode());
 
+            MethodDeclaration<TypeToken> urlEncodeDecl2 = MethodDeclaration.create(TypeToken.String, Tags.tagStrEncodeForURI, false, TypeToken.String);
+            sqlModel.registerFunction(urlEncodeDecl2);
+            sparqlSqlDecls.put(Tags.tagStrEncodeForURI, urlEncodeDecl2.toString());
+            sqlImpls.put(urlEncodeDecl2.toString(), new SqlExprEvaluator_UrlEncode());
 
             MethodDeclaration<TypeToken> urlDecodeDecl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlDecode, false, TypeToken.String);
             sqlModel.registerFunction(urlDecodeDecl);
@@ -910,8 +915,8 @@ public class SparqlifyCoreInit {
             sqlImpls.put(urlDecodeDecl.toString(), new SqlExprEvaluator_UrlDecode());
 
 
-            sqlMetaModel.getInverses().put(urlEncodeDecl.toString(), urlDecodeDecl.toString());
-            sqlMetaModel.getInverses().put(urlDecodeDecl.toString(), urlEncodeDecl.toString());
+            sqlMetaModel.getInverses().put(urlEncodeDecl2.toString(), urlDecodeDecl.toString());
+            sqlMetaModel.getInverses().put(urlDecodeDecl.toString(), urlEncodeDecl2.toString());
 
 
             // Maps a sparql symbol to a set of implementing method declarations
@@ -1195,11 +1200,11 @@ public class SparqlifyCoreInit {
         public static SparqlifyConfig loadSqlFunctionDefinitions(String resourceName) {
             InputStream in = SparqlifyCoreInit.class.getClassLoader().getResourceAsStream(resourceName);
             SparqlifyConfig result;
-			try {
-				result = XmlUtils.unmarshallXml(SparqlifyConfig.class, in);
-			} catch (UnsupportedEncodingException | JAXBException e) {
-				throw new RuntimeException(e);
-			}
+            try {
+                result = XmlUtils.unmarshallXml(SparqlifyConfig.class, in);
+            } catch (UnsupportedEncodingException | JAXBException e) {
+                throw new RuntimeException(e);
+            }
             return result;
         }
 
