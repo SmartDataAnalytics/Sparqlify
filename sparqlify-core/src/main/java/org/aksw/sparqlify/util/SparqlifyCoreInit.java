@@ -126,7 +126,7 @@ public class SparqlifyCoreInit {
         FunctionRegistry.get().put("http://aksw.org/sparqlify/urlDecode", UrlDecode.class);
 
         // Jena does not yet seem to have this strangely named encode_for_uri function
-        FunctionRegistry.get().put("http://aksw.org/sparqlify/urlEncode", UrlEncode.class);
+        FunctionRegistry.get().put(Tags.tagStrEncodeForURI, UrlEncode.class);
 
         FunctionRegistry.get().put(SparqlifyConstants.rightPadLabel, RightPad.class);
     }
@@ -335,7 +335,7 @@ public class SparqlifyCoreInit {
 
 
         {
-            MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
+            MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, Tags.tagStrEncodeForURI, false, TypeToken.String);
 
             //SqlFunctionSerializer serializer = new SqlFunctionSerializerDefault("ST_");
             result.addSerializer(decl.toString(), new SqlFunctionSerializerPassThrough());
@@ -407,7 +407,7 @@ public class SparqlifyCoreInit {
 
         {
             SqlFunctionSerializer serializer = new SqlFunctionSerializerPassThrough();
-            result.addSerializer(SparqlifyConstants.urlEncode, serializer);
+            result.addSerializer(Tags.tagStrEncodeForURI, serializer);
         }
 
         {
@@ -474,7 +474,7 @@ public class SparqlifyCoreInit {
             transMap.put(XSD.xdouble.getURI(), new ExprTransformerCast());
 
 
-            transMap.put(SparqlifyConstants.urlEncode, new ExprTransformerFunction(XSD.xstring));
+            transMap.put(Tags.tagStrEncodeForURI, new ExprTransformerFunction(XSD.xstring));
             transMap.put(SparqlifyConstants.urlDecode, new ExprTransformerFunction(XSD.xstring));
 
             // Geometry
@@ -899,15 +899,10 @@ public class SparqlifyCoreInit {
     //		sparqlSqlDecls.put(bif + "st_geomFromText", stGeomFromTextDecl.toString());
             //sqlImpls.put(stGeomFromTextDecl.toString(), new SqlExprEvaluator_PassThrough(TypeToken.Boolean, "ST_GeomFromText"));
 
-            MethodDeclaration<TypeToken> urlEncodeDecl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
+            MethodDeclaration<TypeToken> urlEncodeDecl = MethodDeclaration.create(TypeToken.String, Tags.tagStrEncodeForURI, false, TypeToken.String);
             sqlModel.registerFunction(urlEncodeDecl);
-            sparqlSqlDecls.put(SparqlifyConstants.urlEncode, urlEncodeDecl.toString());
+            sparqlSqlDecls.put(Tags.tagStrEncodeForURI, urlEncodeDecl.toString());
             sqlImpls.put(urlEncodeDecl.toString(), new SqlExprEvaluator_UrlEncode());
-
-            MethodDeclaration<TypeToken> urlEncodeDecl2 = MethodDeclaration.create(TypeToken.String, Tags.tagStrEncodeForURI, false, TypeToken.String);
-            sqlModel.registerFunction(urlEncodeDecl2);
-            sparqlSqlDecls.put(Tags.tagStrEncodeForURI, urlEncodeDecl2.toString());
-            sqlImpls.put(urlEncodeDecl2.toString(), new SqlExprEvaluator_UrlEncode());
 
             MethodDeclaration<TypeToken> urlDecodeDecl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlDecode, false, TypeToken.String);
             sqlModel.registerFunction(urlDecodeDecl);
@@ -915,8 +910,8 @@ public class SparqlifyCoreInit {
             sqlImpls.put(urlDecodeDecl.toString(), new SqlExprEvaluator_UrlDecode());
 
 
-            sqlMetaModel.getInverses().put(urlEncodeDecl2.toString(), urlDecodeDecl.toString());
-            sqlMetaModel.getInverses().put(urlDecodeDecl.toString(), urlEncodeDecl2.toString());
+            sqlMetaModel.getInverses().put(urlEncodeDecl.toString(), urlDecodeDecl.toString());
+            sqlMetaModel.getInverses().put(urlDecodeDecl.toString(), urlEncodeDecl.toString());
 
 
             // Maps a sparql symbol to a set of implementing method declarations
@@ -1139,12 +1134,12 @@ public class SparqlifyCoreInit {
             {
                 MethodSignature<TypeToken> sig = MethodSignature.create(false, TypeToken.String, TypeToken.String);
 
-                SparqlFunction f = new SparqlFunctionImpl(SparqlifyConstants.urlEncode, sig, null, null);
+                SparqlFunction f = new SparqlFunctionImpl(Tags.tagStrEncodeForURI, sig, null, null);
                 typeSystem.registerSparqlFunction(f);
             }
 
             {
-                MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, SparqlifyConstants.urlEncode, false, TypeToken.String);
+                MethodDeclaration<TypeToken> decl = MethodDeclaration.create(TypeToken.String, Tags.tagStrEncodeForURI, false, TypeToken.String);
 
                 SparqlFunction f = new SparqlFunctionImpl(decl, null, null);
                 typeSystem.registerSparqlFunction(f);
