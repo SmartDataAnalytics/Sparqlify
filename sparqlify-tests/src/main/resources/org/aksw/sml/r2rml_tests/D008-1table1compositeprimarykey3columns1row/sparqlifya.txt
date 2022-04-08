@@ -19,8 +19,8 @@ Create View TriplesMap1 As
     }
   }
   With
-    ?g = uri(concat("http://example.com/graph/Student/", ?ID, "/", spy:urlEncode(?Name)))
-    ?s = uri(concat("http://example.com/Student/", ?ID, "/", spy:urlEncode(?Name)))
+    ?g = uri(concat("http://example.com/graph/Student/", ?ID, "/", ENCODE_FOR_URI(?Name)))
+    ?s = uri(concat("http://example.com/Student/", ?ID, "/", ENCODE_FOR_URI(?Name)))
     ?i = typedLiteral(?ID, xsd:integer)
     ?n = plainLiteral(?Name)
     ?sp = plainLiteral(?Sport)

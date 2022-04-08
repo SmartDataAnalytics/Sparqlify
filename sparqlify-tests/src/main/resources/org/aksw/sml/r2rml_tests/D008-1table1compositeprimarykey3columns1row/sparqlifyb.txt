@@ -27,7 +27,7 @@ Create View TriplesMap1 As
       ex:Sport ?sp
   }
   With
-    ?s = uri(concat("http://example.com/Student/", ?ID, "/", spy:urlEncode(?Name)))
+    ?s = uri(concat("http://example.com/Student/", ?ID, "/", ENCODE_FOR_URI(?Name)))
     ?i = typedLiteral(?ID, xsd:integer)
     ?n = plainLiteral(?Name)
     ?sp = uri(concat("http://example.com/", ?Sport))

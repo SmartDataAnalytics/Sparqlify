@@ -14,7 +14,7 @@ Create View TriplesMap1 As
       ex:name ?n
   }
   With
-    ?s = uri(concat("http://example.com/Student/", ?ID, "/", spy:urlEncode(?Name)))
+    ?s = uri(concat("http://example.com/Student/", ?ID, "/", ENCODE_FOR_URI(?Name)))
     ?n = plainLiteral(?Name)
   From
     Student

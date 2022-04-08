@@ -11,7 +11,7 @@ Create View TriplesMap1 As
     ?s ex:name ?n
   }
   With
-    ?s = uri(concat("http://example.com/", ?"Country Code", "/", spy:urlEncode(?Name)))
+    ?s = uri(concat("http://example.com/", ?"Country Code", "/", ENCODE_FOR_URI(?Name)))
     ?n = plainLiteral(?Name)
   From
     "Country Info"

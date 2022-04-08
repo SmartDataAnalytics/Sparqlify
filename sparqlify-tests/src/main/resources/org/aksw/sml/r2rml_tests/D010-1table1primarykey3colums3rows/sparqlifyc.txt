@@ -12,7 +12,7 @@ Create View TriplesMap1 As
 	?s ex:code ?o
   }
   With
-    ?s = uri(concat("http://example.com/", ?"Country Code", "/", spy:urlEncode(?Name)))
+    ?s = uri(concat("http://example.com/", ?"Country Code", "/", ENCODE_FOR_URI(?Name)))
     ?o = plainLiteral(concat("{{{ ", ?"ISO 3166", " }}}"))
   From
     "Country Info"
