@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.io.util.StdIo;
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.MapReader;
@@ -21,6 +22,7 @@ import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.arq.util.streamrdf.StreamRDFWriterEx;
 import org.aksw.jenax.web.server.boot.FactoryBeanSparqlServer;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
@@ -47,6 +49,7 @@ import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.aksw.sparqlify.util.SqlBackendConfig;
 import org.aksw.sparqlify.util.SqlBackendRegistry;
 import org.aksw.sparqlify.web.SparqlifyCliHelper;
+import org.apache.jena.atlas.lib.StreamOps;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.QueryExecution;
@@ -54,6 +57,9 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.riot.system.StreamRDFOps;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
 import org.apache.jena.sparql.core.Quad;
@@ -238,11 +244,12 @@ public class CmdSparqlifyEndpoint
                 System.out.println(ResultSetFormatter.asText(rs));
             }
             else if(queryEx.isConstructType()) {
-                QueryExecution qe = qef.createQueryExecution(queryString);
-                Iterator<Triple> it = qe.execConstructTriples();
-                QueryExecUtils.exec(null, QueryExec.adapt(qe), ResultsFormat.FMT_RDF_NT, System.out);
-                // SparqlFormatterUtils.writeText(System.out, it);
-                //model.write(System.out, "N-TRIPLES");
+                StreamRDF writer = StreamRDFWriterEx.getWriterStream(StdIo.openStdOutWithCloseShield(), RDFFormat.NQUADS, null);
+            	
+            	try (QueryExecution qe = qef.createQueryExecution(queryString)) {
+                    Iterator<Quad> it = qe.execConstructQuads();
+            		StreamRDFOps.sendQuadsToStream(it, writer);
+            	}
             }
             else {
                 throw new RuntimeException("Query type not supported: " + queryString);
