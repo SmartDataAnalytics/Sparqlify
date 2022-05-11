@@ -100,7 +100,7 @@ public class CmdSparqlifyEndpoint
     @Option(names = { "-n", "--resultsetsize" }, description = "Maximum result set size")
     public Long maxResultSetSize = null;
 
-    @Option(names = { "o", "format" }, description = "Output format; currently only applies to dump (-D). Values: ntriples, nquads")
+    @Option(names = { "--out-format" }, description = "Output format; currently only applies to dump (-D). Values: ntriples, nquads")
     public String outputFormat;
 
     @Option(names = { "-1", "--sparql11" }, description = "Use jena for sparql 11 (supports property paths but may be slow)")

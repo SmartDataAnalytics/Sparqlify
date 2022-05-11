@@ -32,7 +32,7 @@ public class DataSourceOptions implements DataSourceSpec {
     @Option(names = { "-c" , "--class"}, description = "JDBC driver class")
     protected String jdbcDriverClass;
 
-    @Option(names = { "-j", "--jdbcul" }, description = "JDBC URL")
+    @Option(names = { "-j", "--jdbcurl" }, description = "JDBC URL")
     protected String jdbcUrl;
 
     @Option(names = { "-B", "--backlog"}, description = "Backlog; maximum number of jdbc connections", defaultValue = "4")

@@ -110,7 +110,7 @@
 		<jena.version>4.4.0</jena.version>
 		<jenax.version>4.4.0-2</jenax.version>
 
-		<aksw-commons.version>0.9.3</aksw-commons.version>
+		<aksw-commons.version>0.9.4-SNAPSHOT</aksw-commons.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>

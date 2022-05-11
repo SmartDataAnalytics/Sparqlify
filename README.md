@@ -103,6 +103,10 @@ Note that this also works with distros other than "precise" (ubuntu 12.04) such 
 ## Building
 Building the repository creates the JAR files providing the `sparqlify-*` tool suite.
 
+One of the plugins requires the `xjc` command (for compiling an XML schema to Java classes) which is no longer part of the jdk. The following package provides it:
+```bash
+sudo apt install jaxb
+```
 
 ### Debian package
 Building debian packages from this repo relies on the [Debian Maven Plugin](http://debian-maven.sourceforge.net]) plugin, which requires a debian-compatible environment.

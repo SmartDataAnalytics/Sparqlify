@@ -453,7 +453,8 @@ public class SparqlifyUtils {
         SparqlSqlStringRewriterImpl result;
         try(Connection conn = dataSource.getConnection()) {
             BasicTableInfoProvider basicTableInfoProvider = new BasicTableProviderJdbc(conn);
-            Schema databaseSchema = Schema.create(conn);
+            // Schema databaseSchema = Schema.create(conn);
+            Schema databaseSchema = null;
 
             result = createDefaultSparqlSqlStringRewriter(basicTableInfoProvider, databaseSchema, config, typeSerializer, sqlEscaper, sqlFunctionMapping);
         }
