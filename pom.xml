@@ -107,8 +107,8 @@
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<jena.version>4.4.0</jena.version>
-		<jenax.version>4.4.0-2</jenax.version>
+		<jena.version>4.5.0</jena.version>
+		<jenax.version>4.5.0-1-SNAPSHOT</jenax.version>
 
 		<aksw-commons.version>0.9.4-SNAPSHOT</aksw-commons.version>
 
@@ -265,11 +265,11 @@
 								<goal>shade</goal>
 							</goals>
 							<configuration>
-								<!-- TODO Shading is currently needed for the debian packages, which 
+								<!-- TODO Shading is currently needed for the debian packages, which
 									is slow and causes huge deployments -->
-								<!-- The deb packaging should be modified to work similar to the 
+								<!-- The deb packaging should be modified to work similar to the
 									dockerfile maven plugin: -->
-								<!-- Use the resource plugin to copy deps to a lib folder and adjust 
+								<!-- Use the resource plugin to copy deps to a lib folder and adjust
 									the bash scripts -->
 								<shadedArtifactAttached>true</shadedArtifactAttached>
 								<shadedClassifierName>jar-with-dependencies</shadedClassifierName>
@@ -320,7 +320,7 @@
 							<profile>java6</profile>
 						</profiles>
 						<failOnWarn>true</failOnWarn>
-						<!-- excluding some jars, if jar name contains any of these strings 
+						<!-- excluding some jars, if jar name contains any of these strings
 							it won't be analyzed -->
 						<excludes>
 							<exclude>commons-beanutils-core-</exclude>
@@ -330,8 +330,8 @@
 							<exclude>xpp3_</exclude>
 							<exclude>checker-</exclude>
 
-							<!-- This exclude is a hack: jakarta is the implementation and conflicts 
-								with api jars such as the javax servlet api. Actually the apis should be 
+							<!-- This exclude is a hack: jakarta is the implementation and conflicts
+								with api jars such as the javax servlet api. Actually the apis should be
 								set to provided -->
 							<exclude>jakarta.</exclude>
 							<exclude>spring-jcl-</exclude>
@@ -464,11 +464,11 @@
 		</repository>
 
 
-		<!-- <repository> <id>maven2-repository.java.net</id> <name>Java.net Repository 
-			for Maven</name> <url>https://download.java.net/maven/2/</url> <layout>default</layout> 
+		<!-- <repository> <id>maven2-repository.java.net</id> <name>Java.net Repository
+			for Maven</name> <url>https://download.java.net/maven/2/</url> <layout>default</layout>
 			</repository> -->
 
-		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate 
+		<!-- JBoss repo for the maven tattletale plugin that checks for duplicate
 			classes in war files -->
 		<repository>
 			<id>jboss</id>
@@ -638,9 +638,9 @@
 			<!-- </dependency> -->
 
 
-			<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId> 
-				<version>${jersey.version}</version> </dependency> <dependency> <groupId>com.sun.jersey</groupId> 
-				<artifactId>jersey-server</artifactId> <version>${jersey.version}</version> 
+			<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-core</artifactId>
+				<version>${jersey.version}</version> </dependency> <dependency> <groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-server</artifactId> <version>${jersey.version}</version>
 				</dependency> -->
 
 			<!-- Jena SPARQL API -->
@@ -701,10 +701,10 @@
 				<version>${aksw-commons.version}</version>
 			</dependency>
 
-			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-sdb</artifactId> 
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-sdb</artifactId>
 				<version>${jena.version}</version> </dependency> -->
 
-			<!-- <dependency> <groupId>org.aksw.jenax</groupId> <artifactId>jenax-jgrapht</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.jenax</groupId> <artifactId>jenax-jgrapht</artifactId>
 				<version>${jenax.version}</version> </dependency> -->
 
 			<!-- <dependency> -->
@@ -720,13 +720,13 @@
 			</dependency>
 
 
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>commons</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>commons</artifactId>
 				<version>1.0-SNAPSHOT</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-util</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-util</artifactId>
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>sparql</artifactId>
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId> 
+			<!-- <dependency> <groupId>org.aksw.commons</groupId> <artifactId>aksw-commons-collections</artifactId>
 				<version>${aksw.commons.version}</version> <scope>compile</scope> </dependency> -->
 			<!-- <dependency> -->
 			<!-- <groupId>com.jolbox</groupId> -->
@@ -787,15 +787,15 @@
 				<version>20040117.000000</version>
 			</dependency>
 
-			<!-- <dependency> <groupId>commons-validator</groupId> <artifactId>commons-validator</artifactId> 
-				<version>1.6</version> <type>jar</type> <scope>compile</scope> <exclusions> 
-				<exclusion> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId> 
-				</exclusion> <exclusion> <! - - Using org.slf4j:jcl-over-slf4j instead - 
-				- > <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> 
+			<!-- <dependency> <groupId>commons-validator</groupId> <artifactId>commons-validator</artifactId>
+				<version>1.6</version> <type>jar</type> <scope>compile</scope> <exclusions>
+				<exclusion> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId>
+				</exclusion> <exclusion> <! - - Using org.slf4j:jcl-over-slf4j instead -
+				- > <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId>
 				</exclusion> </exclusions> </dependency> -->
 
-			<!-- commons-validator depends on commons-beanutils, which in turn depend 
-				on commons-beanutils-bean-collections. The latter conflicts with commons-collections, 
+			<!-- commons-validator depends on commons-beanutils, which in turn depend
+				on commons-beanutils-bean-collections. The latter conflicts with commons-collections,
 				because of overlap in defined classes -->
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -845,14 +845,14 @@
 			<!-- <scope>compile</scope> -->
 			<!-- </dependency> -->
 
-			<!-- <dependency> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId> 
-				<version>8.4-701.jdbc4</version> < ! - - <version>9.3-1100-jdbc41</version> 
+			<!-- <dependency> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId>
+				<version>8.4-701.jdbc4</version> < ! - - <version>9.3-1100-jdbc41</version>
 				- - > <type>jar</type> <scope>compile</scope> </dependency> -->
 
-			<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
+			<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId>
 				<version>42.2.1.jre7</version> </dependency> -->
 
-			<!-- <dependency> <groupId>net.postgis</groupId> <artifactId>postgis-jdbc</artifactId> 
+			<!-- <dependency> <groupId>net.postgis</groupId> <artifactId>postgis-jdbc</artifactId>
 				<version>2.2.1</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>org.apache.hive</groupId>
@@ -959,9 +959,9 @@
 						<artifactId>jasper-runtime</artifactId>
 					</exclusion>
 
-					<!-- <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-service</artifactId> 
-						</exclusion> <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-service-rpc</artifactId> 
-						</exclusion> <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-common</artifactId> 
+					<!-- <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-service</artifactId>
+						</exclusion> <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-service-rpc</artifactId>
+						</exclusion> <exclusion> <groupId>org.apache.hive</groupId> <artifactId>hive-common</artifactId>
 						</exclusion> -->
 					<exclusion>
 						<groupId>org.apache.hive</groupId>
@@ -1038,7 +1038,7 @@
 			<!-- </dependency> -->
 
 
-			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-top</artifactId> 
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-top</artifactId>
 				<version>0-incubating</version> <scope>compile</scope> </dependency> -->
 
 			<dependency>
@@ -1055,12 +1055,12 @@
 			<!-- </exclusions> -->
 
 
-			<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer 
-				version - -> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId> 
-				<version>2.7.0-incubating</version> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId> 
+			<!-- jena-sdb depends on xerces:xercesImpl:jar:2.7.1 and breaks with newer
+				version - -> <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-core</artifactId>
+				<version>2.7.0-incubating</version> <scope>compile</scope> </dependency>
+				<dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-arq</artifactId>
 				<version>2.9.0-incubating</version> <scope>compile</scope> </dependency> -->
-			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId> 
+			<!-- <dependency> <groupId>org.apache.jena</groupId> <artifactId>jena-iri</artifactId>
 				<version>0.9.0-incubating</version> <scope>compile</scope> </dependency> -->
 			<!-- <dependency> -->
 			<!-- <groupId>org.apache.jena</groupId> -->
@@ -1099,23 +1099,23 @@
 			<!-- </exclusions> -->
 			<!-- </dependency> -->
 
-			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId> 
-				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> <exclusions> 
-				<exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId> 
-				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>iri</artifactId> 
-				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId> 
-				</exclusion> <exclusion> <groupId>junit</groupId> <artifactId>junit</artifactId> 
+			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId>
+				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> <exclusions>
+				<exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId>
+				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>iri</artifactId>
+				</exclusion> <exclusion> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId>
+				</exclusion> <exclusion> <groupId>junit</groupId> <artifactId>junit</artifactId>
 				</exclusion> </exclusions> </dependency> -->
 
-			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId> 
-				<version>2.8.8</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq-extra</artifactId> 
-				<version>2.7.0</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId> 
-				<version>2.6.4</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId> 
-				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> </dependency> 
-				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>tdb</artifactId> 
+			<!-- <dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq</artifactId>
+				<version>2.8.8</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>arq-extra</artifactId>
+				<version>2.7.0</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>jena</artifactId>
+				<version>2.6.4</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>sdb</artifactId>
+				<version>1.3.4</version> <type>jar</type> <scope>compile</scope> </dependency>
+				<dependency> <groupId>com.hp.hpl.jena</groupId> <artifactId>tdb</artifactId>
 				<version>0.8.9</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -1133,7 +1133,7 @@
 				<scope>compile</scope>
 			</dependency>
 
-			<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
+			<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId>
 				<version>5.1.16</version> <type>jar</type> <scope>compile</scope> </dependency> -->
 
 			<!-- <dependency> -->
@@ -1142,10 +1142,10 @@
 			<!-- <version>4.0.2</version> -->
 			<!-- </dependency> -->
 
-			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
-				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
-				</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId> 
-				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope> 
+			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId>
+				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope>
+				</dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-servlet</artifactId>
+				<version>${jetty.version}</version> <type>jar</type> <scope>compile</scope>
 				</dependency> -->
 			<dependency>
 				<groupId>jrexx</groupId>
@@ -1168,7 +1168,7 @@
 				<version>2.6.12</version>
 			</dependency>
 
-			<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV 
+			<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV
 				files -->
 			<dependency>
 				<groupId>com.h2database</groupId>
@@ -1227,7 +1227,7 @@
 
 
 			<!-- Gson: Java to Json conversion -->
-			<!-- <dependency> <groupId>com.google.code.gson</groupId> <artifactId>gson</artifactId> 
+			<!-- <dependency> <groupId>com.google.code.gson</groupId> <artifactId>gson</artifactId>
 				<version>2.8.2</version> <scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>junit</groupId>
@@ -1236,7 +1236,7 @@
 				<scope>test</scope>
 			</dependency>
 
-			<!-- <dependency> <groupId>org.jgrapht</groupId> <artifactId>jgrapht-core</artifactId> 
+			<!-- <dependency> <groupId>org.jgrapht</groupId> <artifactId>jgrapht-core</artifactId>
 				<version>0.9.0</version> </dependency> -->
 
 			<!-- <dependency> -->
@@ -1247,7 +1247,7 @@
 
 			<!-- TODO Remove dep once part of jenax-server again -->
 
-			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
+			<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId>
 				<version>8.1.17.v20150415</version> </dependency> -->
 
 			<!-- <dependency> -->

@@ -180,6 +180,10 @@ public class SparqlifyCliHelper {
             cpConfig.setPassword(passWord);
         }
 
+        // Allow connections to be held indefinitely
+        // Needed for long running dumps (days or weeks)
+        cpConfig.setIdleTimeout(0);
+
 
         if (backlog != null) {
             cpConfig.setMaximumPoolSize(backlog);
