@@ -643,56 +643,13 @@
 				<artifactId>jersey-server</artifactId> <version>${jersey.version}</version>
 				</dependency> -->
 
-			<!-- Jena SPARQL API -->
+			<!-- Jenax -->
 			<dependency>
 				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-arq-core</artifactId>
+				<artifactId>jenax-bom</artifactId>
 				<version>${jenax.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-annotations-reprogen</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-rx-dataaccess</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
-
-
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-arq-algebra</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
-
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-arq-views</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-server-core</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-server-frontends</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-server-standalone</artifactId>
-				<version>${jenax.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 
 			<dependency>
