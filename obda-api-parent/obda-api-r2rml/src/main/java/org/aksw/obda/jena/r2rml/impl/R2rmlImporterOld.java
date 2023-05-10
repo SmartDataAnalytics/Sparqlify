@@ -399,7 +399,7 @@ public class R2rmlImporterOld {
         Expr result = node.isURI()
             ? new E_URI(NodeValue.makeString(node.getURI()))
             : node.isBlank()
-                ? new E_BNode(NodeValue.makeString(node.getBlankNodeLabel()))
+                ? E_BNode.create(NodeValue.makeString(node.getBlankNodeLabel()))
                 : node.isLiteral()
                     ? XSD.xstring.getURI().equals(node.getLiteralDatatypeURI())
                         ? new E_StrLang(NodeValue.makeString(node.getLiteralLexicalForm()), NodeValue.makeString(""))
@@ -431,7 +431,7 @@ public class R2rmlImporterOld {
         result = termTypeIri.equals(R2rmlTerms.IRI)
             ? new E_URI(column)
             : termTypeIri.equals(R2rmlTerms.BlankNode)
-                ? new E_BNode(column)
+                ? E_BNode.create(column)
                 : termTypeIri.equals(R2rmlTerms.Literal)
                     ? (knownDatatype == null || XSD.xstring.asNode().equals(knownDatatype)
                         ? new E_StrLang(column, NodeValue.makeString("")) // FIXME StrLang with empty lang tag wouldn't evaluate

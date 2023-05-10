@@ -317,7 +317,7 @@ varBinding returns [Expr value]
 
 
 typeCtorExpression returns [Expr value]
-    : ^(BNODE c=expressionList) {$value = new E_BNode($c.value.size() == 1 ? $c.value.get(0) : new E_StrConcat($c.value)); }
+    : ^(BNODE c=expressionList) {$value = E_BNode.create($c.value.size() == 1 ? $c.value.get(0) : new E_StrConcat($c.value)); }
     | ^(URI c=expressionList) {$value = new E_IRI($c.value.size() == 1 ? $c.value.get(0) : new E_StrConcat($c.value)); }
     | ^(IRI c=expressionList) {$value = new E_IRI($c.value.size() == 1 ? $c.value.get(0) : new E_StrConcat($c.value)); }
     | ^(PLAIN_LITERAL a=expression b=expression?) {$value = new E_StrLang($a.value, $b.value != null ? $b.value : NodeValue.makeString("")); }

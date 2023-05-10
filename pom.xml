@@ -107,10 +107,10 @@
 		<spring.batch.version>4.3.1</spring.batch.version>
 		<spring.security.version>5.4.2</spring.security.version>
 
-		<jena.version>4.5.0</jena.version>
-		<jenax.version>4.5.0-1-SNAPSHOT</jenax.version>
+		<jena.version>4.8.0</jena.version>
+		<jenax.version>4.8.0-2</jenax.version>
 
-		<aksw-commons.version>0.9.4-SNAPSHOT</aksw-commons.version>
+		<aksw-commons.version>0.9.5</aksw-commons.version>
 
 		<platform.linkedData.contextPath>/</platform.linkedData.contextPath>
 	</properties>
@@ -823,7 +823,11 @@
 					<!-- <exclusion> -->
 					<!-- <groupId>com.sun</groupId> -->
 					<!-- <artifactId>tools</artifactId> -->
-					<!-- </exclusion> -->
+						<!-- </exclusion> -->
+					<exclusion>
+						<groupId>ch.qos.reload4j</groupId>
+						<artifactId>reload4j</artifactId>
+					</exclusion>
 					<exclusion>
 						<groupId>org.apache.logging.log4j</groupId>
 						<artifactId>log4j-1.2-api</artifactId>
@@ -850,12 +854,10 @@
 						<groupId>org.apache.hbase</groupId>
 						<artifactId>hbase-common</artifactId>
 					</exclusion>
-
 					<exclusion>
 						<groupId>com.github.joshelser</groupId>
 						<artifactId>dropwizard-metrics-hadoop-metrics2-reporter</artifactId>
 					</exclusion>
-
 					<exclusion>
 						<groupId>org.mortbay.jetty</groupId>
 						<artifactId>jetty</artifactId>
