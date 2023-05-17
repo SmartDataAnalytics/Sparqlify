@@ -528,6 +528,14 @@
 			</dependency>
 
 			<!-- Nail down jena version -->
+	                <dependency>
+                                <groupId>org.aksw.jenax</groupId>
+                                <artifactId>jenax-bom</artifactId>
+                                <version>${jenax.version}</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                        </dependency>
+
 			<dependency>
 				<groupId>org.apache.jena</groupId>
 				<artifactId>apache-jena-libs</artifactId>
@@ -539,13 +547,6 @@
 				<groupId>org.aksw.commons</groupId>
 				<artifactId>aksw-commons-bom</artifactId>
 				<version>${aksw-commons.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-bom</artifactId>
-				<version>${jenax.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -739,7 +740,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
+				<version>3.12.0</version>
 			</dependency>
 
 			<dependency>

@@ -162,7 +162,7 @@ public class CmdSparqlifyEndpoint
 
         SqlBackendConfig backendConfig = backendRegistry.apply(dbProductName);
         if(backendConfig == null) {
-            throw new RuntimeException("Could not find backend for " + dbProductName);
+            throw new RuntimeException("Could not find backend: [" + dbProductName + "]");
         }
 
 
@@ -245,11 +245,11 @@ public class CmdSparqlifyEndpoint
             }
             else if(queryEx.isConstructType()) {
                 StreamRDF writer = StreamRDFWriterEx.getWriterStream(StdIo.openStdOutWithCloseShield(), RDFFormat.NQUADS, null);
-            	
-            	try (QueryExecution qe = qef.createQueryExecution(queryString)) {
+
+                try (QueryExecution qe = qef.createQueryExecution(queryString)) {
                     Iterator<Quad> it = qe.execConstructQuads();
-            		StreamRDFOps.sendQuadsToStream(it, writer);
-            	}
+                    StreamRDFOps.sendQuadsToStream(it, writer);
+                }
             }
             else {
                 throw new RuntimeException("Query type not supported: " + queryString);

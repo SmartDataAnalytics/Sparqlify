@@ -15,6 +15,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
@@ -103,7 +104,8 @@ public class MainSparqlifyWebManager {
         final WebAppContext webAppContext = new WebAppContext();
         //Context servletContext = webAppContext.getServletContext();
 
-        webAppContext.addEventListener(new LifeCycle.Listener() {
+        // webAppContext.addEventListener(new LifeCycle.Listener() {
+        webAppContext.addLifeCycleListener(new AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle arg0) {
                 WebAppInitializer initializer = new WebAppInitializer();

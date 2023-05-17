@@ -27,10 +27,12 @@ public class SqlBackendRegistry
 
     public static final String HIVE = "apache hive";
     public static final String POSTGRES = "postgresql";
+    public static final String MYSQL = "mysql";
 
     public static void init(Map<String, SqlBackendConfig> map) {
         map.put(HIVE, new SqlBackendConfig(new DatatypeToStringCast(), SqlCodecUtils.createSqlCodecForApacheSpark()));
         map.put(POSTGRES, new SqlBackendConfig(new DatatypeToStringPostgres(), SqlCodecUtils.createSqlCodecDefault()));
+        map.put(MYSQL, new SqlBackendConfig(new DatatypeToStringCast(), SqlCodecUtils.createSqlCodecForApacheSpark()));
     }
 
     public Map<String, SqlBackendConfig> getMap() {
