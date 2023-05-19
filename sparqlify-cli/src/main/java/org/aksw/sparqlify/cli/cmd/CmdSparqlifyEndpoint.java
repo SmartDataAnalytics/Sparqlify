@@ -205,8 +205,8 @@ public class CmdSparqlifyEndpoint
         QueryExecutionFactoryEx qef = FluentSparqlifyFactory.newEngine()
                 .setDataSource(dataSource)
                 .setConfig(config)
-                .setDatatypeToString(new DatatypeToStringPostgres())
-                .setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
+                .setDatatypeToString(typeSerializer)
+                .setSqlEscaper(sqlEscaper) //SqlCodecUtils.createSqlCodecDefault())
                 .setMaxQueryExecutionTime(maxQueryExecutionTime)
                 .setMaxResultSetSize(mrs)
                 .create();

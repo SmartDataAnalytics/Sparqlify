@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringCast;
+import org.aksw.sparqlify.backend.postgres.DatatypeToStringMysql;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 
 public class SqlBackendRegistry
@@ -32,7 +33,7 @@ public class SqlBackendRegistry
     public static void init(Map<String, SqlBackendConfig> map) {
         map.put(HIVE, new SqlBackendConfig(new DatatypeToStringCast(), SqlCodecUtils.createSqlCodecForApacheSpark()));
         map.put(POSTGRES, new SqlBackendConfig(new DatatypeToStringPostgres(), SqlCodecUtils.createSqlCodecDefault()));
-        map.put(MYSQL, new SqlBackendConfig(new DatatypeToStringCast(), SqlCodecUtils.createSqlCodecForApacheSpark()));
+        map.put(MYSQL, new SqlBackendConfig(new DatatypeToStringMysql(), SqlCodecUtils.createSqlCodecForApacheSpark()));
     }
 
     public Map<String, SqlBackendConfig> getMap() {
