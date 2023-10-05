@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 import javax.sql.DataSource;
 
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.core.builder.FluentSparqlifyFactory;

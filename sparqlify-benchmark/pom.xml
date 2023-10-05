@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.5-SNAPSHOT</version>
+		<version>0.9.6-SNAPSHOT</version>
 	</parent>
 
 
@@ -36,7 +36,7 @@
 
 		<dependency>
 			<groupId>org.aksw.bsbm</groupId>
-			<artifactId>bsbm-jsa</artifactId>
+			<artifactId>bsbm-jenax</artifactId>
 		</dependency>
 
 		<dependency>

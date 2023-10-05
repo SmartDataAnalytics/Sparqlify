@@ -5,15 +5,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
-import org.aksw.jenax.arq.connection.core.SparqlQueryConnectionJsa;
+import org.aksw.jenax.dataaccess.sparql.connection.query.SparqlQueryConnectionJsa;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.sparqlify.core.builder.FluentSparqlifyFactory;
 import org.antlr.runtime.RecognitionException;
-import org.apache.jena.ext.com.google.common.io.Files;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import com.google.common.io.Files;
 
 import benchmark.common.TestDriverParams;
 import benchmark.generator.Generator;

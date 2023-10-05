@@ -8,9 +8,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.aksw.jenax.arq.connection.RDFConnectionModular;
-import org.aksw.jenax.arq.connection.SparqlQueryConnectionJsaBase;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.connection.common.RDFConnectionModular;
+import org.aksw.jenax.dataaccess.sparql.connection.query.SparqlQueryConnectionJsaBase;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.jenax.stmt.core.SparqlStmtUpdate;
 import org.aksw.jenax.web.servlet.SparqlEndpointBase;
 import org.apache.jena.rdfconnection.RDFConnection;

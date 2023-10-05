@@ -25,7 +25,7 @@ import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
 import org.aksw.jena_sparql_api.views.ExprEvaluator;
 import org.aksw.jena_sparql_api.views.SqlTranslationUtils;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.lang.ConfigParser;
 import org.aksw.sparqlify.config.syntax.Config;

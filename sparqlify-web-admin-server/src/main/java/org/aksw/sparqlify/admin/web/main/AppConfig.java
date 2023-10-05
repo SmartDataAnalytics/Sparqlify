@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.util.slf4j.LoggerCount;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.service_framework.core.ServiceLauncherRdb2Rdf;
 import org.aksw.service_framework.core.SparqlService;
 import org.aksw.service_framework.jpa.core.ServiceRepositoryJpaImpl;

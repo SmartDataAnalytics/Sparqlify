@@ -1,7 +1,7 @@
 package exp.cornercases;
 
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;

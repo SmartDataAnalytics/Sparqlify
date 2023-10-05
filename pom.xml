@@ -6,7 +6,7 @@
 
 	<groupId>org.aksw.sparqlify</groupId>
 	<artifactId>sparqlify-parent</artifactId>
-	<version>0.9.5-SNAPSHOT</version>
+	<version>0.9.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>A middleware featuring SPARQL to SQL rewriting over relational databases.</description>
 
@@ -96,9 +96,9 @@
 
 		<!-- <jersey.version>2.26</jersey.version> -->
 
-		<rmltk.version>4.8.0-3-SNAPSHOT</rmltk.version>
-		<jena.version>4.8.0</jena.version>
-		<jenax.version>4.8.0-3-SNAPSHOT</jenax.version>
+		<rmltk.version>4.9.0-1-SNAPSHOT</rmltk.version>
+		<jena.version>4.9.0</jena.version>
+		<jenax.version>4.9.0-1-SNAPSHOT</jenax.version>
 		<aksw-commons.version>0.9.7-SNAPSHOT</aksw-commons.version>
 
 
@@ -337,6 +337,7 @@
 							<exclude>spring-jcl-</exclude>
 
 							<exclude>jetty-servlet-api-</exclude>
+							<exclude>hibernate-jpa-</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
@@ -1196,8 +1197,8 @@
 
 			<dependency>
 				<groupId>org.aksw.bsbm</groupId>
-				<artifactId>bsbm-jsa</artifactId>
-				<version>3.1.4</version>
+				<artifactId>bsbm-jenax</artifactId>
+				<version>3.1.8-SNAPSHOT</version>
 			</dependency>
 
 

@@ -2,6 +2,7 @@ package org.aksw.sparqlify.core;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
@@ -66,5 +67,10 @@ public class ResultSetSparqlify
     public void close() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void forEachRemaining(Consumer<? super QuerySolution> action) {
+        it.forEachRemaining(binding -> action.accept(new ResultBinding(null, binding)));
     }
 }

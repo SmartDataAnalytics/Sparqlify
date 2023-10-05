@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.apache.jena.sparql.core.Quad;
 
 public class TaskDump
