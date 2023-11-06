@@ -98,7 +98,7 @@
 
 		<rmltk.version>4.9.0-1</rmltk.version>
 		<jena.version>4.9.0</jena.version>
-		<jenax.version>4.9.0-1-SNAPSHOT</jenax.version>
+		<jenax.version>4.9.0-1</jenax.version>
 		<aksw-commons.version>0.9.7</aksw-commons.version>
 
 
@@ -1204,7 +1204,7 @@
 			<dependency>
 				<groupId>org.aksw.bsbm</groupId>
 				<artifactId>bsbm-jenax</artifactId>
-				<version>3.1.8-SNAPSHOT</version>
+				<version>3.1.8</version>
 			</dependency>
 
 
