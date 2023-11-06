@@ -10,12 +10,13 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.1</version>
+		<version>0.9.6-SNAPSHOT</version>
 	</parent>
 
 	<modules>
 		<!-- <module>sparqlify-pkg-uberjar-cli</module> -->
 		<module>sparqlify-pkg-deb-cli</module>
+		<module>sparqlify-pkg-docker-cli</module>
 	</modules>
 
 </project>

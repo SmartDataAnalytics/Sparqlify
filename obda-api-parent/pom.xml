@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.1</version>
+		<version>0.9.6-SNAPSHOT</version>
 	</parent>
 
 	<modules>
@@ -69,19 +69,9 @@
 
 			<!-- The algebra package is used for normalizing expressions during creating 
 				rr:template strings -->
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-arq-algebra</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
 
 			<!-- TODO Get rid of this dependency ; currently only used for E_RdfTerm -->
 			<!-- E_RdfTerm could go to the algebra package -->
-			<dependency>
-				<groupId>org.aksw.jenax</groupId>
-				<artifactId>jenax-arq-views</artifactId>
-				<version>${jenax.version}</version>
-			</dependency>
 			
 <!-- 			<dependency> -->
 <!-- 				<groupId>org.apache.commons</groupId> -->

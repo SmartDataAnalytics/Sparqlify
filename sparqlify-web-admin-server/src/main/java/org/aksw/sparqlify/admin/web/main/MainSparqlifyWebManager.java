@@ -104,6 +104,7 @@ public class MainSparqlifyWebManager {
         final WebAppContext webAppContext = new WebAppContext();
         //Context servletContext = webAppContext.getServletContext();
 
+        // webAppContext.addEventListener(new LifeCycle.Listener() {
         webAppContext.addLifeCycleListener(new AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle arg0) {

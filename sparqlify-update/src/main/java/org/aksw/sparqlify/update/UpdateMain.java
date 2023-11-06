@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import org.aksw.commons.collections.diff.HashSetDiff;
-import org.apache.jena.ext.com.google.common.io.Files;
+import com.google.common.io.Files;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.sparql.engine.binding.Binding;

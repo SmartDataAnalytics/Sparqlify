@@ -1,11 +1,10 @@
 #!/bin/sh
 
-java -cp "/usr/share/lib/sparqlify-cli/sparqlify-cli.jar" org.aksw.sparqlify.cli.main.MainCliSparqlify "$@"
+#WORK_DIR=`dirname "$0"`
 
-#artifactBase="/usr/share/lib/sparqlify-cli/sparqlify-core"
+LIB_DIR="/usr/share/sparqlify-cli"
+MAIN_CLASS="org.aksw.sparqlify.cli.main.MainCliSparqlify"
 
-# Source the dependencies (they become the value of the variable 'artifacts')
-#. "$artifactBase.inc"
-
-#java -cp "$artifacts:$artifactBase.jar" org.aksw.sparqlify.web.Main "$@"
+# EXTRA_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"
+java $EXTRA_OPTS $JAVA_OPTS -cp "$LIB_DIR:$LIB_DIR/lib/*" "$MAIN_CLASS" "$@"
 

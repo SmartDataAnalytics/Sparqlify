@@ -8,7 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.slf4j.LoggerCount;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.service_framework.jpa.core.ServiceProvider;
 import org.aksw.service_framework.jpa.core.ServiceProviderJpaRdbRdf;
 import org.aksw.service_framework.utils.LogUtils;

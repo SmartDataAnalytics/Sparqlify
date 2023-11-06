@@ -15,7 +15,7 @@ Create View TriplesMap1 As
     ?s foaf:name ?n
   }
   With
-    ?s = uri(exr:student_, spy:urlEncode(?Name))
+    ?s = uri(exr:student_, ENCODE_FOR_URI(?Name))
     ?n = plainLiteral(?Name)
   From
     [[SELECT "Name", COUNT("Sport") FROM "Student" GROUP BY "Name"]]

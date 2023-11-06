@@ -1,4 +1,4 @@
-package org.aksw.sparqlify.trash;
+package org.aksw.sparqlify.cli.cmd;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,9 +47,11 @@ public class CmdExportSmlAsR2rml
 
         LoggerCount loggerCount = new LoggerCount(logger);
 
-        List<Resource> resources = nonOptionArgs.stream()
-                .map(SparqlifyCliHelper.resourceLoader::getResource)
-                .collect(Collectors.toList());
+        List<Resource> resources = SparqlifyCliHelper.resolveFiles(nonOptionArgs, true, loggerCount);
+
+//        		nonOptionArgs.stream()
+//                .map(SparqlifyCliHelper.resourceLoader::getResource)
+//                .collect(Collectors.toList());
 
         Config config = SparqlifyCliHelper.parseSmlConfigs(resources, loggerCount);
         Collection<ViewDefinition> viewDefs = config.getViewDefinitions();

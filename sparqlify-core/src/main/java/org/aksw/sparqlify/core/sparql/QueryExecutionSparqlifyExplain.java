@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.aksw.jenax.arq.util.execution.QueryExecutionAdapter;
+import org.aksw.jenax.arq.util.exec.query.QueryExecutionAdapter;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_Agg;
 import org.aksw.sparqlify.algebra.sql.exprs2.S_AggCount;
 import org.aksw.sparqlify.algebra.sql.nodes.SqlOp;

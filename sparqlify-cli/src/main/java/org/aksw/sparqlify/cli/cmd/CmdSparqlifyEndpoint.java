@@ -11,8 +11,8 @@ import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
+import org.aksw.commons.io.util.StdIo;
 import org.aksw.commons.sql.codec.api.SqlCodec;
-import org.aksw.commons.sql.codec.util.SqlCodecUtils;
 import org.aksw.commons.util.MapReader;
 import org.aksw.commons.util.slf4j.LoggerCount;
 import org.aksw.jena_sparql_api.core.GraphQueryExecutionFactory;
@@ -20,9 +20,9 @@ import org.aksw.jena_sparql_api.core.utils.QueryExecutionUtils;
 import org.aksw.jena_sparql_api.limit.QueryExecutionFactoryLimit;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.views.CandidateViewSelector;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.arq.util.streamrdf.StreamRDFWriterEx;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.jenax.web.server.boot.FactoryBeanSparqlServer;
-import org.aksw.sparqlify.backend.postgres.DatatypeToStringPostgres;
 import org.aksw.sparqlify.config.syntax.Config;
 import org.aksw.sparqlify.config.v0_2.bridge.BasicTableInfoProvider;
 import org.aksw.sparqlify.config.v0_2.bridge.BasicTableProviderJdbc;
@@ -54,12 +54,12 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.riot.system.StreamRDFOps;
 import org.apache.jena.riot.writer.NQuadsWriter;
 import org.apache.jena.riot.writer.NTriplesWriter;
 import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.sparql.exec.QueryExec;
-import org.apache.jena.sparql.resultset.ResultsFormat;
-import org.apache.jena.sparql.util.QueryExecUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +68,7 @@ import org.springframework.core.io.Resource;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @Command(name="endpoint", versionProvider = VersionProviderSparqlify.class, description = "Sparqlify Endpoint Subcommands")
 public class CmdSparqlifyEndpoint
@@ -84,8 +85,8 @@ public class CmdSparqlifyEndpoint
     @Option(names = { "-C", "--context" }, description = "Context e.g. /sparqlify" )
     public String context;
 
-    @Option(names = { "-m", "--mapping" }, arity = "0..*", description = "Sparqlify mapping file (can be specified multiple times)")
-    public List<String> mappingSources = new ArrayList<>();
+    @Option(names = { "-m", "--mapping" }, arity = "0..*", description = "(legacy; avaid use) Sparqlify mapping file(s)")
+    public List<String> mappingSourcesLegacy = new ArrayList<>();
 
     @Option(names = { "-Q", "--query" }, description = "Execute a single query")
     public String queryString;
@@ -99,19 +100,25 @@ public class CmdSparqlifyEndpoint
     @Option(names = { "-n", "--resultsetsize" }, description = "Maximum result set size")
     public Long maxResultSetSize = null;
 
-    @Option(names = { "o", "format" }, description = "Output format; currently only applies to dump (-D). Values: ntriples, nquads")
+    @Option(names = { "--out-format" }, description = "Output format; currently only applies to dump (-D). Values: ntriples, nquads")
     public String outputFormat;
 
     @Option(names = { "-1", "--sparql11" }, description = "Use jena for sparql 11 (supports property paths but may be slow)")
     public boolean useSparql11Wrapper;
 
+    @Parameters(arity = "0..*", description = "Sparqlify mapping file(s). Auto-detects r2rml and sml.")
+    public List<String> mappingSources = new ArrayList<>();
 
     @Override
     public Integer call() throws Exception {
 
         LoggerCount loggerCount = new LoggerCount(logger);
 
-        List<Resource> sources = SparqlifyCliHelper.resolveFiles(mappingSources, true, loggerCount);
+        List<String> allMappingSources = new ArrayList<>();
+        allMappingSources.addAll(mappingSourcesLegacy);
+        allMappingSources.addAll(mappingSources);
+
+        List<Resource> sources = SparqlifyCliHelper.resolveFiles(allMappingSources, true, loggerCount);
 
         Config config = SparqlifyCliHelper.parseSmlConfigs(sources, loggerCount);
         if(loggerCount.getErrorCount() != 0) {
@@ -149,7 +156,7 @@ public class CmdSparqlifyEndpoint
 
         SqlBackendConfig backendConfig = backendRegistry.apply(dbProductName);
         if(backendConfig == null) {
-            throw new RuntimeException("Could not find backend for " + dbProductName);
+            throw new RuntimeException("Could not find backend: [" + dbProductName + "]");
         }
 
 
@@ -192,8 +199,8 @@ public class CmdSparqlifyEndpoint
         QueryExecutionFactoryEx qef = FluentSparqlifyFactory.newEngine()
                 .setDataSource(dataSource)
                 .setConfig(config)
-                .setDatatypeToString(new DatatypeToStringPostgres())
-                .setSqlEscaper(SqlCodecUtils.createSqlCodecDefault())
+                .setDatatypeToString(typeSerializer)
+                .setSqlEscaper(sqlEscaper) //SqlCodecUtils.createSqlCodecDefault())
                 .setMaxQueryExecutionTime(maxQueryExecutionTime)
                 .setMaxResultSetSize(mrs)
                 .create();
@@ -231,11 +238,12 @@ public class CmdSparqlifyEndpoint
                 System.out.println(ResultSetFormatter.asText(rs));
             }
             else if(queryEx.isConstructType()) {
-                QueryExecution qe = qef.createQueryExecution(queryString);
-                Iterator<Triple> it = qe.execConstructTriples();
-                QueryExecUtils.exec(null, QueryExec.adapt(qe), ResultsFormat.FMT_RDF_NT, System.out);
-                // SparqlFormatterUtils.writeText(System.out, it);
-                //model.write(System.out, "N-TRIPLES");
+                StreamRDF writer = StreamRDFWriterEx.getWriterStream(StdIo.openStdOutWithCloseShield(), RDFFormat.NQUADS, null);
+
+                try (QueryExecution qe = qef.createQueryExecution(queryString)) {
+                    Iterator<Quad> it = qe.execConstructQuads();
+                    StreamRDFOps.sendQuadsToStream(it, writer);
+                }
             }
             else {
                 throw new RuntimeException("Query type not supported: " + queryString);

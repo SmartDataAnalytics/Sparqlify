@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-pkg-parent</artifactId>
-		<version>0.9.1</version>
+		<version>0.9.6-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>sparqlify-pkg-deb-cli</artifactId>
@@ -82,7 +82,7 @@
 											<src>${project.build.directory}/${deb.jarFile}</src>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/share/lib/${deb.packageName}</prefix>
+												<prefix>/usr/share/${deb.packageName}</prefix>
 											</mapper>
 										</data>
 
@@ -91,7 +91,7 @@
 											<src>${project.build.directory}/lib</src>
 											<mapper>
 												<type>perm</type>
-												<prefix>/usr/share/lib/${deb.packageName}/lib</prefix>
+												<prefix>/usr/share/${deb.packageName}/lib</prefix>
 												<filemode>755</filemode>
 											</mapper>
 										</data>
@@ -99,8 +99,8 @@
 										<data>
 											<type>link</type>
 											<symlink>true</symlink>
-											<linkName>/usr/share/lib/${deb.packageName}/${deb.packageName}.jar</linkName>
-											<linkTarget>/usr/share/lib/${deb.packageName}/${deb.jarFile}</linkTarget>
+											<linkName>/usr/share/${deb.packageName}/${deb.packageName}.jar</linkName>
+											<linkTarget>/usr/share/${deb.packageName}/${deb.jarFile}</linkTarget>
 										</data>
 
 

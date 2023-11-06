@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
@@ -20,10 +21,13 @@ import org.aksw.obda.domain.impl.LogicalTableTableName;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.r2rml.jena.arq.impl.R2rmlImporterLib;
 import org.aksw.r2rml.jena.arq.impl.TriplesMapToSparqlMapping;
+import org.aksw.r2rml.jena.arq.lib.R2rmlLib;
 import org.aksw.r2rml.jena.domain.api.LogicalTable;
+import org.aksw.r2rml.jena.domain.api.RefObjectMap;
 import org.aksw.r2rml.jena.domain.api.TriplesMap;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.E_Function;
@@ -50,7 +54,18 @@ public class R2rmlImporter {
     }
 
     public Collection<ViewDefinition> read(Model r2rmlModel, SqlCodec sqlCodec) {
-        Collection<TriplesMapToSparqlMapping> mappings = R2rmlImporterLib.read(r2rmlModel);
+
+        // Create a copy of the model to expand rr:join into SQL joins
+        Model copy = ModelFactory.createDefaultModel();
+        copy.add(r2rmlModel);
+
+        List<TriplesMap> rawTms = R2rmlLib.streamTriplesMaps(copy).collect(Collectors.toList());
+        for (TriplesMap tm : rawTms) {
+            R2rmlLib.expandShortcuts(tm);
+            Map<RefObjectMap, TriplesMap> map = R2rmlLib.expandRefObjectMapsInPlace(tm, sqlCodec);
+        }
+
+        Collection<TriplesMapToSparqlMapping> mappings = R2rmlImporterLib.read(copy);
 
         Collection<ViewDefinition> result = mappings.stream()
                 .map(mapping -> convert(mapping, sqlCodec))

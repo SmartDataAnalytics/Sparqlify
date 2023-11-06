@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.aksw.sparqlify</groupId>
         <artifactId>sparqlify-parent</artifactId>
-        <version>0.9.1</version>
+        <version>0.9.6-SNAPSHOT</version>
     </parent>
 
 
@@ -35,7 +35,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.1.0</version>
                 <configuration>
                     <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>

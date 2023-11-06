@@ -16,9 +16,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.aksw.jenax.arq.connection.RDFConnectionModular;
-import org.aksw.jenax.arq.connection.SparqlQueryConnectionJsaBase;
-import org.aksw.jenax.arq.connection.core.QueryExecutionFactory;
+import org.aksw.jenax.dataaccess.sparql.connection.common.RDFConnectionModular;
+import org.aksw.jenax.dataaccess.sparql.connection.query.SparqlQueryConnectionJsaBase;
+import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.jenax.stmt.core.SparqlStmtUpdate;
 import org.aksw.jenax.web.servlet.SparqlEndpointBase;
 import org.aksw.service_framework.core.SparqlService;
