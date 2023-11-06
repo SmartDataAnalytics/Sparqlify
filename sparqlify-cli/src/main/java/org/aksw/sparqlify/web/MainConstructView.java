@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.views.Dialect;
-import org.aksw.jenax.dataaccess.sparql.execution.query.QueryExecutionDecoratorBase;
+import org.aksw.jenax.dataaccess.sparql.execution.query.QueryExecutionWrapperBase;
 import org.aksw.jenax.dataaccess.sparql.factory.execution.query.QueryExecutionFactory;
 import org.aksw.jenax.web.server.boot.FactoryBeanSparqlServer;
 import org.aksw.sparqlify.config.lang.ConfiguratorConstructViewSystem;
@@ -63,7 +63,7 @@ class TripleIterator
 
 
 class QueryExecutionStreamingWrapper
-    extends QueryExecutionDecoratorBase<QueryExecution>
+    extends QueryExecutionWrapperBase<QueryExecution>
     implements QueryExecution
 {
 
@@ -73,13 +73,13 @@ class QueryExecutionStreamingWrapper
 
     @Override
     public Iterator<Triple> execConstructTriples() {
-        Model model = getDecoratee().execConstruct();
+        Model model = getDelegate().execConstruct();
         return new TripleIterator(model.listStatements());
     }
 
     @Override
     public Iterator<Triple> execDescribeTriples() {
-        Model model = getDecoratee().execDescribe();
+        Model model = getDelegate().execDescribe();
         return new TripleIterator(model.listStatements());
     }
 

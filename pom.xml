@@ -96,10 +96,10 @@
 
 		<!-- <jersey.version>2.26</jersey.version> -->
 
-		<rmltk.version>4.9.0-1-SNAPSHOT</rmltk.version>
+		<rmltk.version>4.9.0-1</rmltk.version>
 		<jena.version>4.9.0</jena.version>
 		<jenax.version>4.9.0-1-SNAPSHOT</jenax.version>
-		<aksw-commons.version>0.9.7-SNAPSHOT</aksw-commons.version>
+		<aksw-commons.version>0.9.7</aksw-commons.version>
 
 
 
@@ -584,6 +584,12 @@
 			</dependency>
 			-->
 
+                        <dependency>
+                                <groupId>org.aksw.jenax</groupId>
+                                <artifactId>jenax-arq-json</artifactId>
+                                <version>${jenax.version}</version>
+                                <exclusions><exclusion><groupId>org.apache.sedona</groupId><artifactId>sedona-core-3.0_2.13</artifactId></exclusion></exclusions>
+                        </dependency>
 
 			<dependency>
 				<groupId>org.aksw.sparqlify</groupId>
