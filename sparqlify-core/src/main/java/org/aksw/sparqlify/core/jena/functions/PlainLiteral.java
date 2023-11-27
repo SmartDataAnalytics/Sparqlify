@@ -22,7 +22,7 @@ public class PlainLiteral
         } else {
             String l = lang == null ? null : lang.asUnquotedString();
 
-            tmp = NodeFactory.createLiteral(v, l, false);
+            tmp = NodeFactory.createLiteral(v, l);
         }
 
 

@@ -724,7 +724,7 @@ triples returns [BasicPattern value]
     ;
 
 triple[BasicPattern triples]
-    : ^(TRIPLE ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples])) {$triples.add(new Triple($a.value, $b.value, $c.value)); }
+    : ^(TRIPLE ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples])) {$triples.add(Triple.create($a.value, $b.value, $c.value)); }
     ;
 
 
@@ -738,7 +738,7 @@ triplesSameSubject[BasicPattern value]
 
 // Object list is actually just a a single triple
 objectList[BasicPattern triples]
-    : ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples]) {$triples.add(new Triple($a.value, $b.value, $c.value)); System.out.println("Created triple: " + $triples); }
+    : ^(SUBJECT a=varOrTerm) ^(PREDICATE b=verb) ^(OBJECT c=graphNode[triples]) {$triples.add(Triple.create($a.value, $b.value, $c.value)); System.out.println("Created triple: " + $triples); }
     ;
 
 
@@ -762,7 +762,7 @@ triplesSameSubject[BasicPattern value]
     ;
 
 objectList[Collection<Triple> triples]
-    : ^(TRIPLE ^(SUBJECT a=varOrTerm?) ^(PREDICATE b=verb) ^(OBJECT c=graphNode)  {$triples.add(new Triple($a.value, $b.value, $c.value);})
+    : ^(TRIPLE ^(SUBJECT a=varOrTerm?) ^(PREDICATE b=verb) ^(OBJECT c=graphNode)  {$triples.add(Triple.create($a.value, $b.value, $c.value);})
     ;
 */
 

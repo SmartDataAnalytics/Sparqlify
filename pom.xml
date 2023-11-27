@@ -96,10 +96,10 @@
 
 		<!-- <jersey.version>2.26</jersey.version> -->
 
-		<rmltk.version>4.9.0-1</rmltk.version>
-		<jena.version>4.9.0</jena.version>
-		<jenax.version>4.9.0-1</jenax.version>
-		<aksw-commons.version>0.9.7</aksw-commons.version>
+		<rmltk.version>5.0.0-1-SNAPSHOT</rmltk.version>
+		<jena.version>5.0.0-SNAPSHOT</jena.version>
+		<jenax.version>5.0.0-1-SNAPSHOT</jenax.version>
+		<aksw-commons.version>0.9.8-SNAPSHOT</aksw-commons.version>
 
 
 
