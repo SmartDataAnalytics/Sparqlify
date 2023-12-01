@@ -94,10 +94,8 @@
 		<rs-api.version>3.1.0</rs-api.version>
 
 		<!-- project defaults -->
-		<!-- <maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target> -->
-		<maven.compiler.release>11</maven.compiler.release>
-		<!-- 		<java.version>1.8</java.version> -->
+		<maven.compiler.release>17</maven.compiler.release>
+
 		<java.version.javadoc>http://java.sun.com/javase/8/docs/api/</java.version.javadoc>
 		<file.encoding>UTF-8</file.encoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -189,7 +187,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.11.0</version>
 					<configuration>
 						<release>${maven.compiler.release}</release>
 						<!-- <source>${maven.compiler.source}</source>
@@ -254,7 +252,7 @@
 				<plugin>
 					<artifactId>jdeb</artifactId>
 					<groupId>org.vafer</groupId>
-					<version>1.5</version>
+					<version>1.10</version>
 				</plugin>
 
 				<plugin>
