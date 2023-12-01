@@ -5,13 +5,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import org.aksw.service_framework.core.ServiceRepository;
 import org.aksw.sparqlify.admin.model.JdbcDataSource;
@@ -19,6 +12,14 @@ import org.aksw.sparqlify.admin.model.Rdb2RdfConfig;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 
 
 @Service

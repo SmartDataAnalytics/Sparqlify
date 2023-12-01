@@ -4,7 +4,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
 
-import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
 import org.aksw.jenax.web.frontend.ServerUtils;
@@ -14,12 +13,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.ServletException;
 
 
 
@@ -105,7 +105,7 @@ public class MainSparqlifyWebManager {
         //Context servletContext = webAppContext.getServletContext();
 
         // webAppContext.addEventListener(new LifeCycle.Listener() {
-        webAppContext.addLifeCycleListener(new AbstractLifeCycleListener() {
+        webAppContext.addEventListener(new LifeCycle.Listener() {
             @Override
             public void lifeCycleStarting(LifeCycle arg0) {
                 WebAppInitializer initializer = new WebAppInitializer();

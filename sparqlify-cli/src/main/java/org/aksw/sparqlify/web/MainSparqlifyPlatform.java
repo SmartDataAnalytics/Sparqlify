@@ -3,8 +3,8 @@ package org.aksw.sparqlify.web;
 import java.net.URL;
 import java.security.ProtectionDomain;
 
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

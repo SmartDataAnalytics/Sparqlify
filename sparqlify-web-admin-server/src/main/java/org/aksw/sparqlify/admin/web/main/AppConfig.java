@@ -6,11 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
@@ -56,6 +55,9 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import jakarta.annotation.Resource;
+
 
 @Configuration
 @ComponentScan("org.aksw.sparqlify.admin.web")
@@ -397,8 +399,4 @@ public class AppConfig
         CandidateViewSelectorSparqlify result = SparqlifyUtils.unwrapCandidateViewSelector(opRewriter);
         return result;
     }
-
-
 }
-
-
