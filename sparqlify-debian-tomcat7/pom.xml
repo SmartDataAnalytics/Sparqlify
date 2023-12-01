@@ -57,6 +57,67 @@
 					University of Leipzig.</project.description>
 			</properties>
 		</profile>
+		<profile>
+			<id>deb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>jdeb</artifactId>
+						<groupId>org.vafer</groupId>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jdeb</goal>
+								</goals>
+								<configuration>
+									<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
+									<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
+		
+									<snapshotExpand>true</snapshotExpand>
+									<snapshotEnv />
+		
+									<signPackage>${jdeb.signPackage}</signPackage>
+									<signMethod>dpkg-sig</signMethod>
+									<signRole>builder</signRole>
+									<keyring>${jdeb.keyring}</keyring>
+									<key>${jdeb.key}</key>
+									<passphrase>${jdeb.passphrase}</passphrase>
+		
+									<dataSet>
+		
+										<data>
+											<type>directory</type>
+											<src>${basedir}/src/deb/resources</src>
+										</data>
+		
+										<!-- <data> -->
+										<!-- <type>file</type> -->
+										<!-- <src>${project.build.directory}/${project.build.finalName}.war</src> -->
+										<!-- <mapper> -->
+										<!-- <type>perm</type> -->
+										<!-- <prefix>/usr/share/lib/${deb.tomcatCommon.name}</prefix> -->
+										<!-- <user>loader</user> -->
+										<!-- <group>loader</group> -->
+										<!-- </mapper> -->
+										<!-- </data> -->
+		
+										<!-- <data> -->
+										<!-- <type>link</type> -->
+										<!-- <symlink>true</symlink> -->
+										<!-- <linkName>/var/lib/tomcat7/web${deb.tomcatCommon.name}/${deb.tomcatCommon.name}.war</linkName> -->
+										<!-- <linkTarget>/usr/share/lib/${deb.tomcatCommon.name}/${project.build.finalName}.war</linkTarget> -->
+										<!-- </data> -->
+		
+									</dataSet>
+		
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<description>${project.description}</description>
@@ -64,7 +125,6 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -79,61 +139,6 @@
 				<configuration>
 					<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>jdeb</artifactId>
-				<groupId>org.vafer</groupId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jdeb</goal>
-						</goals>
-						<configuration>
-							<deb>${project.build.directory}/${deb.packageName}_[[version]]_all.deb</deb>
-							<changesOut>${project.build.directory}/${deb.packageName}_[[version]]_all.changes</changesOut>
-
-							<snapshotExpand>true</snapshotExpand>
-							<snapshotEnv />
-
-							<signPackage>${jdeb.signPackage}</signPackage>
-							<signMethod>dpkg-sig</signMethod>
-							<signRole>builder</signRole>
-							<keyring>${jdeb.keyring}</keyring>
-							<key>${jdeb.key}</key>
-							<passphrase>${jdeb.passphrase}</passphrase>
-
-							<dataSet>
-
-								<data>
-									<type>directory</type>
-									<src>${basedir}/src/deb/resources</src>
-								</data>
-
-								<!-- <data> -->
-								<!-- <type>file</type> -->
-								<!-- <src>${project.build.directory}/${project.build.finalName}.war</src> -->
-								<!-- <mapper> -->
-								<!-- <type>perm</type> -->
-								<!-- <prefix>/usr/share/lib/${deb.tomcatCommon.name}</prefix> -->
-								<!-- <user>loader</user> -->
-								<!-- <group>loader</group> -->
-								<!-- </mapper> -->
-								<!-- </data> -->
-
-								<!-- <data> -->
-								<!-- <type>link</type> -->
-								<!-- <symlink>true</symlink> -->
-								<!-- <linkName>/var/lib/tomcat7/web${deb.tomcatCommon.name}/${deb.tomcatCommon.name}.war</linkName> -->
-								<!-- <linkTarget>/usr/share/lib/${deb.tomcatCommon.name}/${project.build.finalName}.war</linkTarget> -->
-								<!-- </data> -->
-
-							</dataSet>
-
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
