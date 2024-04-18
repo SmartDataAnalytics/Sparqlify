@@ -1,9 +1,9 @@
 package org.aksw.sparqlify.platform.config;
 
 
-import javax.servlet.ServletContext;
-
 import org.springframework.web.context.ServletContextAware;
+
+import jakarta.servlet.ServletContext;
 
 /**
  * 
@@ -24,6 +24,7 @@ public class ServletContextBeanInjector //implements BeanFactoryPostProcessor,
 	 * @param context
 	 *            The Servlet Context
 	 */
+	@Override
 	public void setServletContext(ServletContext ctx) {
 		this.servletContext = ctx;
 	}

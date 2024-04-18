@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.6</version>
+		<version>0.9.8</version>
 	</parent>
 	<!-- <build> -->
 	<!-- <finalName>sparqlify-core</finalName> -->
@@ -47,6 +47,29 @@
 				</executions>
 			</plugin>
 			<!-- Invoke xjc -->
+			 <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jaxb2-maven-plugin</artifactId>
+            <!-- <version>3.1.0</version> does not support 2.1 -->
+            <version>2.5.0</version>
+            <executions>
+                <execution>
+                    <id>xjc</id>
+                    <goals>
+                        <goal>xjc</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <!-- The package of your generated sources -->
+                    <packageName>org.aksw.sparqlify.config.xml</packageName>
+                    <target>2.1</target>
+                <sources>
+                    <source>src/main/xsd/sparqlify-function-declarations.xsd</source>
+                </sources>
+            </configuration>
+        </plugin>
+        <!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -63,7 +86,7 @@
 				<configuration>
 					<executable>xjc</executable>
 					<arguments>
-						<!-- <argument>-enableIntrospection</argument> -->
+						<!- - <argument>-enableIntrospection</argument> - ->
 						<argument>-p</argument>
 						<argument>org.aksw.sparqlify.config.xml</argument>
 						<argument>-extension</argument>
@@ -72,11 +95,12 @@
 						<argument>-d</argument>
 						<argument>target/generated-sources/jaxb</argument>
 						<argument>src/main/xsd/sparqlify-function-declarations.xsd</argument>
-						<!-- <argument>-b</argument> -->
-						<!-- <argument>src/main/xjb/binding-customization.xjb</argument> -->
+						<!- - <argument>-b</argument> - - >
+						<!- - <argument>src/main/xjb/binding-customization.xjb</argument> - ->
 					</arguments>
 				</configuration>
 			</plugin>
+			-->
 			<!-- Add target dir to compilation -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -104,10 +128,12 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>javax.activation-api</artifactId>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
@@ -179,10 +205,12 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
+		-->
 		<!-- <dependency> <groupId>commons-validator</groupId> <artifactId>commons-validator</artifactId> 
 			</dependency> -->
 		<!-- Needed to override a dependency in commons-validator -->

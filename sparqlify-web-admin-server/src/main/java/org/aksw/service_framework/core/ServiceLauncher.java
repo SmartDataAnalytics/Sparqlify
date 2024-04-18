@@ -1,6 +1,6 @@
 package org.aksw.service_framework.core;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.aksw.service_framework.jpa.core.ServiceProvider;
 

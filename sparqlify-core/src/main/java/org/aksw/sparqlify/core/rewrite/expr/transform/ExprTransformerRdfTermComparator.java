@@ -96,11 +96,11 @@ public class ExprTransformerRdfTermComparator
             NodeValue x = at.getConstant();
             NodeValue y = at.getConstant();
 
-            boolean isSameValue = NodeValue.sameAs(x, y);
+            boolean isSameValue = NodeValue.sameValueAs(x, y);
 
             boolean isBothLiterals =
-                    (NodeValue.sameAs(x, two) || NodeValue.sameAs(x, three)) &&
-                    (NodeValue.sameAs(y, two) || NodeValue.sameAs(y, three));
+                    (NodeValue.sameValueAs(x, two) || NodeValue.sameValueAs(x, three)) &&
+                    (NodeValue.sameValueAs(y, two) || NodeValue.sameValueAs(y, three));
 
             boolean isCompatibleTypes = isSameValue || isBothLiterals;
 

@@ -371,7 +371,7 @@ public class AutoMapper {
                 // FIXME Encode name
                 Node property = NodeFactory.createURI(prefix + column.getName());
 
-                Triple triple = new Triple(mainVar, property, var);
+                Triple triple = Triple.create(mainVar, property, var);
                 Quad quad = new Quad(Quad.defaultGraphNodeGenerated, triple);
                 viewDefinition.getConstructPattern().add(quad);
             }

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -18,7 +19,6 @@ import org.aksw.sparqlify.core.test.MappingBundle;
 import org.aksw.sparqlify.core.test.QueryBundle;
 import org.aksw.sparqlify.core.test.TestBundle;
 import org.aksw.sparqlify.core.test.TestHelper;
-import org.aksw.sparqlify.util.NQuadUtils;
 import org.aksw.sparqlify.util.SparqlifyUtils;
 import org.antlr.runtime.RecognitionException;
 import org.apache.jena.query.Query;
@@ -26,8 +26,10 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.ResultSetMgr;
 import org.apache.jena.riot.resultset.ResultSetLang;
+import org.apache.jena.riot.system.AsyncParser;
 import org.apache.jena.sparql.core.Quad;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -108,7 +110,7 @@ public class TestBundlerConverter {
             TestCase testCase = new TestCaseImpl(name, () -> {
                 boolean isEqual;
                 try {
-                    Set<Quad> expected = NQuadUtils.readNQuads(bundle.getExpected().getInputStream());
+                    Set<Quad> expected = AsyncParser.of(bundle.getExpected().getInputStream(), Lang.NQUADS, null).streamQuads().collect(Collectors.toSet());
 
                     try(QueryExecutionFactory qef = createQef(name, testBundle, bundle)) {
                         //Callable<Set<Quad>> task = new TaskDump(qef);

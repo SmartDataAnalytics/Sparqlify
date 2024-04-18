@@ -189,27 +189,27 @@ public class QueryExecutionSparqlify
 
     protected QueryExecutionTimeoutHelper timeoutHelper = new QueryExecutionTimeoutHelper(this);
 
-    @Override
-    public void setTimeout(long timeout, TimeUnit timeoutUnits) {
-        timeoutHelper.setTimeout(timeout, timeoutUnits);
-    }
-
-    @Override
-    public void setTimeout(long timeout) {
-        timeoutHelper.setTimeout(timeout);
-    }
-
-    @Override
-    public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
-            TimeUnit timeUnit2) {
-        timeoutHelper.setTimeout(timeout1, timeUnit1, timeout2, timeUnit2);
-    }
-
-    @Override
-    public void setTimeout(long timeout1, long timeout2) {
-        timeoutHelper.setTimeout(timeout1, timeout2);
-    }
-
+//    @Override
+//    public void setTimeout(long timeout, TimeUnit timeoutUnits) {
+//        timeoutHelper.setTimeout(timeout, timeoutUnits);
+//    }
+//
+//    @Override
+//    public void setTimeout(long timeout) {
+//        timeoutHelper.setTimeout(timeout);
+//    }
+//
+//    @Override
+//    public void setTimeout(long timeout1, TimeUnit timeUnit1, long timeout2,
+//            TimeUnit timeUnit2) {
+//        timeoutHelper.setTimeout(timeout1, timeUnit1, timeout2, timeUnit2);
+//    }
+//
+//    @Override
+//    public void setTimeout(long timeout1, long timeout2) {
+//        timeoutHelper.setTimeout(timeout1, timeout2);
+//    }
+//
     @Override
     public void close() {
         // super.close();

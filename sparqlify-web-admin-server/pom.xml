@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-parent</artifactId>
-		<version>0.9.6</version>
+		<version>0.9.8</version>
 	</parent>
-
 
 	<artifactId>sparqlify-web-admin-server</artifactId>
 	<name>Sparqlify SPARQL-&gt;SQL rewriter - Web Admin Server</name>
 	<packaging>war</packaging>
-
 
 	<properties>
 		<tomcat.server-id>tomcat-localhost</tomcat.server-id>
@@ -26,9 +25,11 @@
 	</properties>
 
 
-	<!-- <pluginRepositories> <pluginRepository> <id>typescript-maven-plugin</id> 
+	<!-- <pluginRepositories> <pluginRepository>
+	<id>typescript-maven-plugin</id> 
 		<url>https://github.com/maxlapp/typescript-maven-plugin/tree/master/repo</url> 
-		- <url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url> 
+		-
+	<url>https://raw.github.com/ppedregal/typescript-maven-plugin/master/repo</url> 
 		- </pluginRepository> </pluginRepositories> -->
 
 	<build>
@@ -58,10 +59,12 @@
 
 					<!-- <archive> -->
 					<!-- <manifest> -->
-					<!-- <mainClass>org.aksw.sparqlify.admin.web.main.MainSparqlifyWebManager</mainClass> -->
+					<!--
+					<mainClass>org.aksw.sparqlify.admin.web.main.MainSparqlifyWebManager</mainClass> -->
 					<!-- </manifest> -->
 					<!-- </archive> -->
-					<!-- <packagingExcludes>WEB-INF/lib/jetty-*.jar,WEB-INF/lib/*EmbeddedJetty*.jar</packagingExcludes> -->
+					<!--
+					<packagingExcludes>WEB-INF/lib/jetty-*.jar,WEB-INF/lib/*EmbeddedJetty*.jar</packagingExcludes> -->
 					<!-- <overlays> -->
 					<!-- <overlay> -->
 					<!-- <groupId>org.aksw.sparqlify</groupId> -->
@@ -75,9 +78,12 @@
 					<!-- </overlay> -->
 					<!-- </overlays> -->
 				</configuration>
-				<!-- <configuration> <overlays> <overlay> <groupId>org.kurtjx.snorql</groupId> 
-					<artifactId>snorql-webapp</artifactId> <type>jar</type> <targetPath>.</targetPath> 
-					<includes> <include>build/**</include> </includes> <excludes> <exclude>WEB-INF</exclude> 
+				<!-- <configuration> <overlays> <overlay>
+				<groupId>org.kurtjx.snorql</groupId> 
+					<artifactId>snorql-webapp</artifactId> <type>jar</type>
+				<targetPath>.</targetPath> 
+					<includes> <include>build/**</include> </includes> <excludes>
+				<exclude>WEB-INF</exclude> 
 					</excludes> </overlay> </overlays> </configuration> -->
 			</plugin>
 
@@ -118,13 +124,16 @@
 				</configuration>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.codehaus.cargo</groupId> <artifactId>cargo-maven2-plugin</artifactId> 
-				<extensions>true</extensions> <configuration> <descriptor>src/assemble/merge.xml</descriptor> 
+			<!-- <plugin> <groupId>org.codehaus.cargo</groupId>
+			<artifactId>cargo-maven2-plugin</artifactId> 
+				<extensions>true</extensions> <configuration>
+			<descriptor>src/assemble/merge.xml</descriptor> 
 				</configuration> </plugin> -->
 
 
 			<!-- TypeScript plugin for goal mvn typescript:tsc -->
-			<!-- http://ppedregal.github.io/typescript-maven-plugin/plugin-info.html -->
+			<!--
+			http://ppedregal.github.io/typescript-maven-plugin/plugin-info.html -->
 			<!-- <plugin> -->
 			<!-- <groupId>com.ppedregal.typescript</groupId> -->
 			<!-- <artifactId>typescript-maven-plugin</artifactId> -->
@@ -139,10 +148,10 @@
 			<!-- </plugin> -->
 
 
-
 			<!-- Create a symlink to the target folder without version numbers -->
 			<plugin>
-				<!-- This plugin's configuration must come *after* the Maven Resources 
+				<!-- This plugin's configuration must come *after* the Maven
+				Resources 
 					Plugin, and *before* the Debian Maven Plugin. -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -155,14 +164,19 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<!-- <mkdir dir="${project.build.directory}/${project.build.finalName}/" 
+								<!-- <mkdir
+								dir="${project.build.directory}/${project.build.finalName}/" 
 									/> -->
-								<symlink link="${project.build.directory}/${project.artifactId}"
+								<symlink
+									link="${project.build.directory}/${project.artifactId}"
 									resource="${project.build.finalName}" />
-								<!-- <symlink link="${project.build.directory}/${project.artifactId}" 
+								<!-- <symlink
+								link="${project.build.directory}/${project.artifactId}" 
 									resource="${project.build.directory}/${project.build.finalName}" /> -->
-								<!-- resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
-								<!-- resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
+								<!--
+								resource="${project.build.directory}/deb/usr/share/lib/facete/facete-debian-tomcat.war" -->
+								<!--
+								resource="/usr/share/lib/facete/facete-debian-tomcat.war" -->
 							</target>
 						</configuration>
 						<goals>
@@ -175,8 +189,6 @@
 		</plugins>
 
 
-
-
 	</build>
 
 
@@ -185,7 +197,8 @@
 		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
 			<artifactId>sparqlify-core</artifactId>
-			<!-- <exclusions> <exclusion> <groupId>aopalliance</groupId> <artifactId>aopalliance</artifactId> 
+			<!-- <exclusions> <exclusion> <groupId>aopalliance</groupId>
+			<artifactId>aopalliance</artifactId> 
 				</exclusion> </exclusions> -->
 		</dependency>
 
@@ -197,7 +210,7 @@
 		<dependency>
 			<groupId>org.aksw.jenax</groupId>
 			<artifactId>jenax-server-frontends</artifactId>
-<!--
+			<!--
 <exclusions>
 <exclusion>
 <groupId>javax.servlet</groupId>
@@ -205,7 +218,7 @@
 </exclusion>
 </exclusions>
 -->
-<!--
+			<!--
 <exclusions>
 <exclusion>
 <groupId>org.eclipse.jetty</groupId>
@@ -219,54 +232,60 @@
 -->
 		</dependency>
 
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-server</artifactId>
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-servlet</artifactId>
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-http</artifactId>
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>apache-jsp</artifactId>
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>apache-jstl</artifactId>
-    <scope>provided</scope>
-</dependency>
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-annotations</artifactId>
-    <scope>provided</scope>
-</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<!-- <version>${jetty.version}</version> -->
+			<scope>provided</scope>
+		</dependency>
 
-<dependency>
-    <groupId>org.eclipse.jetty</groupId>
-    <artifactId>jetty-webapp</artifactId>
-    <scope>provided</scope>
-</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.ee${ee.version}</groupId>
+			<artifactId>jetty-ee${ee.version}-webapp</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-<dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-<!-- 	<scope>provided</scope> -->
-</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.ee${ee.version}</groupId>
+			<artifactId>jetty-ee${ee.version}-servlet</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<scope>provided</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.ee${ee.version}</groupId>
+			<artifactId>jetty-ee${ee.version}-plus</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty.ee${ee.version}</groupId>
+			<artifactId>jetty-ee${ee.version}-annotations</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty.ee${ee.version}</groupId>
+			<artifactId>jetty-ee${ee.version}-apache-jsp</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+<!--
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		-->
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.aksw.sparqlify</groupId>
@@ -274,7 +293,8 @@
 		</dependency>
 
 
-		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>jstl</artifactId> 
+		<!-- <dependency> <groupId>javax.servlet</groupId>
+		<artifactId>jstl</artifactId> 
 			</dependency> -->
 
 		<!-- <dependency> -->
@@ -282,6 +302,12 @@
 		<!-- <artifactId>sparqlify-web-admin-client</artifactId> -->
 		<!-- <type>war</type> -->
 		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -303,7 +329,7 @@
 			<artifactId>urlrewritefilter</artifactId>
 		</dependency>
 
-<!--
+		<!--
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -311,7 +337,8 @@
 -->
 
 
-		<!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
+		<!-- <dependency> <groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-jsp</artifactId> 
 			</dependency> -->
 
 		<!-- TODO Maybe add the jena-sparql-api web module -->
