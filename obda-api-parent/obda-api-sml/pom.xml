@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>obda-api-parent</artifactId>
-		<version>0.9.8</version>
+		<version>0.9.9-SNAPSHOT</version>
 	</parent>
 
 	<build>
