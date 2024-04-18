@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.aksw.sparqlify</groupId>
 		<artifactId>sparqlify-pkg-parent</artifactId>
-		<version>0.9.8-SNAPSHOT</version>
+		<version>0.9.8</version>
 	</parent>
 
 	<artifactId>sparqlify-pkg-deb-cli</artifactId>
