@@ -25,16 +25,15 @@ import org.aksw.obda.domain.impl.LogicalTableTableName;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.r2rml.common.vocab.R2rmlTerms;
 import org.aksw.r2rml.jena.arq.impl.R2rmlTemplateLib;
-import org.aksw.r2rml.jena.domain.api.GraphMap;
-import org.aksw.r2rml.jena.domain.api.ObjectMap;
-import org.aksw.r2rml.jena.domain.api.ObjectMapType;
-import org.aksw.r2rml.jena.domain.api.PredicateMap;
-import org.aksw.r2rml.jena.domain.api.PredicateObjectMap;
-import org.aksw.r2rml.jena.domain.api.SubjectMap;
-import org.aksw.r2rml.jena.domain.api.TermMap;
-import org.aksw.r2rml.jena.domain.api.TriplesMap;
 import org.aksw.r2rml.jena.vocab.RR;
-import com.google.common.base.Strings;
+import org.aksw.rmltk.model.r2rml.GraphMap;
+import org.aksw.rmltk.model.r2rml.ObjectMap;
+import org.aksw.rmltk.model.r2rml.ObjectMapType;
+import org.aksw.rmltk.model.r2rml.PredicateMap;
+import org.aksw.rmltk.model.r2rml.PredicateObjectMap;
+import org.aksw.rmltk.model.r2rml.SubjectMap;
+import org.aksw.rmltk.model.r2rml.TermMap;
+import org.aksw.rmltk.model.r2rml.TriplesMap;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -61,6 +60,7 @@ import org.apache.jena.vocabulary.XSD;
 import org.topbraid.shacl.validation.ValidationUtil;
 import org.topbraid.shacl.vocabulary.SH;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
@@ -146,7 +146,7 @@ public class R2rmlImporterOld {
     public ViewDefinition read(TriplesMap tm) {
         // Construct triples by creating the cartesian product between g, s, p, and o term maps
 
-        org.aksw.r2rml.jena.domain.api.LogicalTable logicalTable = tm.getLogicalTable();
+        org.aksw.rmltk.model.r2rml.LogicalTable logicalTable = tm.getLogicalTable();
 //		System.out.println("Processing " + tm.getURI());
 //		System.out.println("  with table " + logicalTable);
 

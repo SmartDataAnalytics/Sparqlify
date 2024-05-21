@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.aksw.commons.sql.codec.api.SqlCodec;
 import org.aksw.commons.sql.codec.util.SqlCodecUtils;
@@ -22,9 +21,10 @@ import org.aksw.obda.jena.domain.impl.ViewDefinition;
 import org.aksw.r2rml.jena.arq.impl.R2rmlImporterLib;
 import org.aksw.r2rml.jena.arq.impl.TriplesMapToSparqlMapping;
 import org.aksw.r2rml.jena.arq.lib.R2rmlLib;
-import org.aksw.r2rml.jena.domain.api.LogicalTable;
-import org.aksw.r2rml.jena.domain.api.RefObjectMap;
-import org.aksw.r2rml.jena.domain.api.TriplesMap;
+import org.aksw.rmltk.model.backbone.common.IRefObjectMap;
+import org.aksw.rmltk.model.backbone.common.ITriplesMap;
+import org.aksw.rmltk.model.r2rml.LogicalTable;
+import org.aksw.rmltk.model.r2rml.TriplesMap;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -62,7 +62,7 @@ public class R2rmlImporter {
         List<TriplesMap> rawTms = R2rmlLib.streamTriplesMaps(copy).collect(Collectors.toList());
         for (TriplesMap tm : rawTms) {
             R2rmlLib.expandShortcuts(tm);
-            Map<RefObjectMap, TriplesMap> map = R2rmlLib.expandRefObjectMapsInPlace(tm, sqlCodec);
+            Map<IRefObjectMap, ITriplesMap> map = R2rmlLib.expandRefObjectMapsInPlace(TriplesMap.class, tm, sqlCodec);
         }
 
         Collection<TriplesMapToSparqlMapping> mappings = R2rmlImporterLib.read(copy);
@@ -75,13 +75,13 @@ public class R2rmlImporter {
     }
 
     public static ViewDefinition convert(TriplesMapToSparqlMapping mapping, SqlCodec sqlCodec) {
-        TriplesMap tm = mapping.getTriplesMap();
+        TriplesMap tm = mapping.getTriplesMap().as(TriplesMap.class);
 
         String name = Objects.toString(tm);
         List<Quad> quads = mapping.getTemplate().getQuads();
         Map<Var, Expr> rawVarDef = mapping.getVarToExpr().getExprs();
         Map<Var, Constraint> constraints = Collections.emptyMap();
-        org.aksw.obda.domain.api.LogicalTable logicalTable = convert(mapping.getTriplesMap().getLogicalTable());
+        org.aksw.obda.domain.api.LogicalTable logicalTable = convert(tm.getLogicalTable());
 
         // Unescape the column names (we might eventually have to pass encoded names to sparqlify)
 

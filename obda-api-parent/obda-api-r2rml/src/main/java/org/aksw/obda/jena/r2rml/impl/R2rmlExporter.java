@@ -13,16 +13,14 @@ import org.aksw.jena_sparql_api.algebra.expr.transform.ExprTransformFlattenFunct
 import org.aksw.jena_sparql_api.algebra.expr.transform.ExprTransformSubstituteWithArgument;
 import org.aksw.jena_sparql_api.views.E_RdfTerm;
 import org.aksw.obda.jena.domain.impl.ViewDefinition;
-import org.aksw.r2rml.jena.domain.api.GraphMap;
-import org.aksw.r2rml.jena.domain.api.ObjectMap;
-import org.aksw.r2rml.jena.domain.api.PredicateMap;
-import org.aksw.r2rml.jena.domain.api.PredicateObjectMap;
-import org.aksw.r2rml.jena.domain.api.SubjectMap;
-import org.aksw.r2rml.jena.domain.api.TermMap;
-import org.aksw.r2rml.jena.domain.api.TriplesMap;
 import org.aksw.r2rml.jena.vocab.RR;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import org.aksw.rmltk.model.r2rml.GraphMap;
+import org.aksw.rmltk.model.r2rml.ObjectMap;
+import org.aksw.rmltk.model.r2rml.PredicateMap;
+import org.aksw.rmltk.model.r2rml.PredicateObjectMap;
+import org.aksw.rmltk.model.r2rml.SubjectMap;
+import org.aksw.rmltk.model.r2rml.TermMap;
+import org.aksw.rmltk.model.r2rml.TriplesMap;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Quad;
@@ -37,6 +35,9 @@ import org.apache.jena.sparql.expr.ExprFunction;
 import org.apache.jena.sparql.expr.ExprTransformer;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 
 public class R2rmlExporter {
@@ -267,7 +268,7 @@ public class R2rmlExporter {
             }
         }
 
-        org.aksw.r2rml.jena.domain.api.LogicalTable lt = result.createResource().as(org.aksw.r2rml.jena.domain.api.LogicalTable.class);
+        org.aksw.rmltk.model.r2rml.LogicalTable lt = result.createResource().as(org.aksw.rmltk.model.r2rml.LogicalTable.class);
         tm.setLogicalTable(lt);
 
         org.aksw.obda.domain.api.LogicalTable srcLt = viewDef.getLogicalTable();
