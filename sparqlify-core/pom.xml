@@ -256,10 +256,12 @@
 			<groupId>jrexx</groupId>
 			<artifactId>jrexx</artifactId>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>
 		</dependency>
+		-->
 		<!-- H2 Tools have features for creating MySQL result sets from CSV/TSV 
 			files -->
 		<dependency>
