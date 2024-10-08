@@ -84,11 +84,11 @@
 
 		<gwt.version>2.0.4</gwt.version>
 
-		<slf4j.version>2.0.9</slf4j.version>
-		<log4j.version>2.21.0</log4j.version>
+		<slf4j.version>2.0.16</slf4j.version>
+		<log4j.version>2.24.1</log4j.version>
 
-		<jetty.version>12.0.3</jetty.version>
-		<ee.version>10</ee.version>
+		<jetty.version>12.0.14</jetty.version>
+		<ee.version>9</ee.version>
 		<jakarta.xml.version>4.0.0</jakarta.xml.version>
 		<jaxb.version>2.3.1</jaxb.version>
 		<rs-api.version>3.1.0</rs-api.version>
@@ -103,9 +103,9 @@
 
 		<!-- <jersey.version>2.26</jersey.version> -->
 
-		<rmltk.version>5.1.0-1-SNAPSHOT</rmltk.version>
-		<jena.version>5.1.0-SNAPSHOT</jena.version>
-		<jenax.version>5.1.0-1-SNAPSHOT</jenax.version>
+		<rmltk.version>5.2.0-1-SNAPSHOT</rmltk.version>
+		<jena.version>5.2.0-SNAPSHOT</jena.version>
+		<jenax.version>5.2.0-1-SNAPSHOT</jenax.version>
 		<aksw-commons.version>0.9.9-SNAPSHOT</aksw-commons.version>
 
 
@@ -366,6 +366,8 @@
 							<exclude>jetty-servlet-api-</exclude>
 							<exclude>hibernate-jpa-</exclude>
 							<exclude>javax.persistence-</exclude>
+							<exclude>jaxb-impl-</exclude>
+							<exclude>netty-all-</exclude>
 						</excludes>
 					</configuration>
 				</plugin>
